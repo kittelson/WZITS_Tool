@@ -1,0 +1,117 @@
+.launch-title-label-top {
+    -fx-background-color: #595959;
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-family: 'calibri';
+}
+
+.launch-title-label-bottom {
+    -fx-background-color: #ED7D31;
+    -fx-text-fill: white;
+    -fx-font-size: 48px;
+    -fx-font-family: 'calibri';
+}
+
+.launch-info-text {
+    -fx-background-color: white;
+}
+
+.launch-info-text .text {
+    -fx-text-alignment: center; 
+}
+
+.intro-instructions {
+    -fx-background-color: white;
+    -fx-font-size: 36;
+    -fx-font-family: 'calibir';
+}
+
+.flow-step-start {
+    -fx-background-color: #ED7D31;
+    -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 30px;
+}
+
+.flow-step {
+    -fx-background-color: #ED7D31;
+    -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 L 25 50 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 30px;
+}
+
+.flow-step-end {
+    -fx-background-color: #ED7D31;
+    -fx-shape: 'M 0 0 L 125 0 L 125 100 L 0 100 L 25 50 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 30px;
+}
+
+.step-subpagination { 
+    -fx-page-information-visible: true;
+}
+
+.step-subpagination .toggle-button {
+    -fx-background-color: #ED7D31;
+    -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 L 25 50 z';
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.step-subpagination .toggle-button:selected {
+    -fx-background-color: #833C0C;
+}
+
+.wz-input-label-style {
+    -fx-text-alignment: center;
+    -fx-text-fill: black;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 18px;
+}
+
+.col-style-center {
+    -fx-alignment: center;
+}
+
+.col-style-blue {
+    -fx-text-fill: blue;
+}
+
+.step-summary-table {
+
+}
+
+.step-summary-table .column-header-background{
+    -fx-background-color: #4472c4;
+}
+
+.step-summary-table .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.step-summary-table .column-header {
+    -fx-background-color: transparent;
+}
+
+.step-summary-table .table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, #c6e0b4;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.step-summary-table .table-row-cell:selected{
+    -fx-text-fill: black;
+}
+
+.step-output-title {
+    -fx-background-color: #3366FF;
+    -fx-text-fill: white;
+    -fx-font-size: 28px;
+    -fx-alignment: center;
+}
+
+

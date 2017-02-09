@@ -5,6 +5,7 @@
  */
 package wzits_fx;
 
+import GUI.MainController;
 import GUI.MainWindow;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -23,9 +24,14 @@ public class WZITS_FX extends Application {
         primaryStage.setTitle("Work Zone ITS Tool");
 
         // Creating Panes
-        BorderPane borderPane = new MainWindow();
+        MainController control = new MainController(primaryStage);
+        BorderPane borderPane = new MainWindow(control);
         Scene scene = new Scene(borderPane);
+        scene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         primaryStage.setScene(scene);
+        //primaryStage.setMaximized(true);
+        primaryStage.setMinHeight(600);
+        primaryStage.setMinWidth(1000);
         primaryStage.show();
     }
 

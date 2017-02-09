@@ -5,18 +5,37 @@
  */
 package GUI;
 
+import GUI.Step.Step1Panel;
+import GUI.Launch.LaunchPane;
+import GUI.Step.IntroPane;
+import GUI.Step.Step2Panel;
+import GUI.Step.Step3Panel;
+import GUI.Step.Step4Panel;
+import GUI.Step.Step5Panel;
+import GUI.Step.Step6Panel;
+import core.Project;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 /**
@@ -25,63 +44,147 @@ import javafx.util.Duration;
  */
 public class MainWindow extends BorderPane {
 
-    public MainWindow() {
+    private final MainController control;
 
-        stepFlow = new ToolBar(step1Button,
+    public MainWindow(MainController control) {
+
+        this.control = control;
+        control.setMainWindow(this);
+
+        // Creating MenuBar
+        menuBar = new MenuBar();
+        Menu menuFile = new Menu("File");
+        Menu menuEdit = new Menu("Edit");
+        Menu menuWindow = new Menu("Window");
+        Menu menuHelp = new Menu("Help");
+        menuBar.getMenus().addAll(menuFile, menuEdit, menuWindow, menuHelp);
+        // Creating File Menu
+        MenuItem newMenuItem = new MenuItem("New");
+        MenuItem openMenuItem = new MenuItem("Open");
+        MenuItem saveMenuItem = new MenuItem("Save");
+        MenuItem saveAsMenuItem = new MenuItem("Save as");
+        MenuItem exitMenuItem = new MenuItem("Exit");
+        newMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+        openMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+        saveMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+        exitMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
+        menuFile.getItems().addAll(newMenuItem, openMenuItem, saveMenuItem, saveAsMenuItem, exitMenuItem);
+        // Creating Edit Menu
+        // Creating Window Menu
+        // Creating HelpMenu
+        MenuItem helpMenuItem = new MenuItem("Help");
+        menuHelp.getItems().add(helpMenuItem);
+
+        titleLabel.getStyleClass().add("launch-title-label-top");
+        titleLabel.setMaxWidth(MainController.MAX_WIDTH);
+
+        stepFlow = new ToolBar(
+                introButton,
+                step1Button,
                 step2Button,
                 step3Button,
                 step4Button,
                 step5Button,
-                step6Button
+                step6Button,
+                summaryButton
         );
-        step1Button.getStylesheets().add(this.getClass().getResource("/GUI/CSS/flowStartStep.css").toExternalForm());
-        step2Button.getStylesheets().add(this.getClass().getResource("/GUI/CSS/flowStep.css").toExternalForm());
-        step3Button.getStylesheets().add(this.getClass().getResource("/GUI/CSS/flowStep.css").toExternalForm());
-        step4Button.getStylesheets().add(this.getClass().getResource("/GUI/CSS/flowStep.css").toExternalForm());
-        step5Button.getStylesheets().add(this.getClass().getResource("/GUI/CSS/flowStep.css").toExternalForm());
-        step6Button.getStylesheets().add(this.getClass().getResource("/GUI/CSS/flowStep.css").toExternalForm());
+        //stepFlow.setStyle("-fx-background-color: blue");
 
-        pageFlow = new ToolBar[numSteps];
-        for (int i = 0; i < numSteps; i++) {
-            pageFlow[i] = new ToolBar();
-        }
+        introButton.getStyleClass().add("flow-step-start");
+        introButton.setStyle("-fx-background-color: " + COLOR_STEP_HL);
+        step1Button.getStyleClass().add("flow-step");
+        step2Button.getStyleClass().add("flow-step");
+        step3Button.getStyleClass().add("flow-step");
+        step4Button.getStyleClass().add("flow-step");
+        step5Button.getStyleClass().add("flow-step");
+        step6Button.getStyleClass().add("flow-step");
+        summaryButton.getStyleClass().add("flow-step-end");
+
+        //toolBarBox.setFillWidth(true);
+        toolBarBox.setAlignment(Pos.CENTER);
+        toolBarBox.getChildren().addAll(menuBar, titleLabel, stepFlow);
+
+        // Setting up TreeView Navigator
+        navigator = new TreeView();
 
         // Setting up sliding panes
-        step1Pane.setCenter(new Label("Step 1"));
-        step2Pane.setCenter(new Label("Step 2"));
-        step3Pane.setCenter(new Label("Step 3"));
-        step4Pane.setCenter(new Label("Step 4"));
-        step5Pane.setCenter(new Label("Step 5"));
-        step6Pane.setCenter(new Label("Step 6"));
-        allStepsPane.add(step1Pane, 0, 0);
-        allStepsPane.add(step2Pane, 1, 0);
-        allStepsPane.add(step3Pane, 2, 0);
-        allStepsPane.add(step4Pane, 3, 0);
-        allStepsPane.add(step5Pane, 4, 0);
-        allStepsPane.add(step6Pane, 5, 0);
-        ColumnConstraints stepCol1 = new ColumnConstraints();
-        stepCol1.setPercentWidth(16.6);
-        ColumnConstraints stepCol2 = new ColumnConstraints();
-        stepCol2.setPercentWidth(16.6);
-        ColumnConstraints stepCol3 = new ColumnConstraints();
-        stepCol3.setPercentWidth(16.6);
-        ColumnConstraints stepCol4 = new ColumnConstraints();
-        stepCol4.setPercentWidth(16.6);
-        ColumnConstraints stepCol5 = new ColumnConstraints();
-        stepCol5.setPercentWidth(16.6);
-        ColumnConstraints stepCol6 = new ColumnConstraints();
-        stepCol6.setPercentWidth(16.6);
-        allStepsPane.getColumnConstraints().addAll(stepCol1, stepCol2, stepCol3, stepCol4, stepCol5, stepCol6);
+        //step1Pane.setCenter(new Label("Step 1"));
+        introPane = new IntroPane(control);
+        step1Pane = new Step1Panel(control);
+        step2Pane = new Step2Panel(control);
+        step3Pane = new Step3Panel(control);
+        step4Pane = new Step4Panel(control);
+        step5Pane = new Step5Panel(control);
+        step6Pane = new Step6Panel(control);
+        summaryPane.setCenter(new Label("Summary"));
+        allStepsPane.add(introPane, 0, 0);
+        allStepsPane.add(step1Pane, 1, 0);
+        allStepsPane.add(step2Pane, 2, 0);
+        allStepsPane.add(step3Pane, 3, 0);
+        allStepsPane.add(step4Pane, 4, 0);
+        allStepsPane.add(step5Pane, 5, 0);
+        allStepsPane.add(step6Pane, 6, 0);
+        allStepsPane.add(summaryPane, 7, 0);
+        //double colPctWidth = 12.5;
+        //ColumnConstraints stepCol1 = new ColumnConstraints();
+        //stepCol1.setPercentWidth(colPctWidth);
+        //ColumnConstraints stepCol2 = new ColumnConstraints();
+        //stepCol2.setPercentWidth(colPctWidth);
+        //ColumnConstraints stepCol3 = new ColumnConstraints();
+        //stepCol3.setPercentWidth(colPctWidth);
+        //ColumnConstraints stepCol4 = new ColumnConstraints();
+        //stepCol4.setPercentWidth(colPctWidth);
+        //ColumnConstraints stepCol5 = new ColumnConstraints();
+        //stepCol5.setPercentWidth(colPctWidth);
+        //ColumnConstraints stepCol6 = new ColumnConstraints();
+        //stepCol6.setPercentWidth(colPctWidth);
+        //allStepsPane.getColumnConstraints().addAll(stepCol1, stepCol2, stepCol3, stepCol4, stepCol5, stepCol6);
+        int numPanes = 8;
+        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
+            ColumnConstraints tcc = new ColumnConstraints();
+            tcc.setPercentWidth(100.0 / 8);
+            allStepsPane.getColumnConstraints().add(tcc);
+        }
+
+        GridPane.setVgrow(introPane, Priority.ALWAYS);
+        GridPane.setVgrow(step1Pane, Priority.ALWAYS);
+        GridPane.setVgrow(step2Pane, Priority.ALWAYS);
+        GridPane.setVgrow(step3Pane, Priority.ALWAYS);
+        GridPane.setVgrow(step4Pane, Priority.ALWAYS);
+        GridPane.setVgrow(step5Pane, Priority.ALWAYS);
+        GridPane.setVgrow(step6Pane, Priority.ALWAYS);
+        GridPane.setVgrow(summaryPane, Priority.ALWAYS);
 
         // Creating Panel
-        this.setTop(stepFlow);
-        this.setBottom(allStepsPane);
+        //this.setTop(stepFlow);
+        //this.setBottom(allStepsPane);
+        launch = new LaunchPane(control);
+        this.setCenter(launch);
 
         setupActionListeners();
         setupPropertyBindings();
+
     }
 
     private void setupActionListeners() {
+        this.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
+                if (allStepsPane != null && allStepsPane.isVisible()) {
+                    allStepsPane.setMinWidth(8 * control.getAppWidth());
+                    moveScreen((activeStep.get() + 1) * step1Pane.getWidth(), 0, false);
+                }
+            }
+        });
+
+        introButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeStep.set(-1);
+                selectStep(activeStep.get());
+            }
+        });
+
         step1Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -124,31 +227,54 @@ public class MainWindow extends BorderPane {
                 selectStep(activeStep.get());
             }
         });
+        summaryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeStep.set(6);
+                selectStep(activeStep.get());
+            }
+        });
     }
 
     private void setupPropertyBindings() {
         this.activeStep.addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
+                introButton.setStyle("-fx-background-color: " + (activeStep.get() == -1 ? COLOR_STEP_HL : COLOR_STEP));
                 step1Button.setStyle("-fx-background-color: " + (activeStep.get() == 0 ? COLOR_STEP_HL : COLOR_STEP));
                 step2Button.setStyle("-fx-background-color: " + (activeStep.get() == 1 ? COLOR_STEP_HL : COLOR_STEP));
                 step3Button.setStyle("-fx-background-color: " + (activeStep.get() == 2 ? COLOR_STEP_HL : COLOR_STEP));
                 step4Button.setStyle("-fx-background-color: " + (activeStep.get() == 3 ? COLOR_STEP_HL : COLOR_STEP));
                 step5Button.setStyle("-fx-background-color: " + (activeStep.get() == 4 ? COLOR_STEP_HL : COLOR_STEP));
                 step6Button.setStyle("-fx-background-color: " + (activeStep.get() == 5 ? COLOR_STEP_HL : COLOR_STEP));
+                summaryButton.setStyle("-fx-background-color: " + (activeStep.get() == 6 ? COLOR_STEP_HL : COLOR_STEP));
             }
         });
     }
 
+    public void begin() {
+        this.getChildren().remove(launch);
+        this.setTop(toolBarBox);
+        this.setCenter(allStepsPane);
+    }
+
     private void selectStep(int stepIndex) {
-        moveScreen(stepIndex * step1Pane.getWidth(), 0);
+        moveScreen((stepIndex + 1) * step1Pane.getWidth(), 0);
     }
 
     private void moveScreen(double toX, double toY) {
-        TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.5), allStepsPane);
-        moveMe.setToX(-1 * toX);
-        moveMe.setToY(toY);
-        moveMe.play();
+        moveScreen(toX, toY, true);
+    }
+
+    private void moveScreen(double toX, double toY, boolean animated) {
+        if (animated) {
+            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allStepsPane);
+            moveMe.setToX(-1 * toX);
+            moveMe.setToY(toY);
+            moveMe.play();
+        } else {
+            allStepsPane.setTranslateX(-1 * toX);
+        }
     }
 
     /**
@@ -156,9 +282,21 @@ public class MainWindow extends BorderPane {
      */
     private final int numSteps = 6;
     /**
+     * Layout box for holding the Title and Flow Controls.
+     */
+    private final VBox toolBarBox = new VBox();
+    /**
+     * Title Label
+     */
+    private final Label titleLabel = new Label("Work Zone ITS Tool");
+    /**
      * Flow of steps for the User.
      */
     private final ToolBar stepFlow;
+    /**
+     * ToolBar button for the start/infoPanel
+     */
+    private final Button introButton = new Button("Start");
     /**
      * ToolBar button for Step 1.
      */
@@ -184,20 +322,26 @@ public class MainWindow extends BorderPane {
      */
     private final Button step6Button = new Button("Step 6");
     /**
-     * Flow of pages within the active step for the User.
+     * ToolBar process end button
      */
-    private final ToolBar[] pageFlow;
+    private final Button summaryButton = new Button("End");
 
     /**
      *
      */
+    private final LaunchPane launch;
+    private final MenuBar menuBar;
     private final GridPane allStepsPane = new GridPane();
-    private final BorderPane step1Pane = new BorderPane();
-    private final BorderPane step2Pane = new BorderPane();
-    private final BorderPane step3Pane = new BorderPane();
-    private final BorderPane step4Pane = new BorderPane();
-    private final BorderPane step5Pane = new BorderPane();
-    private final BorderPane step6Pane = new BorderPane();
+    private final BorderPane introPane;
+    private final BorderPane step1Pane;
+    private final BorderPane step2Pane;
+    private final BorderPane step3Pane;
+    private final BorderPane step4Pane;
+    private final BorderPane step5Pane;
+    private final BorderPane step6Pane;
+    private final BorderPane summaryPane = new BorderPane();
+
+    private final TreeView<Project> navigator;
 
     /**
      * Index of the step currently active.
@@ -211,6 +355,5 @@ public class MainWindow extends BorderPane {
 
     public static final String COLOR_STEP_HL = "#833C0C";
     public static final String COLOR_STEP = "#ED7D31";
-    private static final int MAX_WIDTH = 999999;
 
 }
