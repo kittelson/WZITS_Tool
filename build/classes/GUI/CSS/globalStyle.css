@@ -28,7 +28,7 @@
 
 .flow-step-start {
     -fx-background-color: #ED7D31;
-    -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 z';
+    -fx-shape: 'M 0 0 L 200 0 L 225 50 L 200 100 L 0 100 z';
     -fx-text-fill: white;
     -fx-font-family: 'calibri';
     -fx-font-size: 30px;
@@ -36,13 +36,37 @@
 
 .flow-step {
     -fx-background-color: #ED7D31;
-    -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 L 25 50 z';
+    -fx-shape: 'M 0 0 L 200 0 L 225 50 L 200 100 L 0 100 L 25 50 z';
     -fx-text-fill: white;
     -fx-font-family: 'calibri';
     -fx-font-size: 30px;
 }
 
 .flow-step-end {
+    -fx-background-color: #ED7D31;
+    -fx-shape: 'M 0 0 L 225 0 L 225 100 L 0 100 L 25 50 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 30px;
+}
+
+.flow-step-start-small {
+    -fx-background-color: #ED7D31;
+    -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 30px;
+}
+
+.flow-step-small {
+    -fx-background-color: #ED7D31;
+    -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 L 25 50 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 30px;
+}
+
+.flow-step-end-small {
     -fx-background-color: #ED7D31;
     -fx-shape: 'M 0 0 L 125 0 L 125 100 L 0 100 L 25 50 z';
     -fx-text-fill: white;
@@ -51,18 +75,20 @@
 }
 
 .step-subpagination { 
-    -fx-page-information-visible: true;
+    -fx-page-information-visible: false;
+    -fx-arrows-visible: false;
 }
 
 .step-subpagination .toggle-button {
     -fx-background-color: #ED7D31;
     -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 L 25 50 z';
-    -fx-text-fill: white;
+    -fx-text-fill: #ED7D31; /* white */
     -fx-font-size: 14px;
 }
 
 .step-subpagination .toggle-button:selected {
     -fx-background-color: #833C0C;
+    -fx-text-fill: #833C0C; /* white */
 }
 
 .wz-input-label-style {
@@ -78,6 +104,29 @@
 
 .col-style-blue {
     -fx-text-fill: blue;
+}
+
+.step-one-table .column-header-background {
+    -fx-background-color: #bac5cc;
+}
+
+.step-one-table .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+}
+
+.step-one-table .column-header {
+    -fx-background-color: transparent;
+}
+
+.step-one-table .table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, white;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.step-one-table .table-row-cell:selected{
+    -fx-text-fill: black;
 }
 
 .step-summary-table {

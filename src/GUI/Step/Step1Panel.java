@@ -5,12 +5,20 @@
  */
 package GUI.Step;
 
+import GUI.IconHelper;
 import GUI.MainController;
-import GUI.Tables.Step2Table;
+import GUI.Tables.Step1Table;
+import GUI.Tables.TableHelper;
+import core.Question;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,17 +26,22 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
+import GUI.Helper.ProgressIndicatorBar;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
 /**
@@ -36,14 +49,16 @@ import javafx.util.Callback;
  * @author ltrask
  */
 public class Step1Panel extends BorderPane {
-    
+
     private final MainController control;
-    
+
     private final VBox mainVBox = new VBox();
-    
+
     private final Pagination pagination;
-    
-    private final ProgressBar pb;
+
+    private final ProgressIndicatorBar pb;
+
+    private final SimpleDoubleProperty progress = new SimpleDoubleProperty(0.0);
 
     private final GridPane stepIntroGrid = new GridPane();
     private final GridPane projInfoGrid = new GridPane();
@@ -51,22 +66,24 @@ public class Step1Panel extends BorderPane {
     private final GridPane genInfoGrid;
     private final BorderPane wzMetaDataPane = new BorderPane();
     private final GridPane wzMetaDataGrid;
-    private final BorderPane stepSummaryPane = new BorderPane();
-    
+    //private final BorderPane stepSummaryPane = new BorderPane();
+
     public Step1Panel(MainController control) {
-        
+
         this.control = control;
 
         mainVBox.setFillWidth(true);
-        Label startLabel = new Label("Assesment of Needs");
+        Label startLabel = new Label("Step");
         startLabel.setAlignment(Pos.BOTTOM_CENTER);
         startLabel.setMaxHeight(MainController.MAX_HEIGHT);
         startLabel.setMaxWidth(MainController.MAX_WIDTH);
-        Label infoLabel = new Label("Step 1");
+        Label infoLabel = new Label("1");
         infoLabel.setMaxHeight(MainController.MAX_HEIGHT);
         infoLabel.setMaxWidth(MainController.MAX_WIDTH);
         infoLabel.setAlignment(Pos.TOP_CENTER);
-        Label instructionLabel = new Label("Tool Information or Diagram Here");
+        Label instructionLabel = new Label("Assessment of Needs");
+        instructionLabel.setWrapText(true);
+        instructionLabel.setTextAlignment(TextAlignment.CENTER);
         instructionLabel.setMaxHeight(MainController.MAX_HEIGHT);
         instructionLabel.setMaxWidth(MainController.MAX_WIDTH);
         instructionLabel.setAlignment(Pos.CENTER);
@@ -76,7 +93,9 @@ public class Step1Panel extends BorderPane {
 
         stepIntroGrid.add(startLabel, 0, 0);
         stepIntroGrid.add(infoLabel, 0, 1);
-        stepIntroGrid.add(instructionLabel, 1, 0, 1, 2);
+        stepIntroGrid.add(instructionLabel, 1, 1);
+        stepIntroGrid.add(new ImageView(IconHelper.FIG_FLOW_STEP_1), 1, 0);
+        stepIntroGrid.setStyle("-fx-background-color: white");
 
         RowConstraints row1 = new RowConstraints();
         row1.setPercentHeight(50);
@@ -85,6 +104,9 @@ public class Step1Panel extends BorderPane {
         row2.setPercentHeight(50);
         row2.setVgrow(Priority.ALWAYS);
         stepIntroGrid.getRowConstraints().addAll(row1, row2);
+        ColumnConstraints colConst1 = new ColumnConstraints(150, 150, 150);
+        ColumnConstraints colConst2 = new ColumnConstraints(1, 150, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.CENTER, true);
+        stepIntroGrid.getColumnConstraints().addAll(colConst1, colConst2);
         GridPane.setHgrow(instructionLabel, Priority.ALWAYS);
 
         Label genInfoTitleLabel = new Label("General Information");
@@ -111,33 +133,69 @@ public class Step1Panel extends BorderPane {
         col2.setPercentWidth(50);
         projInfoGrid.getColumnConstraints().addAll(col1, col2);
 
-        pb = new ProgressBar(0);
+        // Old JavaFX ProgressBarCode
+        //pb = new ProgressBar(0);
+        //
+        // New ProgressIndicatorBar Code
+        pb = new ProgressIndicatorBar(progress, 1.0, "%.0f%%", true);
         pb.setMaxWidth(MainController.MAX_WIDTH);
-        
-        pagination = new Pagination(Step2Table.getPageCount(0) + 2);
-        pagination.setPageFactory(new Callback<Integer, Node>(){
+
+        pagination = new Pagination(Step1Table.getPageCount(0) + 2);
+        pagination.setPageFactory(new Callback<Integer, Node>() {
             @Override
             public Node call(Integer pageIndex) {
-                switch (pageIndex) {
-                    default:
-                    case 0:
-                        return stepIntroGrid;
-                    case 1:
-                        return projInfoGrid;
+                if (pageIndex == 0) {
+                    return stepIntroGrid;
+                } else if (pageIndex == 1) {
+                    return projInfoGrid;
+                } else if (pageIndex == pagination.getPageCount() - 1) {
+                    return Step1Table.createSummaryTable();
+                } else {
+                    return Step1Table.createPageTable(pageIndex - 2, 10);
                 }
             }
         });
         //pagination.getStylesheets().add(this.getClass().getResource("/GUI/Step/step1Pane.css").toExternalForm());
         pagination.getStyleClass().add("step-subpagination");
-        
+
+        // NOTE: Use stack pane to add label to progress bar
+        StackPane pbStack = new StackPane();
+        for (Question q : TableHelper.getStepQuestions(0)) {
+            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    updateProgressBar();
+                }
+            });
+        }
         mainVBox.getChildren().addAll(pagination, pb);
 
         pagination.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(pagination, Priority.ALWAYS);
 
-        //this.setPadding(new Insets(10, 10, 10, 10));
         this.setCenter(mainVBox);
-        
+
+        setupActionListeners();
+    }
+
+    private void updateProgressBar() {
+        int sum = 0;
+        for (Question q : TableHelper.getStepQuestions(0)) {
+            if (q.getResponseIdx() > -1) {
+                sum++;
+            }
+        }
+        //pb.setProgress(sum / (double) TableHelper.getNumberOfQuestionsByStep(0));
+        progress.set(sum / (double) TableHelper.getNumberOfQuestionsByStep(0));
+    }
+
+    private void setupActionListeners() {
+        genInfoTF1.textProperty().bindBidirectional(control.getProject().getAgencyProperty());
+        genInfoTF2.textProperty().bindBidirectional(control.getProject().getAnalystProperty());
+        genInfoTF3.textProperty().bindBidirectional(control.getProject().getNameProperty());
+        genInfoTF4.textProperty().bindBidirectional(control.getProject().getUrlLinkProperty());
+        genInfoTA2.textProperty().bindBidirectional(control.getProject().getDescriptionProperty());
+        genInfoTA1.textProperty().bindBidirectional(control.getProject().getLimitsProperty());
     }
 
     private GridPane createGeneralInfoGrid() {
@@ -164,6 +222,17 @@ public class Step1Panel extends BorderPane {
         SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
         genInfoDateToday.setText(df.format(today));
 
+        genInfoTA1.setWrapText(true);
+        genInfoTA2.setWrapText(true);
+
+        genInfoPicGrid.add(genInfoPicLabel, 0, 0);
+        genInfoPicGrid.add(genInfoButton1, 1, 0);
+        genInfoButton1.setMaxWidth(125);
+        genInfoButton1.setDisable(true);
+        genInfoPicLabel.setMaxWidth(MainController.MAX_WIDTH);
+        genInfoPicGrid.getColumnConstraints().add(0, new ColumnConstraints(1, 125, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
+        genInfoPicGrid.getColumnConstraints().add(1, new ColumnConstraints(75, 75, 75, Priority.NEVER, HPos.RIGHT, true));
+
         GridPane grid = new GridPane();
 
         grid.add(genInfoLabel1, 0, 1);
@@ -182,7 +251,7 @@ public class Step1Panel extends BorderPane {
         grid.add(genInfoTA1, 1, 5);
         grid.add(genInfoTA2, 1, 6);
         grid.add(genInfoTF4, 1, 7);
-        grid.add(genInfoPicLabel, 1, 8);
+        grid.add(genInfoPicGrid, 1, 8);
 
         double leftColsplit = 40;
 
@@ -207,9 +276,8 @@ public class Step1Panel extends BorderPane {
         wzInputLabel7.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel8.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel9.setMaxWidth(MainController.MAX_WIDTH);
-        //wzInputChoice1.setMaxWidth(MainController.MAX_WIDTH);
-        //wzInputChoice2.setMaxWidth(MainController.MAX_WIDTH);
-
+        wzInputChoice1.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputChoice2.setMaxWidth(MainController.MAX_WIDTH);
 
         wzInputLabel1.getStyleClass().add("wz-input-label-style");
         wzInputLabel2.getStyleClass().add("wz-input-label-style");
@@ -228,6 +296,16 @@ public class Step1Panel extends BorderPane {
         wzInputSpin5.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 100, 55, 5));
         wzInputSpin6.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 8, 1, 1));
         wzInputSpin7.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 24, 6, 1));
+
+        wzInputChoice1.getSelectionModel().selectFirst();
+        wzInputChoice2.getSelectionModel().selectFirst();
+
+        proceedButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                control.getProject().getStep(1).setStepStarted(true);
+            }
+        });
 
         GridPane inputGrid = new GridPane();
         inputGrid.add(wzInputLabel1, 0, 0);
@@ -249,6 +327,7 @@ public class Step1Panel extends BorderPane {
         inputGrid.add(wzInputSpin5, 1, 6);
         inputGrid.add(wzInputSpin6, 1, 7);
         inputGrid.add(wzInputSpin7, 1, 8);
+        inputGrid.add(proceedButton, 1, 9);
 
         double leftColsplit = 65;
         ColumnConstraints col1 = new ColumnConstraints();
@@ -297,8 +376,9 @@ public class Step1Panel extends BorderPane {
     private final TextArea genInfoTA1 = new TextArea("");
     private final TextArea genInfoTA2 = new TextArea("");
     private final TextField genInfoTF4 = new TextField("");
-    private final Label genInfoPicLabel = new Label();
+    private final Label genInfoPicLabel = new Label("Select file...");
     private final Button genInfoButton1 = new Button("Browse");
+    private final GridPane genInfoPicGrid = new GridPane();
 
     private final Label wzInputLabel1 = new Label("Annual Average Daily Traffic (AADT)");
     private final Label wzInputLabel2 = new Label("Functional Class of Roadway:");
@@ -320,5 +400,7 @@ public class Step1Panel extends BorderPane {
 
     private final ChoiceBox wzInputChoice1 = new ChoiceBox(FXCollections.observableArrayList("Select", "Freeway", "Arterial, Local"));
     private final ChoiceBox wzInputChoice2 = new ChoiceBox(FXCollections.observableArrayList("Select", "Mobile", "Permanent"));
-    
+
+    private final Button proceedButton = new Button("Proceed");
+
 }

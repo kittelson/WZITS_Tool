@@ -27,6 +27,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -36,6 +37,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 /**
@@ -105,7 +107,15 @@ public class MainWindow extends BorderPane {
         toolBarBox.getChildren().addAll(menuBar, titleLabel, stepFlow);
 
         // Setting up TreeView Navigator
-        navigator = new TreeView();
+        ProjectTreeItem testItem = new ProjectTreeItem(control.getProject(), -1);
+        navigator = new TreeView(testItem);
+        navigator.setCellFactory(new Callback<TreeView<Project>, TreeCell<Project>>() {
+            @Override
+            public TreeCell<Project> call(TreeView<Project> p) {
+                return new ProjectTreeItem.ProjectTreeCell();
+            }
+        });
+        navigator.setMaxWidth(200);
 
         // Setting up sliding panes
         //step1Pane.setCenter(new Label("Step 1"));
@@ -171,7 +181,7 @@ public class MainWindow extends BorderPane {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
                 if (allStepsPane != null && allStepsPane.isVisible()) {
-                    allStepsPane.setMinWidth(8 * control.getAppWidth());
+                    allStepsPane.setMinWidth(8 * (control.getAppWidth() - 220));
                     moveScreen((activeStep.get() + 1) * step1Pane.getWidth(), 0, false);
                 }
             }
@@ -248,14 +258,26 @@ public class MainWindow extends BorderPane {
                 step5Button.setStyle("-fx-background-color: " + (activeStep.get() == 4 ? COLOR_STEP_HL : COLOR_STEP));
                 step6Button.setStyle("-fx-background-color: " + (activeStep.get() == 5 ? COLOR_STEP_HL : COLOR_STEP));
                 summaryButton.setStyle("-fx-background-color: " + (activeStep.get() == 6 ? COLOR_STEP_HL : COLOR_STEP));
+                if (activeStep.get() >= 0) {
+                    navigator.getRoot().setExpanded(true);
+                }
             }
         });
+//        step1Button.disableProperty().bind(control.getProject().getStep(0).stepStartedProperty().not());
+//        step2Button.disableProperty().bind(control.getProject().getStep(1).stepStartedProperty().not());
+//        step3Button.disableProperty().bind(control.getProject().getStep(2).stepStartedProperty().not());
+//        step4Button.disableProperty().bind(control.getProject().getStep(3).stepStartedProperty().not());
+//        step5Button.disableProperty().bind(control.getProject().getStep(4).stepStartedProperty().not());
+//        step6Button.disableProperty().bind(control.getProject().getStep(5).stepStartedProperty().not());
+//        summaryButton.disableProperty().bind(control.getProject().getStep(5).stepFinishedProperty().not());
     }
 
     public void begin() {
         this.getChildren().remove(launch);
         this.setTop(toolBarBox);
         this.setCenter(allStepsPane);
+        this.setLeft(navigator);
+        this.setRight(new BorderPane());
     }
 
     private void selectStep(int stepIndex) {

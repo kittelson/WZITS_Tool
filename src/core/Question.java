@@ -7,6 +7,8 @@ package core;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.util.converter.IntegerStringConverter;
 
 /**
@@ -19,22 +21,28 @@ public abstract class Question {
     protected final SimpleStringProperty goal;
     protected final SimpleStringProperty questionText;
     protected final SimpleIntegerProperty responseIdx;
-    
+
     public Question(int idx, String goal, String questionText) {
         this(idx, goal, questionText, -1);
     }
-    
+
     public Question(int idx, String goal, String questionText, int responseIdx) {
         this.idx = new SimpleIntegerProperty(idx);
         this.goal = new SimpleStringProperty(goal);
         this.questionText = new SimpleStringProperty(questionText);
         this.responseIdx = new SimpleIntegerProperty(responseIdx);
+//        this.responseIdx.addListener(new ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+//                System.out.println("Value changed: " + String.valueOf(oldVal) + " to " + String.valueOf(newVal));
+//            }
+//        });
     }
-    
+
     public int getIdx() {
         return idx.get();
     }
-    
+
     public String getGoal() {
         return goal.get();
     }
@@ -51,21 +59,25 @@ public abstract class Question {
         responseIdx.set(val);
         System.out.println("Edited");
     }
-    
+
+    public SimpleIntegerProperty responseIdxProperty() {
+        return responseIdx;
+    }
+
     public abstract boolean isTypeYesNo();
-    
+
     public abstract boolean isYes();
-    
+
     public int getAnswer() {
         return responseIdx.get();
     }
-    
+
     public void setAnswer(int val) {
         responseIdx.set(val);
     }
 
     public abstract void setAnswer(String val);
-    
+
     public abstract String getAnswerString();
 
     public static IntegerStringConverter yesNoConverter = new IntegerStringConverter() {
@@ -93,4 +105,14 @@ public abstract class Question {
             }
         }
     };
+
+    public static final String GOAL_USER_NEEDS = "User Needs";
+
+    public static final String GOAL_FEASIBILITY = "Feasibility";
+
+    public static final String GOAL_MOBILITY = "Mobility";
+    public static final String GOAL_SAFETY = "Safety";
+    public static final String GOAL_PROD = "Productivity";
+    public static final String GOAL_REG = "Regulatory";
+    public static final String GOAL_TRAVELER_INFO = "Traveler Information";
 }
