@@ -7,6 +7,7 @@ package GUI.Step;
 
 import GUI.MainController;
 import GUI.Tables.Step2Table;
+import com.sun.javafx.scene.control.skin.PaginationSkin;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

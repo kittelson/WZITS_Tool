@@ -30,8 +30,8 @@ public class WZITS_FX extends Application {
         scene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         primaryStage.setScene(scene);
         //primaryStage.setMaximized(true);
-        primaryStage.setMinHeight(600);
-        primaryStage.setMinWidth(1000);
+        primaryStage.setMinHeight(750);
+        primaryStage.setMinWidth(1100);
         primaryStage.show();
     }
 

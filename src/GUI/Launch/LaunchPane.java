@@ -22,16 +22,16 @@ import javafx.scene.text.Font;
  * @author ltrask
  */
 public class LaunchPane extends BorderPane {
-    
+
     private final MainController controller;
-    
+
     private final Label titleLabel1, titleLabel2;
-    
+
     private final TextArea infoText;
-    
+
     private final Button startButton = new Button("Begin");
-    
-    public LaunchPane(MainController controller) {
+
+    public LaunchPane(final MainController controller) {
         this.controller = controller;
         titleLabel1 = new Label("Work Zone ITS Tool");
         titleLabel1.setMaxWidth(MainController.MAX_WIDTH);
@@ -51,9 +51,9 @@ public class LaunchPane extends BorderPane {
                 controller.begin();
             }
         });
-        
+
         setupFormatting();
-        
+
         VBox vBox = new VBox();
         vBox.setFillWidth(true);
         vBox.setAlignment(Pos.CENTER);
@@ -62,7 +62,7 @@ public class LaunchPane extends BorderPane {
 
         startButton.setDefaultButton(true);
     }
-    
+
     private void setupFormatting() {
         titleLabel1.getStyleClass().add("launch-title-label-top");
         titleLabel2.getStyleClass().add("launch-title-label-bottom");

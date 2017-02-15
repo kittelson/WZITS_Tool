@@ -5,9 +5,12 @@
  */
 package core;
 
+import GUI.Tables.TableHelper;
 import java.io.File;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  *
@@ -28,6 +31,8 @@ public class Project {
 
     private final Step[] steps;
 
+    private final GoalNeedsMatrix gnMat;
+
     public Project() {
         this("New Project", null);
     }
@@ -41,8 +46,10 @@ public class Project {
         this.saveFile = saveFile;
         steps = new Step[NUM_STEPS];
         for (int stepIdx = 0; stepIdx < NUM_STEPS; stepIdx++) {
-            steps[stepIdx] = new Step("Step " + String.valueOf(stepIdx));
+            steps[stepIdx] = new Step(this, stepIdx, 4);
         }
+
+        gnMat = new GoalNeedsMatrix(TableHelper.getStepQuestions(0), Need.GOAL_WIZARD_NEEDS_LIST);
     }
 
     public String getName() {
@@ -81,6 +88,10 @@ public class Project {
         return steps[index];
     }
 
+    public GoalNeedsMatrix getGoalNeedsMatrix() {
+        return gnMat;
+    }
+
     @Override
     public String toString() {
         return name.get();
@@ -88,7 +99,13 @@ public class Project {
 
     public static class Step {
 
+        private final Project proj;
+
         private final String stepName;
+
+        private final int stepIdx;
+
+        private final int numSubSteps;
 
         private String description;
 
@@ -96,8 +113,25 @@ public class Project {
 
         private final SimpleBooleanProperty stepFinished = new SimpleBooleanProperty(false);
 
-        public Step(String stepName) {
-            this.stepName = stepName;
+        private final SubStep[] subSteps;
+
+        public Step(Project project, int index, int numSubSteps) {
+            this.proj = project;
+            this.stepName = "Step " + String.valueOf(index + 1);
+            this.stepIdx = index;
+            this.numSubSteps = numSubSteps;
+            subSteps = new SubStep[numSubSteps];
+            for (int subStepIdx = 0; subStepIdx < numSubSteps; subStepIdx++) {
+                subSteps[subStepIdx] = new SubStep("Step " + String.valueOf(stepIdx + 1) + "." + String.valueOf(subStepIdx + 1));
+            }
+            subSteps[subSteps.length - 1].stepFinishedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    if (newVal) {
+                        proj.setStepComplete(stepIdx, true);
+                    }
+                }
+            });
         }
 
         public String getName() {
@@ -141,14 +175,75 @@ public class Project {
             return stepFinished;
         }
 
+        public Project.SubStep getSubStep(int subStepIdx) {
+            return this.subSteps[subStepIdx];
+        }
+
+        public int getNumSubSteps() {
+            return this.numSubSteps;
+        }
+
     }
 
     public boolean isStepComplete(int stepIdx) {
+        if (stepIdx < 0) {
+            return true;
+        } else if (stepIdx >= steps.length) {
+            return false;
+        }
         return steps[stepIdx].isStepFinished();
+    }
+
+    public void setStepComplete(int stepIdx, boolean val) {
+        if (stepIdx >= 0 && stepIdx < steps.length) {
+            steps[stepIdx].setStepFinished(val);
+        } else {
+            System.out.println("Invalid step index");
+        }
     }
 
     public boolean isStepStarted(int stepIdx) {
         return steps[stepIdx].isStepStarted();
+    }
+
+    public void setStepStarted(int stepIdx, boolean val) {
+        if (stepIdx >= 0 && stepIdx < steps.length) {
+            steps[stepIdx].setStepStarted(val);
+        } else {
+            System.out.println("Invalid step index");
+        }
+    }
+
+    public boolean isSubStepStarted(int stepIdx, int subStepIdx) {
+        return steps[stepIdx].getSubStep(subStepIdx).isStepStarted();
+    }
+
+    public void setSubStepStarted(int stepIdx, int subStepIdx, boolean val) {
+        if (stepIdx >= 0 && stepIdx < steps.length) {
+            if (subStepIdx >= 0 && subStepIdx < steps[stepIdx].getNumSubSteps()) {
+                steps[stepIdx].getSubStep(subStepIdx).setStepStarted(val);
+            } else {
+                System.out.println("Invalid substep index");
+            }
+        } else {
+            System.out.println("Invalid step index");
+        }
+    }
+
+    public boolean isSubStepFinished(int stepIdx, int subStepIdx) {
+        return steps[stepIdx].getSubStep(subStepIdx).isStepFinished();
+    }
+
+    public void setSubStepComplete(int stepIdx, int subStepIdx, boolean val) {
+        if (stepIdx >= 0 && stepIdx < steps.length) {
+            if (subStepIdx >= 0 && subStepIdx < steps[stepIdx].getNumSubSteps()) {
+                steps[stepIdx].getSubStep(subStepIdx).setStepFinished(val);
+            } else {
+                System.out.println("Invalid substep index");
+            }
+        } else {
+            System.out.println("Invalid step index");
+        }
     }
 
     public static class SubStep {

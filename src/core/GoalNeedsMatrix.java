@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.SortType;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  *
@@ -33,7 +37,7 @@ public class GoalNeedsMatrix {
             qToRowMap.put(qList.get(qIdx), qIdx);
         }
         this.needsList = needsList;
-        for (int needIdx = 0; needIdx < qList.size(); needIdx++) {
+        for (int needIdx = 0; needIdx < needsList.size(); needIdx++) {
             needToColMap.put(needsList.get(needIdx), needIdx);
         }
 
@@ -55,12 +59,60 @@ public class GoalNeedsMatrix {
                 for (int colIdx = 0; colIdx < tokens.length; colIdx++) {
                     matrix[rowIdx][colIdx] = Integer.parseInt(tokens[colIdx]);
                 }
-                br.readLine();
+                line = br.readLine();
                 rowIdx++;
             }
         } catch (IOException e) {
 
         }
+    }
+
+    private void computeScores() {
+        //for (int nIdx = 0; nIdx < needsList.size(); nIdx++) {
+        for (Need n : needsList) {
+            int scoreCounter = 0;
+            for (Question q : qList) {
+                if (q.getResponseIdx() == 1) {
+                    scoreCounter += matrix[qToRowMap.get(q)][needToColMap.get(n)];
+                }
+            }
+            n.setScore(scoreCounter);
+        }
+    }
+
+    public TableView createSummaryTable() {
+        computeScores();
+
+        TableView<Need> summary = new TableView();
+        summary.getStyleClass().add("step-summary-table");
+
+        summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn catCol = new TableColumn("Category");
+        catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
+        catCol.setPrefWidth(150);
+        catCol.setMaxWidth(150);
+        catCol.setMinWidth(150);
+        catCol.getStyleClass().add("col-style-center");
+        catCol.setSortType(SortType.ASCENDING);
+
+        TableColumn recCol = new TableColumn("Recommended User Goals");
+        recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        TableColumn scoreCol = new TableColumn("Score");
+        scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
+        scoreCol.setPrefWidth(100);
+        scoreCol.setMaxWidth(100);
+        scoreCol.setMinWidth(100);
+        scoreCol.getStyleClass().add("col-style-center");
+        scoreCol.setSortType(SortType.DESCENDING);
+
+        summary.getColumns().addAll(catCol, recCol, scoreCol);
+
+        summary.setItems(needsList);
+
+        summary.getSortOrder().setAll(catCol, scoreCol);
+        return summary;
     }
 
 }

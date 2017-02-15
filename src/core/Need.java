@@ -5,6 +5,7 @@
  */
 package core;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,8 @@ public class Need {
     private final SimpleStringProperty description;
 
     private final SimpleStringProperty goal;
+
+    private final SimpleIntegerProperty score = new SimpleIntegerProperty(-1);
 
     public Need(String goal, String description) {
         this.goal = new SimpleStringProperty(goal);
@@ -46,6 +49,18 @@ public class Need {
 
     public SimpleStringProperty descriptionProperty() {
         return this.description;
+    }
+
+    public int getScore() {
+        return score.get();
+    }
+
+    public void setScore(int newScore) {
+        score.set(newScore);
+    }
+
+    public SimpleIntegerProperty scoreProperty() {
+        return score;
     }
 
     public static final ObservableList<Need> GOAL_WIZARD_NEEDS_LIST = FXCollections.observableArrayList(

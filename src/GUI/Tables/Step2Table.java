@@ -7,8 +7,7 @@ package GUI.Tables;
 
 import core.Application;
 import core.Question;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
+import core.QuestionYN;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -17,7 +16,6 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 
 /**
  *
@@ -32,7 +30,7 @@ public class Step2Table extends TableView {
         int startRow = page * questionsPerPage;
         int endRow = Math.min((page + 1) * questionsPerPage, TableHelper.getNumberOfQuestionsByStep(STEP_INDEX));
 
-        TableView<Question> table = new TableView();
+        TableView<QuestionYN> table = new TableView();
         table.setEditable(true);
 
         // Setting up table columns
@@ -69,7 +67,8 @@ public class Step2Table extends TableView {
 
         TableColumn yesCol = new TableColumn("Yes");
         yesCol.setCellValueFactory(new PropertyValueFactory<>("responseIdx"));
-        yesCol.setCellFactory(CheckBoxTableCell.forTableColumn((Integer idx) -> new SimpleBooleanProperty(idx == 1 ? Boolean.TRUE : Boolean.FALSE)));
+        //yesCol.setCellFactory(CheckBoxTableCell.forTableColumn((Integer idx) -> new SimpleBooleanProperty(idx == 1 ? Boolean.TRUE : Boolean.FALSE)));
+        yesCol.setCellValueFactory(CheckBoxTableCell.forTableColumn(yesCol));
         yesCol.setOnEditCommit(new EventHandler<CellEditEvent<Question, Integer>>() {
             @Override
             public void handle(CellEditEvent<Question, Integer> t) {
@@ -78,7 +77,8 @@ public class Step2Table extends TableView {
         });
         TableColumn noCol = new TableColumn("No");
         noCol.setCellValueFactory(new PropertyValueFactory<>("responseIdx"));
-        noCol.setCellFactory(CheckBoxTableCell.forTableColumn((Integer idx) -> new SimpleBooleanProperty(idx == 0 ? Boolean.TRUE : Boolean.FALSE)));
+        //noCol.setCellFactory(CheckBoxTableCell.forTableColumn((Integer idx) -> new SimpleBooleanProperty(idx == 0 ? Boolean.TRUE : Boolean.FALSE)));
+        noCol.setCellValueFactory(CheckBoxTableCell.forTableColumn(noCol));
         noCol.setOnEditCommit(new EventHandler<CellEditEvent<Question, Integer>>() {
             @Override
             public void handle(CellEditEvent<Question, Integer> t) {
@@ -96,7 +96,7 @@ public class Step2Table extends TableView {
         table.getColumns().addAll(indexCol, goalCol, questionCol, responseCol);
 
         // Setting Table Content
-        ObservableList<Question> stepQuestions = FXCollections.observableArrayList(TableHelper.getStepQuestions(STEP_INDEX).subList(startRow, endRow));
+        ObservableList<QuestionYN> stepQuestions = FXCollections.observableArrayList(TableHelper.getStepQuestions(STEP_INDEX).subList(startRow, endRow));
         table.setItems(stepQuestions);
 
         return table;

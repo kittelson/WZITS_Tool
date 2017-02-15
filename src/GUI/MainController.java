@@ -45,6 +45,11 @@ public class MainController {
         return proj;
     }
 
+    public void checkProceed() {
+        //mainWindow.enableProceed(proj.isStepComplete(stepIndex));
+        mainWindow.checkProceed();
+    }
+
     public static final int MAX_WIDTH = 999999;
     public static final int MAX_HEIGHT = 999999;
 

@@ -74,9 +74,42 @@
     -fx-font-size: 30px;
 }
 
+.sub-flow-step-start {
+    -fx-background-color: #833C0C;
+    -fx-shape: 'M 0 0 L 400 0 L 425 25 L 400 50 L 0 50 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 16px;
+}
+
+.sub-flow-step {
+    -fx-background-color: #833C0C;
+    /*-fx-shape: 'M 0 0 L 100 0 L 125 25 L 100 50 L 0 50 L 25 25 z';*/
+    -fx-shape: 'M 0 0 L 400 0 L 425 25 L 400 50 L 0 50 L 25 25 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 16px;
+}
+
+.sub-flow-step-end {
+    -fx-background-color: #833C0C;
+    -fx-shape: 'M 0 0 L 425 0 L 425 50 L 0 50 L 25 25 z';
+    -fx-text-fill: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 16px;
+}
+
+.sub-flow-prev {
+
+}
+
+.sub-flow-next {
+
+}
+
 .step-subpagination { 
     -fx-page-information-visible: false;
-    -fx-arrows-visible: false;
+    /*-fx-arrows-visible: false;*/
 }
 
 .step-subpagination .toggle-button {
@@ -106,6 +139,10 @@
     -fx-text-fill: blue;
 }
 
+.step-one-table {
+    -fx-selection-bar-text: black;
+}
+
 .step-one-table .column-header-background {
     -fx-background-color: #bac5cc;
 }
@@ -119,18 +156,29 @@
     -fx-background-color: transparent;
 }
 
+.step-one-table .table-cell {
+    -fx-text-fill: black;
+}
+
 .step-one-table .table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, white;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+.step-one-table .table-row-cell:odd{
     -fx-background-color: -fx-table-cell-border-color, white;
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.0em; /* 0 */
 }
 
 .step-one-table .table-row-cell:selected{
-    -fx-text-fill: black;
+    -fx-background-color: -fx-table-cell-border-color, white;
+    -fx-background-insets: 0, 1 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
 }
 
 .step-summary-table {
-
+    
 }
 
 .step-summary-table .column-header-background{
@@ -153,7 +201,13 @@
 }
 
 .step-summary-table .table-row-cell:selected{
-    -fx-text-fill: black;
+    -fx-table-cell-border-color: black;
+    -fx-background-insets: 0, 3 3 3 3;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.step-summary-table .table-row-cell:selected .text{
+    -fx-fill: black;
 }
 
 .step-output-title {

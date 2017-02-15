@@ -6,8 +6,6 @@
 package GUI.Tables;
 
 import core.Application;
-import core.UserGoal;
-import core.Need;
 import core.Question;
 import core.QuestionYN;
 import javafx.collections.FXCollections;
@@ -19,7 +17,7 @@ import javafx.collections.ObservableList;
  */
 public class TableHelper {
 
-    public static ObservableList<Question> getStepQuestions(int stepIndex) {
+    public static ObservableList<QuestionYN> getStepQuestions(int stepIndex) {
         switch (stepIndex) {
             default:
             case 0:
@@ -29,11 +27,11 @@ public class TableHelper {
         }
     }
 
-    private static ObservableList<Question> getStep1Questions() {
+    private static ObservableList<QuestionYN> getStep1Questions() {
         return STEP_1_GOAL_QLIST;
     }
 
-    private static ObservableList<Question> getStep2Questions() {
+    private static ObservableList<QuestionYN> getStep2Questions() {
         return STEP_2_APP_QLIST;
     }
 
@@ -63,56 +61,105 @@ public class TableHelper {
         return FXCollections.observableArrayList(new Application("Queue Warning", 5));
     }
 
-    private static final ObservableList<Question> STEP_1_QLIST = FXCollections.observableArrayList(
+    private static final ObservableList<QuestionYN> STEP_1_QLIST = FXCollections.observableArrayList(
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
 
-    private static final ObservableList<Question> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(new UserGoal(1, "Do you expect congestion impacts to be noticable to drivers?"),
-            new UserGoal(2, "Is driver diversion expected onto alternate routes?"),
-            new UserGoal(3, "Do you anticipate significant queuing as a result of this work zone?"),
-            new UserGoal(4, "Will this work zone have reduced lane widths?"),
-            new UserGoal(5, "Will this work zone have reduced sight distance impact?"),
-            new UserGoal(6, "Will transit vehicles need to travel through the work zone?"),
-            new UserGoal(7, "Are you using rapid-set concrete mix?"),
-            new UserGoal(8, "Will construction vehicles access site from travel lanes?"),
-            new UserGoal(9, "Are there specific agency policies for work zones as required by the WZ safety and mobility rule?"),
-            new UserGoal(10, "Does the agency have existing performance targets for work zone?"),
-            new UserGoal(11, "Will outreach and traveler information be used for this work zone?"),
-            new UserGoal(12, "Are there additional data needed before and during construction?"),
-            new UserGoal(13, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"),
-            new UserGoal(14, "Will speed imits in the work zone be lowered compared to base conditions?"),
-            new UserGoal(15, "Does state law allow use of autmoated speed enforcement in WZs?"),
-            new UserGoal(16, "Is there a traveler information goal?"),
-            new UserGoal(17, "Will there be a high volume of constructions vehicles requiring to access the work zone?"),
-            new UserGoal(18, "Will ramp geometry under WZ conditions constrain acceleration lanes?"),
-            new UserGoal(19, "Will work zone activities disable ramp meters (if applicable)?"),
-            new UserGoal(20, "Will the WZ be included in the federally-mandated biannual process review?")
+//    private static final ObservableList<Question> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(
+//            new UserGoal(1, "Do you expect congestion impacts to be noticable to drivers?"),
+//            new UserGoal(2, "Is driver diversion expected onto alternate routes?"),
+//            new UserGoal(3, "Do you anticipate significant queuing as a result of this work zone?"),
+//            new UserGoal(4, "Will this work zone have reduced lane widths?"),
+//            new UserGoal(5, "Will this work zone have reduced sight distance impact?"),
+//            new UserGoal(6, "Will transit vehicles need to travel through the work zone?"),
+//            new UserGoal(7, "Are you using rapid-set concrete mix?"),
+//            new UserGoal(8, "Will construction vehicles access site from travel lanes?"),
+//            new UserGoal(9, "Are there specific agency policies for work zones as required by the WZ safety and mobility rule?"),
+//            new UserGoal(10, "Does the agency have existing performance targets for work zone?"),
+//            new UserGoal(11, "Will outreach and traveler information be used for this work zone?"),
+//            new UserGoal(12, "Are there additional data needed before and during construction?"),
+//            new UserGoal(13, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"),
+//            new UserGoal(14, "Will speed imits in the work zone be lowered compared to base conditions?"),
+//            new UserGoal(15, "Does state law allow use of autmoated speed enforcement in WZs?"),
+//            new UserGoal(16, "Is there a traveler information goal?"),
+//            new UserGoal(17, "Will there be a high volume of constructions vehicles requiring to access the work zone?"),
+//            new UserGoal(18, "Will ramp geometry under WZ conditions constrain acceleration lanes?"),
+//            new UserGoal(19, "Will work zone activities disable ramp meters (if applicable)?"),
+//            new UserGoal(20, "Will the WZ be included in the federally-mandated biannual process review?")
+//    );
+//
+//    private static final ObservableList<Question> STEP_1_UN_SUP_QLIST = FXCollections.observableArrayList(new UserGoal(1, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"),
+//            new UserGoal(2, "Are probe data available for the work zone?"),
+//            new UserGoal(3, "Are crash data available, and how current are those data?"),
+//            new UserGoal(4, "Are there communications systems available?"),
+//            new UserGoal(5, "Are there computer options available?"),
+//            new UserGoal(6, "Is there software available?")
+//    );
+//
+//    private static final ObservableList<Question> STEP_1_ITS_RESOURCES = FXCollections.observableArrayList(new UserGoal(1, "Are technologies to communicate with drivers available?"),
+//            new UserGoal(2, "Are there weather monitoring stations along the work zone?"),
+//            new UserGoal(3, "Is there a local, regional or state TMC that monitors the roadway?"),
+//            new UserGoal(4, "Is there an existing website or traveler information system?"),
+//            new UserGoal(5, "Do you have ITS on-call contracts?"),
+//            new UserGoal(6, "Do you have access to leased or temporary ITS?")
+//    );
+//
+//    private static final ObservableList<Question> STEP_1_SYSTEM_GOALS = FXCollections.observableArrayList(new UserGoal(1, "Is there a mobility goal?"),
+//            new UserGoal(2, "Is there a safety goal?"),
+//            new UserGoal(3, "Is there a productivity goal?"),
+//            new UserGoal(4, "Is there a regulatory goal?"),
+//            new UserGoal(5, "Is there a traveler information goal?")
+//    );
+    private static final ObservableList<QuestionYN> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(
+            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Do you expect congestion impacts to be noticable to drivers?"),
+            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is driver diversion expected onto alternate routes?"),
+            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Do you anticipate significant queuing as a result of this work zone?"),
+            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Will this work zone have reduced lane widths?"),
+            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Will this work zone have reduced sight distance impact?"),
+            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Will transit vehicles need to travel through the work zone?"),
+            new QuestionYN(7, Question.GOAL_USER_NEEDS, "Are you using rapid-set concrete mix?"),
+            new QuestionYN(8, Question.GOAL_USER_NEEDS, "Will construction vehicles access site from travel lanes?"),
+            new QuestionYN(9, Question.GOAL_USER_NEEDS, "Are there specific agency policies for work zones as required by the WZ safety and mobility rule?"),
+            new QuestionYN(10, Question.GOAL_USER_NEEDS, "Does the agency have existing performance targets for work zone?"),
+            new QuestionYN(11, Question.GOAL_USER_NEEDS, "Will outreach and traveler information be used for this work zone?"),
+            new QuestionYN(12, Question.GOAL_USER_NEEDS, "Are there additional data needed before and during construction?"),
+            new QuestionYN(13, Question.GOAL_USER_NEEDS, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"),
+            new QuestionYN(14, Question.GOAL_USER_NEEDS, "Will speed imits in the work zone be lowered compared to base conditions?"),
+            new QuestionYN(15, Question.GOAL_USER_NEEDS, "Does state law allow use of autmoated speed enforcement in WZs?"),
+            new QuestionYN(16, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?"),
+            new QuestionYN(17, Question.GOAL_USER_NEEDS, "Will there be a high volume of constructions vehicles requiring to access the work zone?"),
+            new QuestionYN(18, Question.GOAL_USER_NEEDS, "Will ramp geometry under WZ conditions constrain acceleration lanes?"),
+            new QuestionYN(19, Question.GOAL_USER_NEEDS, "Will work zone activities disable ramp meters (if applicable)?"),
+            new QuestionYN(20, Question.GOAL_USER_NEEDS, "Will the WZ be included in the federally-mandated biannual process review?")
     );
 
-    private static final ObservableList<Question> STEP_1_UN_SUP_QLIST = FXCollections.observableArrayList(new UserGoal(1, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"),
-            new UserGoal(2, "Are probe data available for the work zone?"),
-            new UserGoal(3, "Are crash data available, and how current are those data?"),
-            new UserGoal(4, "Are there communications systems available?"),
-            new UserGoal(5, "Are there computer options available?"),
-            new UserGoal(6, "Is there software available?")
+    private static final ObservableList<QuestionYN> STEP_1_UN_SUP_QLIST = FXCollections.observableArrayList(
+            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"),
+            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are probe data available for the work zone?"),
+            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Are crash data available, and how current are those data?"),
+            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Are there communications systems available?"),
+            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Are there computer options available?"),
+            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Is there software available?")
     );
 
-    private static final ObservableList<Question> STEP_1_ITS_RESOURCES = FXCollections.observableArrayList(new UserGoal(1, "Are technologies to communicate with drivers available?"),
-            new UserGoal(2, "Are there weather monitoring stations along the work zone?"),
-            new UserGoal(3, "Is there a local, regional or state TMC that monitors the roadway?"),
-            new UserGoal(4, "Is there an existing website or traveler information system?"),
-            new UserGoal(5, "Do you have ITS on-call contracts?"),
-            new UserGoal(6, "Do you have access to leased or temporary ITS?")
+    private static final ObservableList<QuestionYN> STEP_1_ITS_RESOURCES = FXCollections.observableArrayList(
+            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are technologies to communicate with drivers available?"),
+            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are there weather monitoring stations along the work zone?"),
+            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there a local, regional or state TMC that monitors the roadway?"),
+            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Is there an existing website or traveler information system?"),
+            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Do you have ITS on-call contracts?"),
+            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Do you have access to leased or temporary ITS?")
     );
 
-    private static final ObservableList<Question> STEP_1_SYSTEM_GOALS = FXCollections.observableArrayList(new UserGoal(1, "Is there a mobility goal?"),
-            new UserGoal(2, "Is there a safety goal?"),
-            new UserGoal(3, "Is there a productivity goal?"),
-            new UserGoal(4, "Is there a regulatory goal?"),
-            new UserGoal(5, "Is there a traveler information goal?")
+    private static final ObservableList<QuestionYN> STEP_1_SYSTEM_GOALS = FXCollections.observableArrayList(
+            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Is there a mobility goal?"),
+            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a safety goal?"),
+            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there a productivity goal?"),
+            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Is there a regulatory goal?"),
+            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?")
     );
 
-    private static final ObservableList<Question> STEP_2_APP_QLIST = FXCollections.observableArrayList(
+    private static final ObservableList<QuestionYN> STEP_2_APP_QLIST = FXCollections.observableArrayList(
             new QuestionYN(1, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?"),
             new QuestionYN(2, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?"),
             new QuestionYN(3, Question.GOAL_MOBILITY, "Will this work zone involve peak-hour lane closures?"),
@@ -142,19 +189,19 @@ public class TableHelper {
             new QuestionYN(27, Question.GOAL_TRAVELER_INFO, "Will outreach and traveler information be used for this work zone?")
     );
 
-    private static final ObservableList<Question> STEP_3_QLIST = FXCollections.observableArrayList(
+    private static final ObservableList<QuestionYN> STEP_3_QLIST = FXCollections.observableArrayList(
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
 
-    private static final ObservableList<Question> STEP_4_QLIST = FXCollections.observableArrayList(
+    private static final ObservableList<QuestionYN> STEP_4_QLIST = FXCollections.observableArrayList(
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
 
-    private static final ObservableList<Question> STEP_5_QLIST = FXCollections.observableArrayList(
+    private static final ObservableList<QuestionYN> STEP_5_QLIST = FXCollections.observableArrayList(
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
 
-    private static final ObservableList<Question> STEP_6_QLIST = FXCollections.observableArrayList(
+    private static final ObservableList<QuestionYN> STEP_6_QLIST = FXCollections.observableArrayList(
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
 

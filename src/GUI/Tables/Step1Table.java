@@ -6,10 +6,14 @@
 package GUI.Tables;
 
 import core.Application;
-import core.Question;
 import core.QuestionYN;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -28,7 +32,7 @@ public class Step1Table {
         int startRow = page * questionsPerPage;
         int endRow = Math.min((page + 1) * questionsPerPage, TableHelper.getNumberOfQuestionsByStep(STEP_INDEX));
 
-        final TableView<Question> table = new TableView();
+        final TableView<QuestionYN> table = new TableView();
         table.setEditable(true);
 
         // Setting up table columns
@@ -93,39 +97,45 @@ public class Step1Table {
         table.getColumns().addAll(indexCol, goalCol, questionCol, responseCol);
 
         // Setting Table Content
-        ObservableList<Question> stepQuestions = FXCollections.observableArrayList(TableHelper.getStepQuestions(STEP_INDEX).subList(startRow, endRow));
-        table.setItems(stepQuestions);
+        final ObservableList<QuestionYN> stepQuestions = TableHelper.getStepQuestions(STEP_INDEX);
+        table.setItems(FXCollections.observableArrayList(stepQuestions.subList(startRow, endRow)));
         table.getStyleClass().add("step-one-table");
+
+        table.setSelectionModel(null);
+
+        ContextMenu cMenu = new ContextMenu();
+        MenuItem fillAllYesMenuItem = new MenuItem("Fill All Yes");
+        fillAllYesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : stepQuestions) {
+                    q.setAnswerIsYes(Boolean.TRUE);
+                }
+            }
+        });
+        MenuItem fillAllNoMenuItem = new MenuItem("Fill All No");
+        fillAllNoMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : stepQuestions) {
+                    q.setAnswerIsNo(Boolean.TRUE);
+                }
+            }
+        });
+        Menu fillByTemplateMenu = new Menu("Fill By Template");
+        MenuItem fillUrbanMenuItem = new MenuItem("Urban Template");
+        MenuItem fillRuralMenuItem = new MenuItem("Rural Template");
+        fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
+        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem, fillByTemplateMenu);
+
+        table.setContextMenu(cMenu);
 
         return table;
 
     }
 
-    public static TableView createSummaryTable() {
-        TableView summary = new TableView();
-        summary.getStyleClass().add("step-summary-table");
-
-        summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn appCol = new TableColumn("Recommended WZITS Applications");
-        appCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-        TableColumn scoreCol = new TableColumn("Score");
-        scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
-        scoreCol.setPrefWidth(100);
-        scoreCol.setMaxWidth(100);
-        scoreCol.setMinWidth(100);
-        scoreCol.getStyleClass().add("col-style-center");
-
-        summary.getColumns().addAll(appCol, scoreCol);
-
-        ObservableList<Application> stepSummary = TableHelper.getStepSummary(STEP_INDEX);
-        summary.setItems(stepSummary);
-        return summary;
-    }
-
     public static int getPageCount(int stepIdx, int questionsPerPage) {
-        return Math.floorDiv(TableHelper.getNumberOfQuestionsByStep(stepIdx), questionsPerPage) + 1;
+        return Math.floorDiv(TableHelper.getNumberOfQuestionsByStep(stepIdx), questionsPerPage);
     }
 
     public static int getPageCount(int stepIdx) {

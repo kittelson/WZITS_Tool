@@ -27,8 +27,13 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import GUI.Helper.ProgressIndicatorBar;
+import GUI.MainWindow;
+import static GUI.MainWindow.COLOR_SUB_STEP;
+import static GUI.MainWindow.COLOR_SUB_STEP_HL;
+import java.util.ArrayList;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.control.ProgressBar;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
@@ -41,8 +46,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 /**
  *
@@ -50,9 +57,19 @@ import javafx.util.Callback;
  */
 public class Step1Panel extends BorderPane {
 
+    private final int numSubSteps = 4;
+
     private final MainController control;
 
+    private final int stepIndex = 0;
+
+    private final SimpleIntegerProperty activeSubStep = new SimpleIntegerProperty(-1);
+
     private final VBox mainVBox = new VBox();
+
+    private final GridPane allSubStepsPane = new GridPane();
+
+    private final VBox pVBox = new VBox();
 
     private final Pagination pagination;
 
@@ -60,17 +77,83 @@ public class Step1Panel extends BorderPane {
 
     private final SimpleDoubleProperty progress = new SimpleDoubleProperty(0.0);
 
+    private final GridPane subStepToolGrid = new GridPane();
+    private final BorderPane subStepToolBar = new BorderPane();
+    private final Button subStep0Button = new Button("Intro");
+    private final Button subStep1Button = new Button("Project Info & WZ Metadata");
+    private final Button subStep2Button = new Button("User Needs");
+    private final Button subStep3Button = new Button("User Needs Supplemental");
+    private final Button subStep4Button = new Button("User Needs Supplemental2");
+    private final Button subStep5Button = new Button("Summary");
+    private final Button prevSubStepButton = new Button();
+    private final Button nextSubStepButton = new Button();
+
     private final GridPane stepIntroGrid = new GridPane();
     private final GridPane projInfoGrid = new GridPane();
     private final BorderPane genInfoPane = new BorderPane();
     private final GridPane genInfoGrid;
     private final BorderPane wzMetaDataPane = new BorderPane();
     private final GridPane wzMetaDataGrid;
-    //private final BorderPane stepSummaryPane = new BorderPane();
+    private final BorderPane unSuppPane = new BorderPane();
+    private final BorderPane unSupp2Pane = new BorderPane();
+    private final BorderPane stepSummaryPane = new BorderPane();
 
     public Step1Panel(MainController control) {
 
         this.control = control;
+
+        // Creating and styling sub step toolbar
+        subStep0Button.getStyleClass().add("sub-flow-step-start");
+        subStep0Button.setStyle("-fx-background-color: " + MainWindow.COLOR_SUB_STEP_HL);
+        subStep1Button.getStyleClass().add("sub-flow-step");
+        subStep2Button.getStyleClass().add("sub-flow-step");
+        subStep3Button.getStyleClass().add("sub-flow-step");
+        subStep4Button.getStyleClass().add("sub-flow-step");
+        subStep5Button.getStyleClass().add("sub-flow-step-end");
+        prevSubStepButton.getStyleClass().add("sub-flow-prev");
+        nextSubStepButton.getStyleClass().add("sub-flow-next");
+
+        // Setting the layout of the Flow ToolBar
+        subStepToolGrid.add(subStep0Button, 0, 0);
+        subStepToolGrid.add(subStep1Button, 1, 0);
+        subStepToolGrid.add(subStep2Button, 2, 0);
+        subStepToolGrid.add(subStep3Button, 3, 0);
+        subStepToolGrid.add(subStep4Button, 4, 0);
+        subStepToolGrid.add(subStep5Button, 5, 0);
+        for (int flowIdx = 0; flowIdx < numSubSteps + 2; flowIdx++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPercentWidth(100.0 / (numSubSteps + 2));
+            colConst.setFillWidth(true);
+            subStepToolGrid.getColumnConstraints().add(colConst);
+        }
+        subStepToolBar.setLeft(prevSubStepButton);
+        subStepToolBar.setCenter(subStepToolGrid);
+        subStepToolBar.setRight(nextSubStepButton);
+        BorderPane.setMargin(subStepToolGrid, new Insets(0, 3, 0, 3));
+
+        ArrayList<Button> buttonList = new ArrayList();
+        buttonList.add(prevSubStepButton);
+        buttonList.add(subStep0Button);
+        buttonList.add(subStep1Button);
+        buttonList.add(subStep2Button);
+        buttonList.add(subStep3Button);
+        buttonList.add(subStep4Button);
+        buttonList.add(subStep5Button);
+        buttonList.add(nextSubStepButton);
+
+        for (Button b : buttonList) {
+            b.setWrapText(true);
+            b.setTextAlignment(TextAlignment.CENTER);
+            b.setMaxWidth(MainController.MAX_WIDTH);
+            b.setMaxHeight(MainController.MAX_HEIGHT);
+        }
+
+        SVGPath prevSVG = new SVGPath();
+        prevSVG.setContent(IconHelper.SVG_STR_PREV_SMALL);
+        SVGPath nextSVG = new SVGPath();
+        nextSVG.setContent(IconHelper.SVG_STR_NEXT_SMALL);
+        prevSubStepButton.setGraphic(prevSVG);
+        nextSubStepButton.setGraphic(nextSVG);
 
         mainVBox.setFillWidth(true);
         Label startLabel = new Label("Step");
@@ -140,26 +223,18 @@ public class Step1Panel extends BorderPane {
         pb = new ProgressIndicatorBar(progress, 1.0, "%.0f%%", true);
         pb.setMaxWidth(MainController.MAX_WIDTH);
 
-        pagination = new Pagination(Step1Table.getPageCount(0) + 2);
+        pagination = new Pagination(Step1Table.getPageCount(0));
         pagination.setPageFactory(new Callback<Integer, Node>() {
             @Override
             public Node call(Integer pageIndex) {
-                if (pageIndex == 0) {
-                    return stepIntroGrid;
-                } else if (pageIndex == 1) {
-                    return projInfoGrid;
-                } else if (pageIndex == pagination.getPageCount() - 1) {
-                    return Step1Table.createSummaryTable();
-                } else {
-                    return Step1Table.createPageTable(pageIndex - 2, 10);
-                }
+                //return Step1Table.createSummaryTable();
+                return Step1Table.createPageTable(pageIndex, 10);
             }
         });
         //pagination.getStylesheets().add(this.getClass().getResource("/GUI/Step/step1Pane.css").toExternalForm());
         pagination.getStyleClass().add("step-subpagination");
 
         // NOTE: Use stack pane to add label to progress bar
-        StackPane pbStack = new StackPane();
         for (Question q : TableHelper.getStepQuestions(0)) {
             q.responseIdxProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -168,14 +243,46 @@ public class Step1Panel extends BorderPane {
                 }
             });
         }
-        mainVBox.getChildren().addAll(pagination, pb);
+        pVBox.getChildren().addAll(pagination, pb);
+        //mainVBox.getChildren().addAll(subStepToolBar, pagination, pb);
+        mainVBox.getChildren().addAll(subStepToolBar, allSubStepsPane);
+        VBox.setMargin(subStepToolBar, new Insets(5, 5, 5, 5));
+        allSubStepsPane.add(stepIntroGrid, 0, 0);
+        allSubStepsPane.add(projInfoGrid, 1, 0);
+        allSubStepsPane.add(pVBox, 2, 0);
+        allSubStepsPane.add(unSuppPane, 3, 0);
+        allSubStepsPane.add(unSupp2Pane, 4, 0);
+        allSubStepsPane.add(stepSummaryPane, 5, 0);
+        //allSubStepsPane.add(subStepSummaryPane, 2, 0);
+
+        int numPanes = numSubSteps + 2;
+        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
+            ColumnConstraints tcc = new ColumnConstraints();
+            tcc.setPercentWidth(100.0 / numPanes);
+            allSubStepsPane.getColumnConstraints().add(tcc);
+        }
 
         pagination.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(pagination, Priority.ALWAYS);
 
+        GridPane.setHgrow(subStep0Button, Priority.ALWAYS);
+        GridPane.setHgrow(subStep1Button, Priority.ALWAYS);
+        GridPane.setHgrow(subStep2Button, Priority.ALWAYS);
+        GridPane.setHgrow(subStep3Button, Priority.ALWAYS);
+        GridPane.setHgrow(subStep4Button, Priority.ALWAYS);
+        GridPane.setHgrow(subStep5Button, Priority.ALWAYS);
+        GridPane.setVgrow(subStep0Button, Priority.ALWAYS);
+        GridPane.setVgrow(subStep1Button, Priority.ALWAYS);
+        GridPane.setVgrow(subStep2Button, Priority.ALWAYS);
+        GridPane.setVgrow(subStep3Button, Priority.ALWAYS);
+        GridPane.setVgrow(subStep4Button, Priority.ALWAYS);
+        GridPane.setVgrow(subStep5Button, Priority.ALWAYS);
+
         this.setCenter(mainVBox);
 
         setupActionListeners();
+        setupPropertyBindings();
+
     }
 
     private void updateProgressBar() {
@@ -190,12 +297,132 @@ public class Step1Panel extends BorderPane {
     }
 
     private void setupActionListeners() {
+        // Flow control actions
+        prevSubStepButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(activeSubStep.get() - 1);
+            }
+        });
+
+        nextSubStepButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(activeSubStep.get() + 1);
+            }
+        });
+
+        subStep0Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(-1);
+            }
+        });
+
+        subStep1Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(0);
+            }
+        });
+
+        subStep2Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(1);
+            }
+        });
+
+        subStep3Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(2);
+            }
+        });
+
+        subStep4Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(3);
+            }
+        });
+
+        subStep5Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                activeSubStep.set(4);
+            }
+        });
+
+    }
+
+    private void setupPropertyBindings() {
+        this.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
+                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
+                    allSubStepsPane.setMinWidth((numSubSteps + 2) * (control.getAppWidth() - 220));
+                    allSubStepsPane.setMaxWidth((numSubSteps + 2) * (control.getAppWidth() - 220));
+                    subStepToolBar.setMinWidth(stepIntroGrid.getWidth());
+                    subStepToolBar.setMaxWidth(stepIntroGrid.getWidth());
+                    subStepToolBar.setMinHeight(60);
+                    subStepToolBar.setMaxHeight(60);
+                    moveScreen((activeSubStep.get() + 1) * stepIntroGrid.getWidth(), 0, false);
+                }
+            }
+        });
+
+        this.activeSubStep.addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue o, Object oldVal, Object newVal) {
+                selectSubStep(activeSubStep.get());
+                subStep0Button.setStyle("-fx-background-color: " + (activeSubStep.get() == -1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                subStep1Button.setStyle("-fx-background-color: " + (activeSubStep.get() == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                subStep2Button.setStyle("-fx-background-color: " + (activeSubStep.get() == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                subStep3Button.setStyle("-fx-background-color: " + (activeSubStep.get() == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                subStep4Button.setStyle("-fx-background-color: " + (activeSubStep.get() == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                subStep5Button.setStyle("-fx-background-color: " + (activeSubStep.get() == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+
+                control.getProject().setSubStepStarted(stepIndex, activeSubStep.get(), true);
+                control.getProject().setSubStepComplete(stepIndex, activeSubStep.get() - 1, true);
+                //if (activeSubStep.get() == (numSubSteps)) {
+                //    control.getProject().setStepComplete(stepIndex, true);
+                //}
+
+                if (activeSubStep.get() == numSubSteps) {
+                    stepSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+                }
+
+                prevSubStepButton.setDisable(activeSubStep.get() == -1);
+                if (activeSubStep.get() == numSubSteps) {
+                    nextSubStepButton.setDisable(true);
+                } else if (activeSubStep.get() == 1 && progress.get() < 1.0) {
+                    nextSubStepButton.setDisable(true);
+                }
+                control.checkProceed();
+            }
+        });
+
+        progress.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                nextSubStepButton.setDisable((activeSubStep.get() == 1 && progress.get() < 1.0));
+            }
+        });
+
+        // General Info Bindings
         genInfoTF1.textProperty().bindBidirectional(control.getProject().getAgencyProperty());
         genInfoTF2.textProperty().bindBidirectional(control.getProject().getAnalystProperty());
         genInfoTF3.textProperty().bindBidirectional(control.getProject().getNameProperty());
         genInfoTF4.textProperty().bindBidirectional(control.getProject().getUrlLinkProperty());
         genInfoTA2.textProperty().bindBidirectional(control.getProject().getDescriptionProperty());
         genInfoTA1.textProperty().bindBidirectional(control.getProject().getLimitsProperty());
+
+        subStep1Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(0).stepStartedProperty().not());
+        subStep2Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(1).stepStartedProperty().not());
+        subStep3Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(2).stepStartedProperty().not());
+        subStep4Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(3).stepStartedProperty().not());
+        subStep5Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(3).stepFinishedProperty().not());
     }
 
     private GridPane createGeneralInfoGrid() {
@@ -358,6 +585,25 @@ public class Step1Panel extends BorderPane {
         GridPane.setHgrow(wzInputChoice2, Priority.ALWAYS);
 
         return inputGrid;
+    }
+
+    private void selectSubStep(int stepIndex) {
+        moveScreen((stepIndex + 1) * stepIntroGrid.getWidth(), 0);
+    }
+
+    private void moveScreen(double toX, double toY) {
+        moveScreen(toX, toY, true);
+    }
+
+    private void moveScreen(double toX, double toY, boolean animated) {
+        if (animated) {
+            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allSubStepsPane);
+            moveMe.setToX(-1 * toX);
+            moveMe.setToY(toY);
+            moveMe.play();
+        } else {
+            allSubStepsPane.setTranslateX(-1 * toX);
+        }
     }
 
     private final Label genInfoLabel1 = new Label("State Agency");
