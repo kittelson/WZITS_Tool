@@ -5,7 +5,6 @@
  */
 package GUI.Tables;
 
-import core.Application;
 import core.QuestionYN;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,18 +38,17 @@ public class Step1Table {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn indexCol = new TableColumn("#");
         indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
-        indexCol.setPrefWidth(25);
-        indexCol.setMaxWidth(25);
-        indexCol.setMinWidth(25);
-        indexCol.getStyleClass().add("col-style-center");
+        indexCol.setPrefWidth(40);
+        indexCol.setMaxWidth(40);
+        indexCol.setMinWidth(40);
+        indexCol.getStyleClass().add("col-style-center-bold");
 
-        TableColumn goalCol = new TableColumn("WZITS Goal Category");
-        goalCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
-        goalCol.setPrefWidth(200);
-        goalCol.setMaxWidth(200);
-        goalCol.setMinWidth(200);
-        goalCol.getStyleClass().add("col-style-center");
-
+//        TableColumn goalCol = new TableColumn("WZITS Goal Category");
+//        goalCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
+//        goalCol.setPrefWidth(200);
+//        goalCol.setMaxWidth(200);
+//        goalCol.setMinWidth(200);
+//        goalCol.getStyleClass().add("col-style-center");
         TableColumn questionCol = new TableColumn("Input Question");
         questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
 
@@ -59,32 +57,14 @@ public class Step1Table {
         responseCol.setMaxWidth(150);
         responseCol.setMinWidth(150);
         responseCol.setCellValueFactory(new PropertyValueFactory<>("responseIdx"));
-//        responseCol.setCellFactory(ChoiceBoxTableCell.forTableColumn(Question.yesNoConverter, FXCollections.observableArrayList(-1, 0, 1)));
-//        responseCol.setOnEditCommit(new EventHandler<CellEditEvent<Question, Integer>>() {
-//            @Override
-//            public void handle(CellEditEvent<Question, Integer> t) {
-//                ((Question) t.getTableView().getItems().get(t.getTablePosition().getRow())).setResponseIdx(t.getNewValue());
-//            }
-//        });
 
         final TableColumn yesCol = new TableColumn<QuestionYN, Boolean>("Yes");
         yesCol.setCellValueFactory(new PropertyValueFactory<>("answerIsYes"));
         yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
-//        yesCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Question, Boolean>>() {
-//            @Override
-//            public void handle(TableColumn.CellEditEvent<Question, Boolean> t) {
-//                ((Question) t.getTableView().getItems().get(t.getTablePosition().getRow())).setResponseIdx(1);
-//            }
-//        });
+
         TableColumn noCol = new TableColumn("No");
         noCol.setCellValueFactory(new PropertyValueFactory<>("answerIsNo"));
         noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
-//        noCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Question, Boolean>>() {
-//            @Override
-//            public void handle(TableColumn.CellEditEvent<Question, Boolean> t) {
-//
-//            }
-//        });
 
         yesCol.setPrefWidth(75);
         yesCol.setMaxWidth(75);
@@ -94,7 +74,7 @@ public class Step1Table {
         noCol.setMinWidth(75);
         responseCol.getColumns().addAll(yesCol, noCol);
 
-        table.getColumns().addAll(indexCol, goalCol, questionCol, responseCol);
+        table.getColumns().addAll(indexCol, questionCol, responseCol); // goalCol
 
         // Setting Table Content
         final ObservableList<QuestionYN> stepQuestions = TableHelper.getStepQuestions(STEP_INDEX);
@@ -140,6 +120,166 @@ public class Step1Table {
 
     public static int getPageCount(int stepIdx) {
         return getPageCount(stepIdx, 10);
+    }
+
+    public static TableView getUserNeedsSupplemental() {
+        TableView<QuestionYN> table = new TableView();
+        table.setEditable(true);
+
+        // Setting up table columns
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn indexCol = new TableColumn("#");
+        indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        indexCol.setPrefWidth(25);
+        indexCol.setMaxWidth(25);
+        indexCol.setMinWidth(25);
+        indexCol.getStyleClass().add("col-style-center-bold");
+
+//        TableColumn goalCol = new TableColumn("WZITS Goal Category");
+//        goalCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
+//        goalCol.setPrefWidth(200);
+//        goalCol.setMaxWidth(200);
+//        goalCol.setMinWidth(200);
+//        goalCol.getStyleClass().add("col-style-center");
+        TableColumn questionCol = new TableColumn("Input Question");
+        questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
+
+        TableColumn responseCol = new TableColumn("User Response");
+        responseCol.setPrefWidth(150);
+        responseCol.setMaxWidth(150);
+        responseCol.setMinWidth(150);
+        responseCol.setCellValueFactory(new PropertyValueFactory<>("responseIdx"));
+
+        final TableColumn yesCol = new TableColumn<QuestionYN, Boolean>("Yes");
+        yesCol.setCellValueFactory(new PropertyValueFactory<>("answerIsYes"));
+        yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
+
+        TableColumn noCol = new TableColumn("No");
+        noCol.setCellValueFactory(new PropertyValueFactory<>("answerIsNo"));
+        noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
+
+        yesCol.setPrefWidth(75);
+        yesCol.setMaxWidth(75);
+        yesCol.setMinWidth(75);
+        noCol.setPrefWidth(75);
+        noCol.setMaxWidth(75);
+        noCol.setMinWidth(75);
+        responseCol.getColumns().addAll(yesCol, noCol);
+
+        table.getColumns().addAll(indexCol, questionCol, responseCol); // goalCol
+
+        final ObservableList<QuestionYN> qList = TableHelper.STEP_1_UN_SUP_QLIST;
+        table.setItems(qList);
+        table.getStyleClass().add("step-one-table");
+
+        ContextMenu cMenu = new ContextMenu();
+        MenuItem fillAllYesMenuItem = new MenuItem("Fill All Yes");
+        fillAllYesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : qList) {
+                    q.setAnswerIsYes(Boolean.TRUE);
+                }
+            }
+        });
+        MenuItem fillAllNoMenuItem = new MenuItem("Fill All No");
+        fillAllNoMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : qList) {
+                    q.setAnswerIsNo(Boolean.TRUE);
+                }
+            }
+        });
+        Menu fillByTemplateMenu = new Menu("Fill By Template");
+        MenuItem fillUrbanMenuItem = new MenuItem("Urban Template");
+        MenuItem fillRuralMenuItem = new MenuItem("Rural Template");
+        fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
+        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem, fillByTemplateMenu);
+
+        table.setContextMenu(cMenu);
+
+        return table;
+    }
+
+    public static TableView getUserNeedsSupplemental2() {
+        TableView<QuestionYN> table = new TableView();
+        table.setEditable(true);
+
+        // Setting up table columns
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn indexCol = new TableColumn("#");
+        indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        indexCol.setPrefWidth(25);
+        indexCol.setMaxWidth(25);
+        indexCol.setMinWidth(25);
+        indexCol.getStyleClass().add("col-style-center-bold");
+
+//        TableColumn goalCol = new TableColumn("WZITS Goal Category");
+//        goalCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
+//        goalCol.setPrefWidth(200);
+//        goalCol.setMaxWidth(200);
+//        goalCol.setMinWidth(200);
+//        goalCol.getStyleClass().add("col-style-center");
+        TableColumn questionCol = new TableColumn("Input Question");
+        questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
+
+        TableColumn responseCol = new TableColumn("User Response");
+        responseCol.setPrefWidth(150);
+        responseCol.setMaxWidth(150);
+        responseCol.setMinWidth(150);
+        responseCol.setCellValueFactory(new PropertyValueFactory<>("responseIdx"));
+
+        final TableColumn yesCol = new TableColumn<QuestionYN, Boolean>("Yes");
+        yesCol.setCellValueFactory(new PropertyValueFactory<>("answerIsYes"));
+        yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
+
+        TableColumn noCol = new TableColumn("No");
+        noCol.setCellValueFactory(new PropertyValueFactory<>("answerIsNo"));
+        noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
+
+        yesCol.setPrefWidth(75);
+        yesCol.setMaxWidth(75);
+        yesCol.setMinWidth(75);
+        noCol.setPrefWidth(75);
+        noCol.setMaxWidth(75);
+        noCol.setMinWidth(75);
+        responseCol.getColumns().addAll(yesCol, noCol);
+
+        table.getColumns().addAll(indexCol, questionCol, responseCol);  // goalCol
+
+        final ObservableList<QuestionYN> qList = TableHelper.STEP_1_SYSTEM_GOALS;
+        table.setItems(qList);
+        table.getStyleClass().add("step-one-table");
+
+        ContextMenu cMenu = new ContextMenu();
+        MenuItem fillAllYesMenuItem = new MenuItem("Fill All Yes");
+        fillAllYesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : qList) {
+                    q.setAnswerIsYes(Boolean.TRUE);
+                }
+            }
+        });
+        MenuItem fillAllNoMenuItem = new MenuItem("Fill All No");
+        fillAllNoMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : qList) {
+                    q.setAnswerIsNo(Boolean.TRUE);
+                }
+            }
+        });
+        Menu fillByTemplateMenu = new Menu("Fill By Template");
+        MenuItem fillUrbanMenuItem = new MenuItem("Urban Template");
+        MenuItem fillRuralMenuItem = new MenuItem("Rural Template");
+        fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
+        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem, fillByTemplateMenu);
+
+        table.setContextMenu(cMenu);
+
+        return table;
     }
 
 }

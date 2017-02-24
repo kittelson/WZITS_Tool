@@ -18,7 +18,9 @@ import javafx.beans.value.ObservableValue;
  */
 public class Project {
 
-    private static final int NUM_STEPS = 6;
+    public static final int NUM_STEPS = 6;
+
+    public static final int[] NUM_SUB_STEPS = {5, 5, 5, 5, 5, 5};
 
     private final SimpleStringProperty name = new SimpleStringProperty();
     private final SimpleStringProperty agency = new SimpleStringProperty();
@@ -46,7 +48,7 @@ public class Project {
         this.saveFile = saveFile;
         steps = new Step[NUM_STEPS];
         for (int stepIdx = 0; stepIdx < NUM_STEPS; stepIdx++) {
-            steps[stepIdx] = new Step(this, stepIdx, 4);
+            steps[stepIdx] = new Step(this, stepIdx, NUM_SUB_STEPS[stepIdx]);
         }
 
         gnMat = new GoalNeedsMatrix(TableHelper.getStepQuestions(0), Need.GOAL_WIZARD_NEEDS_LIST);
@@ -215,6 +217,9 @@ public class Project {
     }
 
     public boolean isSubStepStarted(int stepIdx, int subStepIdx) {
+        if (subStepIdx == -1) {
+            return true;
+        }
         return steps[stepIdx].getSubStep(subStepIdx).isStepStarted();
     }
 
@@ -231,6 +236,9 @@ public class Project {
     }
 
     public boolean isSubStepFinished(int stepIdx, int subStepIdx) {
+        if (stepIdx < 0 || subStepIdx < 0) {
+            return true;
+        }
         return steps[stepIdx].getSubStep(subStepIdx).isStepFinished();
     }
 

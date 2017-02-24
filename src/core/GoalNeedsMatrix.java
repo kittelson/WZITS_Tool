@@ -5,10 +5,13 @@
  */
 package core;
 
+import GUI.Tables.TableHelper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
@@ -29,6 +32,8 @@ public class GoalNeedsMatrix {
 
     private final LinkedHashMap<Need, Integer> needToColMap = new LinkedHashMap();
 
+    private final HashMap<String, SimpleBooleanProperty> includeGoalCat;
+
     private int[][] matrix;
 
     public GoalNeedsMatrix(ObservableList<QuestionYN> qList, ObservableList<Need> needsList) {
@@ -40,6 +45,13 @@ public class GoalNeedsMatrix {
         for (int needIdx = 0; needIdx < needsList.size(); needIdx++) {
             needToColMap.put(needsList.get(needIdx), needIdx);
         }
+
+        includeGoalCat = new HashMap();
+        includeGoalCat.put(Question.GOAL_MOBILITY, TableHelper.STEP_1_SYSTEM_GOALS.get(0).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_SAFETY, TableHelper.STEP_1_SYSTEM_GOALS.get(1).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_PROD, TableHelper.STEP_1_SYSTEM_GOALS.get(2).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_REG, TableHelper.STEP_1_SYSTEM_GOALS.get(3).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_TRAVELER_INFO, TableHelper.STEP_1_SYSTEM_GOALS.get(4).answerIsYesProperty());
 
         matrix = new int[qList.size()][needsList.size()];
 
@@ -90,10 +102,10 @@ public class GoalNeedsMatrix {
 
         TableColumn catCol = new TableColumn("Category");
         catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
-        catCol.setPrefWidth(150);
-        catCol.setMaxWidth(150);
-        catCol.setMinWidth(150);
-        catCol.getStyleClass().add("col-style-center");
+        catCol.setPrefWidth(175);
+        catCol.setMaxWidth(175);
+        catCol.setMinWidth(175);
+        catCol.getStyleClass().add("col-style-center-bold");
         catCol.setSortType(SortType.ASCENDING);
 
         TableColumn recCol = new TableColumn("Recommended User Goals");
@@ -104,12 +116,17 @@ public class GoalNeedsMatrix {
         scoreCol.setPrefWidth(100);
         scoreCol.setMaxWidth(100);
         scoreCol.setMinWidth(100);
-        scoreCol.getStyleClass().add("col-style-center");
+        scoreCol.getStyleClass().add("col-style-center-bold");
         scoreCol.setSortType(SortType.DESCENDING);
 
         summary.getColumns().addAll(catCol, recCol, scoreCol);
 
-        summary.setItems(needsList);
+        //summary.setItems(needsList);
+        for (Need n : needsList) {
+            if (this.includeGoalCat.get(n.getGoal()).get()) {
+                summary.getItems().add(n);
+            }
+        }
 
         summary.getSortOrder().setAll(catCol, scoreCol);
         return summary;

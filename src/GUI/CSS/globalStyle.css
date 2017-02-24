@@ -135,6 +135,11 @@
     -fx-alignment: center;
 }
 
+.col-style-center-bold {
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+}
+
 .col-style-blue {
     -fx-text-fill: blue;
 }
@@ -195,7 +200,7 @@
 }
 
 .step-summary-table .table-row-cell{
-    -fx-background-color: -fx-table-cell-border-color, #c6e0b4;
+    -fx-background-color: -fx-table-cell-border-color, #ddebf7;  /* #c6e0b4 Green from User Needs Wizard */
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.0em; /* 0 */
 }

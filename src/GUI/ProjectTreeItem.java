@@ -151,6 +151,7 @@ public class ProjectTreeItem extends TreeItem<Project> {
                 setGraphic(null);
             } else {
                 setText(getString());
+                setTooltip(MainController.getTooltip(((ProjectTreeItem) this.getTreeItem()).getStep(), ((ProjectTreeItem) this.getTreeItem()).getSubStep()));
                 if (((ProjectTreeItem) this.getTreeItem()).isRoot()) {
                     this.setContentDisplay(ContentDisplay.LEFT);
                 } else {

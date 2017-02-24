@@ -7,7 +7,6 @@ package GUI.Step;
 
 import GUI.MainController;
 import GUI.Tables.Step2Table;
-import com.sun.javafx.scene.control.skin.PaginationSkin;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -55,7 +54,7 @@ public class Step2Panel extends BorderPane {
         infoLabel.setMaxHeight(MainController.MAX_HEIGHT);
         infoLabel.setMaxWidth(MainController.MAX_WIDTH);
         infoLabel.setAlignment(Pos.TOP_CENTER);
-        Label instructionLabel = new Label("Concept Development and Fesibility");
+        Label instructionLabel = new Label("Concept Development and Feasibility");
         instructionLabel.setWrapText(true);
         instructionLabel.setTextAlignment(TextAlignment.CENTER);
         instructionLabel.setMaxHeight(MainController.MAX_HEIGHT);
