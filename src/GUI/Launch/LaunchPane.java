@@ -6,7 +6,6 @@
 package GUI.Launch;
 
 import GUI.MainController;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -29,7 +28,7 @@ public class LaunchPane extends BorderPane {
 
     private final TextArea infoText;
 
-    private final Button startButton = new Button("Begin");
+    private final Button startButton = new Button("Ok");
 
     public LaunchPane(final MainController controller) {
         this.controller = controller;

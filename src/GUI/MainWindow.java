@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import GUI.Helper.NodeFactory;
 import GUI.Step.Step1Panel;
 import GUI.Launch.LaunchPane;
 import GUI.Step.IntroPane;
@@ -14,9 +15,11 @@ import GUI.Step.Step4Panel;
 import GUI.Step.Step5Panel;
 import GUI.Step.Step6Panel;
 import core.Project;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -108,8 +112,13 @@ public class MainWindow extends BorderPane {
         MenuItem helpMenuItem = new MenuItem("Help");
         menuHelp.getItems().add(helpMenuItem);
 
-        titleLabel.getStyleClass().add("launch-title-label-top");
-        titleLabel.setMaxWidth(MainController.MAX_WIDTH);
+        titleLabel1.getStyleClass().add("launch-title-label-top");
+        titleLabel1.setPadding(new Insets(0, 20, 0, 20));
+        titleLabel1.setMaxWidth(MainController.MAX_WIDTH);
+
+        titleLabel2.getStyleClass().add("launch-title-label-top");
+        titleLabel2.setPadding(new Insets(0, 20, 0, 20));
+        titleLabel2.setMaxWidth(MainController.MAX_WIDTH);
 
         // Styling the toolbar buttons
         SVGPath prevSVG = new SVGPath();
@@ -168,11 +177,17 @@ public class MainWindow extends BorderPane {
         //toolBarBox.setFillWidth(true);
         projectFlowBar = new FlowBar(control);
         toolBarBox.setAlignment(Pos.CENTER);
-        toolBarBox.getChildren().addAll(menuBar, titleLabel, projectFlowBar);
+        BorderPane titleLabelPane = new BorderPane();
+        titleLabelPane.setLeft(titleLabel1);
+        titleLabelPane.setCenter(titleLabel2);
+        toolBarBox.getChildren().addAll(menuBar, titleLabelPane, projectFlowBar); // titleLabel1
+        toolBarBox.setStyle("-fx-background-color: #595959");
 
         // Setting up TreeView Navigator
-        ProjectTreeItem projectItem = new ProjectTreeItem(control.getProject(), -1);
+        ProjectTreeItem projectItem = new ProjectTreeItem(control, control.getProject(), -1);
         navigator = new TreeView(projectItem);
+        navigator.getStyleClass().add("navigator");
+        navigator.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         navigator.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
@@ -192,7 +207,13 @@ public class MainWindow extends BorderPane {
                 return new ProjectTreeItem.ProjectTreeCell();
             }
         });
-        navigator.setMaxWidth(200);
+        navigator.setMaxWidth(NodeFactory.NAVIGATOR_MAX_WIDTH);
+
+        //dashboard = new Dashboard(control);
+        leftBar.setCenter(navigator);
+        //leftBar.setBottom(dashboard);
+
+        statusBar = new StatusBar(control);
 
         // Setting up sliding panes
         //step1Pane.setCenter(new Label("Step 1"));
@@ -238,6 +259,7 @@ public class MainWindow extends BorderPane {
         GridPane.setHgrow(step6Pane, Priority.ALWAYS);
         GridPane.setHgrow(summaryPane, Priority.ALWAYS);
 
+        //allStepsPane.setStyle("-fx-background-color: green");
         // Creating Panel
         //this.setTop(stepFlow);
         //this.setBottom(allStepsPane);
@@ -366,8 +388,10 @@ public class MainWindow extends BorderPane {
         this.setTop(toolBarBox);
         BorderPane.setMargin(toolBarBox, new Insets(0, 0, 7, 0));
         this.setCenter(allStepsPane);
-        this.setLeft(navigator);
+        this.setLeft(leftBar); // Navigator
         this.setRight(new BorderPane());
+        this.setBottom(statusBar);
+        this.projectFlowBar.setProceedButtonFlashing(true);
     }
 
     public void checkProceed() {
@@ -393,6 +417,29 @@ public class MainWindow extends BorderPane {
         }
     }
 
+    public void setTitleLabel(final String newTitleLabelText, boolean animated) {
+        if (!animated) {
+            titleLabel2.setText(newTitleLabelText);
+        } else {
+            FadeTransition ft1 = new FadeTransition(Duration.millis(125), titleLabel2);
+            ft1.setFromValue(1.0);
+            ft1.setToValue(0.0);
+
+            ft1.play();
+
+            ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent ae) {
+                    titleLabel2.setText(newTitleLabelText);
+                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), titleLabel2);
+                    ft2.setFromValue(0.0);
+                    ft2.setToValue(1.0);
+                    ft2.play();
+                }
+            });
+        }
+    }
+
     /**
      * Number of steps of the WZITS Tool
      */
@@ -402,9 +449,13 @@ public class MainWindow extends BorderPane {
      */
     private final VBox toolBarBox = new VBox();
     /**
-     * Title Label
+     * Title Label positioned above the FlowBar
      */
-    private final Label titleLabel = new Label("Work Zone ITS Tool");
+    private final Label titleLabel1 = new Label("Work Zone ITS Tool");
+    /**
+     * Title Label positioned below the FlowBar
+     */
+    private final Label titleLabel2 = new Label("Project Introduction");
 //    /**
 //     * Grid for organize the step flow toolbar
 //     */
@@ -455,9 +506,13 @@ public class MainWindow extends BorderPane {
 //    private final Button nextStepButton = new Button();
 
     /**
-     * Flow control toolbar for the main window of the tool
+     * Flow control toolbar for the main window of the tool.
      */
     private final FlowBar projectFlowBar;
+    /**
+     * Status bar positioned at the bottom of the mainwindow.
+     */
+    private final StatusBar statusBar;
     /**
      * Launch/Landing screen for the tool
      */
@@ -474,10 +529,6 @@ public class MainWindow extends BorderPane {
     private final BorderPane summaryPane = new BorderPane();
 
     private final TreeView<Project> navigator;
-
-    public static final String COLOR_STEP_HL = "#833C0C";
-    public static final String COLOR_STEP = "#ED7D31";
-    public static final String COLOR_SUB_STEP = "#833C0C";
-    public static final String COLOR_SUB_STEP_HL = "#0E298C";
+    private final BorderPane leftBar = new BorderPane();
 
 }

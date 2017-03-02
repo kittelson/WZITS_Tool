@@ -5,6 +5,7 @@
  */
 package GUI.Step;
 
+import GUI.Helper.NodeFactory;
 import GUI.IconHelper;
 import GUI.MainController;
 import GUI.Tables.Step1Table;
@@ -16,8 +17,6 @@ import java.util.Date;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,11 +26,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import GUI.Helper.ProgressIndicatorBar;
-import GUI.MainWindow;
-import static GUI.MainWindow.COLOR_SUB_STEP;
-import static GUI.MainWindow.COLOR_SUB_STEP_HL;
 import core.Project;
-import java.util.ArrayList;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.Spinner;
@@ -45,7 +40,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -89,14 +83,17 @@ public class Step1Panel extends BorderPane {
     private final GridPane genInfoGrid;
     private final BorderPane wzMetaDataPane = new BorderPane();
     private final GridPane wzMetaDataGrid;
+    private final BorderPane unPane = new BorderPane();
     private final BorderPane unSuppPane = new BorderPane();
-    private final BorderPane unSupp2Pane = new BorderPane();
-    private final BorderPane stepSummaryPane = new BorderPane();
+    private final BorderPane majorGoalsPane = new BorderPane();
+    private final BorderPane gwSummaryPane = new BorderPane();
+    private final BorderPane stepReportPane = new BorderPane();
 
     public Step1Panel(MainController control) {
 
         this.control = control;
 
+        //this.allSubStepsPane.setStyle("-fx-background-color: blue");
 //        // Creating and styling sub step toolbar
 //        subStep0Button.getStyleClass().add("sub-flow-step-start");
 //        subStep0Button.setStyle("-fx-background-color: " + MainWindow.COLOR_SUB_STEP_HL);
@@ -192,6 +189,7 @@ public class Step1Panel extends BorderPane {
         genInfoGrid = createGeneralInfoGrid();
         genInfoPane.setTop(genInfoTitleLabel);
         genInfoPane.setCenter(genInfoGrid);
+        genInfoPane.setBottom(NodeFactory.createFormattedLabel("", "launch-title-label-top"));
 
         Label wzMetaDataTitleLabel = new Label("Work Zone Meta Data");
         wzMetaDataTitleLabel.setMaxWidth(MainController.MAX_WIDTH);
@@ -199,6 +197,7 @@ public class Step1Panel extends BorderPane {
         wzMetaDataGrid = createWZInputGrid();
         wzMetaDataPane.setTop(wzMetaDataTitleLabel);
         wzMetaDataPane.setCenter(wzMetaDataGrid);
+        wzMetaDataPane.setBottom(NodeFactory.createFormattedLabel("", "launch-title-label-top"));
 
         projInfoGrid.add(genInfoPane, 0, 0);
         projInfoGrid.add(wzMetaDataPane, 1, 0);
@@ -210,13 +209,10 @@ public class Step1Panel extends BorderPane {
         col2.setPercentWidth(50);
         projInfoGrid.getColumnConstraints().addAll(col1, col2);
 
-        // Old JavaFX ProgressBarCode
-        //pb = new ProgressBar(0);
-        //
-        // New ProgressIndicatorBar Code
+        // Creating User Needs Questions Pane
         pb = new ProgressIndicatorBar(progress, 1.0, "%.0f%%", true);
+        pb.getStyleClass().add("progress-bar");
         pb.setMaxWidth(MainController.MAX_WIDTH);
-
         pagination = new Pagination(Step1Table.getPageCount(0));
         pagination.setPageFactory(new Callback<Integer, Node>() {
             @Override
@@ -225,9 +221,8 @@ public class Step1Panel extends BorderPane {
                 return Step1Table.createPageTable(pageIndex, 10);
             }
         });
-        //pagination.getStylesheets().add(this.getClass().getResource("/GUI/Step/step1Pane.css").toExternalForm());
-        pagination.getStyleClass().add("step-subpagination");
-
+        pagination.getStyleClass().add(Pagination.STYLE_CLASS_BULLET);
+        pagination.setStyle("-fx-accent: #ED7D31");
         for (Question q : TableHelper.getStepQuestions(0)) {
             q.responseIdxProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -237,19 +232,41 @@ public class Step1Panel extends BorderPane {
             });
         }
         pVBox.getChildren().addAll(pagination, pb);
+        unPane.setTop(NodeFactory.createFormattedLabel("User Needs", "substep-title-label"));
+        unPane.setCenter(pVBox);
+        unPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
+        // User Needs Supplemental Questions Panel
+        unSuppPane.setTop(NodeFactory.createFormattedLabel("User Needs Supplemental Questions", "substep-title-label"));
         unSuppPane.setCenter(Step1Table.getUserNeedsSupplemental());
-        unSupp2Pane.setCenter(Step1Table.getUserNeedsSupplemental2());
+        unSuppPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        // Major Goal Types Questions Panel
+        majorGoalsPane.setTop(NodeFactory.createFormattedLabel("Major Goals", "substep-title-label"));
+        majorGoalsPane.setCenter(Step1Table.getMajorGoalsTable());
+        majorGoalsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        // Goal Wizard Summary Panel
+        gwSummaryPane.setTop(NodeFactory.createFormattedLabel("Goal Wizard Summary", "substep-title-label"));
+        gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+        gwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        // Step Report Pane
+        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: Assessment of Needs", "substep-title-label"));
+        stepReportPane.setCenter(new BorderPane());
+        stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        // Adding to main substep VBox
 //        mainVBox.getChildren().addAll(subStepToolBar, allSubStepsPane);
         mainVBox.getChildren().addAll(allSubStepsPane);
 //        VBox.setMargin(subStepToolBar, new Insets(5, 5, 5, 5));
         allSubStepsPane.add(stepIntroGrid, 0, 0);
         allSubStepsPane.add(projInfoGrid, 1, 0);
-        allSubStepsPane.add(pVBox, 2, 0);
+        allSubStepsPane.add(unPane, 2, 0);
         allSubStepsPane.add(unSuppPane, 3, 0);
-        allSubStepsPane.add(unSupp2Pane, 4, 0);
-        allSubStepsPane.add(stepSummaryPane, 5, 0);
-        //allSubStepsPane.add(subStepSummaryPane, 2, 0);
+        allSubStepsPane.add(majorGoalsPane, 4, 0);
+        allSubStepsPane.add(gwSummaryPane, 5, 0);
+        allSubStepsPane.add(stepReportPane, 6, 0);
 
         int numPanes = getNumSubSteps() + 2;
         for (int colIdx = 0; colIdx < numPanes; colIdx++) {
@@ -273,7 +290,18 @@ public class Step1Panel extends BorderPane {
 //        GridPane.setVgrow(subStep3Button, Priority.ALWAYS);
 //        GridPane.setVgrow(subStep4Button, Priority.ALWAYS);
 //        GridPane.setVgrow(subStep5Button, Priority.ALWAYS);
+        GridPane.setVgrow(stepIntroGrid, Priority.ALWAYS);
+        GridPane.setVgrow(projInfoGrid, Priority.ALWAYS);
+        GridPane.setVgrow(unPane, Priority.ALWAYS);
+        GridPane.setVgrow(unSuppPane, Priority.ALWAYS);
+        GridPane.setVgrow(majorGoalsPane, Priority.ALWAYS);
+        GridPane.setVgrow(gwSummaryPane, Priority.ALWAYS);
+        GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
+        VBox.setVgrow(allSubStepsPane, Priority.ALWAYS);
         this.setCenter(mainVBox);
+        //this.allSubStepsPane.setMaxHeight(MainController.MAX_HEIGHT);
+        //this.mainVBox.setMaxHeight(MainController.MAX_HEIGHT);
+        //this.setMaxHeight(MainController.MAX_HEIGHT);
 
         setupActionListeners();
         setupPropertyBindings();
@@ -352,10 +380,6 @@ public class Step1Panel extends BorderPane {
 
     }
 
-    private void setActiveSubStep(int subStepIdx) {
-        control.setActiveSubStep(stepIndex, subStepIdx);
-    }
-
     private int getActiveSubStep() {
         return control.getActiveSubStep(stepIndex);
     }
@@ -365,15 +389,16 @@ public class Step1Panel extends BorderPane {
     }
 
     public void setViewWidth(double viewWidth) {
-//        if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
-//            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//            subStepToolBar.setMinWidth(stepIntroGrid.getWidth());
-//            subStepToolBar.setMaxWidth(stepIntroGrid.getWidth());
-//            subStepToolBar.setMinHeight(60);
-//            subStepToolBar.setMaxHeight(60);
-//            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-//        }
+        if (allSubStepsPane != null) {
+            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+            //subStepToolBar.setMinWidth(stepIntroGrid.getWidth());
+            //subStepToolBar.setMaxWidth(stepIntroGrid.getWidth());
+            //subStepToolBar.setMinHeight(60);
+            //subStepToolBar.setMaxHeight(60);
+
+            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+        }
     }
 
     private void setupPropertyBindings() {
@@ -407,8 +432,8 @@ public class Step1Panel extends BorderPane {
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
 
-                if (getActiveSubStep() == getNumSubSteps()) {
-                    stepSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+                if (getActiveSubStep() == Project.GOAL_WIZARD_SUMMARY_INDEX) {
+                    gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
                 }
 
 //                prevSubStepButton.setDisable(getActiveSubStep() == -1);

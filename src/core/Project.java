@@ -217,7 +217,10 @@ public class Project {
     }
 
     public boolean isSubStepStarted(int stepIdx, int subStepIdx) {
-        if (subStepIdx == -1) {
+        if (subStepIdx < 0) {
+            return true;
+        }
+        if (subStepIdx >= NUM_SUB_STEPS[stepIdx]) {
             return true;
         }
         return steps[stepIdx].getSubStep(subStepIdx).isStepStarted();
@@ -237,6 +240,9 @@ public class Project {
 
     public boolean isSubStepFinished(int stepIdx, int subStepIdx) {
         if (stepIdx < 0 || subStepIdx < 0) {
+            return true;
+        }
+        if (subStepIdx >= NUM_SUB_STEPS[stepIdx]) {
             return true;
         }
         return steps[stepIdx].getSubStep(subStepIdx).isStepFinished();
@@ -260,7 +266,7 @@ public class Project {
 
         private String description;
 
-        private final SimpleBooleanProperty stepStarted = new SimpleBooleanProperty(false);
+        private final SimpleBooleanProperty stepStarted = new SimpleBooleanProperty(true);
 
         private final SimpleBooleanProperty stepFinished = new SimpleBooleanProperty(false);
 
@@ -310,5 +316,7 @@ public class Project {
         }
 
     }
+
+    public static final int GOAL_WIZARD_SUMMARY_INDEX = 4;
 
 }

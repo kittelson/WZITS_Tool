@@ -22,8 +22,9 @@
 
 .intro-instructions {
     -fx-background-color: white;
-    -fx-font-size: 36;
-    -fx-font-family: 'calibir';
+    -fx-font-size: 32;
+    -fx-font-family: 'calibri';
+    -fx-text-alignment: center;
 }
 
 .flow-step-start {
@@ -107,19 +108,19 @@
 
 }
 
-.step-subpagination { 
+.step-subpagination-flow-style { 
     -fx-page-information-visible: false;
     /*-fx-arrows-visible: false;*/
 }
 
-.step-subpagination .toggle-button {
+.step-subpagination-flow-style .toggle-button {
     -fx-background-color: #ED7D31;
     -fx-shape: 'M 0 0 L 100 0 L 125 50 L 100 100 L 0 100 L 25 50 z';
     -fx-text-fill: #ED7D31; /* white */
     -fx-font-size: 14px;
 }
 
-.step-subpagination .toggle-button:selected {
+.step-subpagination-flow-style .toggle-button:selected {
     -fx-background-color: #833C0C;
     -fx-text-fill: #833C0C; /* white */
 }
@@ -222,4 +223,42 @@
     -fx-alignment: center;
 }
 
+.substep-title-label {
+    -fx-background-color: #595959; /* Dark Grey: #595959   Navy: #0E298C*/
+    -fx-text-fill: white;
+    -fx-font-size: 24;
+    -fx-font-family: 'calibri';
+    -fx-alignment: center;
+}
 
+.navigator {
+    
+}
+
+.navigator .tree-cell:selected {
+    -fx-background-color: #ED7D31;
+    -fx-text-fill: white;
+}
+
+.progress-bar {
+    -fx-accent: #ED7D31;
+}
+
+.output-dashboard {
+    /*-fx-background-color: white;*/
+    /*-fx-border-color: #bac5cc;*/
+    /*-fx-border-width: 1px;*/
+}
+
+.status-bar {
+    -fx-border-color: #bac5cc;
+    -fx-border-width: 1px;
+}
+
+.tree-step-progess-icon {
+    -fx-progress-color: #ED7D31;
+}
+
+.tree-step-progess-icon .percentage {
+    -fx-fill: null;
+}

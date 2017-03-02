@@ -202,7 +202,7 @@ public class Step1Table {
         return table;
     }
 
-    public static TableView getUserNeedsSupplemental2() {
+    public static TableView getMajorGoalsTable() {
         TableView<QuestionYN> table = new TableView();
         table.setEditable(true);
 

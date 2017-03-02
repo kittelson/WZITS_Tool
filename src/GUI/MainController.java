@@ -22,28 +22,38 @@ public class MainController {
 
     private final Project proj;
     /**
-     * Number of steps for the WZ-ITS Tool
-     */
-    private final int numSteps = 6;
-    /**
      * Index of the step currently active.
      */
     private final SimpleIntegerProperty activeStep = new SimpleIntegerProperty(-1);
     /**
      * Index of the sub step currently active.
      */
-    private final SimpleIntegerProperty[] activeSubStep = new SimpleIntegerProperty[numSteps];
+    private final SimpleIntegerProperty[] activeSubStep = new SimpleIntegerProperty[Project.NUM_STEPS];
 
     public MainController(Stage stage) {
         this.stage = stage;
         proj = new Project("Sample Project");
         for (int stepIdx = 0; stepIdx < activeSubStep.length; stepIdx++) {
-            activeSubStep[stepIdx] = new SimpleIntegerProperty(-1);
+            activeSubStep[stepIdx] = new SimpleIntegerProperty(-2);
         }
     }
 
     public void setMainWindow(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
+    }
+
+    public void setMainWindowTitleLabel(String newLabelText) {
+        mainWindow.setTitleLabel(newLabelText, true);
+    }
+
+    public void updateMainWindowTitle() {
+        if (getActiveStep() < 0) {
+            setMainWindowTitleLabel(INTRO_TITLE);
+        } else if (getActiveStep() == Project.NUM_STEPS) {
+            setMainWindowTitleLabel(SUMMARY_TITLE);
+        } else {
+            setMainWindowTitleLabel("Step " + String.valueOf(getActiveStep() + 1) + ": " + STEP_TITLES[getActiveStep()]);
+        }
     }
 
     public int getActiveStep() {
@@ -106,10 +116,10 @@ public class MainController {
     public void stepBack() {
         if (activeStep.get() < 0) {
             //selectStep(-1, -1);
-        } else if (activeStep.get() == 0 && activeSubStep[activeStep.get()].get() == 0) {
+        } else if (activeStep.get() == 0 && activeSubStep[activeStep.get()].get() < 0) {
             selectStep(-1, -1);
         } else {
-            if (activeSubStep[activeStep.get()].get() > 0) {
+            if (activeSubStep[activeStep.get()].get() >= 0) {
                 selectStep(activeStep.get(), activeSubStep[activeStep.get()].get() - 1);
             } else {
                 selectStep(activeStep.get() - 1, activeSubStep[activeStep.get() - 1].get());
@@ -132,10 +142,10 @@ public class MainController {
     }
 
     public void begin() {
-        //stage.hide();
-        //stage.setMaximized(true);
-        //stage.show();
+        stage.hide();
+        stage.setMaximized(true);
         mainWindow.begin();
+        stage.show();
         //stage.setMinWidth(mainWindow.getMinWidth());
     }
 
@@ -160,7 +170,7 @@ public class MainController {
                 if (subStepIdx >= 0 && subStepIdx < STEP_1_TOOLTIPS.length) {
                     return new Tooltip(STEP_1_TOOLTIPS[subStepIdx]);
                 } else {
-                    return new Tooltip("Step 1: Assesment of Needs");
+                    return new Tooltip("Step 1: Assessment of Needs");
                 }
             case 1:
                 if (subStepIdx >= 0 && subStepIdx < STEP_2_TOOLTIPS.length) {
@@ -186,5 +196,18 @@ public class MainController {
         "User Needs Supplemental",
         "System Goals",
         "Step Summary"};
+
+    public static final String[] STEP_TITLES = new String[]{
+        "Assessment of Needs & Feasibility",
+        "Concept Development",
+        "System Planning & Design",
+        "Procurement",
+        "System Deployment",
+        "System Operation, Maintenance & Evaluation"
+    };
+
+    public static final String INTRO_TITLE = "Project Introduction";
+
+    public static final String SUMMARY_TITLE = "Project Summary";
 
 }

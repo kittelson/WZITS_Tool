@@ -5,12 +5,16 @@
  */
 package GUI;
 
-import static GUI.MainWindow.COLOR_STEP;
-import static GUI.MainWindow.COLOR_STEP_HL;
-import static GUI.MainWindow.COLOR_SUB_STEP;
-import static GUI.MainWindow.COLOR_SUB_STEP_HL;
+import static GUI.Helper.ColorHelper.COLOR_SUB_STEP;
+import static GUI.Helper.ColorHelper.COLOR_SUB_STEP_FONT;
+import static GUI.Helper.ColorHelper.COLOR_SUB_STEP_HL;
+import static GUI.Helper.ColorHelper.COLOR_SUB_STEP_HL_FONT;
+import static GUI.MainWindowPagination.COLOR_STEP;
+import static GUI.MainWindowPagination.COLOR_STEP_HL;
 import core.Project;
 import java.util.ArrayList;
+import javafx.animation.Animation;
+import javafx.animation.FillTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -21,8 +25,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 /**
  *
@@ -36,6 +42,9 @@ public class FlowBar extends BorderPane {
 
     private final Button prevButton = new Button();
     private final Button nextButton = new Button();
+    private final SVGPath prevSVG = new SVGPath();
+    private final SVGPath nextSVG = new SVGPath();
+    private final FillTransition nextFT;
 
     private final Button introButton = new Button("Intro");
     private final Button step1Button = new Button("Step 1");
@@ -105,6 +114,7 @@ public class FlowBar extends BorderPane {
 
     public FlowBar(MainController mc) {
         this.control = mc;
+        this.setStyle("-fx-background-color: white");
         setupButtonLists();
         addButtons();
         createCCLists();
@@ -123,6 +133,10 @@ public class FlowBar extends BorderPane {
         this.setCenter(flowGrid);
         this.setRight(nextButton);
         BorderPane.setMargin(flowGrid, new Insets(0, 3, 0, 3));
+
+        nextFT = new FillTransition(Duration.millis(1000), nextSVG, Color.web("#595959"), Color.web("#ED7D31"));
+        nextFT.setCycleCount(Animation.INDEFINITE);
+        nextFT.setAutoReverse(true);
 
         selectStep(-1, -1);
     }
@@ -287,9 +301,9 @@ public class FlowBar extends BorderPane {
     }
 
     private void setFormatting() {
-        SVGPath prevSVG = new SVGPath();
+        //prevSVG = new SVGPath();
         prevSVG.setContent(IconHelper.SVG_STR_PREV);
-        SVGPath nextSVG = new SVGPath();
+        //nextSVG = new SVGPath();
         nextSVG.setContent(IconHelper.SVG_STR_NEXT);
         prevButton.setGraphic(prevSVG);
         nextButton.setGraphic(nextSVG);
@@ -302,6 +316,9 @@ public class FlowBar extends BorderPane {
         step5Button.getStyleClass().add("sub-flow-step");
         step6Button.getStyleClass().add("sub-flow-step");
         summaryButton.getStyleClass().add("sub-flow-step-end");
+        for (Button b : flowList) {
+            b.setStyle("-fx-background-color: #ED7D31");
+        }
 
         for (Button b : step1List) {
             b.getStyleClass().add("sub-flow-step");
@@ -347,7 +364,7 @@ public class FlowBar extends BorderPane {
 
             // Shrink all Steps before stepIdx
             this.introCC.setPercentWidth(wCollapse);
-            this.introButton.setText("S");
+            this.introButton.setText("Intro");
             for (int i = 0; i < stepIdx; i++) {
                 ccStep.get(i).setPercentWidth(wCollapse);
                 this.flowList.get(i + 1).setText(String.valueOf(i + 1));
@@ -413,6 +430,8 @@ public class FlowBar extends BorderPane {
         nextButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
+                nextFT.stop();
+                nextSVG.setFill(Color.BLACK);
                 control.stepForward();
             }
         });
@@ -427,37 +446,61 @@ public class FlowBar extends BorderPane {
         step1Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                control.setActiveStep(0);
+                if (control.getActiveStep() != 0) {
+                    control.setActiveStep(0);
+                } else {
+                    control.setActiveSubStep(0, -1);
+                }
             }
         });
         step2Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                control.setActiveStep(1);
+                if (control.getActiveStep() != 1) {
+                    control.setActiveStep(1);
+                } else {
+                    control.setActiveSubStep(1, -1);
+                }
             }
         });
         step3Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                control.setActiveStep(2);
+                if (control.getActiveStep() != 2) {
+                    control.setActiveStep(2);
+                } else {
+                    control.setActiveSubStep(2, -1);
+                }
             }
         });
         step4Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                control.setActiveStep(3);
+                if (control.getActiveStep() != 3) {
+                    control.setActiveStep(3);
+                } else {
+                    control.setActiveSubStep(3, -1);
+                }
             }
         });
         step5Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                control.setActiveStep(4);
+                if (control.getActiveStep() != 4) {
+                    control.setActiveStep(4);
+                } else {
+                    control.setActiveSubStep(4, -1);
+                }
             }
         });
         step6Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                control.setActiveStep(5);
+                if (control.getActiveStep() != 5) {
+                    control.setActiveStep(5);
+                } else {
+                    control.setActiveSubStep(5, -1);
+                }
             }
         });
         summaryButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -534,18 +577,26 @@ public class FlowBar extends BorderPane {
             public void changed(ObservableValue<? extends Number> o, Number oldVal, Number newVal) {
                 selectStep(control.getActiveStep(), control.getActiveSubStep(control.getActiveStep()));
                 introButton.setStyle("-fx-background-color: " + (control.getActiveStep() == -1 ? COLOR_STEP_HL : COLOR_STEP));
-                step1Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 0 ? COLOR_STEP_HL : COLOR_STEP));
-                step2Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 1 ? COLOR_STEP_HL : COLOR_STEP));
-                step3Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 2 ? COLOR_STEP_HL : COLOR_STEP));
-                step4Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 3 ? COLOR_STEP_HL : COLOR_STEP));
-                step5Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 4 ? COLOR_STEP_HL : COLOR_STEP));
-                step6Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 5 ? COLOR_STEP_HL : COLOR_STEP));
+                step1Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 0 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 0 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_SUB_STEP_FONT));
+                step2Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 1 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 1 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_SUB_STEP_FONT));
+                step3Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 2 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 2 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_SUB_STEP_FONT));
+                step4Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 3 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 3 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_SUB_STEP_FONT));
+                step5Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 4 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 4 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_SUB_STEP_FONT));
+                step6Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 5 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 4 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_SUB_STEP_FONT));
                 summaryButton.setStyle("-fx-background-color: " + (control.getActiveStep() == 6 ? COLOR_STEP_HL : COLOR_STEP));
 
                 prevButton.setDisable(control.getActiveStep() == -1);
                 nextButton.setDisable(
                         control.getActiveStep() == Project.NUM_STEPS
                 );
+
+                control.updateMainWindowTitle();
             }
         });
         step1Button.disableProperty().bind(control.getProject().getStep(0).stepStartedProperty().not());
@@ -559,13 +610,20 @@ public class FlowBar extends BorderPane {
         control.activeSubStepProperty(0).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
-                step1Button.setStyle("-fx-background-color: " + ((int) newVal == -1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step1Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step1Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step1Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step1Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step1Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step1ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                step1Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step1Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step1Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step1Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step1Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step1Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step1ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step1Sub1Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(0).stepStartedProperty().not());
@@ -577,12 +635,20 @@ public class FlowBar extends BorderPane {
         control.activeSubStepProperty(1).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
-                step2Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step2Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step2Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step2Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step2Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step2ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                step2Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step2Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step2Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step2Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step2Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step2Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step2ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step2Sub1Button.disableProperty().bind(control.getProject().getStep(1).getSubStep(0).stepStartedProperty().not());
@@ -594,12 +660,20 @@ public class FlowBar extends BorderPane {
         control.activeSubStepProperty(2).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
-                step3Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step3Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step3Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step3Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step3Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step3ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                step3Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step3Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step3Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step3Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step3Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step3Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step3ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step3Sub1Button.disableProperty().bind(control.getProject().getStep(2).getSubStep(0).stepStartedProperty().not());
@@ -611,12 +685,20 @@ public class FlowBar extends BorderPane {
         control.activeSubStepProperty(3).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
-                step4Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step4Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step4Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step4Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step4Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step4ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                step4Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step4Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step4Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step4Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step4Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step4Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step4ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step4Sub1Button.disableProperty().bind(control.getProject().getStep(3).getSubStep(0).stepStartedProperty().not());
@@ -628,12 +710,20 @@ public class FlowBar extends BorderPane {
         control.activeSubStepProperty(4).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
-                step5Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step5Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step5Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step5Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step5Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step5ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                step5Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step5Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step5Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step5Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step5Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step5Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step5ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step5Sub1Button.disableProperty().bind(control.getProject().getStep(4).getSubStep(0).stepStartedProperty().not());
@@ -645,12 +735,20 @@ public class FlowBar extends BorderPane {
         control.activeSubStepProperty(5).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
-                step6Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step6Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step6Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step6Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step6Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-                step6ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
+                step6Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step6Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step6Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step6Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step6Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step6Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                step6ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step6Sub1Button.disableProperty().bind(control.getProject().getStep(5).getSubStep(0).stepStartedProperty().not());
@@ -662,9 +760,19 @@ public class FlowBar extends BorderPane {
     }
 
     public void checkProceed() {
-        nextButton.setDisable(!(control.getProject().isStepComplete(control.getActiveStep())
-                || control.getProject().isSubStepFinished(control.getActiveStep(), control.getActiveSubStep(control.getActiveStep())))
+        nextButton.setDisable(
+                !(control.getProject().isStepComplete(control.getActiveStep())
+                || control.getProject().isSubStepFinished(control.getActiveStep(), control.getActiveSubStep(control.getActiveStep()))
+                || control.getProject().isSubStepStarted(control.getActiveStep(), control.getActiveSubStep(control.getActiveStep()) + 1))
         );
+    }
+
+    public void setProceedButtonFlashing(boolean toggle) {
+        if (toggle) {
+            nextFT.play();
+        } else {
+            nextFT.stop();
+        }
     }
 
 }

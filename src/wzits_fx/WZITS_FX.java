@@ -21,7 +21,7 @@ public class WZITS_FX extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        primaryStage.setTitle("Work Zone ITS Tool");
+        primaryStage.setTitle("Work Zone Intelligent Transportations Systems Tool");
 
         // Creating Panes
         MainController control = new MainController(primaryStage);

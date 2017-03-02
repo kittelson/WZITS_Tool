@@ -10,16 +10,20 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
  * @author ltrask
  */
 public class ProjectTreeItem extends TreeItem<Project> {
+
+    private final MainController control;
 
     private final Project proj;
 
@@ -31,12 +35,13 @@ public class ProjectTreeItem extends TreeItem<Project> {
 
     private final TreeItem<Project>[] subSteps;
 
-    public ProjectTreeItem(Project proj, int step) {
-        this(proj, step, -1);
+    public ProjectTreeItem(MainController control, Project proj, int step) {
+        this(control, proj, step, -1);
     }
 
-    public ProjectTreeItem(Project proj, int step, int subStep) {
+    public ProjectTreeItem(MainController control, Project proj, int step, int subStep) {
         super(proj);
+        this.control = control;
         this.proj = proj;
         this.step = step;
         this.subStep = subStep;
@@ -60,20 +65,26 @@ public class ProjectTreeItem extends TreeItem<Project> {
     private void generateChildren() {
         for (int stepIdx = 0; stepIdx < 6; stepIdx++) {
             //steps[stepIdx] = new ProjectTreeItem(proj, stepIdx);
-            final ProjectTreeItem currItem = new ProjectTreeItem(proj, stepIdx);
-            steps[stepIdx] = currItem;
+            final ProjectTreeItem selfRef = new ProjectTreeItem(control, proj, stepIdx);
+            steps[stepIdx] = selfRef;
             proj.getStep(stepIdx).stepStartedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    Event.fireEvent(currItem, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), currItem));
-                    currItem.setExpanded(newVal);
+                    Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
+                    selfRef.setExpanded(newVal);
                 }
             });
             proj.getStep(stepIdx).stepFinishedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    Event.fireEvent(currItem, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), currItem));
-                    currItem.setExpanded(!newVal);
+                    Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
+                    selfRef.setExpanded(!newVal);
+                }
+            });
+            control.activeStepProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
                 }
             });
             this.getChildren().add(steps[stepIdx]);
@@ -83,15 +94,15 @@ public class ProjectTreeItem extends TreeItem<Project> {
     private void generateSubSteps() {
         for (int subStepIdx = 0; subStepIdx < proj.getStep(step).getNumSubSteps(); subStepIdx++) {
             //subSteps[subStepIdx] = new ProjectTreeItem(proj, step, subStepIdx);
-            final ProjectTreeItem currItem = new ProjectTreeItem(proj, step, subStepIdx);
-            subSteps[subStepIdx] = currItem;
+            final ProjectTreeItem selfRef = new ProjectTreeItem(control, proj, step, subStepIdx);
+            subSteps[subStepIdx] = selfRef;
             proj.getStep(step).getSubStep(subStepIdx).stepStartedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
 //                    if (!steps[step].isExpanded()) {
 //                        steps[step].setExpanded(true);
 //                    }
-                    Event.fireEvent(currItem, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), currItem));
+                    Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
                 }
             });
             proj.getStep(step).getSubStep(subStepIdx).stepFinishedProperty().addListener(new ChangeListener<Boolean>() {
@@ -100,7 +111,19 @@ public class ProjectTreeItem extends TreeItem<Project> {
 //                    if (!steps[step].isExpanded()) {
 //                        steps[step].setExpanded(true);
 //                    }
-                    Event.fireEvent(currItem, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), currItem));
+                    Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
+                }
+            });
+            control.activeStepProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
+                }
+            });
+            control.activeSubStepProperty(step).addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
                 }
             });
             this.getChildren().add(subSteps[subStepIdx]);
@@ -137,6 +160,14 @@ public class ProjectTreeItem extends TreeItem<Project> {
         return step < 0;
     }
 
+    public boolean stepIsActive() {
+        return control.getActiveStep() == step;
+    }
+
+    public boolean stepAndSubStepIsActive() {
+        return control.getActiveStep() == step && control.getActiveSubStep(step) == subStep;
+    }
+
     public static class ProjectTreeCell extends TreeCell<Project> {
 
         public ProjectTreeCell() {
@@ -150,34 +181,43 @@ public class ProjectTreeItem extends TreeItem<Project> {
                 setText(null);
                 setGraphic(null);
             } else {
+                ProjectTreeItem pti = ((ProjectTreeItem) this.getTreeItem());
                 setText(getString());
-                setTooltip(MainController.getTooltip(((ProjectTreeItem) this.getTreeItem()).getStep(), ((ProjectTreeItem) this.getTreeItem()).getSubStep()));
-                if (((ProjectTreeItem) this.getTreeItem()).isRoot()) {
+                setTooltip(MainController.getTooltip(pti.getStep(), pti.getSubStep()));
+                if (pti.isRoot()) {
                     this.setContentDisplay(ContentDisplay.LEFT);
                 } else {
                     this.setContentDisplay(ContentDisplay.RIGHT);
                 }
-
-                if (((ProjectTreeItem) this.getTreeItem()).isRoot()) {
+                if (pti.stepAndSubStepIsActive()) {
+                    this.getTreeView().getSelectionModel().select(pti);
+                }
+                if (pti.isRoot()) {
                     setGraphic(new ImageView(this.getTreeItem().isExpanded() ? IconHelper.TREE_NODE_PROJ_OPEN : IconHelper.TREE_NODE_PROJ_OPEN));
-                } else if (((ProjectTreeItem) this.getTreeItem()).isStep()) {
-                    if (this.getItem().isStepStarted(((ProjectTreeItem) this.getTreeItem()).getStep())) {
+                } else if (pti.isStep()) {
+                    if (pti.stepIsActive()) {
+                        pti.setExpanded(true);
+                    }
+                    if (this.getItem().isStepStarted(pti.getStep())) {
                         setTextFill(Color.BLACK);
                     } else {
                         setTextFill(Color.GREY);
                     }
-                    if (this.getItem().isStepComplete(((ProjectTreeItem) this.getTreeItem()).getStep())) {
+                    if (this.getItem().isStepComplete(pti.getStep())) {
                         setGraphic(new ImageView(IconHelper.TREE_NODE_STEP_COMPLETE));
                     } else {
                         setGraphic(null);
                     }
-                } else if (((ProjectTreeItem) this.getTreeItem()).isSubStep()) {
-                    if (this.getItem().isSubStepStarted(((ProjectTreeItem) this.getTreeItem()).getStep(), ((ProjectTreeItem) this.getTreeItem()).getSubStep())) {
+//                    ProgressIndicator pi = new ProgressIndicator(0.5);
+//                    pi.getStyleClass().add("tree-step-progess-icon");
+//                    setGraphic(pi);
+                } else if (pti.isSubStep()) {
+                    if (this.getItem().isSubStepStarted(pti.getStep(), pti.getSubStep())) {
                         setTextFill(Color.BLACK);
                     } else {
                         setTextFill(Color.GRAY);
                     }
-                    if (this.getItem().isSubStepFinished(((ProjectTreeItem) this.getTreeItem()).getStep(), ((ProjectTreeItem) this.getTreeItem()).getSubStep())) {
+                    if (this.getItem().isSubStepFinished(pti.getStep(), pti.getSubStep())) {
                         setGraphic(new ImageView(IconHelper.TREE_NODE_STEP_COMPLETE));
                     } else {
                         setGraphic(null);
