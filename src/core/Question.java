@@ -7,8 +7,6 @@ package core;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.util.converter.IntegerStringConverter;
 
 /**
@@ -115,4 +113,7 @@ public abstract class Question {
     public static final String GOAL_PROD = "Productivity";
     public static final String GOAL_REG = "Regulatory";
     public static final String GOAL_TRAVELER_INFO = "Traveler Information";
+
+    public static final String GOAL_DOCUMENTATION = "Documentation";
+
 }

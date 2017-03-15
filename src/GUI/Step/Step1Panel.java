@@ -559,6 +559,8 @@ public class Step1Panel extends BorderPane {
         wzInputLabel7.getStyleClass().add("wz-input-label-style");
         wzInputLabel8.getStyleClass().add("wz-input-label-style");
         wzInputLabel9.getStyleClass().add("wz-input-label-style");
+        //wzInputChoice1.getStyleClass().add("wzits-choice-box");
+        //wzInputChoice2.getStyleClass().add("wzits-choice-box");
 
         wzInputSpin1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(25000, 125000, 50000, 5000));
         wzInputSpin2.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 50, 2, 0.1));

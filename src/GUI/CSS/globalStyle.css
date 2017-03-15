@@ -1,3 +1,16 @@
+.root {
+    -fx-focus-color: #ED7D31;
+    -fx-faint-focus-color: #ED7D3122;
+    -fx-default-button: #ED7D31;
+    
+    -fx-cell-hover-color: #ED7D31;
+    
+    -fx-accent: #ED7D31;
+    
+    -fx-selection-bar: #ED7D31;
+    -fx-selection-bar-text-fill: white;
+}
+
 .launch-title-label-top {
     -fx-background-color: #595959;
     -fx-text-fill: white;
@@ -241,7 +254,7 @@
 }
 
 .progress-bar {
-    -fx-accent: #ED7D31;
+    -fx-accent: #ED7D31; /**/
 }
 
 .output-dashboard {
@@ -255,10 +268,30 @@
     -fx-border-width: 1px;
 }
 
-.tree-step-progess-icon {
-    -fx-progress-color: #ED7D31;
+.status-bar .content BorderPane {
+    -fx-padding: 0em 0.4em 0.4em 0.4em;
 }
 
-.tree-step-progess-icon .percentage {
-    -fx-fill: null;
+.dashboard-toggle,
+.dashboard-toggle:focused {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-background-radius: 0em;
+}
+
+.dashboard-toggle:selected,
+.dashboard-toggle:selected:focused { 
+    -fx-background-color: #ED7D31;
+    -fx-text-fill:white;
+    -fx-background-radius: 0em;
+}
+
+.dashboard-tab-selector {
+    -fx-border-color: #ED7D31;
+    -fx-border-width: 0px 0px 0px 0px;
+}
+
+.dashboard-tab {
+    -fx-border-color: #ED7D31;
+    -fx-border-width: 5px 5px 5px 10px;
 }

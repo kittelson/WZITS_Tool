@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
@@ -129,6 +130,9 @@ public class GoalNeedsMatrix {
         }
 
         summary.getSortOrder().setAll(catCol, scoreCol);
+
+        summary.setPlaceholder(new Label("Steps 1.2 - 1.4 must be completed to view."));
+
         return summary;
     }
 

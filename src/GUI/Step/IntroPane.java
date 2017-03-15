@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -60,6 +61,10 @@ public class IntroPane extends BorderPane {
 
         startNewButton.setStyle("-fx-font-size: 36");
 
+//        FillTransition nextFT = new FillTransition(Duration.millis(1000), Color.web("#595959"), Color.web("#ED7D31"));
+//        nextFT.setCycleCount(Animation.INDEFINITE);
+//        nextFT.setAutoReverse(true);
+//        nextFT.play();
         subGrid.add(startLabel, 0, 0, 1, 3);
         subGrid.add(infoLabel, 0, 3, 1, 3);
         subGrid.add(new ImageView(IconHelper.FIG_FLOW_ALL_STEPS), 1, 0, 1, 2);

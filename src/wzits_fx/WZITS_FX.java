@@ -7,8 +7,11 @@ package wzits_fx;
 
 import GUI.MainController;
 import GUI.MainWindow;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -30,8 +33,15 @@ public class WZITS_FX extends Application {
         scene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         primaryStage.setScene(scene);
         //primaryStage.setMaximized(true);
-        primaryStage.setMinHeight(750);
-        primaryStage.setMinWidth(1100);
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int maxScreenWidth = gd.getDisplayMode().getWidth();
+        int maxScreenHeight = gd.getDisplayMode().getHeight();
+        primaryStage.setMinHeight(Math.min(maxScreenHeight, 750));
+        primaryStage.setMinWidth(Math.min(maxScreenWidth, 1100));
+        primaryStage.setMaxHeight(maxScreenHeight);
+        primaryStage.setMaxWidth(maxScreenWidth);
+
+        primaryStage.getIcons().add(new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/wzits_tool_icon_32.png")));
         primaryStage.show();
     }
 

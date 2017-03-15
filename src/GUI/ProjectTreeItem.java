@@ -10,12 +10,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -208,9 +206,6 @@ public class ProjectTreeItem extends TreeItem<Project> {
                     } else {
                         setGraphic(null);
                     }
-//                    ProgressIndicator pi = new ProgressIndicator(0.5);
-//                    pi.getStyleClass().add("tree-step-progess-icon");
-//                    setGraphic(pi);
                 } else if (pti.isSubStep()) {
                     if (this.getItem().isSubStepStarted(pti.getStep(), pti.getSubStep())) {
                         setTextFill(Color.BLACK);

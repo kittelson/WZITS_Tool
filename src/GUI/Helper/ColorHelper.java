@@ -19,11 +19,21 @@ public class ColorHelper {
     public static final String WZ_LIGHT_GREY = "#bac5cc";
 
     // Button Color Definitions
+    // Original Theme
+//    public static final String COLOR_STEP_HL = WZ_ORANGE_BURNT;
+//    public static final String COLOR_STEP = WZ_ORANGE;
+//    public static final String COLOR_SUB_STEP = WZ_ORANGE_BURNT;
+//    public static final String COLOR_SUB_STEP_HL = WZ_LIGHT_GREY; //  WZ_NAVY
+//    public static final String COLOR_SUB_STEP_FONT = "white";
+//    public static final String COLOR_SUB_STEP_HL_FONT = "black";
+    // Theme 2
     public static final String COLOR_STEP_HL = WZ_ORANGE_BURNT;
-    public static final String COLOR_STEP = WZ_ORANGE;
+    public static final String COLOR_STEP = WZ_NAVY;
     public static final String COLOR_SUB_STEP = WZ_ORANGE_BURNT;
-    public static final String COLOR_SUB_STEP_HL = WZ_LIGHT_GREY; //  WZ_NAVY
+    public static final String COLOR_SUB_STEP_HL = WZ_ORANGE; //  WZ_NAVY
+    public static final String COLOR_STEP_FONT = "white";
+    public static final String COLOR_STEP_HL_FONT = "white";
     public static final String COLOR_SUB_STEP_FONT = "white";
-    public static final String COLOR_SUB_STEP_HL_FONT = "black";
+    public static final String COLOR_SUB_STEP_HL_FONT = "white";
 
 }

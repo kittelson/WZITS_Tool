@@ -36,10 +36,10 @@ public class LaunchPane extends BorderPane {
         titleLabel1.setMaxWidth(MainController.MAX_WIDTH);
         titleLabel2 = new Label("Welcome");
         titleLabel2.setMaxWidth(MainController.MAX_WIDTH);
-        infoText = new TextArea("This area will display the welcome and "
-                + "information text.  This area will also provide the user with "
+        infoText = new TextArea("This area will display welcome and "
+                + "informational text.  This area can also provide the user with "
                 + "a basic outline of the program and information on how to get "
-                + "started.");
+                + "started.\n\n\n Tool Disclaimers: This tool is a prototype.");
         infoText.setWrapText(true);
         infoText.setEditable(false);
         infoText.setFont(Font.font("Calibri", 20));
