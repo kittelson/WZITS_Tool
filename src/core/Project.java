@@ -319,4 +319,8 @@ public class Project {
 
     public static final int GOAL_WIZARD_SUMMARY_INDEX = 4;
 
+    public final String[][] StepNames = {
+        {"Step 1", "User Needs", "User Needs Support", "Goals", "Goal Wizard Summary", "Feasibility", "Feasibility Wizard Summary", "Stakeholders", "Stakeholders Wizard Summary", "Team Members", "ITS Resources"}
+    };
+
 }

@@ -6,7 +6,11 @@
 package GUI;
 
 import core.Project;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 
@@ -21,6 +25,12 @@ public class MainController {
     private final Stage stage;
 
     private final Project proj;
+
+    /**
+     * Indicates if the project has been started, bound to the activeStep
+     * property
+     */
+    private final SimpleBooleanProperty projectStarted = new SimpleBooleanProperty(false);
     /**
      * Index of the step currently active.
      */
@@ -36,6 +46,16 @@ public class MainController {
         for (int stepIdx = 0; stepIdx < activeSubStep.length; stepIdx++) {
             activeSubStep[stepIdx] = new SimpleIntegerProperty(-2);
         }
+
+        activeStep.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (!projectStarted.get() && (int) newVal >= 0) {
+                    projectStarted.set(true);
+                }
+            }
+        });
+
     }
 
     public void setMainWindow(MainWindow mainWindow) {
@@ -66,6 +86,14 @@ public class MainController {
 
     public SimpleIntegerProperty activeStepProperty() {
         return activeStep;
+    }
+
+    public SimpleBooleanProperty projectStartedProperty() {
+        return projectStarted;
+    }
+
+    public ReadOnlyDoubleProperty stageWidthProperty() {
+        return stage.widthProperty();
     }
 
     /**

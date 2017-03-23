@@ -5,10 +5,14 @@
  */
 package GUI;
 
+import GUI.Helper.ColorHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Helper.ProgressIndicatorBar;
 import javafx.animation.FadeTransition;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -21,6 +25,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 /**
@@ -53,46 +59,275 @@ public class StatusBar extends TitledPane {
 //    private final Label feasLabel = new Label("Feasibility");
 //    private final Label appLabel = new Label("Application");
 //    private final Label stake1Label = new Label("Stakeholder");
-    private final ToggleButton infoLabel = new ToggleButton("Project Info");
-    private final ToggleButton goalLabel = new ToggleButton("Goals");
-    private final ToggleButton feasLabel = new ToggleButton("Feasibility");
-    private final ToggleButton appLabel = new ToggleButton("Application");
-    private final ToggleButton stake1Label = new ToggleButton("Stakeholder");
+    private final ToggleButton infoToggle = new ToggleButton("Project Info");
+    private final ToggleButton goalToggle = new ToggleButton("Goals");
+    private final ToggleButton feasToggle = new ToggleButton("Feasibility");
+    private final ToggleButton appToggle = new ToggleButton("Application");
+    private final ToggleButton stakeToggle = new ToggleButton("Stakeholder");
     private final ToggleGroup tg = new ToggleGroup();
 
-    private final ProgressIndicatorBar pibInfo = new ProgressIndicatorBar(progressInfo, 1.0, "%.0f%%", true);
-    private final ProgressIndicatorBar pibGoal = new ProgressIndicatorBar(progressGoal, 1.0, "%.0f%%", true);
-    private final ProgressIndicatorBar pibFeas = new ProgressIndicatorBar(progressFeas, 1.0, "%.0f%%", true);
-    private final ProgressIndicatorBar pibApp = new ProgressIndicatorBar(progressApp, 1.0, "%.0f%%", true);
-    private final ProgressIndicatorBar pibStake = new ProgressIndicatorBar(progressStake, 1.0, "%.0f%%", true);
+    private final SVGPath svgArrow1 = new SVGPath();
+    private final SVGPath svgArrow2 = new SVGPath();
+    private final SVGPath svgArrow3 = new SVGPath();
+    private final SVGPath svgArrow4 = new SVGPath();
+    private final SVGPath svgArrow5 = new SVGPath();
+    //private final SVGPath svgArrow1 = new SVGPath();
 
-    private final GridPane descriptGrid = new GridPane();
-    private final Label descriptTitle = new Label("Current WZITS Tool Assessment Recommendations:");
-    private final Label goalDescript = new Label("Recommended Goals:");
-    private final Label feasDescript = new Label("Work Zone ITS Feasibility:");
-    private final Label appDescript = new Label("Recommended Application:");
-    private final Label stakeDescript = new Label("Top Stakeholder:");
+    private final DashboardPIB pibInfo = new DashboardPIB(progressInfo);
+    private final DashboardPIB pibGoal = new DashboardPIB(progressGoal);
+    private final DashboardPIB pibFeas = new DashboardPIB(progressFeas);
+    private final DashboardPIB pibApp = new DashboardPIB(progressApp);
+    private final DashboardPIB pibStake = new DashboardPIB(progressStake);
 
-//    private final Tab infoTab = new Tab("Project Info");
-//    private final Tab feasTab = new Tab("Feasibility");
-//    private final Tab goalsTab = new Tab("WZITS Goals");
-//    private final Tab appTab = new Tab("Rec. Applications");
-//    private final Tab stakeTab = new Tab("Stakeholders");
-//    private final TabPane infoDash = new TabPane(infoTab, feasTab, goalsTab, appTab, stakeTab);
-    private final BorderPane infoPane = new BorderPane();
-    private final BorderPane feasPane = new BorderPane();
-    private final BorderPane goalsPane = new BorderPane();
-    private final BorderPane appPane = new BorderPane();
-    private final BorderPane stakePane = new BorderPane();
+    private final BorderPane mainPane = new BorderPane();
+    private final BorderPane descriptPaneOuter = new BorderPane();
+    private final BorderPane descriptPaneInner = new BorderPane();
+
+    // Information Toggled Pane
+    private final GridPane infoPane = new GridPane();
+    private final Label infoPaneTitle = new Label("Project Information and Summary");
+    private final Label projNameLabel1 = new Label("Name: ");
+    private final Label projNameLabel2 = new Label();
+    private final Label projAnalystLabel1 = new Label("Analyst: ");
+    private final Label projAnalystLabel2 = new Label();
+    private final Label projAgencyLabel1 = new Label("Agency: ");
+    private final Label projAgencyLabel2 = new Label();
+    private final Label projDescriptLabel1 = new Label("Desc: ");
+    private final Label projDescriptLabel2 = new Label();
+
+    // Feasibility Assessment Toggled Pane
+    private final GridPane feasPane = new GridPane();
+    private final Label feasPaneTitle = new Label("WZITS Feasibility Assessment");
+    private final Label feasScoreLabel1 = new Label("Feasibility Score: ");
+    private final Label feasScoreLabel2 = new Label("58");
+    private final Label feasScoreDesc1 = new Label("30 or more: ITS is likely to provide significant benefits and should be considered as a treatment to mitigate impacts.");
+    private final Label feasScoreDesc2 = new Label("10 to 29: ITS may provide some benefits and should be considered as a treatment to mitigate impacts.");
+    private final Label feasScoreDesc3 = new Label("Less than 10: Its may not provide enough benefit to justify the associate costs.");
+
+    private final GridPane goalsPane = new GridPane();
+    private final Label goalsPaneTitle = new Label("WZITS Top Goals");
+    private final Label goalsType1Label1 = new Label("Mobility:");
+    private final Label goalsType1Label2 = new Label();
+    private final Label goalsType2Label1 = new Label("Productivity:");
+    private final Label goalsType2Label2 = new Label();
+    private final Label goalsType3Label1 = new Label("Regulatory:");
+    private final Label goalsType3Label2 = new Label();
+    private final Label goalsType4Label1 = new Label("Safety:");
+    private final Label goalsType4Label2 = new Label();
+    private final Label goalsType5Label1 = new Label("Traveler Info:");
+    private final Label goalsType5Label2 = new Label();
+
+    private final GridPane appPane = new GridPane();
+    private final Label appPaneTitle = new Label("Recommended Top WZITS Applications");
+    private final Label appType1Label1 = new Label("#1 ");
+    private final Label appType1Label2 = new Label();
+    private final Label appType2Label1 = new Label("#2 ");
+    private final Label appType2Label2 = new Label();
+    private final Label appType3Label1 = new Label("#3 ");
+    private final Label appType3Label2 = new Label();
+    private final Label appType4Label1 = new Label("#4 ");
+    private final Label appType4Label2 = new Label();
+
+    private final GridPane stakePane = new GridPane();
+    private final Label stakePaneTitle = new Label("WZITS Stakeholders");
+    private final Label stakePrimaryLabel1 = new Label("Primary:");
+    private final Label stakePrimaryLabel2 = new Label();
+    private final Label stakeSecondaryLabel1 = new Label("Secondary:");
+    private final Label stakeSecondaryLabel2 = new Label();
+    private final Label stakeAdditionalLabel1 = new Label("Additional:");
+    private final Label stakeAdditionalLabel2 = new Label();
+
+    private final SimpleBooleanProperty statusEnabledProperty = new SimpleBooleanProperty(true);
 
     public StatusBar(MainController control) {
         this.getStyleClass().add("status-bar");
         this.control = control;
-        Label lbl = new Label("Future Status Bar");
-        lbl.setMaxWidth(MainController.MAX_WIDTH);
-        lbl.setPadding(new Insets(0, 0, 5, 0));
+
+        setupPropertyListeners();
+        setupActionListeners();
 
         // Setting title and graphic
+        setupTitleBar();
+
+        // Setting up dashboard controller (left panel)
+        setupDashboardControlToggle();
+
+        // Setting up toggled panels
+        setupInfoPanel();
+        setupFeasPanel();
+        setupGoalsPanel();
+        setupAppPanel();
+        setupStakePanel();
+
+        this.infoToggle.setSelected(true);
+        infoToggleSelected();
+
+        dashboardGrid.getStyleClass().add("dashboard-tab-selector");
+        descriptPaneOuter.getStyleClass().add("dashboard-tab");
+
+        descriptPaneInner.setCenter(infoPane);
+        descriptPaneOuter.setCenter(descriptPaneInner);
+        mainPane.setLeft(dashboardGrid);
+        mainPane.setCenter(descriptPaneOuter); // descriptGrid
+
+        this.setText("Project Milestones:  ");
+        this.setContent(mainPane);
+        this.setExpanded(false);
+    }
+
+    private void setupPropertyListeners() {
+        control.stageWidthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                setMinWidth(newVal.doubleValue() - 20);
+                setMaxWidth(newVal.doubleValue() - 20);
+            }
+        });
+
+        infoToggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                if (newVal) {
+                    infoToggle.setGraphic(svgArrow1);
+                } else {
+                    infoToggle.setGraphic(null);
+                }
+            }
+        });
+
+        feasToggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                if (newVal) {
+                    feasToggle.setGraphic(svgArrow1);
+                } else {
+                    feasToggle.setGraphic(null);
+                }
+            }
+        });
+
+        goalToggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                if (newVal) {
+                    goalToggle.setGraphic(svgArrow1);
+                } else {
+                    goalToggle.setGraphic(null);
+                }
+            }
+        });
+
+        appToggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                if (newVal) {
+                    appToggle.setGraphic(svgArrow1);
+                } else {
+                    appToggle.setGraphic(null);
+                }
+            }
+        });
+
+        stakeToggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                if (newVal) {
+                    stakeToggle.setGraphic(svgArrow1);
+                } else {
+                    stakeToggle.setGraphic(null);
+                }
+            }
+        });
+
+        statusEnabledProperty.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                if (!newVal) {
+                    setExpanded(false);
+                }
+
+                setCollapsible(newVal);
+
+                feasTitle.setVisible(newVal);
+                pbFeas.setVisible(newVal);
+                goalTitle.setVisible(newVal);
+                pbGoal.setVisible(newVal);
+                appTitle.setVisible(newVal);
+                pbApp.setVisible(newVal);
+                stakeTitle.setVisible(newVal);
+                pbStake.setVisible(newVal);
+            }
+        });
+
+        statusEnabledProperty.bind(control.projectStartedProperty());
+
+        this.projNameLabel2.textProperty().bind(control.getProject().getNameProperty());
+        this.projAgencyLabel2.textProperty().bind(control.getProject().getAgencyProperty());
+        this.projAnalystLabel2.textProperty().bind(control.getProject().getAnalystProperty());
+        this.projDescriptLabel2.textProperty().bind(control.getProject().getDescriptionProperty());
+
+        this.goalsType1Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topMobilityGoalProperty());
+        this.goalsType2Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topProdGoalProperty());
+        this.goalsType3Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topRegGoalProperty());
+        this.goalsType4Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topSafetyGoalProperty());
+        this.goalsType5Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topTIGoalProperty());
+
+        this.goalsType1Label2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), goalsType1Label2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), goalsType1Label2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+    }
+
+    private void setupActionListeners() {
+        infoToggle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                infoToggleSelected();
+            }
+        });
+        goalToggle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                goalToggleSelected();
+            }
+        });
+        feasToggle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                feasToggleSelected();
+            }
+        });
+        appToggle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                appToggleSelected();
+            }
+        });
+        stakeToggle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                stake1ToggleSelected();
+            }
+        });
+    }
+
+    private void setupTitleBar() {
         pbFeas.progressProperty().bind(progressFeas);
         pbGoal.progressProperty().bind(progressGoal);
         pbApp.progressProperty().bind(progressApp);
@@ -119,26 +354,45 @@ public class StatusBar extends TitledPane {
         GridPane.setMargin(pbStake, new Insets(0, pad2, 0, 0));
         this.setGraphic(contentGrid);
         this.setContentDisplay(ContentDisplay.RIGHT);
+    }
+
+    private void setupDashboardControlToggle() {
+
+        // Creating button arrows
+        svgArrow1.setContent(IconHelper.SVG_STR_RIGHTARROW_SMALL);
+        svgArrow2.setContent(IconHelper.SVG_STR_RIGHTARROW_SMALL);
+        svgArrow3.setContent(IconHelper.SVG_STR_RIGHTARROW_SMALL);
+        svgArrow4.setContent(IconHelper.SVG_STR_RIGHTARROW_SMALL);
+        svgArrow5.setContent(IconHelper.SVG_STR_RIGHTARROW_SMALL);
+
+        svgArrow1.setFill(Color.WHITE);
+        svgArrow2.setFill(Color.WHITE);
+        svgArrow3.setFill(Color.WHITE);
+        svgArrow4.setFill(Color.WHITE);
+        svgArrow5.setFill(Color.WHITE);
 
         // Setting pane content
-        //dashTitleLabel.setMaxWidth(MainController.MAX_WIDTH);
-        //dashTitleLabel.setAlignment(Pos.CENTER);
-        //dashTitleLabel.setStyle("-fx-font-weight: bold;");
-        infoLabel.setMaxWidth(MainController.MAX_WIDTH);
-        goalLabel.setMaxWidth(MainController.MAX_WIDTH);
-        feasLabel.setMaxWidth(MainController.MAX_WIDTH);
-        appLabel.setMaxWidth(MainController.MAX_WIDTH);
-        stake1Label.setMaxWidth(MainController.MAX_WIDTH);
+        infoToggle.setMaxWidth(MainController.MAX_WIDTH);
+        goalToggle.setMaxWidth(MainController.MAX_WIDTH);
+        feasToggle.setMaxWidth(MainController.MAX_WIDTH);
+        appToggle.setMaxWidth(MainController.MAX_WIDTH);
+        stakeToggle.setMaxWidth(MainController.MAX_WIDTH);
+
+        infoToggle.setContentDisplay(ContentDisplay.RIGHT);
+        goalToggle.setContentDisplay(ContentDisplay.RIGHT);
+        feasToggle.setContentDisplay(ContentDisplay.RIGHT);
+        appToggle.setContentDisplay(ContentDisplay.RIGHT);
+        stakeToggle.setContentDisplay(ContentDisplay.RIGHT);
 
         dashboardGrid.getStyleClass().add("output-dashboard");
         dashboardGrid.setMaxWidth(NodeFactory.NAVIGATOR_MAX_WIDTH);
         int rowCount = 0;
         //dashboardGrid.add(dashTitleLabel, 0, 0, 2, 1);
-        dashboardGrid.add(infoLabel, 1, rowCount++);
-        dashboardGrid.add(goalLabel, 1, rowCount++);
-        dashboardGrid.add(feasLabel, 1, rowCount++);
-        dashboardGrid.add(appLabel, 1, rowCount++);
-        dashboardGrid.add(stake1Label, 1, rowCount++);
+        dashboardGrid.add(infoToggle, 1, rowCount++);
+        dashboardGrid.add(feasToggle, 1, rowCount++);
+        dashboardGrid.add(goalToggle, 1, rowCount++);
+        dashboardGrid.add(appToggle, 1, rowCount++);
+        dashboardGrid.add(stakeToggle, 1, rowCount++);
         rowCount = 0;
         dashboardGrid.add(pibInfo, 0, rowCount++);
         dashboardGrid.add(pibGoal, 0, rowCount++);
@@ -146,108 +400,159 @@ public class StatusBar extends TitledPane {
         dashboardGrid.add(pibApp, 0, rowCount++);
         dashboardGrid.add(pibStake, 0, rowCount++);
 
-        infoLabel.setToggleGroup(tg);
-        goalLabel.setToggleGroup(tg);
-        feasLabel.setToggleGroup(tg);
-        appLabel.setToggleGroup(tg);
-        stake1Label.setToggleGroup(tg);
+        infoToggle.setToggleGroup(tg);
+        goalToggle.setToggleGroup(tg);
+        feasToggle.setToggleGroup(tg);
+        appToggle.setToggleGroup(tg);
+        stakeToggle.setToggleGroup(tg);
 
-        infoLabel.getStyleClass().add("dashboard-toggle");
-        goalLabel.getStyleClass().add("dashboard-toggle");
-        feasLabel.getStyleClass().add("dashboard-toggle");
-        appLabel.getStyleClass().add("dashboard-toggle");
-        stake1Label.getStyleClass().add("dashboard-toggle");
+        infoToggle.getStyleClass().add("dashboard-toggle");
+        goalToggle.getStyleClass().add("dashboard-toggle");
+        feasToggle.getStyleClass().add("dashboard-toggle");
+        appToggle.getStyleClass().add("dashboard-toggle");
+        stakeToggle.getStyleClass().add("dashboard-toggle");
 
-        int pad3 = 10;
-        GridPane.setMargin(infoLabel, new Insets(0, 0, 0, pad3));
-        GridPane.setMargin(goalLabel, new Insets(0, 0, 0, pad3));
-        GridPane.setMargin(feasLabel, new Insets(0, 0, 0, pad3));
-        GridPane.setMargin(appLabel, new Insets(0, 0, 0, pad3));
-        GridPane.setMargin(stake1Label, new Insets(0, 0, 0, pad3));
+        int pad3 = 5;
+        GridPane.setMargin(infoToggle, new Insets(0, 0, 0, pad3));
+        GridPane.setMargin(goalToggle, new Insets(0, 0, 0, pad3));
+        GridPane.setMargin(feasToggle, new Insets(0, 0, 0, pad3));
+        GridPane.setMargin(appToggle, new Insets(0, 0, 0, pad3));
+        GridPane.setMargin(stakeToggle, new Insets(0, 0, 0, pad3));
 
-        infoLabel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                infoToggleSelected();
-            }
-        });
-        goalLabel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                goalToggleSelected();
-            }
-        });
-        feasLabel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                feasToggleSelected();
-            }
-        });
-        appLabel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                appToggleSelected();
-            }
-        });
-        stake1Label.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                stake1ToggleSelected();
-            }
-        });
-
-        descriptTitle.setStyle("-fx-font-weight: bold;");
-        rowCount = 0;
-        descriptGrid.add(descriptTitle, 0, rowCount++);
-        descriptGrid.add(goalDescript, 0, rowCount++);
-        descriptGrid.add(feasDescript, 0, rowCount++);
-        descriptGrid.add(appDescript, 0, rowCount++);
-        descriptGrid.add(stakeDescript, 0, rowCount++);
-
-        int pad4 = 10;
-        GridPane.setMargin(descriptTitle, new Insets(0, 0, 0, pad4));
-        GridPane.setMargin(goalDescript, new Insets(0, 0, 0, pad4));
-        GridPane.setMargin(feasDescript, new Insets(0, 0, 0, pad4));
-        GridPane.setMargin(appDescript, new Insets(0, 0, 0, pad4));
-        GridPane.setMargin(stakeDescript, new Insets(0, 0, 0, pad4));
-
-//        infoPane.setCenter(descriptTitle);
-//        feasPane.setCenter(goalDescript);
-//        goalsPane.setCenter(feasDescript);
-//        appPane.setCenter(appDescript);
-//        stakePane.setCenter(stakeDescript);
-//        infoTab.setContent(infoPane);
-//        feasTab.setContent(feasPane);
-//        goalsTab.setContent(goalsPane);
-//        appTab.setContent(appPane);
-//        stakeTab.setContent(stakePane);
+        int split = 35;
         ColumnConstraints cc1 = new ColumnConstraints();
-        cc1.setPercentWidth(50);
+        cc1.setPercentWidth(split);
         ColumnConstraints cc2 = new ColumnConstraints();
-        cc2.setPercentWidth(50);
+        cc2.setPercentWidth(100 - split);
         dashboardGrid.getColumnConstraints().addAll(cc1, cc2);
+    }
 
-        this.infoLabel.setSelected(true);
-        infoToggleSelected();
+    private void setupInfoPanel() {
 
-        dashboardGrid.getStyleClass().add("dashboard-tab-selector");
-        descriptGrid.getStyleClass().add("dashboard-tab");
+        // Adding content to pane
+        int rowIdx = 0;
+        this.infoPane.add(this.infoPaneTitle, 0, rowIdx++, 2, 1);
+        this.infoPane.add(this.projNameLabel1, 0, rowIdx);
+        this.infoPane.add(this.projNameLabel2, 1, rowIdx++);
+        this.infoPane.add(this.projAnalystLabel1, 0, rowIdx);
+        this.infoPane.add(this.projAnalystLabel2, 1, rowIdx++);
+        this.infoPane.add(this.projAgencyLabel1, 0, rowIdx);
+        this.infoPane.add(this.projAgencyLabel2, 1, rowIdx++);
+        this.infoPane.add(this.projDescriptLabel1, 0, rowIdx);
+        this.infoPane.add(this.projDescriptLabel2, 1, rowIdx++, 1, 2);
 
-        BorderPane bpane = new BorderPane();
-        bpane.setLeft(dashboardGrid);
-        bpane.setCenter(descriptGrid); // descriptGrid
-        BorderPane.setMargin(descriptGrid, new Insets(0, 0, 0, 0));
+        // Setting grid constraints
+        // Setting formatting
+        infoPaneTitle.setStyle("-fx-font-weight: bold");
+        projNameLabel1.setStyle("-fx-font-weight: bold");
+        projAnalystLabel1.setStyle("-fx-font-weight: bold");
+        projAgencyLabel1.setStyle("-fx-font-weight: bold");
+        projDescriptLabel1.setStyle("-fx-font-weight: bold");
+        projDescriptLabel2.setWrapText(true);
+    }
 
-        this.setText("Project Milestones:  ");
-        this.setContent(bpane);
-        this.setExpanded(false);
+    private void setupFeasPanel() {
+        // Adding content to pane
+        int rowIdx = 0;
+        this.feasPane.add(this.feasPaneTitle, 0, rowIdx++, 2, 1);
+        this.feasPane.add(this.feasScoreLabel1, 0, rowIdx);
+        this.feasPane.add(this.feasScoreLabel2, 1, rowIdx++);
+        this.feasPane.add(this.feasScoreDesc1, 0, rowIdx++, 2, 1);
+        this.feasPane.add(this.feasScoreDesc2, 0, rowIdx++, 2, 1);
+        this.feasPane.add(this.feasScoreDesc3, 0, rowIdx, 2, 1);
+
+        // Setting grid constraints
+        ColumnConstraints fcc1 = new ColumnConstraints(125);
+        feasPane.getColumnConstraints().addAll(fcc1);
+
+        // Setting formatting
+        feasPaneTitle.setStyle("-fx-font-weight: bold");
+        feasScoreLabel1.setStyle("-fx-font-weight: bold");
+        feasScoreDesc1.setStyle("-fx-font-weight: bold");
+
+    }
+
+    private void setupGoalsPanel() {
+
+        // Adding content to pane
+        int rowIdx = 0;
+        this.goalsPane.add(this.goalsPaneTitle, 0, rowIdx++, 2, 1);
+        this.goalsPane.add(this.goalsType1Label1, 0, rowIdx);
+        this.goalsPane.add(this.goalsType1Label2, 1, rowIdx++);
+        this.goalsPane.add(this.goalsType2Label1, 0, rowIdx);
+        this.goalsPane.add(this.goalsType2Label2, 1, rowIdx++);
+        this.goalsPane.add(this.goalsType3Label1, 0, rowIdx);
+        this.goalsPane.add(this.goalsType3Label2, 1, rowIdx++);
+        this.goalsPane.add(this.goalsType4Label1, 0, rowIdx);
+        this.goalsPane.add(this.goalsType4Label2, 1, rowIdx++);
+        this.goalsPane.add(this.goalsType5Label1, 0, rowIdx);
+        this.goalsPane.add(this.goalsType5Label2, 1, rowIdx++);
+
+        // Setting grid constraints
+        ColumnConstraints gcc1 = new ColumnConstraints(125);
+        goalsPane.getColumnConstraints().addAll(gcc1);
+
+        // Setting formatting
+        goalsPaneTitle.setStyle("-fx-font-weight: bold");
+        goalsType1Label1.setStyle("-fx-font-weight: bold");
+        goalsType2Label1.setStyle("-fx-font-weight: bold");
+        goalsType3Label1.setStyle("-fx-font-weight: bold");
+        goalsType4Label1.setStyle("-fx-font-weight: bold");
+        goalsType5Label1.setStyle("-fx-font-weight: bold");
+    }
+
+    private void setupAppPanel() {
+        // Adding content to pane
+        int rowIdx = 0;
+        this.appPane.add(this.appPaneTitle, 0, rowIdx++, 2, 1);
+        this.appPane.add(this.appType1Label1, 0, rowIdx);
+        this.appPane.add(this.appType1Label2, 1, rowIdx++);
+        this.appPane.add(this.appType2Label1, 0, rowIdx);
+        this.appPane.add(this.appType2Label2, 1, rowIdx++);
+        this.appPane.add(this.appType3Label1, 0, rowIdx);
+        this.appPane.add(this.appType3Label2, 1, rowIdx++);
+        this.appPane.add(this.appType4Label1, 0, rowIdx);
+        this.appPane.add(this.appType4Label2, 1, rowIdx++, 1, 2);
+
+        // Setting grid constraints
+        ColumnConstraints acc1 = new ColumnConstraints(25);
+        appPane.getColumnConstraints().addAll(acc1);
+
+        // Setting formatting
+        appPaneTitle.setStyle("-fx-font-weight: bold");
+        appType1Label1.setStyle("-fx-font-weight: bold");
+        appType2Label1.setStyle("-fx-font-weight: bold");
+        appType3Label1.setStyle("-fx-font-weight: bold");
+        appType4Label1.setStyle("-fx-font-weight: bold");
+    }
+
+    private void setupStakePanel() {
+        // Adding content to pane
+        int rowIdx = 0;
+        this.stakePane.add(this.stakePaneTitle, 0, rowIdx++, 2, 1);
+        this.stakePane.add(this.stakePrimaryLabel1, 0, rowIdx);
+        this.stakePane.add(this.stakePrimaryLabel2, 1, rowIdx++);
+        this.stakePane.add(this.stakeSecondaryLabel1, 0, rowIdx);
+        this.stakePane.add(this.stakeSecondaryLabel2, 1, rowIdx++);
+        this.stakePane.add(this.stakeAdditionalLabel1, 0, rowIdx);
+        this.stakePane.add(this.stakeAdditionalLabel2, 1, rowIdx++);
+
+        // Setting grid constraints
+        ColumnConstraints scc1 = new ColumnConstraints(100);
+        stakePane.getColumnConstraints().addAll(scc1);
+
+        // Setting formatting
+        stakePaneTitle.setStyle("-fx-font-weight: bold");
+        stakePrimaryLabel1.setStyle("-fx-font-weight: bold");
+        stakeSecondaryLabel1.setStyle("-fx-font-weight: bold");
+        stakeAdditionalLabel1.setStyle("-fx-font-weight: bold");
     }
 
     private void infoToggleSelected() {
-        if (!infoLabel.isSelected()) {
-            infoLabel.setSelected(true);
+        if (!infoToggle.isSelected()) {
+            infoToggle.setSelected(true);
         } else {
-            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptGrid);
+            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptPaneInner);
             ft1.setFromValue(1.0);
             ft1.setToValue(0.0);
             ft1.play();
@@ -255,12 +560,8 @@ public class StatusBar extends TitledPane {
             ft1.setOnFinished(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent ae) {
-                    descriptTitle.setText("Project Information");
-                    goalDescript.setText("Name:");
-                    feasDescript.setText("Analyst:");
-                    appDescript.setText("Future:");
-                    stakeDescript.setText("Future:");
-                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptGrid);
+                    descriptPaneInner.setCenter(infoPane);
+                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptPaneInner);
                     ft2.setFromValue(0.0);
                     ft2.setToValue(1.0);
                     ft2.play();
@@ -270,10 +571,10 @@ public class StatusBar extends TitledPane {
     }
 
     private void goalToggleSelected() {
-        if (!goalLabel.isSelected()) {
-            goalLabel.setSelected(true);
+        if (!goalToggle.isSelected()) {
+            goalToggle.setSelected(true);
         } else {
-            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptGrid);
+            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptPaneInner);
             ft1.setFromValue(1.0);
             ft1.setToValue(0.0);
             ft1.play();
@@ -281,12 +582,8 @@ public class StatusBar extends TitledPane {
             ft1.setOnFinished(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent ae) {
-                    descriptTitle.setText("WZITS Goals Assessment");
-                    goalDescript.setText("Mobility:");
-                    feasDescript.setText("Productivity:");
-                    appDescript.setText("Regulatory:");
-                    stakeDescript.setText("Safety:");
-                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptGrid);
+                    descriptPaneInner.setCenter(goalsPane);
+                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptPaneInner);
                     ft2.setFromValue(0.0);
                     ft2.setToValue(1.0);
                     ft2.play();
@@ -296,10 +593,10 @@ public class StatusBar extends TitledPane {
     }
 
     private void feasToggleSelected() {
-        if (!feasLabel.isSelected()) {
-            feasLabel.setSelected(true);
+        if (!feasToggle.isSelected()) {
+            feasToggle.setSelected(true);
         } else {
-            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptGrid);
+            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptPaneInner);
             ft1.setFromValue(1.0);
             ft1.setToValue(0.0);
             ft1.play();
@@ -307,12 +604,8 @@ public class StatusBar extends TitledPane {
             ft1.setOnFinished(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent ae) {
-                    descriptTitle.setText("WZITS Feasibility Assessment");
-                    goalDescript.setText("Feasibility Score: 58");
-                    feasDescript.setText("30 or more: ITS is likely to provide significant benefits and should be considered as a treatment to mitigate impacts.");
-                    appDescript.setText("10 to 29: ITS may provide some benefits and should be considered as a treatment to mitigate impacts.");
-                    stakeDescript.setText("Less than 10: Its may not provide enough benefit to justify the associate costs.");
-                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptGrid);
+                    descriptPaneInner.setCenter(feasPane);
+                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptPaneInner);
                     ft2.setFromValue(0.0);
                     ft2.setToValue(1.0);
                     ft2.play();
@@ -322,10 +615,10 @@ public class StatusBar extends TitledPane {
     }
 
     private void appToggleSelected() {
-        if (!appLabel.isSelected()) {
-            appLabel.setSelected(true);
+        if (!appToggle.isSelected()) {
+            appToggle.setSelected(true);
         } else {
-            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptGrid);
+            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptPaneInner);
             ft1.setFromValue(1.0);
             ft1.setToValue(0.0);
             ft1.play();
@@ -333,12 +626,8 @@ public class StatusBar extends TitledPane {
             ft1.setOnFinished(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent ae) {
-                    descriptTitle.setText("WZITS Recommended Applications");
-                    goalDescript.setText("#1:");
-                    feasDescript.setText("#2:");
-                    appDescript.setText("#3:");
-                    stakeDescript.setText("#4:");
-                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptGrid);
+                    descriptPaneInner.setCenter(appPane);
+                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptPaneInner);
                     ft2.setFromValue(0.0);
                     ft2.setToValue(1.0);
                     ft2.play();
@@ -348,10 +637,10 @@ public class StatusBar extends TitledPane {
     }
 
     private void stake1ToggleSelected() {
-        if (!stake1Label.isSelected()) {
-            stake1Label.setSelected(true);
+        if (!stakeToggle.isSelected()) {
+            stakeToggle.setSelected(true);
         } else {
-            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptGrid);
+            FadeTransition ft1 = new FadeTransition(Duration.millis(125), descriptPaneInner);
             ft1.setFromValue(1.0);
             ft1.setToValue(0.0);
             ft1.play();
@@ -359,18 +648,33 @@ public class StatusBar extends TitledPane {
             ft1.setOnFinished(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent ae) {
-                    descriptTitle.setText("WZITS Stakeholders");
-                    goalDescript.setText("Primary:");
-                    feasDescript.setText("Secondary:");
-                    appDescript.setText("");
-                    stakeDescript.setText("");
-                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptGrid);
+                    descriptPaneInner.setCenter(stakePane);
+                    FadeTransition ft2 = new FadeTransition(Duration.millis(125), descriptPaneInner);
                     ft2.setFromValue(0.0);
                     ft2.setToValue(1.0);
                     ft2.play();
                 }
             });
         }
+    }
+
+    private class DashboardPIB extends ProgressIndicatorBar {
+
+        public DashboardPIB(SimpleDoubleProperty prop) {
+            super(prop, 1.0, "%.0f%%", true);
+        }
+
+        @Override
+        protected void syncProgress() {
+            super.syncProgress();
+            if (workDone.get() == totalWork) {
+                bar.setStyle("-fx-accent: limegreen");
+                text.setText("Ready!");
+            } else {
+                bar.setStyle("-fx-accent: " + ColorHelper.WZ_ORANGE);
+            }
+        }
+
     }
 
 }

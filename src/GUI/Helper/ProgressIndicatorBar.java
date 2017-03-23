@@ -19,15 +19,15 @@ import javafx.scene.text.Text;
  */
 public class ProgressIndicatorBar extends StackPane {
 
-    final private ReadOnlyDoubleProperty workDone;
-    final private double totalWork;
+    final protected ReadOnlyDoubleProperty workDone;
+    final protected double totalWork;
 
-    final private ProgressBar bar = new ProgressBar();
-    final private Text text = new Text();
-    final private String labelFormatSpecifier;
-    final private Boolean isPercent;
+    final protected ProgressBar bar = new ProgressBar();
+    final protected Text text = new Text();
+    final protected String labelFormatSpecifier;
+    final protected Boolean isPercent;
 
-    final private static int DEFAULT_LABEL_PADDING = 5;
+    final protected static int DEFAULT_LABEL_PADDING = 5;
 
     public ProgressIndicatorBar(final ReadOnlyDoubleProperty workDone, final double totalWork, final String labelFormatSpecifier, final boolean isPercent) {
         this.workDone = workDone;
@@ -49,7 +49,7 @@ public class ProgressIndicatorBar extends StackPane {
     }
 
     // synchronizes the progress indicated with the work done.
-    private void syncProgress() {
+    protected void syncProgress() {
         if (workDone == null || totalWork == 0) {
             text.setText("");
             bar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);

@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -80,7 +82,7 @@ public class GoalNeedsMatrix {
         }
     }
 
-    private void computeScores() {
+    public void computeScores() {
         //for (int nIdx = 0; nIdx < needsList.size(); nIdx++) {
         for (Need n : needsList) {
             int scoreCounter = 0;
@@ -91,6 +93,58 @@ public class GoalNeedsMatrix {
             }
             n.setScore(scoreCounter);
         }
+
+        // Finding Top Scores
+        int topMobScore = 0;
+        Need topMobNeed = null;
+        int topProdScore = 0;
+        Need topProdNeed = null;
+        int topRegScore = 0;
+        Need topRegNeed = null;
+        int topSafetyScore = 0;
+        Need topSafetyNeed = null;
+        int topTIScore = 0;
+        Need topTINeed = null;
+        for (Need n : needsList) {
+            switch (n.getGoal()) {
+                case Question.GOAL_MOBILITY:
+                    if (n.getScore() > topMobScore) {
+                        topMobScore = n.getScore();
+                        topMobNeed = n;
+                    }
+                    break;
+                case Question.GOAL_PROD:
+                    if (n.getScore() > topProdScore) {
+                        topProdScore = n.getScore();
+                        topProdNeed = n;
+                    }
+                    break;
+                case Question.GOAL_REG:
+                    if (n.getScore() > topRegScore) {
+                        topRegScore = n.getScore();
+                        topRegNeed = n;
+                    }
+                    break;
+                case Question.GOAL_SAFETY:
+                    if (n.getScore() > topSafetyScore) {
+                        topSafetyScore = n.getScore();
+                        topSafetyNeed = n;
+                    }
+                    break;
+                case Question.GOAL_TRAVELER_INFO:
+                    if (n.getScore() > topTIScore) {
+                        topTIScore = n.getScore();
+                        topTINeed = n;
+                    }
+                    break;
+
+            }
+        }
+        this.topMobilityGoal.set(topMobNeed != null ? topMobNeed.getDescription() : "");
+        this.topProdGoal.set(topProdNeed != null ? topProdNeed.getDescription() : "");
+        this.topRegGoal.set(topRegNeed != null ? topRegNeed.getDescription() : "");
+        this.topSafetyGoal.set(topSafetyNeed != null ? topSafetyNeed.getDescription() : "");
+        this.topTIGoal.set(topTINeed != null ? topTINeed.getDescription() : "");
     }
 
     public TableView createSummaryTable() {
@@ -134,6 +188,71 @@ public class GoalNeedsMatrix {
         summary.setPlaceholder(new Label("Steps 1.2 - 1.4 must be completed to view."));
 
         return summary;
+    }
+    private final StringProperty topMobilityGoal = new SimpleStringProperty();
+
+    public String getTopMobilityGoal() {
+        return topMobilityGoal.get();
+    }
+
+    public void setTopMobilityGoal(String value) {
+        topMobilityGoal.set(value);
+    }
+
+    public StringProperty topMobilityGoalProperty() {
+        return topMobilityGoal;
+    }
+    private final StringProperty topProdGoal = new SimpleStringProperty();
+
+    public String getTopProdGoal() {
+        return topProdGoal.get();
+    }
+
+    public void setTopProdGoal(String value) {
+        topProdGoal.set(value);
+    }
+
+    public StringProperty topProdGoalProperty() {
+        return topProdGoal;
+    }
+    private final StringProperty topRegGoal = new SimpleStringProperty();
+
+    public String getTopRegGoal() {
+        return topRegGoal.get();
+    }
+
+    public void setTopRegGoal(String value) {
+        topRegGoal.set(value);
+    }
+
+    public StringProperty topRegGoalProperty() {
+        return topRegGoal;
+    }
+    private final StringProperty topSafetyGoal = new SimpleStringProperty();
+
+    public String getTopSafetyGoal() {
+        return topSafetyGoal.get();
+    }
+
+    public void setTopSafetyGoal(String value) {
+        topSafetyGoal.set(value);
+    }
+
+    public StringProperty topSafetyGoalProperty() {
+        return topSafetyGoal;
+    }
+    private final StringProperty topTIGoal = new SimpleStringProperty();
+
+    public String getTopTIGoal() {
+        return topTIGoal.get();
+    }
+
+    public void setTopTIGoal(String value) {
+        topTIGoal.set(value);
+    }
+
+    public StringProperty topTIGoalProperty() {
+        return topTIGoal;
     }
 
 }

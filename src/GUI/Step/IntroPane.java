@@ -7,6 +7,7 @@ package GUI.Step;
 
 import GUI.IconHelper;
 import GUI.MainController;
+import javafx.beans.binding.DoubleBinding;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -14,7 +15,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -61,13 +61,40 @@ public class IntroPane extends BorderPane {
 
         startNewButton.setStyle("-fx-font-size: 36");
 
+        DoubleBinding widthBinding = new DoubleBinding() {
+            {
+                super.bind(widthProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                return Math.max(widthProperty().get() * 0.70, 700);
+            }
+        };
+
+        DoubleBinding heightBinding = new DoubleBinding() {
+            {
+                super.bind(heightProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                return Math.max(heightProperty().get() * 0.35, 200);
+            }
+        };
+        ImageView figAllSteps = new ImageView(IconHelper.FIG_FLOW_ALL_STEPS);
+        figAllSteps.fitWidthProperty().bind(widthBinding);
+        figAllSteps.fitHeightProperty().bind(heightBinding);
+        figAllSteps.setPreserveRatio(true);
+        figAllSteps.setSmooth(true);
+        figAllSteps.setCache(true);
 //        FillTransition nextFT = new FillTransition(Duration.millis(1000), Color.web("#595959"), Color.web("#ED7D31"));
 //        nextFT.setCycleCount(Animation.INDEFINITE);
 //        nextFT.setAutoReverse(true);
 //        nextFT.play();
         subGrid.add(startLabel, 0, 0, 1, 3);
         subGrid.add(infoLabel, 0, 3, 1, 3);
-        subGrid.add(new ImageView(IconHelper.FIG_FLOW_ALL_STEPS), 1, 0, 1, 2);
+        subGrid.add(figAllSteps, 1, 0, 1, 2);
         subGrid.add(instructionLabel, 1, 2, 1, 2);
         subGrid.add(startNewButton, 1, 4, 1, 2);
         subGrid.setStyle("-fx-background-color: white");

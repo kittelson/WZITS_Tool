@@ -6,6 +6,8 @@
 package core;
 
 import java.util.ArrayList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  *
@@ -16,7 +18,7 @@ public class QuestionGenerator {
     /**
      *
      */
-    public final ArrayList<Question> list1;
+    public final ArrayList<QuestionYN> qGoalsList;
 
     /**
      *
@@ -63,8 +65,19 @@ public class QuestionGenerator {
      */
     public final ArrayList<Question> list10;
 
-    public QuestionGenerator() {
-        list1 = new ArrayList();
+    /**
+     * WZITS Project associated with the Question Generator
+     */
+    private final Project proj;
+
+    /**
+     *
+     * @param project
+     */
+    public QuestionGenerator(Project project) {
+        this.proj = project;
+
+        qGoalsList = new ArrayList();
         list2 = new ArrayList();
         list3 = new ArrayList();
         list4 = new ArrayList();
@@ -74,6 +87,12 @@ public class QuestionGenerator {
         list8 = new ArrayList();
         list9 = new ArrayList();
         list10 = new ArrayList();
+
+        ChangeListener questionAnsweredListener = new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                proj.getGoalNeedsMatrix().computeScores();
+            }
+        };
     }
 
 }

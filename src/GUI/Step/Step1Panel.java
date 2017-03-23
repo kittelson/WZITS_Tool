@@ -5,6 +5,7 @@
  */
 package GUI.Step;
 
+import GUI.Helper.ColorHelper;
 import GUI.Helper.NodeFactory;
 import GUI.IconHelper;
 import GUI.MainController;
@@ -28,6 +29,7 @@ import javafx.scene.control.Pagination;
 import GUI.Helper.ProgressIndicatorBar;
 import core.Project;
 import javafx.animation.TranslateTransition;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -165,10 +167,41 @@ public class Step1Panel extends BorderPane {
         infoLabel.getStyleClass().add("launch-title-label-bottom");
         instructionLabel.getStyleClass().add("intro-instructions");
 
+        DoubleBinding widthBinding = new DoubleBinding() {
+            {
+                super.bind(widthProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                //return Math.max(widthProperty().get() * 0.70, 700);
+                return (widthProperty().get() - 150) * 0.9;
+            }
+        };
+
+        DoubleBinding heightBinding = new DoubleBinding() {
+            {
+                super.bind(heightProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                //return Math.max(heightProperty().get() * 0.35, 150);
+                return heightProperty().get() * 0.35;
+            }
+        };
+
+        ImageView figStep1 = new ImageView(IconHelper.FIG_FLOW_STEP_1);
+        figStep1.fitWidthProperty().bind(widthBinding);
+        figStep1.fitHeightProperty().bind(heightBinding);
+        figStep1.setPreserveRatio(true);
+        figStep1.setSmooth(true);
+        figStep1.setCache(true);
+
         stepIntroGrid.add(startLabel, 0, 0);
         stepIntroGrid.add(infoLabel, 0, 1);
         stepIntroGrid.add(instructionLabel, 1, 1);
-        stepIntroGrid.add(new ImageView(IconHelper.FIG_FLOW_STEP_1), 1, 0);
+        stepIntroGrid.add(figStep1, 1, 0);
         stepIntroGrid.setStyle("-fx-background-color: white");
 
         RowConstraints row1 = new RowConstraints();
@@ -222,7 +255,10 @@ public class Step1Panel extends BorderPane {
             }
         });
         pagination.getStyleClass().add(Pagination.STYLE_CLASS_BULLET);
-        pagination.setStyle("-fx-accent: #ED7D31");
+        pagination.setStyle(
+                "-fx-accent: " + ColorHelper.WZ_ORANGE + "; "
+                + "-fx-background-color: " + ColorHelper.WZ_LIGHT_GREY + "; "
+        );
         for (Question q : TableHelper.getStepQuestions(0)) {
             q.responseIdxProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -459,8 +495,8 @@ public class Step1Panel extends BorderPane {
         genInfoTF2.textProperty().bindBidirectional(control.getProject().getAnalystProperty());
         genInfoTF3.textProperty().bindBidirectional(control.getProject().getNameProperty());
         genInfoTF4.textProperty().bindBidirectional(control.getProject().getUrlLinkProperty());
-        genInfoTA2.textProperty().bindBidirectional(control.getProject().getDescriptionProperty());
-        genInfoTA1.textProperty().bindBidirectional(control.getProject().getLimitsProperty());
+        genInfoTA1.textProperty().bindBidirectional(control.getProject().getDescriptionProperty());
+        genInfoTA2.textProperty().bindBidirectional(control.getProject().getLimitsProperty());
 
 //        subStep1Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(0).stepStartedProperty().not());
 //        subStep2Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(1).stepStartedProperty().not());

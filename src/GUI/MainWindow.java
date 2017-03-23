@@ -392,6 +392,7 @@ public class MainWindow extends BorderPane {
         this.setRight(new BorderPane());
         this.setBottom(statusBar);
         this.projectFlowBar.setProceedButtonFlashing(true);
+        //this.statusBar.setStatusEnabled(false);
     }
 
     public void checkProceed() {
