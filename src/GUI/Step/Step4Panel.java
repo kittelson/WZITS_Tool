@@ -6,7 +6,7 @@
 package GUI.Step;
 
 import GUI.MainController;
-import GUI.Tables.Step2Table;
+import GUI.Tables.Step2TableHelper;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -84,18 +84,19 @@ public class Step4Panel extends BorderPane {
         pb = new ProgressBar(0);
         pb.setMaxWidth(MainController.MAX_WIDTH);
 
-        pagination = new Pagination(Step2Table.getPageCount(3) + 2);
+        //pagination = new Pagination(Step2TableHelper.getPageCount(3) + 2);
+        pagination = new Pagination(1);
         pagination.setPageFactory(new Callback<Integer, Node>() {
             @Override
             public Node call(Integer pageIndex) {
-                if (pageIndex == 0) {
-                    return stepIntroGrid;
-                } else if (pageIndex == pagination.getPageCount() - 1) {
-                    return Step2Table.createSummaryTable();
-                } else {
-                    return Step2Table.createPageTable(pageIndex - 1, 10);
-                }
-                //return Step1Table.createPageTable(pageIndex, 10);
+//                if (pageIndex == 0) {
+//                    return stepIntroGrid;
+//                } else if (pageIndex == pagination.getPageCount() - 1) {
+//                    return Step2TableHelper.createSummaryTable();
+//                } else {
+//                    return Step2TableHelper.createPageTable(pageIndex - 1, 10);
+//                }
+                return stepIntroGrid;
             }
         });
         //pagination.getStylesheets().add(this.getClass().getResource("/GUI/Step/step1Pane.css").toExternalForm());

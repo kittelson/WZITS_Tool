@@ -5,12 +5,24 @@
  */
 package GUI.Tables;
 
-import core.Application;
 import core.Question;
 import core.QuestionOption;
 import core.QuestionYN;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 /**
  *
@@ -18,53 +30,146 @@ import javafx.collections.ObservableList;
  */
 public class TableHelper {
 
-    public static ObservableList<QuestionYN> getStepQuestions(int stepIndex) {
-        switch (stepIndex) {
-            default:
-            case 0:
-                return getStep1Questions();
-            case 1:
-                return getStep2Questions();
+    public static TableView createQuestionYNTable(final ObservableList<QuestionYN> qList, String tableStyleCSS) {
+        TableView<QuestionYN> table = new TableView();
+        table.setEditable(true);
+
+        // Setting up table columns
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn indexCol = new TableColumn("#");
+        indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        indexCol.setPrefWidth(25);
+        indexCol.setMaxWidth(25);
+        indexCol.setMinWidth(25);
+        indexCol.getStyleClass().add("col-style-center-bold");
+
+        TableColumn questionCol = new TableColumn("Input Question");
+        questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
+
+        TableColumn responseCol = new TableColumn("User Response");
+        responseCol.setPrefWidth(150);
+        responseCol.setMaxWidth(150);
+        responseCol.setMinWidth(150);
+        responseCol.setCellValueFactory(new PropertyValueFactory<>("responseIdx"));
+
+        final TableColumn yesCol = new TableColumn<>("Yes");
+        yesCol.setCellValueFactory(new PropertyValueFactory<>("answerIsYes"));
+        yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
+
+        TableColumn noCol = new TableColumn("No");
+        noCol.setCellValueFactory(new PropertyValueFactory<>("answerIsNo"));
+        noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
+
+        yesCol.setPrefWidth(75);
+        yesCol.setMaxWidth(75);
+        yesCol.setMinWidth(75);
+        noCol.setPrefWidth(75);
+        noCol.setMaxWidth(75);
+        noCol.setMinWidth(75);
+        responseCol.getColumns().addAll(yesCol, noCol);
+
+        table.getColumns().addAll(indexCol, questionCol, responseCol);  // goalCol
+
+        //final ObservableList<QuestionYN> qList = ;
+        table.setItems(qList);
+        table.getStyleClass().add(tableStyleCSS);
+
+        ContextMenu cMenu = new ContextMenu();
+        MenuItem fillAllYesMenuItem = new MenuItem("Fill All Yes");
+        fillAllYesMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : qList) {
+                    q.setAnswerIsYes(Boolean.TRUE);
+                }
+            }
+        });
+        MenuItem fillAllNoMenuItem = new MenuItem("Fill All No");
+        fillAllNoMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (QuestionYN q : qList) {
+                    q.setAnswerIsNo(Boolean.TRUE);
+                }
+            }
+        });
+        Menu fillByTemplateMenu = new Menu("Fill By Template");
+        MenuItem fillUrbanMenuItem = new MenuItem("Urban Template");
+        MenuItem fillRuralMenuItem = new MenuItem("Rural Template");
+        fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
+        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem, fillByTemplateMenu);
+
+        table.setContextMenu(cMenu);
+
+        for (TableColumn tc : table.getColumns()) {
+            tc.setSortable(false);
         }
+
+        return table;
     }
 
-    private static ObservableList<QuestionYN> getStep1Questions() {
-        return STEP_1_GOAL_QLIST;
-    }
+    public static TableView createQuestionOptionTable(ObservableList<QuestionOption> qList, String tableStyleCSS) {
+        TableView<QuestionOption> table = new TableView();
+        table.setEditable(true);
 
-    private static ObservableList<QuestionYN> getStep2Questions() {
-        return STEP_2_APP_QLIST;
-    }
+        // Setting up table columns
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn indexCol = new TableColumn("#");
+        indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        indexCol.setPrefWidth(25);
+        indexCol.setMaxWidth(25);
+        indexCol.setMinWidth(25);
+        indexCol.getStyleClass().add("col-style-center-bold");
 
-    public static int getNumberOfQuestionsByStep(int stepIdx) {
-        switch (stepIdx) {
-            default:
-                return 0;
-            case 0:
-                return STEP_1_GOAL_QLIST.size();
-            case 1:
-                return STEP_2_APP_QLIST.size();
-            case 2:
-                return STEP_3_QLIST.size();
-            case 3:
-                return STEP_4_QLIST.size();
-            case 4:
-                return STEP_5_QLIST.size();
-            case 5:
-                return STEP_6_QLIST.size();
+        TableColumn questionCol = new TableColumn("Input Question");
+        questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
+
+        TableColumn responseCol = new TableColumn("User Response");
+        responseCol.setPrefWidth(150);
+        responseCol.setMaxWidth(150);
+        responseCol.setMinWidth(150);
+        responseCol.setCellValueFactory(new PropertyValueFactory<>("responseIdx"));
+        responseCol.setCellFactory(new Callback<TableColumn<QuestionOption, String>, TableCell<QuestionOption, String>>() {
+            @Override
+            public TableCell<QuestionOption, String> call(TableColumn<QuestionOption, String> param) {
+                //ObservableList<String> optList = FXCollections.observableArrayList(param.getTableView().getItems().get(0).getOptions());
+                //ObservableList<String> optList = FXCollections.observableArrayList(param.getTableView());
+                return new ComboBoxTableCell() {
+                    @Override
+                    public ObservableList<String> getItems() {
+                        return FXCollections.observableArrayList(((QuestionOption) this.getTableRow().getItem()).getOptions());
+                    }
+                };
+            }
+        });
+        responseCol.setOnEditCommit(new EventHandler<CellEditEvent<QuestionOption, String>>() {
+            @Override
+            public void handle(CellEditEvent<QuestionOption, String> t) {
+                ((QuestionOption) t.getTableView().getItems().get(t.getTablePosition().getRow())).setAnswer(t.getNewValue());
+            }
+        });
+
+        table.getColumns().addAll(indexCol, questionCol, responseCol);  // goalCol
+
+        //final ObservableList<QuestionYN> qList = ;
+        table.setItems(qList);
+        table.getStyleClass().add(tableStyleCSS);
+
+        ContextMenu cMenu = new ContextMenu();
+        Menu fillByTemplateMenu = new Menu("Fill By Template");
+        MenuItem fillUrbanMenuItem = new MenuItem("Urban Template");
+        MenuItem fillRuralMenuItem = new MenuItem("Rural Template");
+        fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
+        cMenu.getItems().addAll(fillByTemplateMenu);
+
+        table.setContextMenu(cMenu);
+
+        for (TableColumn tc : table.getColumns()) {
+            tc.setSortable(false);
         }
+
+        return table;
     }
-
-    public static ObservableList<Application> getStepSummary(int stepIdx) {
-        if (stepIdx == 0) {
-
-        }
-        return FXCollections.observableArrayList(new Application("Queue Warning", 5));
-    }
-
-    private static final ObservableList<QuestionYN> STEP_1_QLIST = FXCollections.observableArrayList(
-            new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
-    );
 
 //    private static final ObservableList<Question> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(
 //            new UserGoal(1, "Do you expect congestion impacts to be noticable to drivers?"),
@@ -111,38 +216,36 @@ public class TableHelper {
 //            new UserGoal(4, "Is there a regulatory goal?"),
 //            new UserGoal(5, "Is there a traveler information goal?")
 //    );
-    private static final ObservableList<QuestionYN> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(
-            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Do you expect congestion impacts to be noticable to drivers?"),
-            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is driver diversion expected onto alternate routes?"),
-            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Do you anticipate significant queuing as a result of this work zone?"),
-            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Will this work zone have reduced lane widths?"),
-            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Will this work zone have reduced sight distance impact?"),
-            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Will transit vehicles need to travel through the work zone?"),
-            new QuestionYN(7, Question.GOAL_USER_NEEDS, "Are you using rapid-set concrete mix?"),
-            new QuestionYN(8, Question.GOAL_USER_NEEDS, "Will construction vehicles access site from travel lanes?"),
-            new QuestionYN(9, Question.GOAL_USER_NEEDS, "Are there specific agency policies for work zones as required by the WZ safety and mobility rule?"),
-            new QuestionYN(10, Question.GOAL_USER_NEEDS, "Does the agency have existing performance targets for work zone?"),
-            new QuestionYN(11, Question.GOAL_USER_NEEDS, "Will outreach and traveler information be used for this work zone?"),
-            new QuestionYN(12, Question.GOAL_USER_NEEDS, "Are there additional data needed before and during construction?"),
-            new QuestionYN(13, Question.GOAL_USER_NEEDS, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"),
-            new QuestionYN(14, Question.GOAL_USER_NEEDS, "Will speed imits in the work zone be lowered compared to base conditions?"),
-            new QuestionYN(15, Question.GOAL_USER_NEEDS, "Does state law allow use of autmoated speed enforcement in WZs?"),
-            new QuestionYN(16, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?"),
-            new QuestionYN(17, Question.GOAL_USER_NEEDS, "Will there be a high volume of constructions vehicles requiring to access the work zone?"),
-            new QuestionYN(18, Question.GOAL_USER_NEEDS, "Will ramp geometry under WZ conditions constrain acceleration lanes?"),
-            new QuestionYN(19, Question.GOAL_USER_NEEDS, "Will work zone activities disable ramp meters (if applicable)?"),
-            new QuestionYN(20, Question.GOAL_USER_NEEDS, "Will the WZ be included in the federally-mandated biannual process review?")
-    );
-
-    public static final ObservableList<QuestionYN> STEP_1_UN_SUP_QLIST = FXCollections.observableArrayList(
-            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"),
-            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are probe data available for the work zone?"),
-            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Are crash data available, and how current are those data?"),
-            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Are there communications systems available?"),
-            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Are there computer options available?"),
-            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Is there software available?")
-    );
-
+//    private static final ObservableList<QuestionYN> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(
+//            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Do you expect congestion impacts to be noticable to drivers?"),
+//            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is driver diversion expected onto alternate routes?"),
+//            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Do you anticipate significant queuing as a result of this work zone?"),
+//            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Will this work zone have reduced lane widths?"),
+//            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Will this work zone have reduced sight distance impact?"),
+//            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Will transit vehicles need to travel through the work zone?"),
+//            new QuestionYN(7, Question.GOAL_USER_NEEDS, "Are you using rapid-set concrete mix?"),
+//            new QuestionYN(8, Question.GOAL_USER_NEEDS, "Will construction vehicles access site from travel lanes?"),
+//            new QuestionYN(9, Question.GOAL_USER_NEEDS, "Are there specific agency policies for work zones as required by the WZ safety and mobility rule?"),
+//            new QuestionYN(10, Question.GOAL_USER_NEEDS, "Does the agency have existing performance targets for work zone?"),
+//            new QuestionYN(11, Question.GOAL_USER_NEEDS, "Will outreach and traveler information be used for this work zone?"),
+//            new QuestionYN(12, Question.GOAL_USER_NEEDS, "Are there additional data needed before and during construction?"),
+//            new QuestionYN(13, Question.GOAL_USER_NEEDS, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"),
+//            new QuestionYN(14, Question.GOAL_USER_NEEDS, "Will speed imits in the work zone be lowered compared to base conditions?"),
+//            new QuestionYN(15, Question.GOAL_USER_NEEDS, "Does state law allow use of autmoated speed enforcement in WZs?"),
+//            new QuestionYN(16, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?"),
+//            new QuestionYN(17, Question.GOAL_USER_NEEDS, "Will there be a high volume of constructions vehicles requiring to access the work zone?"),
+//            new QuestionYN(18, Question.GOAL_USER_NEEDS, "Will ramp geometry under WZ conditions constrain acceleration lanes?"),
+//            new QuestionYN(19, Question.GOAL_USER_NEEDS, "Will work zone activities disable ramp meters (if applicable)?"),
+//            new QuestionYN(20, Question.GOAL_USER_NEEDS, "Will the WZ be included in the federally-mandated biannual process review?")
+//    );
+//    public static final ObservableList<QuestionYN> STEP_1_UN_SUP_QLIST = FXCollections.observableArrayList(
+//            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"),
+//            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are probe data available for the work zone?"),
+//            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Are crash data available, and how current are those data?"),
+//            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Are there communications systems available?"),
+//            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Are there computer options available?"),
+//            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Is there software available?")
+//    );
     public static final ObservableList<QuestionYN> STEP_1_ITS_RESOURCES = FXCollections.observableArrayList(
             new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are technologies to communicate with drivers available?"),
             new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are there weather monitoring stations along the work zone?"),
@@ -152,14 +255,13 @@ public class TableHelper {
             new QuestionYN(6, Question.GOAL_USER_NEEDS, "Do you have access to leased or temporary ITS?")
     );
 
-    public static final ObservableList<QuestionYN> STEP_1_SYSTEM_GOALS = FXCollections.observableArrayList(
-            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Is there a mobility goal?"),
-            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a safety goal?"),
-            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there a productivity goal?"),
-            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Is there a regulatory goal?"),
-            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?")
-    );
-
+//    public static final ObservableList<QuestionYN> STEP_1_SYSTEM_GOALS = FXCollections.observableArrayList(
+//            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Is there a mobility goal?"),
+//            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a safety goal?"),
+//            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there a productivity goal?"),
+//            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Is there a regulatory goal?"),
+//            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?")
+//    );
     public static final ObservableList<QuestionYN> STEP_1_FEASIBILITY = FXCollections.observableArrayList(
             new QuestionYN(1, Question.GOAL_FEASIBILITY, "Traffic speed variability"),
             new QuestionYN(2, Question.GOAL_FEASIBILITY, "Back of queue and other sight distance issues"),

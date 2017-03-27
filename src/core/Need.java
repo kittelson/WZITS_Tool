@@ -22,9 +22,16 @@ public class Need {
 
     private final SimpleIntegerProperty score = new SimpleIntegerProperty(-1);
 
+    private final boolean isPlaceholder;
+
     public Need(String goal, String description) {
+        this(goal, description, false);
+    }
+
+    public Need(String goal, String description, boolean isPlaceholder) {
         this.goal = new SimpleStringProperty(goal);
         this.description = new SimpleStringProperty(description);
+        this.isPlaceholder = isPlaceholder;
     }
 
     public String getGoal() {
@@ -68,24 +75,24 @@ public class Need {
             new Need(Question.GOAL_MOBILITY, "Facilitate the movement of emergency and construction vehicles through the work zone"),
             new Need(Question.GOAL_MOBILITY, "Reduce the number of single-vehicle trips through the work zone"),
             new Need(Question.GOAL_MOBILITY, "Reduce variability of travel times"),
-            new Need(Question.GOAL_MOBILITY, ""),
+            new Need(Question.GOAL_MOBILITY, "", true),
             new Need(Question.GOAL_SAFETY, "Reduce rear-end crashes"),
             new Need(Question.GOAL_SAFETY, "Reduce secondary incidents"),
             new Need(Question.GOAL_SAFETY, "Reduce Incident Clearance Times"),
             new Need(Question.GOAL_SAFETY, "Work toward zero work zone fatalities"),
             new Need(Question.GOAL_SAFETY, "Provide a safe environment for roadway users and worker safety"),
-            new Need(Question.GOAL_SAFETY, ""),
+            new Need(Question.GOAL_SAFETY, "", true),
             new Need(Question.GOAL_PROD, "Minimize delays in construction vehicle access to the work zone"),
             new Need(Question.GOAL_PROD, "Provide an egress from work zone for haul vehicles"),
-            new Need(Question.GOAL_PROD, ""),
+            new Need(Question.GOAL_PROD, "", true),
             new Need(Question.GOAL_REG, "Reduce work zone delays to within XX minutes"),
             new Need(Question.GOAL_REG, "Monitor work zone operations and safety performance in real-time"),
             new Need(Question.GOAL_REG, "Monitor alternative route operations and safety performance in real-time"),
             new Need(Question.GOAL_REG, "Optimize contractor work periods"),
-            new Need(Question.GOAL_REG, ""),
+            new Need(Question.GOAL_REG, "", true),
             new Need(Question.GOAL_TRAVELER_INFO, "Provide roadway users real-time work zone information"),
             new Need(Question.GOAL_TRAVELER_INFO, "Provide roadway users real-time alternate route information"),
-            new Need(Question.GOAL_TRAVELER_INFO, "")
+            new Need(Question.GOAL_TRAVELER_INFO, "", true)
     );
 
 }

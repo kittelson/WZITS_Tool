@@ -7,6 +7,8 @@ package GUI.Step;
 
 import GUI.IconHelper;
 import GUI.MainController;
+import javafx.animation.Animation;
+import javafx.animation.FillTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,6 +22,8 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 /**
  *
@@ -29,8 +33,9 @@ public class IntroPane extends BorderPane {
 
     private final MainController control;
 
-    private final Button startNewButton = new Button("Begin Work Zone ITS Assessment");
+    private final Button startNewButton = new Button("Press to Begin New \nWork Zone ITS Assessment");
 
+    //private final FillTransition beginFT;
     public IntroPane(MainController mc) {
         this.control = mc;
 
@@ -59,7 +64,8 @@ public class IntroPane extends BorderPane {
         infoLabel.getStyleClass().add("launch-title-label-bottom");
         instructionLabel.getStyleClass().add("intro-instructions");
 
-        startNewButton.setStyle("-fx-font-size: 36");
+        startNewButton.getStyleClass().add("intro-begin-button");
+        //startNewButton.setStyle("-fx-font-size: 36");
 
         DoubleBinding widthBinding = new DoubleBinding() {
             {
@@ -88,10 +94,12 @@ public class IntroPane extends BorderPane {
         figAllSteps.setPreserveRatio(true);
         figAllSteps.setSmooth(true);
         figAllSteps.setCache(true);
-//        FillTransition nextFT = new FillTransition(Duration.millis(1000), Color.web("#595959"), Color.web("#ED7D31"));
-//        nextFT.setCycleCount(Animation.INDEFINITE);
-//        nextFT.setAutoReverse(true);
-//        nextFT.play();
+
+        //beginFT = new FillTransition(Duration.millis(1000), Color.web("#79bde8"), Color.web("#005596"));
+        //beginFT.setShape(startNewButton.getShape());
+        //beginFT.setCycleCount(Animation.INDEFINITE);
+        //beginFT.setAutoReverse(true);
+        //beginFT.play();
         subGrid.add(startLabel, 0, 0, 1, 3);
         subGrid.add(infoLabel, 0, 3, 1, 3);
         subGrid.add(figAllSteps, 1, 0, 1, 2);

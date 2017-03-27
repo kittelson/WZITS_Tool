@@ -8,6 +8,7 @@ package GUI;
 import GUI.Helper.ColorHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Helper.ProgressIndicatorBar;
+import core.FeasibilityMatrix;
 import javafx.animation.FadeTransition;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -99,10 +100,10 @@ public class StatusBar extends TitledPane {
     private final GridPane feasPane = new GridPane();
     private final Label feasPaneTitle = new Label("WZITS Feasibility Assessment");
     private final Label feasScoreLabel1 = new Label("Feasibility Score: ");
-    private final Label feasScoreLabel2 = new Label("58");
-    private final Label feasScoreDesc1 = new Label("30 or more: ITS is likely to provide significant benefits and should be considered as a treatment to mitigate impacts.");
-    private final Label feasScoreDesc2 = new Label("10 to 29: ITS may provide some benefits and should be considered as a treatment to mitigate impacts.");
-    private final Label feasScoreDesc3 = new Label("Less than 10: Its may not provide enough benefit to justify the associate costs.");
+    private final Label feasScoreLabel2 = new Label("-");
+    private final Label feasScoreDesc1 = new Label(FeasibilityMatrix.DESC_30PLUS);
+    private final Label feasScoreDesc2 = new Label(FeasibilityMatrix.DESC_10_TO_29);
+    private final Label feasScoreDesc3 = new Label(FeasibilityMatrix.DESC_LESS_THAN_10);
 
     private final GridPane goalsPane = new GridPane();
     private final Label goalsPaneTitle = new Label("WZITS Top Goals");
@@ -271,6 +272,41 @@ public class StatusBar extends TitledPane {
         this.goalsType3Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topRegGoalProperty());
         this.goalsType4Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topSafetyGoalProperty());
         this.goalsType5Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topTIGoalProperty());
+
+        this.feasScoreLabel2.textProperty().bind(control.getProject().getFeasibilityMatrix().feasibilityProperty().asString());
+        this.feasScoreLabel2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), feasScoreLabel2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), feasScoreLabel2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+                if (Integer.valueOf(newVal) >= 30) {
+                    feasScoreDesc1.setStyle("-fx-font-weight: bold");
+                    feasScoreDesc2.setStyle("-fx-font-weight: normal");
+                    feasScoreDesc3.setStyle("-fx-font-weight: normal");
+                } else if (Integer.valueOf(newVal) >= 30) {
+                    feasScoreDesc1.setStyle("-fx-font-weight: normal");
+                    feasScoreDesc2.setStyle("-fx-font-weight: bold");
+                    feasScoreDesc3.setStyle("-fx-font-weight: normal");
+                } else {
+                    feasScoreDesc1.setStyle("-fx-font-weight: normal");
+                    feasScoreDesc2.setStyle("-fx-font-weight: normal");
+                    feasScoreDesc3.setStyle("-fx-font-weight: bold");
+                }
+            }
+        });
 
         this.goalsType1Label2.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -468,7 +504,7 @@ public class StatusBar extends TitledPane {
         // Setting formatting
         feasPaneTitle.setStyle("-fx-font-weight: bold");
         feasScoreLabel1.setStyle("-fx-font-weight: bold");
-        feasScoreDesc1.setStyle("-fx-font-weight: bold");
+        //feasScoreDesc3.setStyle("-fx-font-weight: bold");
 
     }
 

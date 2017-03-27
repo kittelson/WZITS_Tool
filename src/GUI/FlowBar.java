@@ -57,46 +57,52 @@ public class FlowBar extends BorderPane {
     private final Button step6Button = new Button("Step 6");
     private final Button summaryButton = new Button("Summary");
 
-    private final Button step1Sub1Button = new Button("Step 1.1");
-    private final Button step1Sub2Button = new Button("Step 1.2");
-    private final Button step1Sub3Button = new Button("Step 1.3");
-    private final Button step1Sub4Button = new Button("Step 1.4");
-    private final Button step1Sub5Button = new Button("Step 1.5");
+    private final Button step1Sub1Button = new Button(Project.STEP_NAMES[0][1]);
+    private final Button step1Sub2Button = new Button(Project.STEP_NAMES[0][2]);
+    private final Button step1Sub3Button = new Button(Project.STEP_NAMES[0][3]);
+    private final Button step1Sub4Button = new Button(Project.STEP_NAMES[0][4]);
+    private final Button step1Sub5Button = new Button(Project.STEP_NAMES[0][5]);
+    private final Button step1Sub6Button = new Button(Project.STEP_NAMES[0][6]);
+    private final Button step1Sub7Button = new Button(Project.STEP_NAMES[0][7]);
+    private final Button step1Sub8Button = new Button(Project.STEP_NAMES[0][8]);
+    private final Button step1Sub9Button = new Button(Project.STEP_NAMES[0][9]);
+    private final Button step1Sub10Button = new Button(Project.STEP_NAMES[0][10]);
+    private final Button step1Sub11Button = new Button(Project.STEP_NAMES[0][11]);
     private final Button step1ReportButton = new Button("Report");
 
-    private final Button step2Sub1Button = new Button("Step 2.1");
-    private final Button step2Sub2Button = new Button("Step 2.2");
-    private final Button step2Sub3Button = new Button("Step 2.3");
-    private final Button step2Sub4Button = new Button("Step 2.4");
-    private final Button step2Sub5Button = new Button("Step 2.5");
+    private final Button step2Sub1Button = new Button(Project.STEP_NAMES[1][1]);
+    private final Button step2Sub2Button = new Button(Project.STEP_NAMES[1][2]);
+    private final Button step2Sub3Button = new Button(Project.STEP_NAMES[1][3]);
+    private final Button step2Sub4Button = new Button(Project.STEP_NAMES[1][4]);
+    private final Button step2Sub5Button = new Button(Project.STEP_NAMES[1][5]);
     private final Button step2ReportButton = new Button("Report");
 
-    private final Button step3Sub1Button = new Button("Step 3.1");
-    private final Button step3Sub2Button = new Button("Step 3.2");
-    private final Button step3Sub3Button = new Button("Step 3.3");
-    private final Button step3Sub4Button = new Button("Step 3.4");
-    private final Button step3Sub5Button = new Button("Step 3.5");
+    private final Button step3Sub1Button = new Button(Project.STEP_NAMES[2][1]);
+    private final Button step3Sub2Button = new Button(Project.STEP_NAMES[2][2]);
+    private final Button step3Sub3Button = new Button(Project.STEP_NAMES[2][3]);
+    private final Button step3Sub4Button = new Button(Project.STEP_NAMES[2][4]);
+    private final Button step3Sub5Button = new Button(Project.STEP_NAMES[2][5]);
     private final Button step3ReportButton = new Button("Report");
 
-    private final Button step4Sub1Button = new Button("Step 4.1");
-    private final Button step4Sub2Button = new Button("Step 4.2");
-    private final Button step4Sub3Button = new Button("Step 4.3");
-    private final Button step4Sub4Button = new Button("Step 4.4");
-    private final Button step4Sub5Button = new Button("Step 4.5");
+    private final Button step4Sub1Button = new Button(Project.STEP_NAMES[3][1]);
+    private final Button step4Sub2Button = new Button(Project.STEP_NAMES[3][2]);
+    private final Button step4Sub3Button = new Button(Project.STEP_NAMES[3][3]);
+    private final Button step4Sub4Button = new Button(Project.STEP_NAMES[3][4]);
+    //private final Button step4Sub5Button = new Button(Project.STEP_NAMES[3][5]);
     private final Button step4ReportButton = new Button("Report");
 
-    private final Button step5Sub1Button = new Button("Step 5.1");
-    private final Button step5Sub2Button = new Button("Step 5.2");
-    private final Button step5Sub3Button = new Button("Step 5.3");
-    private final Button step5Sub4Button = new Button("Step 5.4");
-    private final Button step5Sub5Button = new Button("Step 5.5");
+    private final Button step5Sub1Button = new Button(Project.STEP_NAMES[4][1]);
+    private final Button step5Sub2Button = new Button(Project.STEP_NAMES[4][2]);
+    private final Button step5Sub3Button = new Button(Project.STEP_NAMES[4][3]);
+    private final Button step5Sub4Button = new Button(Project.STEP_NAMES[4][4]);
+    //private final Button step5Sub5Button = new Button(Project.STEP_NAMES[4][5]);
     private final Button step5ReportButton = new Button("Report");
 
-    private final Button step6Sub1Button = new Button("Step 6.1");
-    private final Button step6Sub2Button = new Button("Step 6.2");
-    private final Button step6Sub3Button = new Button("Step 6.3");
-    private final Button step6Sub4Button = new Button("Step 6.4");
-    private final Button step6Sub5Button = new Button("Step 6.5");
+    private final Button step6Sub1Button = new Button(Project.STEP_NAMES[5][1]);
+    private final Button step6Sub2Button = new Button(Project.STEP_NAMES[5][2]);
+    private final Button step6Sub3Button = new Button(Project.STEP_NAMES[5][3]);
+    private final Button step6Sub4Button = new Button(Project.STEP_NAMES[5][4]);
+    private final Button step6Sub5Button = new Button(Project.STEP_NAMES[5][5]);
     private final Button step6ReportButton = new Button("Report");
 
     private final ArrayList<Button> allButtonList = new ArrayList();
@@ -178,6 +184,12 @@ public class FlowBar extends BorderPane {
         step1List.add(step1Sub3Button);
         step1List.add(step1Sub4Button);
         step1List.add(step1Sub5Button);
+        step1List.add(step1Sub6Button);
+        step1List.add(step1Sub7Button);
+        step1List.add(step1Sub8Button);
+        step1List.add(step1Sub9Button);
+        step1List.add(step1Sub10Button);
+        step1List.add(step1Sub11Button);
         step1List.add(step1ReportButton);
 
         step2List.add(step2Button);
@@ -201,7 +213,7 @@ public class FlowBar extends BorderPane {
         step4List.add(step4Sub2Button);
         step4List.add(step4Sub3Button);
         step4List.add(step4Sub4Button);
-        step4List.add(step4Sub5Button);
+        //step4List.add(step4Sub5Button);
         step4List.add(step4ReportButton);
 
         step5List.add(step5Button);
@@ -209,7 +221,7 @@ public class FlowBar extends BorderPane {
         step5List.add(step5Sub2Button);
         step5List.add(step5Sub3Button);
         step5List.add(step5Sub4Button);
-        step5List.add(step5Sub5Button);
+        //step5List.add(step5Sub5Button);
         step5List.add(step5ReportButton);
 
         step6List.add(step6Button);
@@ -235,6 +247,12 @@ public class FlowBar extends BorderPane {
         allButtonList.add(step1Sub3Button);
         allButtonList.add(step1Sub4Button);
         allButtonList.add(step1Sub5Button);
+        allButtonList.add(step1Sub6Button);
+        allButtonList.add(step1Sub7Button);
+        allButtonList.add(step1Sub8Button);
+        allButtonList.add(step1Sub9Button);
+        allButtonList.add(step1Sub10Button);
+        allButtonList.add(step1Sub11Button);
         allButtonList.add(step1ReportButton);
 
         allButtonList.add(step2Button);
@@ -258,7 +276,7 @@ public class FlowBar extends BorderPane {
         allButtonList.add(step4Sub2Button);
         allButtonList.add(step4Sub3Button);
         allButtonList.add(step4Sub4Button);
-        allButtonList.add(step4Sub5Button);
+        //allButtonList.add(step4Sub5Button);
         allButtonList.add(step4ReportButton);
 
         allButtonList.add(step5Button);
@@ -266,7 +284,7 @@ public class FlowBar extends BorderPane {
         allButtonList.add(step5Sub2Button);
         allButtonList.add(step5Sub3Button);
         allButtonList.add(step5Sub4Button);
-        allButtonList.add(step5Sub5Button);
+        //allButtonList.add(step5Sub5Button);
         allButtonList.add(step5ReportButton);
 
         allButtonList.add(step6Button);
@@ -343,6 +361,7 @@ public class FlowBar extends BorderPane {
 
         for (Button b : allButtonList) {
             b.setTextAlignment(TextAlignment.CENTER);
+            b.setWrapText(true);
             b.setMinWidth(0);
             b.setMinHeight(0);
             b.setMaxWidth(MainController.MAX_WIDTH);
@@ -377,11 +396,11 @@ public class FlowBar extends BorderPane {
             this.flowList.get(stepIdx + 1).setText("Step " + String.valueOf(stepIdx + 1));
             for (int i = 0; i < Project.NUM_STEPS; i++) {
                 if (i == stepIdx) {
-                    for (int j = 0; j < Project.NUM_SUB_STEPS[stepIdx] + 1; j++) {
+                    for (int j = 0; j < Project.NUM_SUB_STEPS[i] + 1; j++) {
                         ccSubSteps.get(i).get(j).setPercentWidth(wExpand);
                     }
                 } else {
-                    for (int j = 0; j < Project.NUM_SUB_STEPS[stepIdx] + 1; j++) {
+                    for (int j = 0; j < Project.NUM_SUB_STEPS[i] + 1; j++) {
                         ccSubSteps.get(i).get(j).setPercentWidth(0);
                     }
                 }
@@ -613,18 +632,23 @@ public class FlowBar extends BorderPane {
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
                 step1Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step1Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step1Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step1Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step1Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step1Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step1ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step1Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step1Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step1Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step1Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step1Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step1ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                for (int bIdx = 1; bIdx < step1List.size(); bIdx++) {
+                    step1List.get(bIdx).setStyle("-fx-background-color: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                            + ";-fx-text-fill: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                }
+
                 prevButton.setDisable(control.getActiveStep() == 0 && control.getActiveSubStep(0) == -1);
             }
         });
@@ -633,6 +657,12 @@ public class FlowBar extends BorderPane {
         step1Sub3Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(2).stepStartedProperty().not());
         step1Sub4Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(3).stepStartedProperty().not());
         step1Sub5Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(3).stepFinishedProperty().not());
+        step1Sub6Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(5).stepStartedProperty().not());
+        step1Sub7Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(5).stepFinishedProperty().not());
+        step1Sub8Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(7).stepStartedProperty().not());
+        step1Sub9Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(7).stepStartedProperty().not());
+        step1Sub10Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(9).stepStartedProperty().not());
+        step1Sub11Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(10).stepStartedProperty().not());
 
         control.activeSubStepProperty(1).addListener(new ChangeListener() {
             @Override
@@ -697,8 +727,8 @@ public class FlowBar extends BorderPane {
                         + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
                 step4Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step4Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                //step4Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                //        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
                 step4ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
@@ -707,7 +737,7 @@ public class FlowBar extends BorderPane {
         step4Sub2Button.disableProperty().bind(control.getProject().getStep(3).getSubStep(1).stepStartedProperty().not());
         step4Sub3Button.disableProperty().bind(control.getProject().getStep(3).getSubStep(2).stepStartedProperty().not());
         step4Sub4Button.disableProperty().bind(control.getProject().getStep(3).getSubStep(3).stepStartedProperty().not());
-        step4Sub5Button.disableProperty().bind(control.getProject().getStep(3).getSubStep(3).stepFinishedProperty().not());
+        //step4Sub5Button.disableProperty().bind(control.getProject().getStep(3).getSubStep(3).stepFinishedProperty().not());
 
         control.activeSubStepProperty(4).addListener(new ChangeListener() {
             @Override
@@ -722,8 +752,8 @@ public class FlowBar extends BorderPane {
                         + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
                 step5Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step5Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                //step5Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                //        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
                 step5ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
@@ -732,7 +762,7 @@ public class FlowBar extends BorderPane {
         step5Sub2Button.disableProperty().bind(control.getProject().getStep(4).getSubStep(1).stepStartedProperty().not());
         step5Sub3Button.disableProperty().bind(control.getProject().getStep(4).getSubStep(2).stepStartedProperty().not());
         step5Sub4Button.disableProperty().bind(control.getProject().getStep(4).getSubStep(3).stepStartedProperty().not());
-        step5Sub5Button.disableProperty().bind(control.getProject().getStep(4).getSubStep(3).stepFinishedProperty().not());
+        //step5Sub5Button.disableProperty().bind(control.getProject().getStep(4).getSubStep(3).stepFinishedProperty().not());
 
         control.activeSubStepProperty(5).addListener(new ChangeListener() {
             @Override

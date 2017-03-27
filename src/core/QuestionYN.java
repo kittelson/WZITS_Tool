@@ -5,7 +5,9 @@
  */
 package core;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -19,13 +21,18 @@ public class QuestionYN extends Question {
 
     public final SimpleBooleanProperty answerIsNo = new SimpleBooleanProperty(false);
 
+    private final IntegerProperty score = new SimpleIntegerProperty(0);
+
+    private final int weight;
+
     public QuestionYN(int idx, String goal, String questionText) {
-        this(idx, goal, questionText, false);
+        this(idx, goal, questionText, false, 1);
     }
 
-    public QuestionYN(int idx, String goal, String questionText, boolean isYes) {
+    public QuestionYN(int idx, String goal, String questionText, boolean isYes, int weightVal) {
         super(idx, goal, questionText);
-        //answerIsYes.bind(answerIsNo.not());
+        this.weight = weightVal;
+
         answerIsYes.set(isYes);
         answerIsYes.addListener(new ChangeListener<Boolean>() {
             @Override
@@ -34,7 +41,9 @@ public class QuestionYN extends Question {
                 if (newVal) {
                     responseIdx.set(1);
                     answerIsNo.set(false);
+                    score.set(weight);
                 } else {
+                    score.set(0);
                     if (!answerIsNo.get()) {
                         responseIdx.set(-1);
                     }
@@ -48,6 +57,7 @@ public class QuestionYN extends Question {
                 if (newVal) {
                     responseIdx.set(0);
                     answerIsYes.set(false);
+                    score.set(0);
                 } else {
                     if (!answerIsYes.get()) {
                         responseIdx.set(-1);
@@ -100,4 +110,17 @@ public class QuestionYN extends Question {
     public SimpleBooleanProperty answerIsNoProperty() {
         return answerIsNo;
     }
+
+    protected int getScore() {
+        return score.get();
+    }
+
+    protected void setScore(int value) {
+        score.set(value);
+    }
+
+    protected IntegerProperty scoreProperty() {
+        return score;
+    }
+
 }

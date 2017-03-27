@@ -5,6 +5,9 @@
  */
 package core;
 
+import GUI.Helper.CellSpan;
+import GUI.Helper.CellSpanTableView;
+import GUI.Helper.SpanModel;
 import GUI.Tables.TableHelper;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,9 +40,15 @@ public class GoalNeedsMatrix {
 
     private final HashMap<String, SimpleBooleanProperty> includeGoalCat;
 
+    private int numMob;
+    private int numProd;
+    private int numReg;
+    private int numSafety;
+    private int numTravInfo;
+
     private int[][] matrix;
 
-    public GoalNeedsMatrix(ObservableList<QuestionYN> qList, ObservableList<Need> needsList) {
+    public GoalNeedsMatrix(ObservableList<QuestionYN> qList, ObservableList<Need> needsList, ObservableList<QuestionYN> majorGoalsList) {
         this.qList = qList;
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
             qToRowMap.put(qList.get(qIdx), qIdx);
@@ -50,11 +59,11 @@ public class GoalNeedsMatrix {
         }
 
         includeGoalCat = new HashMap();
-        includeGoalCat.put(Question.GOAL_MOBILITY, TableHelper.STEP_1_SYSTEM_GOALS.get(0).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_SAFETY, TableHelper.STEP_1_SYSTEM_GOALS.get(1).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_PROD, TableHelper.STEP_1_SYSTEM_GOALS.get(2).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_REG, TableHelper.STEP_1_SYSTEM_GOALS.get(3).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_TRAVELER_INFO, TableHelper.STEP_1_SYSTEM_GOALS.get(4).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_MOBILITY, majorGoalsList.get(0).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_SAFETY, majorGoalsList.get(1).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_PROD, majorGoalsList.get(2).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_REG, majorGoalsList.get(3).answerIsYesProperty());
+        includeGoalCat.put(Question.GOAL_TRAVELER_INFO, majorGoalsList.get(4).answerIsYesProperty());
 
         matrix = new int[qList.size()][needsList.size()];
 
@@ -94,6 +103,7 @@ public class GoalNeedsMatrix {
             n.setScore(scoreCounter);
         }
 
+        numMob = numProd = numReg = numSafety = numTravInfo = 0;
         // Finding Top Scores
         int topMobScore = 0;
         Need topMobNeed = null;
@@ -108,30 +118,35 @@ public class GoalNeedsMatrix {
         for (Need n : needsList) {
             switch (n.getGoal()) {
                 case Question.GOAL_MOBILITY:
+                    numMob++;
                     if (n.getScore() > topMobScore) {
                         topMobScore = n.getScore();
                         topMobNeed = n;
                     }
                     break;
                 case Question.GOAL_PROD:
+                    numProd++;
                     if (n.getScore() > topProdScore) {
                         topProdScore = n.getScore();
                         topProdNeed = n;
                     }
                     break;
                 case Question.GOAL_REG:
+                    numReg++;
                     if (n.getScore() > topRegScore) {
                         topRegScore = n.getScore();
                         topRegNeed = n;
                     }
                     break;
                 case Question.GOAL_SAFETY:
+                    numSafety++;
                     if (n.getScore() > topSafetyScore) {
                         topSafetyScore = n.getScore();
                         topSafetyNeed = n;
                     }
                     break;
                 case Question.GOAL_TRAVELER_INFO:
+                    numTravInfo++;
                     if (n.getScore() > topTIScore) {
                         topTIScore = n.getScore();
                         topTINeed = n;
@@ -160,7 +175,7 @@ public class GoalNeedsMatrix {
         catCol.setPrefWidth(175);
         catCol.setMaxWidth(175);
         catCol.setMinWidth(175);
-        catCol.getStyleClass().add("col-style-center-bold");
+        catCol.getStyleClass().add("col-style-center");
         catCol.setSortType(SortType.ASCENDING);
 
         TableColumn recCol = new TableColumn("Recommended User Goals");
@@ -171,7 +186,7 @@ public class GoalNeedsMatrix {
         scoreCol.setPrefWidth(100);
         scoreCol.setMaxWidth(100);
         scoreCol.setMinWidth(100);
-        scoreCol.getStyleClass().add("col-style-center-bold");
+        scoreCol.getStyleClass().add("col-style-center");
         scoreCol.setSortType(SortType.DESCENDING);
 
         summary.getColumns().addAll(catCol, recCol, scoreCol);
@@ -189,6 +204,89 @@ public class GoalNeedsMatrix {
 
         return summary;
     }
+
+    public TableView createSummarySpanTable() {
+        computeScores();
+
+        final CellSpanTableView<Need> summary = new CellSpanTableView();
+        //summary.getStyleClass().add("step-summary-table");
+
+        summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn catCol = new TableColumn("Category");
+        catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
+        catCol.setPrefWidth(175);
+        catCol.setMaxWidth(175);
+        catCol.setMinWidth(175);
+        catCol.getStyleClass().add("col-style-center");
+        catCol.setSortType(SortType.ASCENDING);
+
+        TableColumn recCol = new TableColumn("Recommended User Goals");
+        recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        TableColumn scoreCol = new TableColumn("Score");
+        scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
+        scoreCol.setPrefWidth(100);
+        scoreCol.setMaxWidth(100);
+        scoreCol.setMinWidth(100);
+        scoreCol.getStyleClass().add("col-style-center");
+        scoreCol.setSortType(SortType.DESCENDING);
+
+        summary.getColumns().addAll(catCol, recCol, scoreCol);
+
+        //summary.setItems(needsList);
+        for (Need n : needsList) {
+            if (this.includeGoalCat.get(n.getGoal()).get()) {
+                summary.getItems().add(n);
+            }
+        }
+
+//        final int finNumMob = numMob;
+//        final int finNumProd = numProd;
+//        final int finNumReg = numReg;
+//        final int finNumSafety = numSafety;
+//        final int finNumTravInfo = numTravInfo;
+        summary.setSpanModel(new SpanModel() {
+            private final CellSpan mobSpan = new CellSpan(numMob, 1);
+            private final CellSpan prodSpan = new CellSpan(numProd, 1);
+            private final CellSpan regSpan = new CellSpan(numReg, 1);
+            private final CellSpan safetySpan = new CellSpan(numSafety, 1);
+            private final CellSpan travInfoSpan = new CellSpan(numTravInfo, 1);
+
+            @Override
+            public CellSpan getCellSpanAt(int rowIndex, int columnIndex) {
+                if (rowIndex == 0) {
+                    return mobSpan;
+                }
+                if (rowIndex == numMob + 1) {
+                    return prodSpan;
+                }
+                if (rowIndex == numMob + numProd + 2) {
+                    return regSpan;
+                }
+                if (rowIndex == numMob + numProd + numReg + 3) {
+                    return safetySpan;
+                }
+                if (rowIndex == numMob + numProd + numReg + numSafety + 4) {
+                    return travInfoSpan;
+                }
+                return null;
+                //return summary.getItems().get(rowIndex).getSpan();
+            }
+
+            @Override
+            public boolean isCellSpanEnabled() {
+                return true;
+            }
+        });
+
+        summary.getSortOrder().setAll(catCol, scoreCol);
+
+        summary.setPlaceholder(new Label("Steps 1.2 - 1.4 must be completed to view."));
+
+        return summary;
+    }
+
     private final StringProperty topMobilityGoal = new SimpleStringProperty();
 
     public String getTopMobilityGoal() {

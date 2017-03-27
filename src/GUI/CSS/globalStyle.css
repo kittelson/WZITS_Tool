@@ -9,6 +9,8 @@
     
     -fx-selection-bar: #ED7D31;
     -fx-selection-bar-text-fill: white;
+    
+    -fx-font-family: "calibri";
 }
 
 .launch-title-label-top {
@@ -37,6 +39,14 @@
     -fx-background-color: white;
     -fx-font-size: 32;
     -fx-font-family: 'calibri';
+    -fx-text-alignment: center;
+}
+
+.intro-begin-button {
+    -fx-font-size: 36;
+    -fx-font-family: "calibri";
+    -fx-background-color: #29abe2;
+    -fx-text-fill: white;
     -fx-text-alignment: center;
 }
 
@@ -295,3 +305,106 @@
     -fx-border-color: #ED7D31;
     -fx-border-width: 5px 5px 5px 10px;
 }
+
+.opt-pane-title {
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-background-color: #bac5cc;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+}
+
+.opt-pane-question {
+    -fx-background-color: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 15;
+}
+
+.opt-pane-question-idx {
+    -fx-alignment: center;
+    -fx-background-color: white;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+}
+
+.feasibility-output-title-bold {
+    -fx-background-color: #4472c4;
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 28;
+}
+
+.feasibility-output-title {
+    -fx-background-color: #ddebf7;
+    -fx-alignment: center;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 28;
+}
+
+.feasibility-output-desc {
+    -fx-background-color: white;
+    -fx-alignment: center;
+    -fx-font-family: 'calibri';
+    -fx-font-size: 20;
+}
+
+.cell-span-table-view > .virtual-flow > .clipped-container > .sheet > .table-row-cell {
+    -fx-skin: "net.jonathangiles.hacking.tableview.cellSpan.impl.CellSpanTableRowSkin";
+}
+
+.cell-span-table-view > .virtual-flow > .clipped-container > .sheet > .table-row-cell {
+    -fx-background-color: transparent;
+} 
+
+/* All table-row-cells - we don't care if they are even or odd */
+.cell-span-table-view > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell {
+    -fx-background-color: -fx-table-cell-border-color, -fx-control-inner-background;
+    -fx-background-insets: 0, 0 1 1 0;
+    -fx-alignment: center;
+}
+
+/** Selection styles */
+/*.cell-span-table-view > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:focused:selected, */
+.cell-span-table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:selected > .table-cell,
+.cell-span-table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:focused:selected > .table-cell,
+.cell-span-table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:focused:selected:hover > .table-cell,
+.cell-span-table-view:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:filled:selected,
+.cell-span-table-view:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:filled:focused:selected,
+.cell-span-table-view:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell > .table-cell:filled:focused:selected:hover {
+    -fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-selection-bar;
+    -fx-background-insets: 0 1 0 0, 1 2 1 1, 2 3 2 2;
+    -fx-background: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+
+/** Hover styles */
+/** --- Row selection mode hover */
+.cell-span-table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:hover > .table-cell { 
+    -fx-background-color: -fx-table-cell-border-color, -fx-cell-hover-color;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.cell-span-table-view:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:focused:hover > .table-cell  { 
+    -fx-background-color: -fx-table-cell-border-color, -fx-focus-color, -fx-cell-focus-inner-border, -fx-cell-hover-color;
+    -fx-background-insets: 0, 0 0 1 0, 1 1 2 1, 2 2 3 2, 3 3 4 3;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+/** --- Cell selection mode hover */
+.cell-span-table-view:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled > .table-cell:hover {
+    -fx-background-color: -fx-table-cell-border-color, -fx-cell-hover-color;
+    -fx-text-fill: -fx-text-inner-color;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.cell-span-table-view:cell-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled > .table-cell:focused:hover {
+    -fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-cell-hover-color;
+    -fx-background-insets: 0 1 0 0, 1 2 1 1, 2 3 2 2;
+    -fx-text-fill: -fx-text-inner-color;
+}
+/** End of hover styles */

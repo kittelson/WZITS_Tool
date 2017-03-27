@@ -17,6 +17,7 @@ public class NodeFactory {
     public static Label createFormattedLabel(String text, String formatStyle) {
         Label lbl = new Label(text);
         lbl.setMaxWidth(MainController.MAX_WIDTH);
+        lbl.setMaxHeight(MainController.MAX_HEIGHT);
         lbl.getStyleClass().add(formatStyle);
         return lbl;
     }

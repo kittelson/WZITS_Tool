@@ -108,6 +108,8 @@ public abstract class Question {
 
     public static final String GOAL_FEASIBILITY = "Feasibility";
 
+    public static final String GOAL_STAKEHOLDER = "Stakeholder";
+
     public static final String GOAL_MOBILITY = "Mobility";
     public static final String GOAL_SAFETY = "Safety";
     public static final String GOAL_PROD = "Productivity";

@@ -226,6 +226,6 @@ public class ProjectTreeItem extends TreeItem<Project> {
         }
     }
 
-    private final int[] numSubSteps = {7, 7, 7, 7, 7, 7};
+    private final int[] numSubSteps = {12, 7, 7, 7, 7, 7};
 
 }

@@ -5,12 +5,12 @@
  */
 package core;
 
-import GUI.Tables.TableHelper;
 import java.io.File;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Project {
 
     public static final int NUM_STEPS = 6;
 
-    public static final int[] NUM_SUB_STEPS = {5, 5, 5, 5, 5, 5};
+    public static final int[] NUM_SUB_STEPS = {11, 5, 5, 4, 4, 5};
 
     private final SimpleStringProperty name = new SimpleStringProperty();
     private final SimpleStringProperty agency = new SimpleStringProperty();
@@ -33,7 +33,13 @@ public class Project {
 
     private final Step[] steps;
 
+    private final QuestionGenerator qGen;
+
     private final GoalNeedsMatrix gnMat;
+
+    private final FeasibilityMatrix feasMat;
+
+    private final StakeholderMatrix stakeMat;
 
     public Project() {
         this("New Project", null);
@@ -50,8 +56,10 @@ public class Project {
         for (int stepIdx = 0; stepIdx < NUM_STEPS; stepIdx++) {
             steps[stepIdx] = new Step(this, stepIdx, NUM_SUB_STEPS[stepIdx]);
         }
-
-        gnMat = new GoalNeedsMatrix(TableHelper.getStepQuestions(0), Need.GOAL_WIZARD_NEEDS_LIST);
+        qGen = new QuestionGenerator(this);
+        gnMat = new GoalNeedsMatrix(qGen.getGoalWizardQs(), Need.GOAL_WIZARD_NEEDS_LIST, qGen.qMajorGoalsList);
+        feasMat = new FeasibilityMatrix(qGen.qFeasOptionList, qGen.qFeasYNList);
+        stakeMat = new StakeholderMatrix(qGen.qStakeholderOptionList, qGen.qFeasYNList);
     }
 
     public String getName() {
@@ -90,8 +98,80 @@ public class Project {
         return steps[index];
     }
 
+    public ObservableList<QuestionYN> getGoalWizardQs() {
+        return qGen.getGoalWizardQs();
+    }
+
+    public int getNumGoalWizardQs() {
+        return qGen.getGoalWizardQCount();
+    }
+
+    public ObservableList<QuestionYN> getUNSupportQs() {
+        return qGen.qUNSupportList;
+    }
+
+    public int getNumUNSupportQs() {
+        return qGen.qUNSupportList.size();
+    }
+
+    public ObservableList<QuestionYN> getMajorGoalsQs() {
+        return qGen.qMajorGoalsList;
+    }
+
+    public int getNumMajorGoalsQs() {
+        return qGen.qMajorGoalsList.size();
+    }
+
     public GoalNeedsMatrix getGoalNeedsMatrix() {
         return gnMat;
+    }
+
+    public ObservableList<QuestionYN> getFeasWizardYNQs() {
+        return qGen.qFeasYNList;
+    }
+
+    public int getNumFeasWizardYNQs() {
+        return qGen.qFeasYNList.size();
+    }
+
+    public ObservableList<QuestionOption> getFeasWizardOptQs() {
+        return qGen.qFeasOptionList;
+    }
+
+    public int getNumFeasWizardOptQs() {
+        return qGen.qFeasOptionList.size();
+    }
+
+    public FeasibilityMatrix getFeasibilityMatrix() {
+        return feasMat;
+    }
+
+    public ObservableList<QuestionYN> getStakeWizardYNQs() {
+        return qGen.qStakeholderYNList;
+    }
+
+    public int getNumStakeWizardYNQs() {
+        return qGen.qStakeholderYNList.size();
+    }
+
+    public ObservableList<QuestionOption> getStakeWizardOptQs() {
+        return qGen.qStakeholderOptionList;
+    }
+
+    public int getNumStakeWizardOptQs() {
+        return qGen.qStakeholderOptionList.size();
+    }
+
+    public StakeholderMatrix getStakeholderMatrix() {
+        return stakeMat;
+    }
+
+    public ObservableList<QuestionYN> getAppWizardQs() {
+        return qGen.getAppWizardQs();
+    }
+
+    public int getNumAppWizardQs() {
+        return qGen.getAppWizardQCount();
     }
 
     @Override
@@ -317,10 +397,18 @@ public class Project {
 
     }
 
-    public static final int GOAL_WIZARD_SUMMARY_INDEX = 4;
+    public static final int GOAL_WIZARD_SUMMARY_INDEX = 4; // Step 1
+    public static final int FEAS_WIZARD_SUMMARY_INDEX = 6; // Step 1
+    public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 8;  // Step 1
+    public static final int APP_WIZARD_SUMMARY_INDEX = 2; // Step 2
 
-    public final String[][] StepNames = {
-        {"Step 1", "User Needs", "User Needs Support", "Goals", "Goal Wizard Summary", "Feasibility", "Feasibility Wizard Summary", "Stakeholders", "Stakeholders Wizard Summary", "Team Members", "ITS Resources"}
+    public static final String[][] STEP_NAMES = {
+        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard Summary", "Feasibility", "Feasibility Wizard Summary", "Stakeholders", "Stakeholders Wizard Summary", "Team Members", "ITS Resources"},
+        {"Step 2", "Initial Applications", "Application Wizard", "Benefits", "Costs", "Institutional/Jurisdictional", "Legal/Policy", "Stakeholder Buy-In", "Develop Concept of Operations"},
+        {"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Ops & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
+        {"Step 4", "Direct/Indirect", "Award Mechanism", "RFP Requirements", "Selected Vendor"},
+        {"Step 5", "Implementing System Plans", "Scheduling Decisions", "System Acceptance Testing", "Handling Deployment Issues"},
+        {"Step 6", "Changin Work Zone", "Using/Sharing ITS Info", "Maintaining Adequate Staff", "Leveraging Public Support", "System Monitoring/Evaluation"}
     };
 
 }
