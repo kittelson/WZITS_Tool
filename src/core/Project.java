@@ -6,8 +6,14 @@
 package core;
 
 import java.io.File;
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -22,12 +28,25 @@ public class Project {
 
     public static final int[] NUM_SUB_STEPS = {11, 5, 5, 4, 4, 5};
 
+    // Project information
     private final SimpleStringProperty name = new SimpleStringProperty();
     private final SimpleStringProperty agency = new SimpleStringProperty();
     private final SimpleStringProperty analyst = new SimpleStringProperty();
     private final SimpleStringProperty description = new SimpleStringProperty();
     private final SimpleStringProperty limits = new SimpleStringProperty();
     private final SimpleStringProperty urlLink = new SimpleStringProperty();
+
+    // Work Zone Metadata
+    private final StringProperty functionalClass = new SimpleStringProperty();
+    private final StringProperty wzType = new SimpleStringProperty();
+    private final StringProperty maintainingAgency = new SimpleStringProperty();
+    private final IntegerProperty aadt = new SimpleIntegerProperty();
+    private final FloatProperty wzLength = new SimpleFloatProperty();
+    private final IntegerProperty numRoadwayLanes = new SimpleIntegerProperty();
+    private final FloatProperty shoulderWidth = new SimpleFloatProperty();
+    private final IntegerProperty speedLimit = new SimpleIntegerProperty();
+    private final IntegerProperty numLanesClosed = new SimpleIntegerProperty();
+    private final IntegerProperty activityDuration = new SimpleIntegerProperty();
 
     private File saveFile = null;
 
@@ -59,7 +78,7 @@ public class Project {
         qGen = new QuestionGenerator(this);
         gnMat = new GoalNeedsMatrix(qGen.getGoalWizardQs(), Need.GOAL_WIZARD_NEEDS_LIST, qGen.qMajorGoalsList);
         feasMat = new FeasibilityMatrix(qGen.qFeasOptionList, qGen.qFeasYNList);
-        stakeMat = new StakeholderMatrix(qGen.qStakeholderOptionList, qGen.qFeasYNList);
+        stakeMat = new StakeholderMatrix(this, qGen.qStakeholderOptionList, qGen.qStakeholderYNList);
     }
 
     public String getName() {
@@ -92,6 +111,126 @@ public class Project {
 
     public SimpleStringProperty getUrlLinkProperty() {
         return urlLink;
+    }
+
+    public String getFunctionalClass() {
+        return functionalClass.get();
+    }
+
+    public void setFunctionalClass(String value) {
+        functionalClass.set(value);
+    }
+
+    public StringProperty functionalClassProperty() {
+        return functionalClass;
+    }
+
+    public String getMaintainingAgency() {
+        return maintainingAgency.get();
+    }
+
+    public void setMaintainingAgency(String value) {
+        maintainingAgency.set(value);
+    }
+
+    public StringProperty maintainingAgencyProperty() {
+        return maintainingAgency;
+    }
+
+    public int getAadt() {
+        return aadt.get();
+    }
+
+    public void setAadt(int value) {
+        aadt.set(value);
+    }
+
+    public IntegerProperty aadtProperty() {
+        return aadt;
+    }
+
+    public float getWzLength() {
+        return wzLength.get();
+    }
+
+    public void setWzLength(float value) {
+        wzLength.set(value);
+    }
+
+    public FloatProperty wzLengthProperty() {
+        return wzLength;
+    }
+
+    public String getWzType() {
+        return wzType.get();
+    }
+
+    public void setWzType(String value) {
+        wzType.set(value);
+    }
+
+    public StringProperty wzTypeProperty() {
+        return wzType;
+    }
+
+    public int getNumRoadwayLanes() {
+        return numRoadwayLanes.get();
+    }
+
+    public void setNumRoadwayLanes(int value) {
+        numRoadwayLanes.set(value);
+    }
+
+    public IntegerProperty numRoadwayLanesProperty() {
+        return numRoadwayLanes;
+    }
+
+    public float getShoulderWidth() {
+        return shoulderWidth.get();
+    }
+
+    public void setShoulderWidth(float value) {
+        shoulderWidth.set(value);
+    }
+
+    public FloatProperty shoulderWidthProperty() {
+        return shoulderWidth;
+    }
+
+    public int getSpeedLimit() {
+        return speedLimit.get();
+    }
+
+    public void setSpeedLimit(int value) {
+        speedLimit.set(value);
+    }
+
+    public IntegerProperty speedLimitProperty() {
+        return speedLimit;
+    }
+
+    public int getNumLanesClosed() {
+        return numLanesClosed.get();
+    }
+
+    public void setNumLanesClosed(int value) {
+        numLanesClosed.set(value);
+    }
+
+    public IntegerProperty numLanesClosedProperty() {
+        return numLanesClosed;
+    }
+
+    public int getActivityDuration() {
+        return activityDuration.get();
+    }
+
+    public void setActivityDuration(int value) {
+        activityDuration.set(value);
+    }
+
+    public IntegerProperty activityDurationProperty() {
+        return activityDuration;
     }
 
     public Project.Step getStep(int index) {
@@ -396,6 +535,12 @@ public class Project {
         }
 
     }
+
+    public final SimpleDoubleProperty progressInfo = new SimpleDoubleProperty(1.0);
+    public final SimpleDoubleProperty progressGoal = new SimpleDoubleProperty(0.0);
+    public final SimpleDoubleProperty progressFeas = new SimpleDoubleProperty(0.0);
+    public final SimpleDoubleProperty progressApp = new SimpleDoubleProperty(0.0);
+    public final SimpleDoubleProperty progressStake = new SimpleDoubleProperty(0.0);
 
     public static final int GOAL_WIZARD_SUMMARY_INDEX = 4; // Step 1
     public static final int FEAS_WIZARD_SUMMARY_INDEX = 6; // Step 1

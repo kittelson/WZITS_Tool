@@ -30,7 +30,7 @@ import javafx.util.Callback;
  */
 public class TableHelper {
 
-    public static TableView createQuestionYNTable(final ObservableList<QuestionYN> qList, String tableStyleCSS) {
+    public static TableView createQuestionYNTable(final ObservableList<QuestionYN> qList, Options opts) {
         TableView<QuestionYN> table = new TableView();
         table.setEditable(true);
 
@@ -43,7 +43,7 @@ public class TableHelper {
         indexCol.setMinWidth(25);
         indexCol.getStyleClass().add("col-style-center-bold");
 
-        TableColumn questionCol = new TableColumn("Input Question");
+        TableColumn questionCol = new TableColumn(opts != null && opts.qColumnHeader != null ? opts.qColumnHeader : "Input Question");
         questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
 
         TableColumn responseCol = new TableColumn("User Response");
@@ -72,7 +72,7 @@ public class TableHelper {
 
         //final ObservableList<QuestionYN> qList = ;
         table.setItems(qList);
-        table.getStyleClass().add(tableStyleCSS);
+        table.getStyleClass().add(opts.tableStyleCSS);
 
         ContextMenu cMenu = new ContextMenu();
         MenuItem fillAllYesMenuItem = new MenuItem("Fill All Yes");
@@ -108,7 +108,7 @@ public class TableHelper {
         return table;
     }
 
-    public static TableView createQuestionOptionTable(ObservableList<QuestionOption> qList, String tableStyleCSS) {
+    public static TableView createQuestionOptionTable(ObservableList<QuestionOption> qList, Options opts) {
         TableView<QuestionOption> table = new TableView();
         table.setEditable(true);
 
@@ -121,7 +121,7 @@ public class TableHelper {
         indexCol.setMinWidth(25);
         indexCol.getStyleClass().add("col-style-center-bold");
 
-        TableColumn questionCol = new TableColumn("Input Question");
+        TableColumn questionCol = new TableColumn(opts != null && opts.qColumnHeader != null ? opts.qColumnHeader : "Input Question");
         questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
 
         TableColumn responseCol = new TableColumn("User Response");
@@ -153,7 +153,7 @@ public class TableHelper {
 
         //final ObservableList<QuestionYN> qList = ;
         table.setItems(qList);
-        table.getStyleClass().add(tableStyleCSS);
+        table.getStyleClass().add(opts.tableStyleCSS);
 
         ContextMenu cMenu = new ContextMenu();
         Menu fillByTemplateMenu = new Menu("Fill By Template");
@@ -336,5 +336,15 @@ public class TableHelper {
     private static final ObservableList<QuestionYN> STEP_6_QLIST = FXCollections.observableArrayList(
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
+
+    public static class Options {
+
+        public String tableStyleCSS;
+        public String qColumnHeader = "Input Question";
+
+        public Options(String tableStyleCSS) {
+            this.tableStyleCSS = tableStyleCSS;
+        }
+    }
 
 }

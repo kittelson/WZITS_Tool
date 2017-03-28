@@ -38,12 +38,6 @@ public class StatusBar extends TitledPane {
 
     private final MainController control;
 
-    private final SimpleDoubleProperty progressInfo = new SimpleDoubleProperty(1.0);
-    private final SimpleDoubleProperty progressGoal = new SimpleDoubleProperty(0.8);
-    private final SimpleDoubleProperty progressFeas = new SimpleDoubleProperty(0.6);
-    private final SimpleDoubleProperty progressApp = new SimpleDoubleProperty(0.4);
-    private final SimpleDoubleProperty progressStake = new SimpleDoubleProperty(0.2);
-
     private final Label feasTitle = new Label("Feasibility Assessment");
     private final Label goalTitle = new Label("Goals");
     private final Label appTitle = new Label("Applications");
@@ -74,11 +68,11 @@ public class StatusBar extends TitledPane {
     private final SVGPath svgArrow5 = new SVGPath();
     //private final SVGPath svgArrow1 = new SVGPath();
 
-    private final DashboardPIB pibInfo = new DashboardPIB(progressInfo);
-    private final DashboardPIB pibGoal = new DashboardPIB(progressGoal);
-    private final DashboardPIB pibFeas = new DashboardPIB(progressFeas);
-    private final DashboardPIB pibApp = new DashboardPIB(progressApp);
-    private final DashboardPIB pibStake = new DashboardPIB(progressStake);
+    private final DashboardPIB pibInfo;
+    private final DashboardPIB pibGoal;
+    private final DashboardPIB pibFeas;
+    private final DashboardPIB pibApp;
+    private final DashboardPIB pibStake;
 
     private final BorderPane mainPane = new BorderPane();
     private final BorderPane descriptPaneOuter = new BorderPane();
@@ -143,6 +137,12 @@ public class StatusBar extends TitledPane {
     public StatusBar(MainController control) {
         this.getStyleClass().add("status-bar");
         this.control = control;
+
+        pibInfo = new DashboardPIB(control.getProject().progressInfo);
+        pibGoal = new DashboardPIB(control.getProject().progressGoal);
+        pibFeas = new DashboardPIB(control.getProject().progressFeas);
+        pibApp = new DashboardPIB(control.getProject().progressApp);
+        pibStake = new DashboardPIB(control.getProject().progressStake);
 
         setupPropertyListeners();
         setupActionListeners();
@@ -273,6 +273,10 @@ public class StatusBar extends TitledPane {
         this.goalsType4Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topSafetyGoalProperty());
         this.goalsType5Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topTIGoalProperty());
 
+        this.stakePrimaryLabel2.textProperty().bind(control.getProject().getStakeholderMatrix().primaryStakeholderProperty());
+        this.stakeSecondaryLabel2.textProperty().bind(control.getProject().getStakeholderMatrix().secondaryStakeholderProperty());
+        this.stakeAdditionalLabel2.textProperty().bind(control.getProject().getStakeholderMatrix().additionalStakeholderProperty());
+
         this.feasScoreLabel2.textProperty().bind(control.getProject().getFeasibilityMatrix().feasibilityProperty().asString());
         this.feasScoreLabel2.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -296,7 +300,7 @@ public class StatusBar extends TitledPane {
                     feasScoreDesc1.setStyle("-fx-font-weight: bold");
                     feasScoreDesc2.setStyle("-fx-font-weight: normal");
                     feasScoreDesc3.setStyle("-fx-font-weight: normal");
-                } else if (Integer.valueOf(newVal) >= 30) {
+                } else if (Integer.valueOf(newVal) >= 10) {
                     feasScoreDesc1.setStyle("-fx-font-weight: normal");
                     feasScoreDesc2.setStyle("-fx-font-weight: bold");
                     feasScoreDesc3.setStyle("-fx-font-weight: normal");
@@ -321,6 +325,146 @@ public class StatusBar extends TitledPane {
                     public void handle(ActionEvent ae) {
                         //descriptPaneInner.setCenter(infoPane);
                         FadeTransition ft2 = new FadeTransition(Duration.millis(125), goalsType1Label2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+        this.goalsType2Label2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), goalsType2Label2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), goalsType2Label2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+        this.goalsType3Label2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), goalsType3Label2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), goalsType3Label2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+        this.goalsType4Label2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), goalsType4Label2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), goalsType4Label2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+        this.goalsType5Label2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), goalsType5Label2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), goalsType5Label2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+        stakePrimaryLabel2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), stakePrimaryLabel2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), stakePrimaryLabel2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+        stakeSecondaryLabel2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), stakeSecondaryLabel2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), stakeSecondaryLabel2);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        });
+        stakeAdditionalLabel2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), stakeAdditionalLabel2);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), stakeAdditionalLabel2);
                         ft2.setFromValue(0.0);
                         ft2.setToValue(1.0);
                         ft2.play();
@@ -364,10 +508,10 @@ public class StatusBar extends TitledPane {
     }
 
     private void setupTitleBar() {
-        pbFeas.progressProperty().bind(progressFeas);
-        pbGoal.progressProperty().bind(progressGoal);
-        pbApp.progressProperty().bind(progressApp);
-        pbStake.progressProperty().bind(progressStake);
+        pbFeas.progressProperty().bind(control.getProject().progressFeas);
+        pbGoal.progressProperty().bind(control.getProject().progressGoal);
+        pbApp.progressProperty().bind(control.getProject().progressApp);
+        pbStake.progressProperty().bind(control.getProject().progressStake);
 
         int pad1 = 5;
         int pad2 = 25;
@@ -425,8 +569,8 @@ public class StatusBar extends TitledPane {
         int rowCount = 0;
         //dashboardGrid.add(dashTitleLabel, 0, 0, 2, 1);
         dashboardGrid.add(infoToggle, 1, rowCount++);
-        dashboardGrid.add(feasToggle, 1, rowCount++);
         dashboardGrid.add(goalToggle, 1, rowCount++);
+        dashboardGrid.add(feasToggle, 1, rowCount++);
         dashboardGrid.add(appToggle, 1, rowCount++);
         dashboardGrid.add(stakeToggle, 1, rowCount++);
         rowCount = 0;
@@ -703,7 +847,7 @@ public class StatusBar extends TitledPane {
         @Override
         protected void syncProgress() {
             super.syncProgress();
-            if (workDone.get() == totalWork) {
+            if (workDone.get() >= totalWork) {
                 bar.setStyle("-fx-accent: limegreen");
                 text.setText("Ready!");
             } else {

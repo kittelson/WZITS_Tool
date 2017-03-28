@@ -107,6 +107,7 @@ public class QuestionGenerator {
         qProjectDocumentation = FXCollections.observableArrayList();
 
         initializeQuestions();
+        connectToProgressIndicators();
 
         ChangeListener questionAnsweredListener = new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
@@ -125,7 +126,7 @@ public class QuestionGenerator {
     }
 
     private void createFeasWizardQuestions() {
-        int qIdx = 0;
+        int qIdx = 1;
         qFeasOptionList.add(new QuestionOption(qIdx++, Question.GOAL_FEASIBILITY, "What is the duration of long-term stationary work?",
                 new String[]{"> 1 Construction Seaons", "4-10 Months", "< 4 Months"},
                 new int[]{8, 5, 1}));
@@ -141,7 +142,7 @@ public class QuestionGenerator {
         qFeasOptionList.add(new QuestionOption(qIdx++, Question.GOAL_FEASIBILITY, "How long are queues expected to extend?",
                 new String[]{"At least 2 miles for at least 2 hours per day", "1-2 miles for 1-2 hours per day", "<1 mile for <1 hour per day"},
                 new int[]{8, 5, 1}));
-        qIdx = 0;
+        qIdx = 1;
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Is traffic speed variability expected to occur?", false, 1));
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Do you expect back of queue and other sight distance issues?", false, 3)); // Dependant
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Are high speeds/chronic speeding expected to occur?", false, 2));
@@ -241,24 +242,25 @@ public class QuestionGenerator {
      * questions with additional options.
      */
     private void createStakeholderWizardQuestions() {
-        int qIdx = 0;
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Are there schools or universities in the area?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Is this a tourist route?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Is there a special event venue nearby?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Does a transit line run parallel to the WZ?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Are there other work zones in the area?"));
-        qStakeholderOptionList.add(new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER, "What agencies are responsible for responding to incidents/patrolling the roadway?",
+        int qIdx = 1;
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Are there schools or universities in the area?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is this a tourist route?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a special event venue nearby?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Does a transit line run parallel to the WZ?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Are there other work zones in the area?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Are there local businesses/shopping centers located near the WZ?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Will there be restrictions to side streets?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is this a freight or shipping corridor?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Are there ped/bike routes impacted by the work zone?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is the work zone on a roadway that is part of a signalized / coordinated system?"));
+        qIdx = 1;
+        qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "What agencies are responsible for responding to incidents/patrolling the roadway?",
                 new String[]{"State DOT", "Municipal"}));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Are there local businesses/shopping centers located near the WZ?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Will there be restrictions to side streets?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Is this a freight or shipping corridor?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Are there ped/bike routes impacted by the work zone?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, "Is the work zone on a roadway that is part of a signalized / coordinated system?"));
-        qStakeholderOptionList.add(new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER, "What is the anticipated source of funds for the project?",
+        qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "What is the anticipated source of funds for the project?",
                 new String[]{"State DOT", "Municipal"}));
-        qStakeholderOptionList.add(new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER, "Which of the stakeholders are the \"must haves\" for the project team? (use check boxes to select stakeholders)",
+        qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "Which of the stakeholders are the \"must haves\" for the project team? (use check boxes to select stakeholders)",
                 new String[]{"State DOT", "Municipal"}));
-        qStakeholderOptionList.add(new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER, "Which of the stakeholders are potential additions or \"maybes\" for the project team?",
+        qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "Which of the stakeholders are potential additions or \"maybes\" for the project team?",
                 new String[]{"State DOT", "Municipal"}));
 
     }
@@ -348,6 +350,124 @@ public class QuestionGenerator {
         qProjectDocumentation.add(new QuestionYN(qIdx, Question.GOAL_DOCUMENTATION, "Are there provisions in place to modify or recalibrate the SWZ ITS set-up throughout the project?"));
         qProjectDocumentation.add(new QuestionYN(qIdx, Question.GOAL_DOCUMENTATION, "Is a final evaluation of the project planned?"));
 
+    }
+
+    private void connectToProgressIndicators() {
+        connectGoalsProgress();
+        connectFeasibilityProgress();
+        connectStakeholderProgress();
+    }
+
+    private void connectGoalsProgress() {
+        final int numRequiredQs = this.qGoalWizardList.size() + this.qMajorGoalsList.size();
+        for (QuestionYN q : qGoalWizardList) {
+            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    if (newVal.intValue() < 0) {
+                        proj.progressGoal.set(Math.max(0, proj.progressGoal.get() - 1.0 / numRequiredQs));
+                    } else if (oldVal.intValue() < 0) {
+                        proj.progressGoal.set(Math.min(1.0, proj.progressGoal.get() + 1.0 / numRequiredQs));
+                    }
+                    proj.getGoalNeedsMatrix().computeScores();
+                }
+            });
+        }
+        for (QuestionYN q : qMajorGoalsList) {
+            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    if (newVal.intValue() < 0) {
+                        proj.progressGoal.set(Math.max(0, proj.progressGoal.get() - 1.0 / numRequiredQs));
+                    } else if (oldVal.intValue() < 0) {
+                        proj.progressGoal.set(Math.min(1.0, proj.progressGoal.get() + 1.0 / numRequiredQs));
+                    }
+                    proj.getGoalNeedsMatrix().computeScores();
+                }
+            });
+        }
+    }
+
+    private void connectFeasibilityProgress() {
+        final int numRequiredQs = this.qFeasYNList.size() + this.qFeasOptionList.size();
+        for (QuestionYN q : qFeasYNList) {
+            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    if (newVal.intValue() < 0) {
+                        proj.progressFeas.set(Math.max(0, proj.progressFeas.get() - 1.0 / numRequiredQs));
+                    } else if (oldVal.intValue() < 0) {
+                        proj.progressFeas.set(Math.min(1.0, proj.progressFeas.get() + 1.0 / numRequiredQs));
+                    }
+                    proj.getFeasibilityMatrix().computeFeasibility();
+                }
+            });
+        }
+        for (QuestionOption q : qFeasOptionList) {
+            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    if (newVal.intValue() < 0) {
+                        proj.progressFeas.set(Math.max(0, proj.progressFeas.get() - 1.0 / numRequiredQs));
+                    } else if (oldVal.intValue() < 0) {
+                        proj.progressFeas.set(Math.min(1.0, proj.progressFeas.get() + 1.0 / numRequiredQs));
+                    }
+                    proj.getFeasibilityMatrix().computeFeasibility();
+                }
+            });
+        }
+    }
+
+    private void connectStakeholderProgress() {
+        final int numRequiredQs = 2 + this.qStakeholderYNList.size(); // + this.qStakeholderOptionList.size();
+        proj.functionalClassProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                if (newVal.equalsIgnoreCase("Select")) {
+                    if (proj.progressStake.get() > 0) {
+                        proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
+                    }
+                } else if (oldVal.equalsIgnoreCase("Select")) {
+                    proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
+                }
+                proj.getStakeholderMatrix().computeStakeholders();
+            }
+        });
+        proj.maintainingAgencyProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                if (newVal.equalsIgnoreCase("Select")) {
+                    proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
+                } else if (oldVal.equalsIgnoreCase("Select")) {
+                    proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
+                }
+                proj.getStakeholderMatrix().computeStakeholders();
+            }
+        });
+        for (QuestionYN q : qStakeholderYNList) {
+            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    if (newVal.intValue() < 0) {
+                        proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
+                    } else if (oldVal.intValue() < 0) {
+                        proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
+                    }
+                    proj.getStakeholderMatrix().computeStakeholders();
+                }
+            });
+        }
+//        for (QuestionOption q : qStakeholderOptionList) {
+//            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+//                @Override
+//                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+//                    if (newVal.intValue() < 0) {
+//                        proj.progressStake.set(proj.progressStake.get() - 1.0 / numRequiredQs);
+//                    } else if (oldVal.intValue() < 0) {
+//                        proj.progressStake.set(proj.progressStake.get() + 1.0 / numRequiredQs);
+//                    }
+//                    proj.getStakeholderMatrix().computeStakeholders();
+//                }
+//            });
+//    }
     }
 
     /**

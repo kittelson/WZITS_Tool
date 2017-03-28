@@ -185,11 +185,11 @@ public class Step1TableHelper {
     }
 
     public static TableView createUserNeedsSupplemental(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getUNSupportQs(), STEP1_TABLE_CSS);
+        return TableHelper.createQuestionYNTable(proj.getUNSupportQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
 
     public static TableView getMajorGoalsTable(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getMajorGoalsQs(), STEP1_TABLE_CSS);
+        return TableHelper.createQuestionYNTable(proj.getMajorGoalsQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
 
     public static GridPane getFeasibilityWizard(Project proj) {
@@ -215,7 +215,9 @@ public class Step1TableHelper {
     }
 
     private static TableView createFeasibilityYNTable(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getFeasWizardYNQs(), STEP1_TABLE_CSS);
+        TableHelper.Options tOpts = new TableHelper.Options(STEP1_TABLE_CSS);
+        tOpts.qColumnHeader = "Mark All That Apply";
+        return TableHelper.createQuestionYNTable(proj.getFeasWizardYNQs(), tOpts);
     }
 
     private static GridPane createFeasOptGrid(Project proj) {
@@ -259,28 +261,66 @@ public class Step1TableHelper {
     public static GridPane createStakeholderWizard(Project proj) {
         final GridPane pane = new GridPane();
 
-        TableView t1 = createStakeholderOptTable(proj);
+        Node t1 = createStakeholderOptTable(proj);
         TableView t2 = createStakeholderYNTable(proj);
         pane.add(t1, 0, 0);
         pane.add(t2, 0, 1);
 
-        int split = 25;
-        RowConstraints rc1 = new RowConstraints();
-        rc1.setPercentHeight(split);
-        RowConstraints rc2 = new RowConstraints();
-        rc2.setPercentHeight(100 - split);
-        pane.getRowConstraints().addAll(rc1, rc2);
+        int rowHeight = 170;
+        pane.getRowConstraints().add(new RowConstraints(rowHeight, rowHeight, rowHeight, Priority.NEVER, VPos.CENTER, true));
+        pane.getRowConstraints().add(new RowConstraints(1, 125, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true));
         GridPane.setHgrow(t1, Priority.ALWAYS);
         GridPane.setHgrow(t2, Priority.ALWAYS);
         return pane;
     }
 
-    private static TableView createStakeholderOptTable(Project proj) {
-        return TableHelper.createQuestionOptionTable(proj.getStakeWizardOptQs(), STEP1_TABLE_CSS);
+    private static Node createStakeholderOptTable(Project proj) {
+        //return TableHelper.createQuestionOptionTable(proj.getStakeWizardOptQs(), STEP1_TABLE_CSS);
+        return createStakeholderOptGrid(proj);
+    }
+
+    private static GridPane createStakeholderOptGrid(Project proj) {
+        GridPane pane = new GridPane();
+        pane.add(NodeFactory.createFormattedLabel("#", "opt-pane-title"), 0, 0);
+        pane.add(NodeFactory.createFormattedLabel("Input Question", "opt-pane-title"), 1, 0);
+        pane.add(NodeFactory.createFormattedLabel("User Response", "opt-pane-title"), 2, 0);
+        double rowSplit = 100.0 / (proj.getNumStakeWizardOptQs() + 2);
+        RowConstraints rc = new RowConstraints();
+        rc.setPercentHeight(rowSplit * 2);
+        pane.getRowConstraints().add(rc);
+        int qIdx = 1;
+        for (final QuestionOption q : proj.getStakeWizardOptQs()) {
+            final ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(q.getOptions()));
+            cb.setMaxWidth(MainController.MAX_WIDTH);
+            cb.setMaxHeight(MainController.MAX_HEIGHT);
+            cb.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent ae) {
+                    q.setAnswer((String) cb.getSelectionModel().getSelectedItem());
+                }
+            });
+            pane.add(NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx"), 0, qIdx);
+            pane.add(NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question"), 1, qIdx);
+            pane.add(cb, 2, qIdx);
+            rc = new RowConstraints();
+            rc.setPercentHeight(rowSplit);
+            pane.getRowConstraints().add(rc);
+            qIdx++;
+        }
+
+        int col1Width = 25;
+        int col3Width = 350;
+        pane.getColumnConstraints().add(0, new ColumnConstraints(col1Width, col1Width, col1Width, Priority.NEVER, HPos.RIGHT, true));
+        pane.getColumnConstraints().add(1, new ColumnConstraints(1, 125, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
+        pane.getColumnConstraints().add(2, new ColumnConstraints(col3Width, col3Width, col3Width, Priority.NEVER, HPos.RIGHT, true));
+
+        return pane;
     }
 
     private static TableView createStakeholderYNTable(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getStakeWizardYNQs(), STEP1_TABLE_CSS);
+        TableHelper.Options tOpts = new TableHelper.Options(STEP1_TABLE_CSS);
+        tOpts.qColumnHeader = "Mark All That Apply";
+        return TableHelper.createQuestionYNTable(proj.getStakeWizardYNQs(), tOpts);
     }
 
     public static final int GOAL_WIZARD = 0;

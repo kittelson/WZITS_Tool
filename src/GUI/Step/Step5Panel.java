@@ -5,14 +5,18 @@
  */
 package GUI.Step;
 
+import GUI.IconHelper;
 import GUI.MainController;
 import GUI.Tables.Step2TableHelper;
+import core.Project;
+import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -64,9 +68,43 @@ public class Step5Panel extends BorderPane {
         infoLabel.getStyleClass().add("launch-title-label-bottom");
         instructionLabel.getStyleClass().add("intro-instructions");
 
+        DoubleBinding widthBinding = new DoubleBinding() {
+            {
+                super.bind(widthProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                //return Math.max(widthProperty().get() * 0.70, 700);
+                return (widthProperty().get() / (Project.NUM_SUB_STEPS[4] + 2) - 150); // 0.9
+                //return (widthProperty().get()) * 0.2;
+            }
+        };
+
+        DoubleBinding heightBinding = new DoubleBinding() {
+            {
+                super.bind(heightProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                //return Math.max(heightProperty().get() * 0.35, 150);
+                return heightProperty().get() * 0.35; // 0.35
+            }
+        };
+
+        ImageView figStep = new ImageView(IconHelper.FIG_FLOW_STEP_5);
+        //figStep1.setFitWidth(1500);
+        figStep.fitWidthProperty().bind(widthBinding);
+        figStep.fitHeightProperty().bind(heightBinding);
+        figStep.setPreserveRatio(true);
+        figStep.setSmooth(true);
+        figStep.setCache(true);
+
         stepIntroGrid.add(startLabel, 0, 0);
         stepIntroGrid.add(infoLabel, 0, 1);
-        stepIntroGrid.add(instructionLabel, 1, 0, 1, 2);
+        stepIntroGrid.add(instructionLabel, 1, 1);
+        stepIntroGrid.add(figStep, 1, 0);
         stepIntroGrid.setStyle("-fx-background-color: white");
 
         RowConstraints row1 = new RowConstraints();

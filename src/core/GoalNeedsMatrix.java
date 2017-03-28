@@ -8,7 +8,6 @@ package core;
 import GUI.Helper.CellSpan;
 import GUI.Helper.CellSpanTableView;
 import GUI.Helper.SpanModel;
-import GUI.Tables.TableHelper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -87,7 +86,7 @@ public class GoalNeedsMatrix {
                 rowIdx++;
             }
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 

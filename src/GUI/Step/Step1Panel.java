@@ -29,6 +29,8 @@ import GUI.Helper.ProgressIndicatorBar;
 import core.Project;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -178,8 +180,8 @@ public class Step1Panel extends BorderPane {
             @Override
             protected double computeValue() {
                 //return Math.max(widthProperty().get() * 0.70, 700);
-                //return (widthProperty().get() - 150) * 0.9;
-                return (widthProperty().get()) * 0.2;
+                return (widthProperty().get() / (Project.NUM_SUB_STEPS[0] + 2) - 150); // 0.9
+                //return (widthProperty().get()) * 0.2;
             }
         };
 
@@ -191,14 +193,14 @@ public class Step1Panel extends BorderPane {
             @Override
             protected double computeValue() {
                 //return Math.max(heightProperty().get() * 0.35, 150);
-                return heightProperty().get() * 0.35;
+                return heightProperty().get() * 0.35; // 0.35
             }
         };
 
         ImageView figStep1 = new ImageView(IconHelper.FIG_FLOW_STEP_1);
-        figStep1.setFitWidth(1500);
-        //figStep1.fitWidthProperty().bind(widthBinding);
-        //figStep1.fitHeightProperty().bind(heightBinding);
+        //figStep1.setFitWidth(1500);
+        figStep1.fitWidthProperty().bind(widthBinding);
+        figStep1.fitHeightProperty().bind(heightBinding);
         figStep1.setPreserveRatio(true);
         figStep1.setSmooth(true);
         figStep1.setCache(true);
@@ -462,11 +464,6 @@ public class Step1Panel extends BorderPane {
         if (allSubStepsPane != null) {
             allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
             allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-            //subStepToolBar.setMinWidth(stepIntroGrid.getWidth());
-            //subStepToolBar.setMaxWidth(stepIntroGrid.getWidth());
-            //subStepToolBar.setMinHeight(60);
-            //subStepToolBar.setMaxHeight(60);
-
             moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
         }
     }
@@ -479,10 +476,6 @@ public class Step1Panel extends BorderPane {
                 if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
                     allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
                     allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//                    subStepToolBar.setMinWidth(stepIntroGrid.getWidth());
-//                    subStepToolBar.setMaxWidth(stepIntroGrid.getWidth());
-//                    subStepToolBar.setMinHeight(60);
-//                    subStepToolBar.setMaxHeight(60);
                     moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
                 }
             }
@@ -492,13 +485,6 @@ public class Step1Panel extends BorderPane {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
                 selectSubStep(getActiveSubStep());
-//                subStep0Button.setStyle("-fx-background-color: " + (getActiveSubStep() == -1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-//                subStep1Button.setStyle("-fx-background-color: " + (getActiveSubStep() == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-//                subStep2Button.setStyle("-fx-background-color: " + (getActiveSubStep() == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-//                subStep3Button.setStyle("-fx-background-color: " + (getActiveSubStep() == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-//                subStep4Button.setStyle("-fx-background-color: " + (getActiveSubStep() == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-//                subStep5Button.setStyle("-fx-background-color: " + (getActiveSubStep() == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP));
-
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
 
@@ -514,24 +500,10 @@ public class Step1Panel extends BorderPane {
                         break;
                 }
 
-//                prevSubStepButton.setDisable(getActiveSubStep() == -1);
-//                if (getActiveSubStep() == getNumSubSteps()) {
-//                    nextSubStepButton.setDisable(true);
-//                } else if (getActiveSubStep() == 1 && progress.get() < 1.0) {
-//                    nextSubStepButton.setDisable(true);
-//                } else {
-//                    nextSubStepButton.setDisable(false);
-//                }
                 control.checkProceed();
             }
         });
 
-//        progress.addListener(new ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
-//                nextSubStepButton.setDisable((getActiveSubStep() == 1 && progress.get() < 1.0));
-//            }
-//        });
         // General Info Bindings
         genInfoTF1.textProperty().bindBidirectional(control.getProject().getAgencyProperty());
         genInfoTF2.textProperty().bindBidirectional(control.getProject().getAnalystProperty());
@@ -540,11 +512,17 @@ public class Step1Panel extends BorderPane {
         genInfoTA1.textProperty().bindBidirectional(control.getProject().getDescriptionProperty());
         genInfoTA2.textProperty().bindBidirectional(control.getProject().getLimitsProperty());
 
-//        subStep1Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(0).stepStartedProperty().not());
-//        subStep2Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(1).stepStartedProperty().not());
-//        subStep3Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(2).stepStartedProperty().not());
-//        subStep4Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(3).stepStartedProperty().not());
-//        subStep5Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(3).stepFinishedProperty().not());
+        // Work zone metadata bindings
+        control.getProject().aadtProperty().bindBidirectional(this.wzInputSpin1.getValueFactory().valueProperty());
+        control.getProject().functionalClassProperty().bindBidirectional(this.wzInputChoice1.valueProperty());
+        control.getProject().wzLengthProperty().bindBidirectional(this.wzInputSpin2.getValueFactory().valueProperty());
+        control.getProject().wzTypeProperty().bindBidirectional(this.wzInputChoice2.valueProperty());
+        control.getProject().maintainingAgencyProperty().bindBidirectional(this.wzInputChoice3.valueProperty());
+        control.getProject().numRoadwayLanesProperty().bindBidirectional(this.wzInputSpin3.getValueFactory().valueProperty());
+        control.getProject().shoulderWidthProperty().bindBidirectional(this.wzInputSpin4.getValueFactory().valueProperty());
+        control.getProject().speedLimitProperty().bindBidirectional(this.wzInputSpin5.getValueFactory().valueProperty());
+        control.getProject().numLanesClosedProperty().bindBidirectional(this.wzInputSpin6.getValueFactory().valueProperty());
+        control.getProject().activityDurationProperty().bindBidirectional(this.wzInputSpin7.getValueFactory().valueProperty());
     }
 
     private GridPane createGeneralInfoGrid() {
@@ -625,8 +603,10 @@ public class Step1Panel extends BorderPane {
         wzInputLabel7.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel8.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel9.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel10.setMaxWidth(MainController.MAX_WIDTH);
         wzInputChoice1.setMaxWidth(MainController.MAX_WIDTH);
         wzInputChoice2.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputChoice3.setMaxWidth(MainController.MAX_WIDTH);
 
         wzInputLabel1.getStyleClass().add("wz-input-label-style");
         wzInputLabel2.getStyleClass().add("wz-input-label-style");
@@ -637,8 +617,10 @@ public class Step1Panel extends BorderPane {
         wzInputLabel7.getStyleClass().add("wz-input-label-style");
         wzInputLabel8.getStyleClass().add("wz-input-label-style");
         wzInputLabel9.getStyleClass().add("wz-input-label-style");
+        wzInputLabel10.getStyleClass().add("wz-input-label-style");
         //wzInputChoice1.getStyleClass().add("wzits-choice-box");
         //wzInputChoice2.getStyleClass().add("wzits-choice-box");
+        //wzInputChoice3.getStyleClass().add("wzits-choice-box");
 
         wzInputSpin1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(25000, 125000, 50000, 5000));
         wzInputSpin2.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 50, 2, 0.1));
@@ -650,6 +632,7 @@ public class Step1Panel extends BorderPane {
 
         wzInputChoice1.getSelectionModel().selectFirst();
         wzInputChoice2.getSelectionModel().selectFirst();
+        wzInputChoice3.getSelectionModel().selectFirst();
 
 //        proceedButton.setOnAction(new EventHandler<ActionEvent>() {
 //            @Override
@@ -657,28 +640,30 @@ public class Step1Panel extends BorderPane {
 //                control.getProject().getStep(1).setStepStarted(true);
 //            }
 //        });
+        int colIdx = 0;
         GridPane inputGrid = new GridPane();
-        inputGrid.add(wzInputLabel1, 0, 0);
-        inputGrid.add(wzInputLabel2, 0, 1);
-        inputGrid.add(wzInputLabel3, 0, 2);
-        inputGrid.add(wzInputLabel4, 0, 3);
-        inputGrid.add(wzInputLabel5, 0, 4);
-        inputGrid.add(wzInputLabel6, 0, 5);
-        inputGrid.add(wzInputLabel7, 0, 6);
-        inputGrid.add(wzInputLabel8, 0, 7);
-        inputGrid.add(wzInputLabel9, 0, 8);
+        inputGrid.add(wzInputLabel2, 0, colIdx);
+        inputGrid.add(wzInputChoice1, 1, colIdx++);
+        inputGrid.add(wzInputLabel4, 0, colIdx);
+        inputGrid.add(wzInputChoice2, 1, colIdx++);
+        inputGrid.add(wzInputLabel10, 0, colIdx);
+        inputGrid.add(wzInputChoice3, 1, colIdx++);
+        inputGrid.add(wzInputLabel1, 0, colIdx);
+        inputGrid.add(wzInputSpin1, 1, colIdx++);
+        inputGrid.add(wzInputLabel3, 0, colIdx);
+        inputGrid.add(wzInputSpin2, 1, colIdx++);
+        inputGrid.add(wzInputLabel5, 0, colIdx);
+        inputGrid.add(wzInputSpin3, 1, colIdx++);
+        inputGrid.add(wzInputLabel6, 0, colIdx);
+        inputGrid.add(wzInputSpin4, 1, colIdx++);
+        inputGrid.add(wzInputLabel7, 0, colIdx);
+        inputGrid.add(wzInputSpin5, 1, colIdx++);
+        inputGrid.add(wzInputLabel8, 0, colIdx);
+        inputGrid.add(wzInputSpin6, 1, colIdx++);
+        inputGrid.add(wzInputLabel9, 0, colIdx);
+        inputGrid.add(wzInputSpin7, 1, colIdx++);
 
-        inputGrid.add(wzInputSpin1, 1, 0);
-        inputGrid.add(wzInputChoice1, 1, 1);
-        inputGrid.add(wzInputSpin2, 1, 2);
-        inputGrid.add(wzInputChoice2, 1, 3);
-        inputGrid.add(wzInputSpin3, 1, 4);
-        inputGrid.add(wzInputSpin4, 1, 5);
-        inputGrid.add(wzInputSpin5, 1, 6);
-        inputGrid.add(wzInputSpin6, 1, 7);
-        inputGrid.add(wzInputSpin7, 1, 8);
         //inputGrid.add(proceedButton, 1, 9);
-
         double leftColsplit = 65;
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setPercentWidth(leftColsplit);
@@ -696,6 +681,7 @@ public class Step1Panel extends BorderPane {
         GridPane.setHgrow(wzInputLabel7, Priority.ALWAYS);
         GridPane.setHgrow(wzInputLabel8, Priority.ALWAYS);
         GridPane.setHgrow(wzInputLabel9, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel10, Priority.ALWAYS);
 
         GridPane.setHgrow(wzInputSpin1, Priority.ALWAYS);
         GridPane.setHgrow(wzInputSpin2, Priority.ALWAYS);
@@ -706,6 +692,7 @@ public class Step1Panel extends BorderPane {
         GridPane.setHgrow(wzInputSpin7, Priority.ALWAYS);
         GridPane.setHgrow(wzInputChoice1, Priority.ALWAYS);
         GridPane.setHgrow(wzInputChoice2, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputChoice3, Priority.ALWAYS);
 
         return inputGrid;
     }
@@ -758,16 +745,39 @@ public class Step1Panel extends BorderPane {
     private final Label wzInputLabel7 = new Label("Posted Speed Limit (mph)");
     private final Label wzInputLabel8 = new Label("Number of Lanes to be Closed:");
     private final Label wzInputLabel9 = new Label("Duration of Activity (hr)");
+    private final Label wzInputLabel10 = new Label("Maintaining Agency");
 
+    /**
+     * Annual Average Daily Traffic (AADT)(Integer) Input Spinner
+     */
     private final Spinner wzInputSpin1 = new Spinner();
+    /**
+     * Work Zone Length (Float) Input Spinner
+     */
     private final Spinner wzInputSpin2 = new Spinner();
+    /**
+     * Number of Roadway Lanes (1 Direction) (Integer) Input Spinner
+     */
     private final Spinner wzInputSpin3 = new Spinner();
+    /**
+     * Shoulder Width (ft) (Float) Input Spinner
+     */
     private final Spinner wzInputSpin4 = new Spinner();
+    /**
+     * Posted Speed Limit (mph) (Integer) Input Spinner
+     */
     private final Spinner wzInputSpin5 = new Spinner();
+    /**
+     * Number of Lanes to be Closed (Integer) Input Spinner
+     */
     private final Spinner wzInputSpin6 = new Spinner();
+    /**
+     * Duration of Activity (hr) (Integer) Input Spinner
+     */
     private final Spinner wzInputSpin7 = new Spinner();
 
-    private final ChoiceBox wzInputChoice1 = new ChoiceBox(FXCollections.observableArrayList("Select", "Freeway", "Arterial, Local"));
+    private final ChoiceBox wzInputChoice1 = new ChoiceBox(FXCollections.observableArrayList("Select", "Freeway", "Arterial", "Local"));
     private final ChoiceBox wzInputChoice2 = new ChoiceBox(FXCollections.observableArrayList("Select", "Mobile", "Permanent"));
+    private final ChoiceBox wzInputChoice3 = new ChoiceBox(FXCollections.observableArrayList("Select", "State", "County", "City/Town", "Other"));
 
 }
