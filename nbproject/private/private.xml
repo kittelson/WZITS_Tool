@@ -3,17 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/FeasibilityMatrix.java</file>
+            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/Tables/TableHelper.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/StakeholderMatrix.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/QuestionGenerator.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/defaults/stake1.csv</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/defaults/stake2.csv</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/Project.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/GoalNeedsMatrix.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/Stakeholder.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/FlowBar.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/MainController.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/Step/Step1Panel.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/StatusBar.java</file>
+            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/QuestionYN.java</file>
         </group>
     </open-files>
 </project-private>

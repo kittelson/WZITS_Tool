@@ -8,8 +8,12 @@ package GUI.Tables;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import core.Project;
+import core.Question;
 import core.QuestionOption;
 import core.QuestionYN;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,13 +27,16 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
@@ -41,7 +48,7 @@ public class Step1TableHelper {
 
     private static final int STEP_INDEX = 0;
 
-    public static final int QS_PER_PAGE = 10;
+    public static final int QS_PER_PAGE = 20;
 
     private static final String STEP1_TABLE_CSS = "step-one-table";
 
@@ -76,50 +83,40 @@ public class Step1TableHelper {
         // Setting up table columns
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn indexCol = new TableColumn("#");
-        indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        //indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        indexCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<QuestionYN, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<QuestionYN, String> p) {
+                return new ReadOnlyObjectWrapper(Integer.toString(table.getItems().indexOf(p.getValue()) + 1));
+            }
+        });
         indexCol.setPrefWidth(40);
         indexCol.setMaxWidth(40);
         indexCol.setMinWidth(40);
         indexCol.getStyleClass().add("col-style-center-bold");
-        indexCol.setCellFactory(new Callback<TableColumn<QuestionYN, Number>, TableCell<QuestionYN, Number>>() {
-            @Override
-            public TableCell<QuestionYN, Number> call(TableColumn<QuestionYN, Number> t) {
-                return new TableCell<QuestionYN, Number>() {
-                    @Override
-                    public void updateItem(Number item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item != null) {
-                            if (item.intValue() < 0) {
-                                setText(null);
-                                super.setTextAlignment(TextAlignment.CENTER);
-                            } else {
-                                setText(Integer.toString(item.intValue()));
-                            }
-                        }
-                    }
-                };
-            }
-        });
 
         TableColumn questionCol = new TableColumn("Input Question");
         questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
-//        questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
-//            @Override
-//            public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> t) {
-//                return new TableCell<QuestionYN, String>() {
-//                    @Override
-//                    public void updateItem(String item, boolean empty) {
-//                        super.updateItem(item, empty);
-//                        if (item != null) {
-//                            if (item.equalsIgnoreCase(CONTINUE_STR)) {
-//                                this.setTextAlignment(TextAlignment.CENTER);
-//                            }
-//                            setText(item);
-//                        }
-//                    }
-//                };
-//            }
-//        });
+        questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
+            @Override
+            public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
+                final TextFieldTableCell<QuestionYN, String> cbe = new TextFieldTableCell();
+                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        if (newVal.getItem() != null) {
+                            ((Question) newVal.getItem()).visibleProperty().addListener(new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                                    cbe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                }
+                            });
+                        }
+                    }
+                });
+                return cbe;
+            }
+        });
 
         TableColumn responseCol = new TableColumn("User Response");
         responseCol.setPrefWidth(150);

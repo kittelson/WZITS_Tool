@@ -8,6 +8,9 @@ package GUI.Tables;
 import core.Question;
 import core.QuestionOption;
 import core.QuestionYN;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,9 +22,13 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
 /**
@@ -31,13 +38,22 @@ import javafx.util.Callback;
 public class TableHelper {
 
     public static TableView createQuestionYNTable(final ObservableList<QuestionYN> qList, Options opts) {
-        TableView<QuestionYN> table = new TableView();
+        final TableView<QuestionYN> table = new TableView();
         table.setEditable(true);
 
         // Setting up table columns
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn indexCol = new TableColumn("#");
-        indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        if (!opts.autoIndex) {
+            indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        } else {
+            indexCol.setCellValueFactory(new Callback<CellDataFeatures<QuestionYN, String>, ObservableValue<String>>() {
+                @Override
+                public ObservableValue<String> call(CellDataFeatures<QuestionYN, String> p) {
+                    return new ReadOnlyObjectWrapper(Integer.toString(table.getItems().indexOf(p.getValue()) + 1));
+                }
+            });
+        }
         indexCol.setPrefWidth(25);
         indexCol.setMaxWidth(25);
         indexCol.setMinWidth(25);
@@ -45,6 +61,26 @@ public class TableHelper {
 
         TableColumn questionCol = new TableColumn(opts != null && opts.qColumnHeader != null ? opts.qColumnHeader : "Input Question");
         questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
+        questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
+            @Override
+            public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
+                final TextFieldTableCell<QuestionYN, String> cbe = new TextFieldTableCell();
+                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        if (newVal.getItem() != null) {
+                            ((Question) newVal.getItem()).visibleProperty().addListener(new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                                    cbe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                }
+                            });
+                        }
+                    }
+                });
+                return cbe;
+            }
+        });
 
         TableColumn responseCol = new TableColumn("User Response");
         responseCol.setPrefWidth(150);
@@ -54,11 +90,45 @@ public class TableHelper {
 
         final TableColumn yesCol = new TableColumn<>("Yes");
         yesCol.setCellValueFactory(new PropertyValueFactory<>("answerIsYes"));
-        yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
+        //yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
+        yesCol.setCellFactory(new Callback<TableColumn<QuestionYN, Boolean>, TableCell<QuestionYN, Boolean>>() {
+            @Override
+            public TableCell<QuestionYN, Boolean> call(TableColumn<QuestionYN, Boolean> tc) {
+                final CheckBoxTableCell<QuestionYN, Boolean> cbe = new CheckBoxTableCell();
+                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        //System.out.println("Called");
+                        if (newVal.getItem() != null) {
+                            //cbe.disableProperty().bind(((Question) newVal.getItem()).lockedProperty());
+                            cbe.editableProperty().bind(((Question) newVal.getItem()).lockedProperty().not());
+                        }
+                    }
+                });
+                return cbe;
+            }
+        });
 
         TableColumn noCol = new TableColumn("No");
         noCol.setCellValueFactory(new PropertyValueFactory<>("answerIsNo"));
-        noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
+        //noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
+        noCol.setCellFactory(new Callback<TableColumn<QuestionYN, Boolean>, TableCell<QuestionYN, Boolean>>() {
+            @Override
+            public TableCell<QuestionYN, Boolean> call(TableColumn<QuestionYN, Boolean> tc) {
+                final CheckBoxTableCell<QuestionYN, Boolean> cbe = new CheckBoxTableCell();
+                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        //System.out.println("Called");
+                        if (newVal.getItem() != null) {
+                            //cbe.disableProperty().bind(((Question) newVal.getItem()).lockedProperty());
+                            cbe.editableProperty().bind(((Question) newVal.getItem()).lockedProperty().not());
+                        }
+                    }
+                });
+                return cbe;
+            }
+        });
 
         yesCol.setPrefWidth(75);
         yesCol.setMaxWidth(75);
@@ -80,7 +150,9 @@ public class TableHelper {
             @Override
             public void handle(ActionEvent e) {
                 for (QuestionYN q : qList) {
-                    q.setAnswerIsYes(Boolean.TRUE);
+                    if (!q.isLocked()) {
+                        q.setAnswerIsYes(Boolean.TRUE);
+                    }
                 }
             }
         });
@@ -89,7 +161,9 @@ public class TableHelper {
             @Override
             public void handle(ActionEvent e) {
                 for (QuestionYN q : qList) {
-                    q.setAnswerIsNo(Boolean.TRUE);
+                    if (!q.isLocked()) {
+                        q.setAnswerIsNo(Boolean.TRUE);
+                    }
                 }
             }
         });
@@ -109,13 +183,22 @@ public class TableHelper {
     }
 
     public static TableView createQuestionOptionTable(ObservableList<QuestionOption> qList, Options opts) {
-        TableView<QuestionOption> table = new TableView();
+        final TableView<QuestionOption> table = new TableView();
         table.setEditable(true);
 
         // Setting up table columns
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn indexCol = new TableColumn("#");
-        indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        if (!opts.autoIndex) {
+            indexCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
+        } else {
+            indexCol.setCellValueFactory(new Callback<CellDataFeatures<QuestionYN, String>, ObservableValue<String>>() {
+                @Override
+                public ObservableValue<String> call(CellDataFeatures<QuestionYN, String> p) {
+                    return new ReadOnlyObjectWrapper(Integer.toString(table.getItems().indexOf(p.getValue()) + 1));
+                }
+            });
+        }
         indexCol.setPrefWidth(25);
         indexCol.setMaxWidth(25);
         indexCol.setMinWidth(25);
@@ -123,6 +206,26 @@ public class TableHelper {
 
         TableColumn questionCol = new TableColumn(opts != null && opts.qColumnHeader != null ? opts.qColumnHeader : "Input Question");
         questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
+        questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
+            @Override
+            public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
+                final TextFieldTableCell<QuestionYN, String> cbe = new TextFieldTableCell();
+                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        if (newVal.getItem() != null) {
+                            ((Question) newVal.getItem()).visibleProperty().addListener(new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                                    cbe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                }
+                            });
+                        }
+                    }
+                });
+                return cbe;
+            }
+        });
 
         TableColumn responseCol = new TableColumn("User Response");
         responseCol.setPrefWidth(150);
@@ -337,14 +440,16 @@ public class TableHelper {
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
 
+    public static Color COLOR_HIDDEN = Color.RED;
+
     public static class Options {
 
         public String tableStyleCSS;
         public String qColumnHeader = "Input Question";
+        public boolean autoIndex = true;
 
         public Options(String tableStyleCSS) {
             this.tableStyleCSS = tableStyleCSS;
         }
     }
-
 }

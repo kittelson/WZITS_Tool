@@ -43,10 +43,10 @@ public class StatusBar extends TitledPane {
     private final Label appTitle = new Label("Applications");
     private final Label stakeTitle = new Label("Stakeholders");
 
-    private final ProgressBar pbFeas = new ProgressBar();
-    private final ProgressBar pbGoal = new ProgressBar();
-    private final ProgressBar pbApp = new ProgressBar();
-    private final ProgressBar pbStake = new ProgressBar();
+    private final ProgressBar pbFeas = new StatusPB();
+    private final ProgressBar pbGoal = new StatusPB();
+    private final ProgressBar pbApp = new StatusPB();
+    private final ProgressBar pbStake = new StatusPB();
 
     private final GridPane dashboardGrid = new GridPane();
     //private final Label dashTitleLabel = new Label("Assessment Complete %");
@@ -515,23 +515,25 @@ public class StatusBar extends TitledPane {
 
         int pad1 = 5;
         int pad2 = 25;
+        int colIdx = 0;
         GridPane contentGrid = new GridPane();
-        contentGrid.add(feasTitle, 0, 0);
-        GridPane.setMargin(feasTitle, new Insets(0, pad1, 0, 0));
-        contentGrid.add(pbFeas, 1, 0);
-        GridPane.setMargin(pbFeas, new Insets(0, pad2, 0, 0));
-        contentGrid.add(goalTitle, 2, 0);
+        contentGrid.add(goalTitle, colIdx++, 0);
         GridPane.setMargin(goalTitle, new Insets(0, pad1, 0, 0));
-        contentGrid.add(pbGoal, 3, 0);
+        contentGrid.add(pbGoal, colIdx++, 0);
         GridPane.setMargin(pbGoal, new Insets(0, pad2, 0, 0));
-        contentGrid.add(appTitle, 4, 0);
-        GridPane.setMargin(appTitle, new Insets(0, pad1, 0, 0));
-        contentGrid.add(pbApp, 5, 0);
-        GridPane.setMargin(pbApp, new Insets(0, pad2, 0, 0));
-        contentGrid.add(stakeTitle, 6, 0);
+        contentGrid.add(feasTitle, colIdx++, 0);
+        GridPane.setMargin(feasTitle, new Insets(0, pad1, 0, 0));
+        contentGrid.add(pbFeas, colIdx++, 0);
+        GridPane.setMargin(pbFeas, new Insets(0, pad2, 0, 0));
+        contentGrid.add(stakeTitle, colIdx++, 0);
         GridPane.setMargin(stakeTitle, new Insets(0, pad1, 0, 0));
-        contentGrid.add(pbStake, 7, 0);
+        contentGrid.add(pbStake, colIdx++, 0);
         GridPane.setMargin(pbStake, new Insets(0, pad2, 0, 0));
+        contentGrid.add(appTitle, colIdx++, 0);
+        GridPane.setMargin(appTitle, new Insets(0, pad1, 0, 0));
+        contentGrid.add(pbApp, colIdx++, 0);
+        GridPane.setMargin(pbApp, new Insets(0, pad2, 0, 0));
+
         this.setGraphic(contentGrid);
         this.setContentDisplay(ContentDisplay.RIGHT);
     }
@@ -571,14 +573,14 @@ public class StatusBar extends TitledPane {
         dashboardGrid.add(infoToggle, 1, rowCount++);
         dashboardGrid.add(goalToggle, 1, rowCount++);
         dashboardGrid.add(feasToggle, 1, rowCount++);
-        dashboardGrid.add(appToggle, 1, rowCount++);
         dashboardGrid.add(stakeToggle, 1, rowCount++);
+        dashboardGrid.add(appToggle, 1, rowCount++);
         rowCount = 0;
         dashboardGrid.add(pibInfo, 0, rowCount++);
         dashboardGrid.add(pibGoal, 0, rowCount++);
         dashboardGrid.add(pibFeas, 0, rowCount++);
-        dashboardGrid.add(pibApp, 0, rowCount++);
         dashboardGrid.add(pibStake, 0, rowCount++);
+        dashboardGrid.add(pibApp, 0, rowCount++);
 
         infoToggle.setToggleGroup(tg);
         goalToggle.setToggleGroup(tg);
@@ -855,6 +857,22 @@ public class StatusBar extends TitledPane {
             }
         }
 
+    }
+
+    private class StatusPB extends ProgressBar {
+
+        public StatusPB() {
+            this.progressProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    if (newVal.doubleValue() >= 1.0 && oldVal.doubleValue() < 1.0) {
+                        setStyle("-fx-accent: limegreen");
+                    } else if (oldVal.doubleValue() >= 1.0 && newVal.doubleValue() < 1.0) {
+                        setStyle("-fx-accent: " + ColorHelper.WZ_ORANGE);
+                    }
+                }
+            });
+        }
     }
 
 }

@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Comparator;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -20,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 /**
  *
@@ -192,17 +195,22 @@ public class StakeholderMatrix {
     public TableView createSummaryTable() {
         computeStakeholders();
 
-        TableView<Stakeholder> summary = new TableView();
+        final TableView<Stakeholder> summary = new TableView();
         summary.getStyleClass().add("step-summary-table");
 
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn catCol = new TableColumn("#");
-        catCol.setCellValueFactory(new PropertyValueFactory<>("idx"));
-        catCol.setPrefWidth(25);
-        catCol.setMaxWidth(25);
-        catCol.setMinWidth(25);
-        catCol.getStyleClass().add("col-style-center-bold");
+        TableColumn indexCol = new TableColumn("#");
+        indexCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<QuestionYN, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<QuestionYN, String> p) {
+                return new ReadOnlyObjectWrapper(Integer.toString(summary.getItems().indexOf(p.getValue()) + 1));
+            }
+        });
+        indexCol.setPrefWidth(25);
+        indexCol.setMaxWidth(25);
+        indexCol.setMinWidth(25);
+        indexCol.getStyleClass().add("col-style-center-bold");
 
         TableColumn recCol = new TableColumn("Stakeholder");
         recCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -214,7 +222,7 @@ public class StakeholderMatrix {
         scoreCol.setMinWidth(75);
         scoreCol.getStyleClass().add("col-style-center");
 
-        summary.getColumns().addAll(catCol, recCol, scoreCol);
+        summary.getColumns().addAll(indexCol, recCol, scoreCol);
 
 //        int sIdx = 1;
 //        for (String key : this.stakeholderScore.keySet()) {

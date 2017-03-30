@@ -6,6 +6,7 @@
 package core;
 
 import java.io.File;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -47,6 +48,7 @@ public class Project {
     private final IntegerProperty speedLimit = new SimpleIntegerProperty();
     private final IntegerProperty numLanesClosed = new SimpleIntegerProperty();
     private final IntegerProperty activityDuration = new SimpleIntegerProperty();
+    private final BooleanProperty crashDataAvailable = new SimpleBooleanProperty();
 
     private File saveFile = null;
 
@@ -231,6 +233,18 @@ public class Project {
 
     public IntegerProperty activityDurationProperty() {
         return activityDuration;
+    }
+
+    public boolean isCrashDataAvailable() {
+        return crashDataAvailable.get();
+    }
+
+    public void setCrashDataAvailable(boolean value) {
+        crashDataAvailable.set(value);
+    }
+
+    public BooleanProperty crashDataAvailableProperty() {
+        return crashDataAvailable;
     }
 
     public Project.Step getStep(int index) {

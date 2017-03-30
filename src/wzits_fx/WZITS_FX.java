@@ -41,7 +41,13 @@ public class WZITS_FX extends Application {
         primaryStage.setMaxHeight(maxScreenHeight);
         primaryStage.setMaxWidth(maxScreenWidth);
 
-        primaryStage.getIcons().add(new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/wzits_tool_icon_32.png")));
+        //Image wzitsIcon16 = new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/wzits_icon_16.png"));
+        //Image wzitsIcon32 = new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/wzits_icon_32.png"));
+        //Image wzitsIcon48 = new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/wzits_icon_48.png"));
+        Image wzitsIcon64 = new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/wzits_icon_64.png"), 64, 64, true, true);
+        //Image wzitsIcon40 = new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/19419_logo-02.png"), 120, 120, true, true);
+        //primaryStage.getIcons().addAll(wzitsIcon16, wzitsIcon32, wzitsIcon48, wzitsIcon64);
+        primaryStage.getIcons().addAll(wzitsIcon64);
         primaryStage.show();
     }
 

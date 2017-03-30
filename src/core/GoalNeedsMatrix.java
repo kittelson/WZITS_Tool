@@ -50,7 +50,7 @@ public class GoalNeedsMatrix {
     public GoalNeedsMatrix(ObservableList<QuestionYN> qList, ObservableList<Need> needsList, ObservableList<QuestionYN> majorGoalsList) {
         this.qList = qList;
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
-            qToRowMap.put(qList.get(qIdx), qIdx);
+            qToRowMap.put(qList.get(qIdx), qList.get(qIdx).getIdx() - 1);
         }
         this.needsList = needsList;
         for (int needIdx = 0; needIdx < needsList.size(); needIdx++) {

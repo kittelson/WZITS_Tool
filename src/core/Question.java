@@ -5,6 +5,8 @@
  */
 package core;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.converter.IntegerStringConverter;
@@ -19,6 +21,9 @@ public abstract class Question {
     protected final SimpleStringProperty goal;
     protected final SimpleStringProperty questionText;
     protected final SimpleIntegerProperty responseIdx;
+
+    protected final BooleanProperty visible = new SimpleBooleanProperty();
+    protected final BooleanProperty locked = new SimpleBooleanProperty();
 
     public Question(int idx, String goal, String questionText) {
         this(idx, goal, questionText, -1);
@@ -77,6 +82,30 @@ public abstract class Question {
     public abstract void setAnswer(String val);
 
     public abstract String getAnswerString();
+
+    public boolean isVisible() {
+        return visible.get();
+    }
+
+    public void setVisible(boolean value) {
+        visible.set(value);
+    }
+
+    public BooleanProperty visibleProperty() {
+        return visible;
+    }
+
+    public boolean isLocked() {
+        return locked.get();
+    }
+
+    public void setLocked(boolean value) {
+        locked.set(value);
+    }
+
+    public BooleanProperty lockedProperty() {
+        return locked;
+    }
 
     public static IntegerStringConverter yesNoConverter = new IntegerStringConverter() {
         @Override

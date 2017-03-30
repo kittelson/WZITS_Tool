@@ -736,16 +736,16 @@ public class Step1Panel extends BorderPane {
     private final Button genInfoButton1 = new Button("Browse");
     private final GridPane genInfoPicGrid = new GridPane();
 
-    private final Label wzInputLabel1 = new Label("Annual Average Daily Traffic (AADT)");
+    private final Label wzInputLabel1 = new Label("Annual Average Daily Traffic (AADT):");
     private final Label wzInputLabel2 = new Label("Functional Class of Roadway:");
     private final Label wzInputLabel3 = new Label("Work Zone Length (mi):");
     private final Label wzInputLabel4 = new Label("Work Zone Type:");
     private final Label wzInputLabel5 = new Label("Number of Roadway Lanes (1 Direction):");
     private final Label wzInputLabel6 = new Label("Shoulder Width (ft):");
-    private final Label wzInputLabel7 = new Label("Posted Speed Limit (mph)");
+    private final Label wzInputLabel7 = new Label("Posted Speed Limit (mph):");
     private final Label wzInputLabel8 = new Label("Number of Lanes to be Closed:");
-    private final Label wzInputLabel9 = new Label("Duration of Activity (hr)");
-    private final Label wzInputLabel10 = new Label("Maintaining Agency");
+    private final Label wzInputLabel9 = new Label("Duration of Activity (hr):");
+    private final Label wzInputLabel10 = new Label("Maintaining Agency:");
 
     /**
      * Annual Average Daily Traffic (AADT)(Integer) Input Spinner

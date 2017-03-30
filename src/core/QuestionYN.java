@@ -65,6 +65,23 @@ public class QuestionYN extends Question {
                 }
             }
         });
+
+        responseIdx.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (newVal.intValue() == 1 && !answerIsYes.get()) {
+                    answerIsYes.set(true);
+                } else if (newVal.intValue() == 0 && !answerIsNo.get()) {
+                    answerIsNo.set(true);
+                } else if (newVal.intValue() == -1) {
+                    if (answerIsYes.get()) {
+                        answerIsYes.set(false);
+                    } else if (answerIsNo.get()) {
+                        answerIsNo.set(false);
+                    }
+                }
+            }
+        });
     }
 
     @Override
