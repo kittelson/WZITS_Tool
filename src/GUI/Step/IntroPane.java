@@ -5,15 +5,14 @@
  */
 package GUI.Step;
 
-import GUI.IconHelper;
+import GUI.Helper.IconHelper;
 import GUI.MainController;
-import javafx.animation.Animation;
-import javafx.animation.FillTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -22,8 +21,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 /**
  *
@@ -42,6 +39,14 @@ public class IntroPane extends BorderPane {
         startNewButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                GridPane instrNode = new GridPane();
+                ImageView iv = new ImageView(IconHelper.NAV_HELPER);
+                instrNode.add(iv, 0, 0);
+                al.setTitle("Hint: WZITS Tool Navigation");
+                al.setHeaderText("WZITS Tool Navigation");
+                al.getDialogPane().setContent(instrNode);
+                al.showAndWait();
                 control.selectStep(0);
             }
         });
@@ -74,7 +79,8 @@ public class IntroPane extends BorderPane {
 
             @Override
             protected double computeValue() {
-                return Math.max(widthProperty().get() * 0.70, 700);
+                //return Math.max(widthProperty().get() * 0.70, 700);
+                return widthProperty().get() - 150;
             }
         };
 
@@ -85,7 +91,7 @@ public class IntroPane extends BorderPane {
 
             @Override
             protected double computeValue() {
-                return Math.max(heightProperty().get() * 0.35, 200);
+                return heightProperty().get() * 0.25;
             }
         };
         ImageView figAllSteps = new ImageView(IconHelper.FIG_FLOW_ALL_STEPS);

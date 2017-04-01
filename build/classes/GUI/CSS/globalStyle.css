@@ -170,6 +170,7 @@
 
 .step-one-table {
     -fx-selection-bar-text: black;
+    -fx-font-size: 18;
 }
 
 .step-one-table .column-header-background {
@@ -179,6 +180,8 @@
 .step-one-table .column-header-background .label{
     -fx-background-color: transparent;
     -fx-text-fill: black;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
 }
 
 .step-one-table .column-header {
@@ -207,7 +210,8 @@
 }
 
 .step-summary-table {
-    
+    -fx-accent: #4472c4;
+    -fx-font-size: 18;
 }
 
 .step-summary-table .column-header-background{
@@ -216,6 +220,7 @@
 
 .step-summary-table .column-header-background .label{
     -fx-background-color: transparent;
+    -fx-wrap-text: true;
     -fx-text-fill: white;
 }
 
@@ -230,8 +235,9 @@
 }
 
 .step-summary-table .table-row-cell:selected{
-    -fx-table-cell-border-color: black;
-    -fx-background-insets: 0, 3 3 3 3;
+    -fx-table-cell-border-color: #ddebf7;
+    -fx-background-color: #ED7D31;
+    -fx-background-insets: 0, 2 2 2 2;
     -fx-padding: 0.0em; /* 0 */
 }
 
@@ -311,21 +317,31 @@
     -fx-alignment: center;
     -fx-background-color: #bac5cc;
     -fx-font-family: 'calibri';
-    -fx-font-size: 15;
+    -fx-wrap-text: true;
+    -fx-font-size: 18;
     -fx-font-weight: bold;
 }
 
 .opt-pane-question {
     -fx-background-color: white;
     -fx-font-family: 'calibri';
-    -fx-font-size: 15;
+    -fx-font-size: 18;
 }
 
 .opt-pane-question-idx {
     -fx-alignment: center;
     -fx-background-color: white;
     -fx-font-family: 'calibri';
-    -fx-font-size: 15;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+.opt-pane-question-response {
+    -fx-alignment: center;
+    -fx-background-color: #ED7D31;
+    -fx-font-family: 'calibri';
+    -fx-text-fill: white;
+    -fx-font-size: 18;
     -fx-font-weight: bold;
 }
 
@@ -349,6 +365,114 @@
     -fx-alignment: center;
     -fx-font-family: 'calibri';
     -fx-font-size: 20;
+}
+
+.list-table-core-team {
+    -fx-accent: #4ac974;
+    -fx-font-size: 18;
+}
+
+.list-table-core-team .column-header-background{
+    -fx-background-color: #4ac974;
+}
+
+.list-table-core-team .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-wrap-text: true;
+    -fx-text-fill: black;
+}
+
+.list-table-core-team .column-header {
+    -fx-background-color: transparent;
+}
+
+.list-table-core-team .table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, #bce5c9;  /* #c6e0b4 Green from User Needs Wizard */
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.list-table-core-team .table-row-cell:selected{
+    -fx-table-cell-border-color: #bce5c9;
+    -fx-background-color: #ED7D31;
+    -fx-background-insets: 0, 2 2 2 2;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.list-table-core-team .table-row-cell:selected .text{
+    -fx-fill: black;
+}
+
+.list-table-stakeholder {
+    -fx-accent: #f7f56a;
+    -fx-font-size: 18;
+}
+
+.list-table-stakeholder .column-header-background{
+    -fx-background-color: #f7f56a;
+}
+
+.list-table-stakeholder .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-wrap-text: true;
+    -fx-text-fill: black;
+}
+
+.list-table-stakeholder .column-header {
+    -fx-background-color: transparent;
+}
+
+.list-table-stakeholder .table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, #fcfbbd;  /* #c6e0b4 Green from User Needs Wizard */
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.list-table-stakeholder .table-row-cell:selected{
+    -fx-table-cell-border-color: #fcfbbd;
+    -fx-background-color: #ED7D31;
+    -fx-background-insets: 0, 2 2 2 2;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.list-table-stakeholder .table-row-cell:selected .text{
+    -fx-fill: black;
+}
+
+.list-table-na {
+    -fx-accent: #bac5cc;
+    -fx-font-size: 18;
+}
+
+.list-table-na .column-header-background{
+    -fx-background-color: #bac5cc;
+}
+
+.list-table-na .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-wrap-text: true;
+    -fx-text-fill: black;
+}
+
+.list-table-na .column-header {
+    -fx-background-color: transparent;
+}
+
+.list-table-na .table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, white;  /* #c6e0b4 Green from User Needs Wizard */
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.list-table-na .table-row-cell:selected{
+    -fx-table-cell-border-color: white;
+    -fx-background-color: #ED7D31;
+    -fx-background-insets: 0, 2 2 2 2;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.list-table-na .table-row-cell:selected .text{
+    -fx-fill: black;
 }
 
 .cell-span-table-view > .virtual-flow > .clipped-container > .sheet > .table-row-cell {

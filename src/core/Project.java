@@ -27,7 +27,7 @@ public class Project {
 
     public static final int NUM_STEPS = 6;
 
-    public static final int[] NUM_SUB_STEPS = {11, 5, 5, 4, 4, 5};
+    public static final int[] NUM_SUB_STEPS = {11, 8, 8, 4, 4, 5};
 
     // Project information
     private final SimpleStringProperty name = new SimpleStringProperty();
@@ -41,6 +41,7 @@ public class Project {
     private final StringProperty functionalClass = new SimpleStringProperty();
     private final StringProperty wzType = new SimpleStringProperty();
     private final StringProperty maintainingAgency = new SimpleStringProperty();
+    private final StringProperty patrollingAgency = new SimpleStringProperty();
     private final IntegerProperty aadt = new SimpleIntegerProperty();
     private final FloatProperty wzLength = new SimpleFloatProperty();
     private final IntegerProperty numRoadwayLanes = new SimpleIntegerProperty();
@@ -137,6 +138,18 @@ public class Project {
 
     public StringProperty maintainingAgencyProperty() {
         return maintainingAgency;
+    }
+
+    public String getPatrollingAgency() {
+        return patrollingAgency.get();
+    }
+
+    public void setPatrollingAgency(String value) {
+        patrollingAgency.set(value);
+    }
+
+    public StringProperty patrollingAgencyProperty() {
+        return patrollingAgency;
     }
 
     public int getAadt() {
@@ -251,6 +264,10 @@ public class Project {
         return steps[index];
     }
 
+    public QuestionGenerator getQGen() {
+        return qGen;
+    }
+
     public ObservableList<QuestionYN> getGoalWizardQs() {
         return qGen.getGoalWizardQs();
     }
@@ -319,6 +336,14 @@ public class Project {
         return stakeMat;
     }
 
+    public ObservableList<QuestionYN> getITSResourcesQs() {
+        return qGen.qITSResourcesList;
+    }
+
+    public int getNumITSResourcesQs() {
+        return qGen.qITSResourcesList.size();
+    }
+
     public ObservableList<QuestionYN> getAppWizardQs() {
         return qGen.getAppWizardQs();
     }
@@ -357,7 +382,8 @@ public class Project {
             this.numSubSteps = numSubSteps;
             subSteps = new SubStep[numSubSteps];
             for (int subStepIdx = 0; subStepIdx < numSubSteps; subStepIdx++) {
-                subSteps[subStepIdx] = new SubStep("Step " + String.valueOf(stepIdx + 1) + "." + String.valueOf(subStepIdx + 1));
+                subSteps[subStepIdx] = new SubStep("Step " + String.valueOf(stepIdx + 1) + "." + String.valueOf(subStepIdx + 1),
+                        Project.checkSubStepIsWizardSummary(stepIdx, subStepIdx));
             }
             subSteps[subSteps.length - 1].stepFinishedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -503,8 +529,15 @@ public class Project {
 
         private final SimpleBooleanProperty stepFinished = new SimpleBooleanProperty(false);
 
+        private final SimpleBooleanProperty wizardSummary = new SimpleBooleanProperty(false);
+
         public SubStep(String stepName) {
+            this(stepName, false);
+        }
+
+        public SubStep(String stepName, boolean isWizardSummary) {
             this.stepName = stepName;
+            wizardSummary.set(isWizardSummary);
         }
 
         public String getName() {
@@ -548,6 +581,21 @@ public class Project {
             return stepFinished;
         }
 
+        public boolean isWizardSummary() {
+            return wizardSummary.get();
+        }
+
+    }
+
+    public static boolean checkSubStepIsWizardSummary(int stepIdx, int subStepIdx) {
+        switch (stepIdx) {
+            case 0:
+                return subStepIdx == 4 || subStepIdx == 6 || subStepIdx == 8;
+            case 1:
+                return subStepIdx == 2;
+            default:
+                return false;
+        }
     }
 
     public final SimpleDoubleProperty progressInfo = new SimpleDoubleProperty(1.0);
@@ -559,12 +607,14 @@ public class Project {
     public static final int GOAL_WIZARD_SUMMARY_INDEX = 4; // Step 1
     public static final int FEAS_WIZARD_SUMMARY_INDEX = 6; // Step 1
     public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 8;  // Step 1
+    public static final int TEAM_SUMMARY_INDEX = 9; // Step 1
     public static final int APP_WIZARD_SUMMARY_INDEX = 2; // Step 2
 
     public static final String[][] STEP_NAMES = {
-        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard Summary", "Feasibility", "Feasibility Wizard Summary", "Stakeholders", "Stakeholders Wizard Summary", "Team Members", "ITS Resources"},
+        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Member Selection", "Team Members", "ITS Resources"},
         {"Step 2", "Initial Applications", "Application Wizard", "Benefits", "Costs", "Institutional/Jurisdictional", "Legal/Policy", "Stakeholder Buy-In", "Develop Concept of Operations"},
-        {"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Ops & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
+        //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Ops & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
+        {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Ops & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefity/Cost"},
         {"Step 4", "Direct/Indirect", "Award Mechanism", "RFP Requirements", "Selected Vendor"},
         {"Step 5", "Implementing System Plans", "Scheduling Decisions", "System Acceptance Testing", "Handling Deployment Issues"},
         {"Step 6", "Changin Work Zone", "Using/Sharing ITS Info", "Maintaining Adequate Staff", "Leveraging Public Support", "System Monitoring/Evaluation"}

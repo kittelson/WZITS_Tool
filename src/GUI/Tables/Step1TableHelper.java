@@ -23,6 +23,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
@@ -37,7 +38,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 
 /**
@@ -100,21 +101,39 @@ public class Step1TableHelper {
         questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
             @Override
             public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
-                final TextFieldTableCell<QuestionYN, String> cbe = new TextFieldTableCell();
-                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell();
+                tfe.setEditable(false);
+                tfe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
                     @Override
-                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, final TableRow newVal) {
                         if (newVal.getItem() != null) {
-                            ((Question) newVal.getItem()).visibleProperty().addListener(new ChangeListener<Boolean>() {
+                            final Question q = (Question) newVal.getItem();
+                            q.visibleProperty().addListener(new ChangeListener<Boolean>() {
                                 @Override
                                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                                    cbe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    tfe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    //if (newVal) {
+                                    //    tfe.setStyle("-fx-background-color: white;-fx-text-fill: black");
+                                    //} else {
+                                    //    tfe.setStyle("-fx-background-color: grey;-fx-text-fill: grey");
+                                    //}
+                                }
+                            });
+                            tfe.textFillProperty().addListener(new ChangeListener<Paint>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Paint> ov, Paint oldVal, Paint newVal) {
+                                    tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    //if (q.visibleProperty().get()) {
+                                    //    tfe.setStyle("-fx-background-color: white;-fx-text-fill: black");
+                                    //} else {
+                                    //    tfe.setStyle("-fx-background-color: grey;-fx-text-fill: grey");
+                                    //}
                                 }
                             });
                         }
                     }
                 });
-                return cbe;
+                return tfe;
             }
         });
 
@@ -126,11 +145,45 @@ public class Step1TableHelper {
 
         final TableColumn yesCol = new TableColumn<>("Yes");
         yesCol.setCellValueFactory(new PropertyValueFactory<>("answerIsYes"));
-        yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
+        //yesCol.setCellFactory(CheckBoxTableCell.forTableColumn(yesCol));
+        yesCol.setCellFactory(new Callback<TableColumn<QuestionYN, Boolean>, TableCell<QuestionYN, Boolean>>() {
+            @Override
+            public TableCell<QuestionYN, Boolean> call(TableColumn<QuestionYN, Boolean> tc) {
+                final CheckBoxTableCell<QuestionYN, Boolean> cbe = new CheckBoxTableCell();
+                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        //System.out.println("Called");
+                        if (newVal.getItem() != null) {
+                            //cbe.disableProperty().bind(((Question) newVal.getItem()).lockedProperty());
+                            cbe.editableProperty().bind(((Question) newVal.getItem()).lockedProperty().not());
+                        }
+                    }
+                });
+                return cbe;
+            }
+        });
 
         TableColumn noCol = new TableColumn("No");
         noCol.setCellValueFactory(new PropertyValueFactory<>("answerIsNo"));
-        noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
+        //noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
+        noCol.setCellFactory(new Callback<TableColumn<QuestionYN, Boolean>, TableCell<QuestionYN, Boolean>>() {
+            @Override
+            public TableCell<QuestionYN, Boolean> call(TableColumn<QuestionYN, Boolean> tc) {
+                final CheckBoxTableCell<QuestionYN, Boolean> cbe = new CheckBoxTableCell();
+                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        //System.out.println("Called");
+                        if (newVal.getItem() != null) {
+                            //cbe.disableProperty().bind(((Question) newVal.getItem()).lockedProperty());
+                            cbe.editableProperty().bind(((Question) newVal.getItem()).lockedProperty().not());
+                        }
+                    }
+                });
+                return cbe;
+            }
+        });
 
         yesCol.setPrefWidth(75);
         yesCol.setMaxWidth(75);
@@ -144,7 +197,7 @@ public class Step1TableHelper {
 
         // Setting Table Content
         final ObservableList<QuestionYN> stepQuestions = FXCollections.observableArrayList(proj.getGoalWizardQs().subList(startRow, endRow));
-        stepQuestions.add(new QuestionYN(-1, "", CONTINUE_STR));
+        //stepQuestions.add(new QuestionYN(-1, "", CONTINUE_STR));
         //table.setItems(FXCollections.observableArrayList(stepQuestions.subList(startRow, endRow)));
         table.setItems(stepQuestions);
         table.getStyleClass().add("step-one-table");
@@ -185,6 +238,10 @@ public class Step1TableHelper {
         return TableHelper.createQuestionYNTable(proj.getUNSupportQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
 
+    public static TableView getITSResourcesPanel(Project proj) {
+        return TableHelper.createQuestionYNTable(proj.getITSResourcesQs(), new TableHelper.Options(STEP1_TABLE_CSS));
+    }
+
     public static TableView getMajorGoalsTable(Project proj) {
         return TableHelper.createQuestionYNTable(proj.getMajorGoalsQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
@@ -214,6 +271,7 @@ public class Step1TableHelper {
     private static TableView createFeasibilityYNTable(Project proj) {
         TableHelper.Options tOpts = new TableHelper.Options(STEP1_TABLE_CSS);
         tOpts.qColumnHeader = "Mark All That Apply";
+        tOpts.showFeasibilityScore = true;
         return TableHelper.createQuestionYNTable(proj.getFeasWizardYNQs(), tOpts);
     }
 
@@ -222,6 +280,7 @@ public class Step1TableHelper {
         pane.add(NodeFactory.createFormattedLabel("#", "opt-pane-title"), 0, 0);
         pane.add(NodeFactory.createFormattedLabel("Input Question", "opt-pane-title"), 1, 0);
         pane.add(NodeFactory.createFormattedLabel("User Response", "opt-pane-title"), 2, 0);
+        pane.add(NodeFactory.createFormattedLabel("Contributed Score", "opt-pane-title"), 3, 0);
         double rowSplit = 100.0 / (proj.getFeasWizardOptQs().size() + 2);
         RowConstraints rc = new RowConstraints();
         rc.setPercentHeight(rowSplit * 2);
@@ -237,9 +296,37 @@ public class Step1TableHelper {
                     q.setAnswer((String) cb.getSelectionModel().getSelectedItem());
                 }
             });
-            pane.add(NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx"), 0, qIdx);
-            pane.add(NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question"), 1, qIdx);
+            cb.disableProperty().bind(q.lockedProperty());
+            cb.disableProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    // If disable, select lowest impact (last) option
+                    if (newVal) {
+                        cb.getSelectionModel().selectLast();
+                    }
+                }
+            });
+            Label qIdxLabel = NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx");
+            qIdxLabel.disableProperty().bind(q.lockedProperty());
+            final Label qLabel = NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question");
+            qLabel.disableProperty().bind(q.lockedProperty());
+            qLabel.disableProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    // If disable, select lowest impact (last) option
+                    if (newVal) {
+                        qLabel.setText(q.getLockedQuestionText());
+                    } else {
+                        qLabel.setText(q.getQuestionText());
+                    }
+                }
+            });
+            final Label qScoreLabel = NodeFactory.createFormattedLabel("0", "opt-pane-question-idx");
+            qScoreLabel.textProperty().bind(q.scoreProperty().asString());
+            pane.add(qIdxLabel, 0, qIdx);
+            pane.add(qLabel, 1, qIdx);
             pane.add(cb, 2, qIdx);
+            pane.add(qScoreLabel, 3, qIdx);
             rc = new RowConstraints();
             rc.setPercentHeight(rowSplit);
             pane.getRowConstraints().add(rc);
@@ -248,9 +335,11 @@ public class Step1TableHelper {
 
         int col1Width = 25;
         int col3Width = 350;
+        int col4Width = 100;
         pane.getColumnConstraints().add(0, new ColumnConstraints(col1Width, col1Width, col1Width, Priority.NEVER, HPos.RIGHT, true));
         pane.getColumnConstraints().add(1, new ColumnConstraints(1, 125, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
         pane.getColumnConstraints().add(2, new ColumnConstraints(col3Width, col3Width, col3Width, Priority.NEVER, HPos.RIGHT, true));
+        pane.getColumnConstraints().add(3, new ColumnConstraints(col4Width, col4Width, col4Width, Priority.NEVER, HPos.RIGHT, true));
 
         return pane;
     }
@@ -287,18 +376,25 @@ public class Step1TableHelper {
         pane.getRowConstraints().add(rc);
         int qIdx = 1;
         for (final QuestionOption q : proj.getStakeWizardOptQs()) {
-            final ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(q.getOptions()));
-            cb.setMaxWidth(MainController.MAX_WIDTH);
-            cb.setMaxHeight(MainController.MAX_HEIGHT);
-            cb.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent ae) {
-                    q.setAnswer((String) cb.getSelectionModel().getSelectedItem());
-                }
-            });
+            Node displayNode;
+            if (!q.isLocked()) {
+                final ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(q.getOptions()));
+                cb.setMaxWidth(MainController.MAX_WIDTH);
+                cb.setMaxHeight(MainController.MAX_HEIGHT);
+                cb.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        q.setAnswer((String) cb.getSelectionModel().getSelectedItem());
+                    }
+                });
+                displayNode = cb;
+            } else {
+                displayNode = NodeFactory.createFormattedLabel("", "opt-pane-question-response");
+                ((Label) displayNode).textProperty().bind(q.answerStringProperty());
+            }
             pane.add(NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx"), 0, qIdx);
             pane.add(NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question"), 1, qIdx);
-            pane.add(cb, 2, qIdx);
+            pane.add(displayNode, 2, qIdx);
             rc = new RowConstraints();
             rc.setPercentHeight(rowSplit);
             pane.getRowConstraints().add(rc);

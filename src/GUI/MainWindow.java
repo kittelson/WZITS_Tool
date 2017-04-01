@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Step.Step1Panel;
 import GUI.Launch.LaunchPane;

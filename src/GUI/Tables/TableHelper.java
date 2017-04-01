@@ -29,6 +29,7 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 
 /**
@@ -54,31 +55,40 @@ public class TableHelper {
                 }
             });
         }
-        indexCol.setPrefWidth(25);
-        indexCol.setMaxWidth(25);
-        indexCol.setMinWidth(25);
+        indexCol.setPrefWidth(35);
+        indexCol.setMaxWidth(35);
+        indexCol.setMinWidth(35);
         indexCol.getStyleClass().add("col-style-center-bold");
 
         TableColumn questionCol = new TableColumn(opts != null && opts.qColumnHeader != null ? opts.qColumnHeader : "Input Question");
+        questionCol.setEditable(false);
         questionCol.setCellValueFactory(new PropertyValueFactory<>("questionText"));
         questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
             @Override
             public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
-                final TextFieldTableCell<QuestionYN, String> cbe = new TextFieldTableCell();
-                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell();
+                tfe.setEditable(false);
+                tfe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
                     @Override
                     public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
                         if (newVal.getItem() != null) {
-                            ((Question) newVal.getItem()).visibleProperty().addListener(new ChangeListener<Boolean>() {
+                            final Question q = (Question) newVal.getItem();
+                            q.visibleProperty().addListener(new ChangeListener<Boolean>() {
                                 @Override
                                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                                    cbe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    tfe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                }
+                            });
+                            tfe.textFillProperty().addListener(new ChangeListener<Paint>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Paint> ov, Paint oldVal, Paint newVal) {
+                                    tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
                                 }
                             });
                         }
                     }
                 });
-                return cbe;
+                return tfe;
             }
         });
 
@@ -137,9 +147,19 @@ public class TableHelper {
         noCol.setMaxWidth(75);
         noCol.setMinWidth(75);
         responseCol.getColumns().addAll(yesCol, noCol);
+        table.getColumns().addAll(indexCol, questionCol, responseCol);
 
-        table.getColumns().addAll(indexCol, questionCol, responseCol);  // goalCol
+        if (opts.showFeasibilityScore) {
+            TableColumn scoreCol = new TableColumn<>("Contributed Score");
+            scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
+            scoreCol.setPrefWidth(100);
+            scoreCol.setMaxWidth(100);
+            scoreCol.setMinWidth(100);
+            scoreCol.getStyleClass().add("col-style-center-bold");
+            table.getColumns().add(scoreCol);
+        }
 
+        // goalCol
         //final ObservableList<QuestionYN> qList = ;
         table.setItems(qList);
         table.getStyleClass().add(opts.tableStyleCSS);
@@ -199,9 +219,9 @@ public class TableHelper {
                 }
             });
         }
-        indexCol.setPrefWidth(25);
-        indexCol.setMaxWidth(25);
-        indexCol.setMinWidth(25);
+        indexCol.setPrefWidth(35);
+        indexCol.setMaxWidth(35);
+        indexCol.setMinWidth(35);
         indexCol.getStyleClass().add("col-style-center-bold");
 
         TableColumn questionCol = new TableColumn(opts != null && opts.qColumnHeader != null ? opts.qColumnHeader : "Input Question");
@@ -209,21 +229,28 @@ public class TableHelper {
         questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
             @Override
             public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
-                final TextFieldTableCell<QuestionYN, String> cbe = new TextFieldTableCell();
-                cbe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell();
+                tfe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
                     @Override
                     public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
                         if (newVal.getItem() != null) {
-                            ((Question) newVal.getItem()).visibleProperty().addListener(new ChangeListener<Boolean>() {
+                            final Question q = (Question) newVal.getItem();
+                            q.visibleProperty().addListener(new ChangeListener<Boolean>() {
                                 @Override
                                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                                    cbe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    tfe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                }
+                            });
+                            tfe.textFillProperty().addListener(new ChangeListener<Paint>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Paint> ov, Paint oldVal, Paint newVal) {
+                                    tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
                                 }
                             });
                         }
                     }
                 });
-                return cbe;
+                return tfe;
             }
         });
 
@@ -440,13 +467,14 @@ public class TableHelper {
             new QuestionYN(0, Question.GOAL_MOBILITY, "Will this work zone involve off-peak lane closures?")
     );
 
-    public static Color COLOR_HIDDEN = Color.RED;
+    public static Color COLOR_HIDDEN = Color.LIGHTGRAY;
 
     public static class Options {
 
         public String tableStyleCSS;
         public String qColumnHeader = "Input Question";
         public boolean autoIndex = true;
+        public boolean showFeasibilityScore = false;
 
         public Options(String tableStyleCSS) {
             this.tableStyleCSS = tableStyleCSS;

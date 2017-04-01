@@ -9,6 +9,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.util.converter.IntegerStringConverter;
 
 /**
@@ -22,24 +24,29 @@ public abstract class Question {
     protected final SimpleStringProperty questionText;
     protected final SimpleIntegerProperty responseIdx;
 
-    protected final BooleanProperty visible = new SimpleBooleanProperty();
+    protected final BooleanProperty visible = new SimpleBooleanProperty(true);
     protected final BooleanProperty locked = new SimpleBooleanProperty();
+
+    private String lockRefText = "";
 
     public Question(int idx, String goal, String questionText) {
         this(idx, goal, questionText, -1);
     }
 
-    public Question(int idx, String goal, String questionText, int responseIdx) {
+    public Question(int idx, String goal, String questionTxt, int responseIdx) {
         this.idx = new SimpleIntegerProperty(idx);
         this.goal = new SimpleStringProperty(goal);
-        this.questionText = new SimpleStringProperty(questionText);
+        this.questionText = new SimpleStringProperty(questionTxt);
         this.responseIdx = new SimpleIntegerProperty(responseIdx);
-//        this.responseIdx.addListener(new ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
-//                System.out.println("Value changed: " + String.valueOf(oldVal) + " to " + String.valueOf(newVal));
-//            }
-//        });
+        this.visibleProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                //System.out.println("Visibility Changed");
+                //if (newVal == false) {
+                //    questionText.set(questionText.get() + LOCKED_TEXT);
+                //}
+            }
+        });
     }
 
     public int getIdx() {
@@ -107,6 +114,14 @@ public abstract class Question {
         return locked;
     }
 
+    public String getLockedQuestionText() {
+        return questionText.get() + " (Locked due to " + lockRefText + ")";
+    }
+
+    public void setLockedReferenceText(String refText) {
+        this.lockRefText = refText;
+    }
+
     public static IntegerStringConverter yesNoConverter = new IntegerStringConverter() {
         @Override
         public Integer fromString(String sVal) {
@@ -146,5 +161,7 @@ public abstract class Question {
     public static final String GOAL_TRAVELER_INFO = "Traveler Information";
 
     public static final String GOAL_DOCUMENTATION = "Documentation";
+
+    public static final String LOCKED_TEXT = " (Locked)";
 
 }

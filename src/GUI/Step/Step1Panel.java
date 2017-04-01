@@ -7,7 +7,7 @@ package GUI.Step;
 
 import GUI.Helper.ColorHelper;
 import GUI.Helper.NodeFactory;
-import GUI.IconHelper;
+import GUI.Helper.IconHelper;
 import GUI.MainController;
 import GUI.Tables.Step1TableHelper;
 import core.Question;
@@ -29,8 +29,6 @@ import GUI.Helper.ProgressIndicatorBar;
 import core.Project;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -70,16 +68,6 @@ public class Step1Panel extends BorderPane {
 
     private final SimpleDoubleProperty goalWizProgress = new SimpleDoubleProperty(0.0);
 
-//    private final GridPane subStepToolGrid = new GridPane();
-//    private final BorderPane subStepToolBar = new BorderPane();
-//    private final Button subStep0Button = new Button("Intro");
-//    private final Button subStep1Button = new Button("Project Info & WZ Metadata");
-//    private final Button subStep2Button = new Button("User Needs");
-//    private final Button subStep3Button = new Button("User Needs Supplemental");
-//    private final Button subStep4Button = new Button("System Goals");
-//    private final Button subStep5Button = new Button("Summary");
-//    private final Button prevSubStepButton = new Button();
-//    private final Button nextSubStepButton = new Button();
     private final GridPane stepIntroGrid = new GridPane();
     private final GridPane projInfoGrid = new GridPane();
     private final BorderPane genInfoPane = new BorderPane();
@@ -94,65 +82,14 @@ public class Step1Panel extends BorderPane {
     private final BorderPane fwSummaryPane = new BorderPane();
     private final BorderPane stakeholderPane = new BorderPane();
     private final BorderPane swSummaryPane = new BorderPane();
+    private final BorderPane teamMembersPane = new BorderPane();
+    private final BorderPane itsPane = new BorderPane();
     private final BorderPane stepReportPane = new BorderPane();
 
     public Step1Panel(MainController mc) {
 
         this.control = mc;
 
-        //this.allSubStepsPane.setStyle("-fx-background-color: blue");
-//        // Creating and styling sub step toolbar
-//        subStep0Button.getStyleClass().add("sub-flow-step-start");
-//        subStep0Button.setStyle("-fx-background-color: " + MainWindow.COLOR_SUB_STEP_HL);
-//        subStep1Button.getStyleClass().add("sub-flow-step");
-//        subStep2Button.getStyleClass().add("sub-flow-step");
-//        subStep3Button.getStyleClass().add("sub-flow-step");
-//        subStep4Button.getStyleClass().add("sub-flow-step");
-//        subStep5Button.getStyleClass().add("sub-flow-step-end");
-//        prevSubStepButton.getStyleClass().add("sub-flow-prev");
-//        nextSubStepButton.getStyleClass().add("sub-flow-next");
-//
-//        // Setting the layout of the Flow ToolBar
-//        subStepToolGrid.add(subStep0Button, 0, 0);
-//        subStepToolGrid.add(subStep1Button, 1, 0);
-//        subStepToolGrid.add(subStep2Button, 2, 0);
-//        subStepToolGrid.add(subStep3Button, 3, 0);
-//        subStepToolGrid.add(subStep4Button, 4, 0);
-//        subStepToolGrid.add(subStep5Button, 5, 0);
-//        for (int flowIdx = 0; flowIdx < getNumSubSteps() + 2; flowIdx++) {
-//            ColumnConstraints colConst = new ColumnConstraints();
-//            colConst.setPercentWidth(100.0 / (getNumSubSteps() + 2));
-//            colConst.setFillWidth(true);
-//            subStepToolGrid.getColumnConstraints().add(colConst);
-//        }
-//        subStepToolBar.setLeft(prevSubStepButton);
-//        subStepToolBar.setCenter(subStepToolGrid);
-//        subStepToolBar.setRight(nextSubStepButton);
-//        BorderPane.setMargin(subStepToolGrid, new Insets(0, 3, 0, 3));
-//
-//        ArrayList<Button> buttonList = new ArrayList();
-//        buttonList.add(prevSubStepButton);
-//        buttonList.add(subStep0Button);
-//        buttonList.add(subStep1Button);
-//        buttonList.add(subStep2Button);
-//        buttonList.add(subStep3Button);
-//        buttonList.add(subStep4Button);
-//        buttonList.add(subStep5Button);
-//        buttonList.add(nextSubStepButton);
-//
-//        for (Button b : buttonList) {
-//            b.setWrapText(true);
-//            b.setTextAlignment(TextAlignment.CENTER);
-//            b.setMaxWidth(MainController.MAX_WIDTH);
-//            b.setMaxHeight(MainController.MAX_HEIGHT);
-//        }
-//
-//        SVGPath prevSVG = new SVGPath();
-//        prevSVG.setContent(IconHelper.SVG_STR_PREV_SMALL);
-//        SVGPath nextSVG = new SVGPath();
-//        nextSVG.setContent(IconHelper.SVG_STR_NEXT_SMALL);
-//        prevSubStepButton.setGraphic(prevSVG);
-//        nextSubStepButton.setGraphic(nextSVG);
         mainVBox.setFillWidth(true);
         Label startLabel = new Label("Step");
         startLabel.setAlignment(Pos.BOTTOM_CENTER);
@@ -295,12 +232,21 @@ public class Step1Panel extends BorderPane {
 
         // Feasibility Questions Panel
         feasibilityPane.setTop(NodeFactory.createFormattedLabel("Feasibility", "substep-title-label"));
-        feasibilityPane.setCenter(Step1TableHelper.getFeasibilityWizard(control.getProject()));
+        GridPane fwgp1 = new GridPane();
+        fwgp1.add(Step1TableHelper.getFeasibilityWizard(control.getProject()), 0, 0);
+        fwgp1.add(control.getProject().getFeasibilityMatrix().createSummaryPanel(), 0, 1);
+        RowConstraints rc1 = new RowConstraints();
+        rc1.setPercentHeight(80);
+        RowConstraints rc2 = new RowConstraints();
+        rc2.setPercentHeight(20);
+        fwgp1.getRowConstraints().addAll(rc1, rc2);
+        feasibilityPane.setCenter(fwgp1);
         feasibilityPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Feasibility Wizard panel
         fwSummaryPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard Summary", "substep-title-label"));
-        fwSummaryPane.setCenter(control.getProject().getFeasibilityMatrix().createSummaryPanel());
+        BorderPane fwbp2 = new BorderPane();
+        fwSummaryPane.setCenter(fwbp2);
         fwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Stakeholders Questions Panel
@@ -308,10 +254,20 @@ public class Step1Panel extends BorderPane {
         stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject()));
         stakeholderPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
-        // Feasibility Wizard panel
+        // Stakeholder Wizard panel
         swSummaryPane.setTop(NodeFactory.createFormattedLabel("Stakeholder Wizard Summary", "substep-title-label"));
         swSummaryPane.setCenter(control.getProject().getStakeholderMatrix().createSummaryTable());
         swSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        // Team Members and Stakeholders Panel
+        teamMembersPane.setTop(NodeFactory.createFormattedLabel("Selected Core Team Members and Stakeholders", "substep-title-label"));
+        teamMembersPane.setCenter(control.getProject().getStakeholderMatrix().createSelectedMembersPanel());
+        teamMembersPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        // ITS Panel
+        itsPane.setTop(NodeFactory.createFormattedLabel("ITS Resources", "substep-title-label"));
+        itsPane.setCenter(Step1TableHelper.getITSResourcesPanel(control.getProject()));
+        itsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: Assessment of Needs", "substep-title-label"));
@@ -319,9 +275,7 @@ public class Step1Panel extends BorderPane {
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Adding to main substep VBox
-//        mainVBox.getChildren().addAll(subStepToolBar, allSubStepsPane);
         mainVBox.getChildren().addAll(allSubStepsPane);
-//        VBox.setMargin(subStepToolBar, new Insets(5, 5, 5, 5));
         allSubStepsPane.add(stepIntroGrid, 0, 0);
         allSubStepsPane.add(projInfoGrid, 1, 0);
         allSubStepsPane.add(unPane, 2, 0);
@@ -332,7 +286,9 @@ public class Step1Panel extends BorderPane {
         allSubStepsPane.add(fwSummaryPane, 7, 0);
         allSubStepsPane.add(stakeholderPane, 8, 0);
         allSubStepsPane.add(swSummaryPane, 9, 0);
-        allSubStepsPane.add(stepReportPane, 10, 0);
+        allSubStepsPane.add(teamMembersPane, 10, 0);
+        allSubStepsPane.add(itsPane, 11, 0);
+        allSubStepsPane.add(stepReportPane, 12, 0);
 
         int numPanes = getNumSubSteps() + 2;
         for (int colIdx = 0; colIdx < numPanes; colIdx++) {
@@ -344,18 +300,6 @@ public class Step1Panel extends BorderPane {
         pagination.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(pagination, Priority.ALWAYS);
 
-//        GridPane.setHgrow(subStep0Button, Priority.ALWAYS);
-//        GridPane.setHgrow(subStep1Button, Priority.ALWAYS);
-//        GridPane.setHgrow(subStep2Button, Priority.ALWAYS);
-//        GridPane.setHgrow(subStep3Button, Priority.ALWAYS);
-//        GridPane.setHgrow(subStep4Button, Priority.ALWAYS);
-//        GridPane.setHgrow(subStep5Button, Priority.ALWAYS);
-//        GridPane.setVgrow(subStep0Button, Priority.ALWAYS);
-//        GridPane.setVgrow(subStep1Button, Priority.ALWAYS);
-//        GridPane.setVgrow(subStep2Button, Priority.ALWAYS);
-//        GridPane.setVgrow(subStep3Button, Priority.ALWAYS);
-//        GridPane.setVgrow(subStep4Button, Priority.ALWAYS);
-//        GridPane.setVgrow(subStep5Button, Priority.ALWAYS);
         GridPane.setVgrow(stepIntroGrid, Priority.ALWAYS);
         GridPane.setVgrow(projInfoGrid, Priority.ALWAYS);
         GridPane.setVgrow(unPane, Priority.ALWAYS);
@@ -369,9 +313,6 @@ public class Step1Panel extends BorderPane {
         GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
         VBox.setVgrow(allSubStepsPane, Priority.ALWAYS);
         this.setCenter(mainVBox);
-        //this.allSubStepsPane.setMaxHeight(MainController.MAX_HEIGHT);
-        //this.mainVBox.setMaxHeight(MainController.MAX_HEIGHT);
-        //this.setMaxHeight(MainController.MAX_HEIGHT);
 
         setupActionListeners();
         setupPropertyBindings();
@@ -392,63 +333,6 @@ public class Step1Panel extends BorderPane {
     }
 
     private void setupActionListeners() {
-//        // Flow control actions
-//        prevSubStepButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                //activeSubStep.set(getActiveSubStep() - 1);
-//                setActiveSubStep(getActiveSubStep() - 1);
-//            }
-//        });
-//
-//        nextSubStepButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                setActiveSubStep(getActiveSubStep() + 1);
-//            }
-//        });
-//
-//        subStep0Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                setActiveSubStep(-1);
-//            }
-//        });
-//
-//        subStep1Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                setActiveSubStep(0);
-//            }
-//        });
-//
-//        subStep2Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                setActiveSubStep(1);
-//            }
-//        });
-//
-//        subStep3Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                setActiveSubStep(2);
-//            }
-//        });
-//
-//        subStep4Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                setActiveSubStep(3);
-//            }
-//        });
-//
-//        subStep5Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                setActiveSubStep(4);
-//            }
-//        });
 
     }
 
@@ -497,6 +381,9 @@ public class Step1Panel extends BorderPane {
                         break;
                     case Project.STAKEHOLDER_WIZARD_SUMMARY_INDEX:
                         swSummaryPane.setCenter(control.getProject().getStakeholderMatrix().createSummaryTable());
+                        break;
+                    case Project.TEAM_SUMMARY_INDEX:
+                        teamMembersPane.setCenter(control.getProject().getStakeholderMatrix().createSelectedMembersPanel());
                         break;
                 }
 

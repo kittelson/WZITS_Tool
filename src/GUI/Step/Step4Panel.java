@@ -5,16 +5,18 @@
  */
 package GUI.Step;
 
-import GUI.IconHelper;
+import GUI.Helper.IconHelper;
+import GUI.Helper.NodeFactory;
 import GUI.MainController;
+import GUI.Tables.Step4TableHelper;
 import core.Project;
+import javafx.animation.TranslateTransition;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -23,7 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Callback;
+import javafx.util.Duration;
 
 /**
  *
@@ -33,14 +35,18 @@ public class Step4Panel extends BorderPane {
 
     private final MainController control;
 
+    private int stepIndex = 3;
+
     private final VBox mainVBox = new VBox();
 
-    private final Pagination pagination;
-
-    private final ProgressBar pb;
+    private final GridPane allSubStepsPane = new GridPane();
 
     private final GridPane stepIntroGrid = new GridPane();
-    private final BorderPane stepSummaryPane = new BorderPane();
+    private final BorderPane directIndirectPane = new BorderPane();
+    private final BorderPane mechanismPane = new BorderPane();
+    private final BorderPane rfpNode = new BorderPane();
+    private final BorderPane vendorSelectionPane = new BorderPane();
+    private final BorderPane stepReportPane = new BorderPane();
 
     public Step4Panel(MainController control) {
 
@@ -75,7 +81,7 @@ public class Step4Panel extends BorderPane {
             @Override
             protected double computeValue() {
                 //return Math.max(widthProperty().get() * 0.70, 700);
-                return (widthProperty().get() / (Project.NUM_SUB_STEPS[3] + 2) - 150); // 0.9
+                return (widthProperty().get() / (Project.NUM_SUB_STEPS[1] + 2) - 150); // 0.9
                 //return (widthProperty().get()) * 0.2;
             }
         };
@@ -118,34 +124,119 @@ public class Step4Panel extends BorderPane {
         stepIntroGrid.getColumnConstraints().addAll(colConst1, colConst2);
         GridPane.setHgrow(instructionLabel, Priority.ALWAYS);
 
-        pb = new ProgressBar(0);
-        pb.setMaxWidth(MainController.MAX_WIDTH);
+        int subStepIndex = 1;
+        // Initial Applications Questions Panel
+        directIndirectPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        directIndirectPane.setCenter(Step4TableHelper.createDirectIndirectNode(control.getProject()));
+        directIndirectPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
-        //pagination = new Pagination(Step2TableHelper.getPageCount(3) + 2);
-        pagination = new Pagination(1);
-        pagination.setPageFactory(new Callback<Integer, Node>() {
-            @Override
-            public Node call(Integer pageIndex) {
-//                if (pageIndex == 0) {
-//                    return stepIntroGrid;
-//                } else if (pageIndex == pagination.getPageCount() - 1) {
-//                    return Step2TableHelper.createSummaryTable();
-//                } else {
-//                    return Step2TableHelper.createPageTable(pageIndex - 1, 10);
-//                }
-                return stepIntroGrid;
-            }
-        });
-        //pagination.getStylesheets().add(this.getClass().getResource("/GUI/Step/step1Pane.css").toExternalForm());
-        pagination.getStyleClass().add("step-subpagination");
+        // Application Wizard Summary Panel
+        mechanismPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        mechanismPane.setCenter(Step4TableHelper.createMechanismNode(control.getProject()));
+        mechanismPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
-        mainVBox.getChildren().addAll(pagination, pb);
+        // Benefits Questions Panel
+        rfpNode.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        rfpNode.setCenter(Step4TableHelper.createRFPNode(control.getProject()));
+        rfpNode.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
-        pagination.setMaxHeight(Double.MAX_VALUE);
-        VBox.setVgrow(pagination, Priority.ALWAYS);
+        // Costs Questions Panel
+        vendorSelectionPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        vendorSelectionPane.setCenter(Step4TableHelper.createVendorNode(control.getProject()));
+        vendorSelectionPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
+        mainVBox.getChildren().addAll(allSubStepsPane);
+        int i = 0;
+        allSubStepsPane.add(stepIntroGrid, i++, 0);
+        allSubStepsPane.add(directIndirectPane, i++, 0);
+        allSubStepsPane.add(mechanismPane, i++, 0);
+        allSubStepsPane.add(rfpNode, i++, 0);
+        allSubStepsPane.add(vendorSelectionPane, i++, 0);
+        allSubStepsPane.add(stepReportPane, i++, 0);
+
+        int numPanes = getNumSubSteps() + 2;
+        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
+            ColumnConstraints tcc = new ColumnConstraints();
+            tcc.setPercentWidth(100.0 / numPanes);
+            allSubStepsPane.getColumnConstraints().add(tcc);
+        }
+
+        GridPane.setVgrow(stepIntroGrid, Priority.ALWAYS);
+        GridPane.setVgrow(directIndirectPane, Priority.ALWAYS);
+        GridPane.setVgrow(mechanismPane, Priority.ALWAYS);
+        GridPane.setVgrow(rfpNode, Priority.ALWAYS);
+        GridPane.setVgrow(vendorSelectionPane, Priority.ALWAYS);
+        GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
+        VBox.setVgrow(allSubStepsPane, Priority.ALWAYS);
         this.setCenter(mainVBox);
 
+        setupActionListeners();
+        setupPropertyBindings();
+
+    }
+
+    private void setupActionListeners() {
+
+    }
+
+    private void setupPropertyBindings() {
+        this.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
+                System.out.println("Step 4 Width Resized");
+                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
+                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+                }
+            }
+        });
+
+        control.activeSubStepProperty(stepIndex).addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue o, Object oldVal, Object newVal) {
+                selectSubStep(getActiveSubStep());
+                control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
+                control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
+
+                control.checkProceed();
+            }
+        });
+    }
+
+    private int getActiveSubStep() {
+        return control.getActiveSubStep(stepIndex);
+    }
+
+    private int getNumSubSteps() {
+        return Project.NUM_SUB_STEPS[stepIndex];
+    }
+
+    public void setViewWidth(double viewWidth) {
+        if (allSubStepsPane != null) {
+            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+        }
+    }
+
+    private void selectSubStep(int stepIndex) {
+        moveScreen((stepIndex + 1) * stepIntroGrid.getWidth(), 0);
+    }
+
+    private void moveScreen(double toX, double toY) {
+        moveScreen(toX, toY, true);
+    }
+
+    private void moveScreen(double toX, double toY, boolean animated) {
+        if (animated) {
+            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allSubStepsPane);
+            moveMe.setToX(-1 * toX);
+            moveMe.setToY(toY);
+            moveMe.play();
+        } else {
+            allSubStepsPane.setTranslateX(-1 * toX);
+        }
     }
 
 }

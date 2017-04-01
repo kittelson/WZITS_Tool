@@ -21,7 +21,7 @@ public class QuestionYN extends Question {
 
     public final SimpleBooleanProperty answerIsNo = new SimpleBooleanProperty(false);
 
-    private final IntegerProperty score = new SimpleIntegerProperty(0);
+    protected final IntegerProperty score = new SimpleIntegerProperty(0);
 
     private final int weight;
 
@@ -41,7 +41,6 @@ public class QuestionYN extends Question {
                 if (newVal) {
                     responseIdx.set(1);
                     answerIsNo.set(false);
-                    score.set(weight);
                 } else {
                     score.set(0);
                     if (!answerIsNo.get()) {
@@ -57,7 +56,6 @@ public class QuestionYN extends Question {
                 if (newVal) {
                     responseIdx.set(0);
                     answerIsYes.set(false);
-                    score.set(0);
                 } else {
                     if (!answerIsYes.get()) {
                         responseIdx.set(-1);
@@ -80,6 +78,7 @@ public class QuestionYN extends Question {
                         answerIsNo.set(false);
                     }
                 }
+                score.set(newVal.intValue() == 1 ? weight : 0);
             }
         });
     }
@@ -128,15 +127,15 @@ public class QuestionYN extends Question {
         return answerIsNo;
     }
 
-    protected int getScore() {
+    public int getScore() {
         return score.get();
     }
 
-    protected void setScore(int value) {
+    public void setScore(int value) {
         score.set(value);
     }
 
-    protected IntegerProperty scoreProperty() {
+    public IntegerProperty scoreProperty() {
         return score;
     }
 

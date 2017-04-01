@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import GUI.Helper.IconHelper;
 import GUI.Helper.ColorHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Helper.ProgressIndicatorBar;

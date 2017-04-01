@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import GUI.Helper.IconHelper;
 import core.Project;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -45,7 +46,7 @@ public class ProjectTreeItem extends TreeItem<Project> {
         this.subStep = subStep;
         steps = new TreeItem[6];
 
-        subSteps = new TreeItem[(step < 0 || subStep >= 0) ? 0 : numSubSteps[step]];
+        subSteps = new TreeItem[(step < 0 || subStep >= 0) ? 0 : Project.NUM_SUB_STEPS[step] + 1];
         if (step < 0) {
             final ProjectTreeItem selfRef = this;
             proj.getNameProperty().addListener(new ChangeListener<String>() {
@@ -226,6 +227,5 @@ public class ProjectTreeItem extends TreeItem<Project> {
         }
     }
 
-    private final int[] numSubSteps = {12, 7, 7, 7, 7, 7};
-
+    //private final int[] numSubSteps = {12, 7, 7, 7, 7, 7};
 }

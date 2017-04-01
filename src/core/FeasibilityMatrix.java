@@ -7,11 +7,16 @@ package core;
 
 import GUI.Helper.NodeFactory;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 
 /**
  *
@@ -40,12 +45,13 @@ public class FeasibilityMatrix {
         feasibility.set(feasScore);
     }
 
-    public BorderPane createSummaryPanel() {
+    public GridPane createSummaryPanel() {
         computeFeasibility();
-        BorderPane bPane = new BorderPane();
+        GridPane gPane = new GridPane();
         GridPane scoreGrid = new GridPane();
         Label scoreTitleLabel = NodeFactory.createFormattedLabel("Feasibility Score:", "feasibility-output-title-bold");
         Label scoreLabel = NodeFactory.createFormattedLabel(String.valueOf(feasibility.get()), "feasibility-output-title");
+        scoreLabel.textProperty().bind(feasibility.asString());
         scoreGrid.add(scoreTitleLabel, 0, 0);
         scoreGrid.add(scoreLabel, 1, 0);
         ColumnConstraints cc1 = new ColumnConstraints();
@@ -54,17 +60,39 @@ public class FeasibilityMatrix {
         cc2.setPercentWidth(50);
         scoreGrid.getColumnConstraints().addAll(cc1, cc2);
 
-        Label descriptionlabel;
-        if (feasibility.get() >= 30) {
-            descriptionlabel = NodeFactory.createFormattedLabel(DESC_30PLUS, "feasibility-output-desc");
-        } else if (feasibility.get() >= 10) {
-            descriptionlabel = NodeFactory.createFormattedLabel(DESC_10_TO_29, "feasibility-output-desc");
-        } else {
-            descriptionlabel = NodeFactory.createFormattedLabel(DESC_LESS_THAN_10, "feasibility-output-desc");
-        }
-        bPane.setTop(scoreGrid);
-        bPane.setCenter(descriptionlabel);
-        return bPane;
+        final Label descriptionlabel = NodeFactory.createFormattedLabel(DESC_30PLUS, "feasibility-output-desc");
+        feasibility.addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (newVal.intValue() >= 30) {
+                    descriptionlabel.setText(DESC_30PLUS);
+                } else if (newVal.intValue() >= 10) {
+                    descriptionlabel.setText(DESC_10_TO_29);
+                } else {
+                    descriptionlabel.setText(DESC_LESS_THAN_10);
+                }
+            }
+        });
+//        if (feasibility.get() >= 30) {
+//            descriptionlabel = NodeFactory.createFormattedLabel(DESC_30PLUS, "feasibility-output-desc");
+//        } else if (feasibility.get() >= 10) {
+//            descriptionlabel = NodeFactory.createFormattedLabel(DESC_10_TO_29, "feasibility-output-desc");
+//        } else {
+//            descriptionlabel = NodeFactory.createFormattedLabel(DESC_LESS_THAN_10, "feasibility-output-desc");
+//        }
+        gPane.add(scoreGrid, 0, 0);
+        gPane.add(descriptionlabel, 0, 1);
+        RowConstraints rc1 = new RowConstraints();
+        rc1.setPercentHeight(50);
+        RowConstraints rc2 = new RowConstraints();
+        rc2.setPercentHeight(50);
+        gPane.getRowConstraints().addAll(rc1, rc2);
+        GridPane.setVgrow(scoreTitleLabel, Priority.ALWAYS);
+        GridPane.setVgrow(scoreLabel, Priority.ALWAYS);
+        GridPane.setHgrow(scoreTitleLabel, Priority.ALWAYS);
+        GridPane.setHgrow(scoreLabel, Priority.ALWAYS);
+        GridPane.setHgrow(descriptionlabel, Priority.ALWAYS);
+        GridPane.setHgrow(gPane, Priority.ALWAYS);
+        return gPane;
     }
 
     public SimpleIntegerProperty feasibilityProperty() {
@@ -73,6 +101,6 @@ public class FeasibilityMatrix {
 
     public static final String DESC_30PLUS = "30 or more: ITS is likely to provide significant benefits and should be considered as a treatment to mitigate impacts.";
     public static final String DESC_10_TO_29 = "10 to 29: ITS may provide some benefits and should be considered as a treatment to mitigate impacts.";
-    public static final String DESC_LESS_THAN_10 = "Less than 10: Its may not provide enough benefit to justify the associate costs.";
+    public static final String DESC_LESS_THAN_10 = "Less than 10: ITS may not provide enough benefit to justify the associated costs.";
 
 }

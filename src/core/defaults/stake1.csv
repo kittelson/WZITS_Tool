@@ -1,4 +1,4 @@
-Stakeholder,State DOT,County transportation agency,City transportation agency,MPO,Transit agency,FHWA Division Office,Service patrol/ contractors,Construction contractors,Local police,State police,Fire department,EMS,Local businesses,Shopping centers,Commercial trucking companies,Motorists,Media,Local residents,Public officials,Incident management agencies,Special event venue,Schools/ Universities,Convention/ Visitors Bureau,Ped-Bike Coordinator / Advocacy Group,Traffic Management Center
+Stakeholder,State DOT,County transportation agency,City transportation agency,MPO,Transit agency,FHWA Division Office,Service patrol/Contractors,Construction contractors,Local police/Sheriff,State police,Fire department,EMS,Local businesses,Shopping centers,Commercial trucking companies,Motorists,Media,Local residents,Public officials,Incident management agencies,Special event venue,Schools/ Universities,Convention/ Visitors Bureau,Ped-Bike Coordinator / Advocacy Group,Traffic Management Center
 Freeway,2,1,1,2,0,99,2,2,1,1,0,2,1,1,2,2,2,1,2,2,1,0,0,0,2
 Arterial,1,1,1,1,1,1,1,1,1,1,1,1,2,2,1,1,1,2,1,1,1,0,0,0,1
 Local,0,1,1,0,1,1,1,1,0,0,1,0,1,1,0,0,0,2,0,0,0,0,0,0,0
@@ -6,3 +6,6 @@ State,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2
 County,0,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 City/Town,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Other,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Local Police/Sheriff,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+State Police,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Service Patrol or Contractor,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

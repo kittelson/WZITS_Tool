@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package GUI;
+package GUI.Helper;
 
 import javafx.scene.image.Image;
 
@@ -28,6 +28,8 @@ public class IconHelper {
     public static final Image TREE_NODE_PROJ_OPEN = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/folder_open_48.png"), 16, 16, true, true);
 
     public static final Image TREE_NODE_STEP_COMPLETE = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/check16.png"));
+
+    public static final Image NAV_HELPER = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/navigatorHelp.PNG"));
 
     public static final Image FIG_FLOW_ALL_STEPS = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/all_steps.png"));
 

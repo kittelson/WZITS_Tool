@@ -30,10 +30,14 @@ public class ColorHelper {
     public static final String COLOR_STEP_HL = WZ_ORANGE_BURNT;
     public static final String COLOR_STEP = WZ_NAVY;
     public static final String COLOR_SUB_STEP = WZ_ORANGE_BURNT;
+    public static final String COLOR_WIZARD = "green";
     public static final String COLOR_SUB_STEP_HL = WZ_ORANGE; //  WZ_NAVY
+    public static final String COLOR_WIZARD_HL = "lawngreen";
     public static final String COLOR_STEP_FONT = "white";
     public static final String COLOR_STEP_HL_FONT = "white";
     public static final String COLOR_SUB_STEP_FONT = "white";
+    public static final String COLOR_WIZARD_FONT = "white";
     public static final String COLOR_SUB_STEP_HL_FONT = "white";
+    public static final String COLOR_WIZARD_HL_FONT = "black";
 
 }

@@ -18,10 +18,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.util.Callback;
 
 /**
@@ -57,8 +64,8 @@ public class StakeholderMatrix {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        optScoreMat = new int[7][numStakeholders];
-        ynScoreMat = new int[16][numStakeholders];
+        optScoreMat = new int[10][numStakeholders];
+        ynScoreMat = new int[18][numStakeholders];
 
         try {
             br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/stake1.csv")));
@@ -99,36 +106,28 @@ public class StakeholderMatrix {
 
     private void setupBindings() {
         int qIdx = 0;
-//        qYNList.get(qIdx++).answerIsYes.bind(this.hasSchools);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.touristRoute);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.specialEventVenue);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.transitOnRoute);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.otherWorkZones);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.businessHourLnClosures);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.sideStreetRestrictions);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.freightCorridor);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.pedBikeImpacts);
-//        qYNList.get(qIdx++).answerIsYes.bind(this.signalizedSystem);
         this.hasSchools.bind(qYNList.get(qIdx++).answerIsYes);
         this.touristRoute.bind(qYNList.get(qIdx++).answerIsYes);
         this.specialEventVenue.bind(qYNList.get(qIdx++).answerIsYes);
         this.transitOnRoute.bind(qYNList.get(qIdx++).answerIsYes);
         this.otherWorkZones.bind(qYNList.get(qIdx++).answerIsYes);
+        this.emergencyResponseCorridor.bind(qYNList.get(qIdx++).answerIsYes);
         this.businessHourLnClosures.bind(qYNList.get(qIdx++).answerIsYes);
         this.sideStreetRestrictions.bind(qYNList.get(qIdx++).answerIsYes);
         this.freightCorridor.bind(qYNList.get(qIdx++).answerIsYes);
         this.pedBikeImpacts.bind(qYNList.get(qIdx++).answerIsYes);
         this.signalizedSystem.bind(qYNList.get(qIdx++).answerIsYes);
+        this.unwantedLocalDiversion.bind(qYNList.get(qIdx++).answerIsYes);
         qIdx = 0;
-        this.mobilityGoal.bind(proj.getMajorGoalsQs().get(qIdx++).answerIsYes);
-        this.productivityGoal.bind(proj.getMajorGoalsQs().get(qIdx++).answerIsYes);
-        this.regulatoryGoal.bind(proj.getMajorGoalsQs().get(qIdx++).answerIsYes);
-        this.safetyGoal.bind(proj.getMajorGoalsQs().get(qIdx++).answerIsYes);
-        this.travelerInfoGoal.bind(proj.getMajorGoalsQs().get(qIdx++).answerIsYes);
+        this.mobilityGoal.bind(proj.getMajorGoalsQs().get(0).answerIsYes);
+        this.productivityGoal.bind(proj.getMajorGoalsQs().get(2).answerIsYes);
+        this.regulatoryGoal.bind(proj.getMajorGoalsQs().get(3).answerIsYes);
+        this.safetyGoal.bind(proj.getMajorGoalsQs().get(1).answerIsYes);
+        this.travelerInfoGoal.bind(proj.getMajorGoalsQs().get(4).answerIsYes);
     }
 
     public void computeStakeholders() {
-        int funcIdx = 0;
+        int funcIdx = -1;
         if (proj.functionalClassProperty().get() != null) {
             switch (proj.functionalClassProperty().get()) {
                 case "Freeway":
@@ -143,7 +142,7 @@ public class StakeholderMatrix {
             }
         }
 
-        int mainIdx = 3;
+        int mainIdx = -1;
         if (proj.maintainingAgencyProperty().get() != null) {
             switch (proj.maintainingAgencyProperty().get()) {
                 case "State":
@@ -160,28 +159,71 @@ public class StakeholderMatrix {
                     break;
             }
         }
+
+        int patrolIdx = -1;
+        if (proj.patrollingAgencyProperty().get() != null) {
+            switch (proj.patrollingAgencyProperty().get()) {
+                case "Local Police/Sheriff":
+                    patrolIdx = 7;
+                    break;
+                case "State Police":
+                    patrolIdx = 8;
+                    break;
+                case "Service Patrol or Contractor":
+                    patrolIdx = 9;
+                    break;
+            }
+        }
         int[] scores = new int[stakeholders.size()];
         for (int stakeIdx = 0; stakeIdx < stakeholders.size(); stakeIdx++) {
-            scores[stakeIdx] += optScoreMat[funcIdx][stakeIdx];
-            scores[stakeIdx] += optScoreMat[mainIdx][stakeIdx];
+            scores[stakeIdx] += funcIdx >= 0 ? optScoreMat[funcIdx][stakeIdx] : 0;
+            scores[stakeIdx] += mainIdx >= 3 ? optScoreMat[mainIdx][stakeIdx] : 0;
+            scores[stakeIdx] += patrolIdx >= 7 ? optScoreMat[patrolIdx][stakeIdx] : 0;
             int ynIdx = 0;
-            scores[stakeIdx] += this.hasSchools.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.touristRoute.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.specialEventVenue.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.transitOnRoute.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.otherWorkZones.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.emergencyResponseCorridor.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.businessHourLnClosures.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.sideStreetRestrictions.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.freightCorridor.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.pedBikeImpacts.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.signalizedSystem.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.mobilityGoal.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.safetyGoal.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.productivityGoal.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.regulatoryGoal.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
-            scores[stakeIdx] += this.travelerInfoGoal.get() ? ynScoreMat[ynIdx++][stakeIdx] : 0;
+            scores[stakeIdx] += proj.getNumLanesClosed() > 0 ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.hasSchools.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.touristRoute.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.specialEventVenue.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.transitOnRoute.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.otherWorkZones.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.emergencyResponseCorridor.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.businessHourLnClosures.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.sideStreetRestrictions.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.freightCorridor.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.pedBikeImpacts.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.signalizedSystem.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.mobilityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.safetyGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.productivityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.regulatoryGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.travelerInfoGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
+            scores[stakeIdx] += this.unwantedLocalDiversion.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+            ynIdx++;
             stakeholders.get(stakeIdx).setScore(scores[stakeIdx]);
+            if (scores[stakeIdx] > 2) {
+                stakeholders.get(stakeIdx).setCoreTeamMember(true);
+            } else if (scores[stakeIdx] > 0) {
+                stakeholders.get(stakeIdx).setStakeholder(true);
+            } else {
+                stakeholders.get(stakeIdx).setNotApplicable(true);
+            }
         }
 
         ObservableList<Stakeholder> osl = FXCollections.observableArrayList(stakeholders);
@@ -197,6 +239,7 @@ public class StakeholderMatrix {
 
         final TableView<Stakeholder> summary = new TableView();
         summary.getStyleClass().add("step-summary-table");
+        summary.setEditable(true);
 
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -207,9 +250,9 @@ public class StakeholderMatrix {
                 return new ReadOnlyObjectWrapper(Integer.toString(summary.getItems().indexOf(p.getValue()) + 1));
             }
         });
-        indexCol.setPrefWidth(25);
-        indexCol.setMaxWidth(25);
-        indexCol.setMinWidth(25);
+        indexCol.setPrefWidth(35);
+        indexCol.setMaxWidth(35);
+        indexCol.setMinWidth(35);
         indexCol.getStyleClass().add("col-style-center-bold");
 
         TableColumn recCol = new TableColumn("Stakeholder");
@@ -222,7 +265,32 @@ public class StakeholderMatrix {
         scoreCol.setMinWidth(75);
         scoreCol.getStyleClass().add("col-style-center");
 
-        summary.getColumns().addAll(indexCol, recCol, scoreCol);
+        TableColumn coreTeamCol = new TableColumn("Core Team");
+        coreTeamCol.setCellValueFactory(new PropertyValueFactory<>("coreTeamMember"));
+        coreTeamCol.setCellFactory(CheckBoxTableCell.forTableColumn(coreTeamCol));
+
+        TableColumn stakeholderCol = new TableColumn("Stakeholder");
+        stakeholderCol.setCellValueFactory(new PropertyValueFactory<>("stakeholder"));
+        stakeholderCol.setCellFactory(CheckBoxTableCell.forTableColumn(stakeholderCol));
+
+        TableColumn notApplicableCol = new TableColumn("N/A");
+        notApplicableCol.setCellValueFactory(new PropertyValueFactory<>("notApplicable"));
+        notApplicableCol.setCellFactory(CheckBoxTableCell.forTableColumn(notApplicableCol));
+
+        coreTeamCol.setPrefWidth(100);
+        coreTeamCol.setMaxWidth(100);
+        coreTeamCol.setMinWidth(100);
+        stakeholderCol.setPrefWidth(100);
+        stakeholderCol.setMaxWidth(100);
+        stakeholderCol.setMinWidth(100);
+        notApplicableCol.setPrefWidth(75);
+        notApplicableCol.setMaxWidth(75);
+        notApplicableCol.setMinWidth(75);
+
+        TableColumn teamTypeCol = new TableColumn("Team Members");
+        teamTypeCol.getColumns().addAll(coreTeamCol, stakeholderCol, notApplicableCol);
+
+        summary.getColumns().addAll(indexCol, recCol, scoreCol, teamTypeCol);
 
 //        int sIdx = 1;
 //        for (String key : this.stakeholderScore.keySet()) {
@@ -235,6 +303,106 @@ public class StakeholderMatrix {
 
         return summary;
     }
+
+    public Node createSelectedMembersPanel() {
+        GridPane gPane = new GridPane();
+
+        ObservableList<Stakeholder> teamCore = FXCollections.observableArrayList();
+        ObservableList<Stakeholder> teamStakeholder = FXCollections.observableArrayList();
+        ObservableList<Stakeholder> teamNA = FXCollections.observableArrayList();
+        for (Stakeholder sh : stakeholders) {
+            if (sh.isCoreTeamMember()) {
+                teamCore.add(sh);
+            } else if (sh.isStakeholder()) {
+                teamStakeholder.add(sh);
+            } else {
+                teamNA.add(sh);
+            }
+        }
+
+        Node coreNode = createMemberTable(teamCore, Stakeholder.CORE_TEAM);
+        Node shNode = createMemberTable(teamStakeholder, Stakeholder.STAKEHOLDER);
+        Node naNode = createMemberTable(teamNA, Stakeholder.NA);
+
+        gPane.add(coreNode, 0, 0);
+        gPane.add(shNode, 0, 1);
+        gPane.add(naNode, 0, 2);
+
+        GridPane.setHgrow(coreNode, Priority.ALWAYS);
+        GridPane.setHgrow(shNode, Priority.ALWAYS);
+        GridPane.setHgrow(naNode, Priority.ALWAYS);
+
+        RowConstraints rc1 = new RowConstraints();
+        rc1.setPercentHeight(50);
+        RowConstraints rc2 = new RowConstraints();
+        rc2.setPercentHeight(30);
+        RowConstraints rc3 = new RowConstraints();
+        rc3.setPercentHeight(20);
+        gPane.getRowConstraints().addAll(rc1, rc2, rc3);
+
+        return gPane;
+    }
+
+    private Node createMemberTable(ObservableList<Stakeholder> sList, int listType) {
+        final TableView<Stakeholder> table = new TableView();
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn indexCol = new TableColumn<>("#");
+        indexCol.setCellValueFactory(new Callback<CellDataFeatures<Stakeholder, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<Stakeholder, String> p) {
+                return new ReadOnlyObjectWrapper(Integer.toString(table.getItems().indexOf(p.getValue()) + 1));
+            }
+        });
+        indexCol.setPrefWidth(85);
+        indexCol.setMinWidth(85);
+        indexCol.setMaxWidth(85);
+
+        TableColumn nameCol = new TableColumn<>();
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        switch (listType) {
+            default:
+            case Stakeholder.CORE_TEAM:
+                table.setPlaceholder(new Label("No Core Team Members Selected in the Stakeholder Wizard"));
+                nameCol.setText("Selected Core Team Members");
+                table.getStyleClass().add("list-table-core-team");
+                break;
+            case Stakeholder.STAKEHOLDER:
+                table.setPlaceholder(new Label("No Stakeholder Agencies Indicated in the Stakeholder Wizard"));
+                nameCol.setText("Selected Project Stakeholders");
+                table.getStyleClass().add("list-table-stakeholder");
+                break;
+            case Stakeholder.NA:
+                table.setPlaceholder(new Label("No Unlikely Agencies Specified in the Stakeholder Wizard"));
+                nameCol.setText("Agencies with Unlikely Interest");
+                table.getStyleClass().add("list-table-na");
+                break;
+        }
+
+        TableColumn emailCol = new TableColumn<>("Email");
+        emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
+        emailCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        emailCol.setEditable(true);
+        emailCol.setPrefWidth(150);
+        emailCol.setMinWidth(150);
+        emailCol.setMaxWidth(150);
+
+        TableColumn phoneCol = new TableColumn<>("Phone #");
+        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        phoneCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        phoneCol.setEditable(true);
+        phoneCol.setPrefWidth(150);
+        phoneCol.setMinWidth(150);
+        phoneCol.setMaxWidth(150);
+
+        table.getColumns().addAll(indexCol, nameCol, emailCol, phoneCol);
+
+        table.setItems(sList);
+
+        return table;
+    }
+
     private final BooleanProperty hasSchools = new SimpleBooleanProperty();
 
     public boolean isHasSchools() {
@@ -378,6 +546,20 @@ public class StakeholderMatrix {
     public BooleanProperty signalizedSystemProperty() {
         return signalizedSystem;
     }
+    private final BooleanProperty unwantedLocalDiversion = new SimpleBooleanProperty();
+
+    public boolean isUnwantedLocalDiversion() {
+        return unwantedLocalDiversion.get();
+    }
+
+    public void setUnwantedLocalDiversion(boolean value) {
+        unwantedLocalDiversion.set(value);
+    }
+
+    public BooleanProperty unwantedLocalDiversionProperty() {
+        return unwantedLocalDiversion;
+    }
+
     private final BooleanProperty mobilityGoal = new SimpleBooleanProperty();
 
     public boolean isMobilityGoal() {
