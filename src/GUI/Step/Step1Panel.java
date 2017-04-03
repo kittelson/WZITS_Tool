@@ -407,12 +407,12 @@ public class Step1Panel extends BorderPane {
         });
 
         // General Info Bindings
-        genInfoTF1.textProperty().bindBidirectional(control.getProject().getAgencyProperty());
-        genInfoTF2.textProperty().bindBidirectional(control.getProject().getAnalystProperty());
-        genInfoTF3.textProperty().bindBidirectional(control.getProject().getNameProperty());
-        genInfoTF4.textProperty().bindBidirectional(control.getProject().getUrlLinkProperty());
-        genInfoTA1.textProperty().bindBidirectional(control.getProject().getDescriptionProperty());
-        genInfoTA2.textProperty().bindBidirectional(control.getProject().getLimitsProperty());
+        genInfoTF1.textProperty().bindBidirectional(control.getProject().agencyProperty());
+        genInfoTF2.textProperty().bindBidirectional(control.getProject().analystProperty());
+        genInfoTF3.textProperty().bindBidirectional(control.getProject().nameProperty());
+        genInfoTF4.textProperty().bindBidirectional(control.getProject().urlLinkProperty());
+        genInfoTA1.textProperty().bindBidirectional(control.getProject().descriptionProperty());
+        genInfoTA2.textProperty().bindBidirectional(control.getProject().limitsProperty());
 
         // Work zone metadata bindings
         control.getProject().aadtProperty().bindBidirectional(this.wzInputSpin1.getValueFactory().valueProperty());
@@ -524,17 +524,17 @@ public class Step1Panel extends BorderPane {
         //wzInputChoice2.getStyleClass().add("wzits-choice-box");
         //wzInputChoice3.getStyleClass().add("wzits-choice-box");
 
-        wzInputSpin1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(25000, 125000, 50000, 5000));
-        wzInputSpin2.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 50, 2, 0.1));
-        wzInputSpin3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 8, 3, 1));
-        wzInputSpin4.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 25, 10, 0.5));
-        wzInputSpin5.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 100, 55, 5));
-        wzInputSpin6.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 8, 1, 1));
-        wzInputSpin7.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 24, 6, 1));
+        wzInputSpin1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(25000, 125000, control.getProject().getAadt(), 5000));
+        wzInputSpin2.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 50, control.getProject().getWzLength(), 0.1));
+        wzInputSpin3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 8, control.getProject().getNumRoadwayLanes(), 1));
+        wzInputSpin4.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 25, control.getProject().getShoulderWidth(), 0.5));
+        wzInputSpin5.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 100, control.getProject().getSpeedLimit(), 5));
+        wzInputSpin6.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 8, control.getProject().getNumLanesClosed(), 1));
+        wzInputSpin7.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 24, control.getProject().getActivityDuration(), 1));
 
-        wzInputChoice1.getSelectionModel().selectFirst();
-        wzInputChoice2.getSelectionModel().selectFirst();
-        wzInputChoice3.getSelectionModel().selectFirst();
+        wzInputChoice1.getSelectionModel().select(control.getProject().getFunctionalClass());
+        wzInputChoice2.getSelectionModel().select(control.getProject().getWzType());
+        wzInputChoice3.getSelectionModel().select(control.getProject().getMaintainingAgency());
 
 //        proceedButton.setOnAction(new EventHandler<ActionEvent>() {
 //            @Override

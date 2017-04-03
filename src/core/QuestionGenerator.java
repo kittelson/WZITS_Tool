@@ -5,6 +5,10 @@
  */
 package core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,168 +19,165 @@ import javafx.collections.ObservableList;
  *
  * @author ltrask
  */
-public class QuestionGenerator {
+public class QuestionGenerator implements Serializable {
+
+    private final long serialVersionUID = 123456789L;
 
     /**
      * List of yes/no questions for the goal wizard.
      */
-    public final ObservableList<QuestionYN> qGoalWizardList;
+    public ObservableList<QuestionYN> qGoalWizardList;
 
     /**
      * List of major goals questions.
      */
-    public final ObservableList<QuestionYN> qMajorGoalsList;
+    public ObservableList<QuestionYN> qMajorGoalsList;
 
     /**
      * List of user needs support questions.
      */
-    public final ObservableList<QuestionYN> qUNSupportList;
+    public ObservableList<QuestionYN> qUNSupportList;
     /**
      * list of option questions for the Feasibility Wizard.
      */
-    public final ObservableList<QuestionOption> qFeasOptionList;
+    public ObservableList<QuestionOption> qFeasOptionList;
 
     /**
      * List of yes/no questions for the Feasibility Wizard.
      */
-    public final ObservableList<QuestionYN> qFeasYNList;
+    public ObservableList<QuestionYN> qFeasYNList;
 
     /**
      * List of yes/no questions for the stakeholder wizard.
      */
-    public final ObservableList<QuestionYN> qStakeholderYNList;
+    public ObservableList<QuestionYN> qStakeholderYNList;
 
     /**
      * List of option questions for the stakeholder wizard.
      */
-    public final ObservableList<QuestionOption> qStakeholderOptionList;
+    public ObservableList<QuestionOption> qStakeholderOptionList;
 
     /**
      * List of yes/no questions for the ITS resources step.
      */
-    public final ObservableList<QuestionYN> qITSResourcesList;
+    public ObservableList<QuestionYN> qITSResourcesList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qApplicationList;
+    public ObservableList<QuestionYN> qApplicationList;
 
     /**
      *
      */
-    public final ObservableList<QuestionOptionMS> qBenefitList;
+    public ObservableList<QuestionOptionMS> qBenefitList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qCostList;
+    public ObservableList<QuestionYN> qCostList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qJurisdictionalList;
+    public ObservableList<QuestionYN> qJurisdictionalList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qLegalList;
+    public ObservableList<QuestionYN> qLegalList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qStakeholderBuyInList;
+    public ObservableList<QuestionYN> qStakeholderBuyInList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qConOpsList;
+    public ObservableList<QuestionYN> qConOpsList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qSysReqList;
+    public ObservableList<QuestionYN> qSysReqList;
 
     /**
      *
      */
-    public final ObservableList<QuestionYN> qTestingStratList;
+    public ObservableList<QuestionYN> qTestingStratList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qOpsMaintList;
+    public ObservableList<QuestionYN> qOpsMaintList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qStaffTrainingList;
+    public ObservableList<QuestionYN> qStaffTrainingList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qSysSecurityList;
+    public ObservableList<QuestionYN> qSysSecurityList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qProjectEvalList;
+    public ObservableList<QuestionYN> qProjectEvalList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qSysBCList;
+    public ObservableList<QuestionYN> qSysBCList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qDirectIndirectList;
+    public ObservableList<QuestionYN> qDirectIndirectList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qMechanismList;
+    public ObservableList<QuestionYN> qMechanismList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qRFPList;
+    public ObservableList<QuestionYN> qRFPList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qVendorSelectionList;
+    public ObservableList<QuestionYN> qVendorSelectionList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qSysPlansList;
+    public ObservableList<QuestionYN> qSysPlansList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qSchedulingList;
+    public ObservableList<QuestionYN> qSchedulingList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qAcceptanceTrainingList;
+    public ObservableList<QuestionYN> qAcceptanceTrainingList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qDeploymentIssuesList;
+    public ObservableList<QuestionYN> qDeploymentIssuesList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qChangingConditionsList;
+    public ObservableList<QuestionYN> qChangingConditionsList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qSharingInfoList;
+    public ObservableList<QuestionYN> qSharingInfoList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qStaffingList;
+    public ObservableList<QuestionYN> qStaffingList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qPublicSupportList;
+    public ObservableList<QuestionYN> qPublicSupportList;
     /**
      *
      */
-    public final ObservableList<QuestionYN> qMonitoringEvalList;
-
-    /**
-     *
-     */
-    public final ObservableList<QuestionYN> qProjectDocumentation;
+    public ObservableList<QuestionYN> qMonitoringEvalList;
 
     /**
      * WZITS Project associated with the Question Generator
@@ -225,16 +226,54 @@ public class QuestionGenerator {
         this.qStaffingList = FXCollections.observableArrayList();
         this.qPublicSupportList = FXCollections.observableArrayList();
         this.qMonitoringEvalList = FXCollections.observableArrayList();
-        qProjectDocumentation = FXCollections.observableArrayList();
 
         initializeQuestions();
         connectToProgressIndicators();
 
-        ChangeListener questionAnsweredListener = new ChangeListener<Boolean>() {
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                proj.getGoalNeedsMatrix().computeScores();
-            }
-        };
+    }
+
+    public QuestionGenerator(QuestionGenerator qGen, Project project) {
+        this.proj = project;
+
+        qGoalWizardList = qGen.qGoalWizardList;
+        qUNSupportList = qGen.qUNSupportList;
+        qMajorGoalsList = qGen.qMajorGoalsList;
+        qFeasOptionList = qGen.qFeasOptionList;
+        qFeasYNList = qGen.qFeasYNList;
+        qStakeholderYNList = qGen.qStakeholderYNList;
+        qStakeholderOptionList = qGen.qStakeholderOptionList;
+        qITSResourcesList = qGen.qITSResourcesList;
+        qApplicationList = qGen.qApplicationList;
+        qBenefitList = qGen.qBenefitList;
+        qCostList = qGen.qCostList;
+        qJurisdictionalList = qGen.qJurisdictionalList;
+        qLegalList = qGen.qLegalList;
+        this.qStakeholderBuyInList = qGen.qStakeholderBuyInList;
+        this.qConOpsList = qGen.qConOpsList;
+        this.qSysReqList = qGen.qSysReqList;
+        this.qTestingStratList = qGen.qTestingStratList;
+        this.qOpsMaintList = qGen.qOpsMaintList;
+        this.qStaffTrainingList = qGen.qStaffTrainingList;
+        this.qSysSecurityList = qGen.qSysSecurityList;
+        this.qProjectEvalList = qGen.qProjectEvalList;
+        this.qSysBCList = qGen.qSysBCList;
+        this.qDirectIndirectList = qGen.qDirectIndirectList;
+        this.qMechanismList = qGen.qMechanismList;
+        this.qRFPList = qGen.qRFPList;
+        this.qVendorSelectionList = qGen.qVendorSelectionList;
+        this.qSysPlansList = qGen.qSysPlansList;
+        this.qSchedulingList = qGen.qSchedulingList;
+        this.qAcceptanceTrainingList = qGen.qAcceptanceTrainingList;
+        this.qDeploymentIssuesList = qGen.qDeploymentIssuesList;
+        this.qChangingConditionsList = qGen.qChangingConditionsList;
+        this.qSharingInfoList = qGen.qSharingInfoList;
+        this.qStaffingList = qGen.qStaffingList;
+        this.qPublicSupportList = qGen.qPublicSupportList;
+        this.qMonitoringEvalList = qGen.qMonitoringEvalList;
+
+        createQuestionBindings();
+        connectToProgressIndicators();
+
     }
 
     private void initializeQuestions() {
@@ -272,7 +311,7 @@ public class QuestionGenerator {
         bindDependantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.significantQueueingQ, "User Needs #3");
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Are high speeds/chronic speeding expected to occur?", false, 2));
         //qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Work zone congestion", false, 1)); // Consolidated
-        qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Is driver diversion expected onto alternate routes? (Answer in User Needs #2", false, 1));
+        qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Is driver diversion expected onto alternate routes? (See User Needs #2)", false, 1));
         bindRedundantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.driverDiversionQ, "User Needs #2");
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Are merging conflicts and hazards at work zone tapers expected to occur?", false, 3));
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Do you expect the work zone layout to cause driver confusion or trouble wayfinding?", false, 3));
@@ -314,7 +353,7 @@ public class QuestionGenerator {
         bindDependantQs(constructionVehAccessQ, highVolumeConstructionVehsQ, "User Needs #8");
         qGoalWizardList.add(new QuestionYN(10, Question.GOAL_USER_NEEDS, "Are there specific agency policies for work zones as required by the work zone safety and mobility rule?"));
         this.specificAgencyPoliciesQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
-        qGoalWizardList.add(new QuestionYN(11, Question.GOAL_USER_NEEDS, "Does the agency have existing performance targets for work zone?"));
+        qGoalWizardList.add(new QuestionYN(11, Question.GOAL_USER_NEEDS, "Does the agency have existing performance targets for work zones?"));
         this.existingPerformanceMeasuresQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(12, Question.GOAL_USER_NEEDS, "Will outreach and traveler information be used for this work zone?"));
         this.outreachTravelerInfoQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
@@ -326,6 +365,7 @@ public class QuestionGenerator {
         this.loweredSpeedLimitsQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(16, Question.GOAL_USER_NEEDS, "Does state law allow use of automated speed enforcement in work zones?"));
         this.allowAutomatedSpeedEnforcementQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
+        proj.automatedEnforcementAllowedProperty().bindBidirectional(allowAutomatedSpeedEnforcementQ.answerIsYesProperty());
         qGoalWizardList.add(new QuestionYN(18, Question.GOAL_USER_NEEDS, "Will ramp geometry under work zone conditions constrain acceleration lanes?"));
         this.rampGeometryQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(19, Question.GOAL_USER_NEEDS, "Will work zone activities disable ramp meters (if applicable)?"));
@@ -348,7 +388,7 @@ public class QuestionGenerator {
     }
 
     private void createUserNeedsSupportQuestions() {
-        qUNSupportList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"));
+        qUNSupportList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV camveras, variable message signs, or travel time sensors in the work zone?"));
         qUNSupportList.add(new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are probe data available for the work zone?"));
         qUNSupportList.add(new QuestionYN(3, Question.GOAL_USER_NEEDS, "Are crash data available?"));
         qUNSupportList.get(qUNSupportList.size() - 1).answerIsYesProperty().bindBidirectional(proj.crashDataAvailableProperty());
@@ -360,7 +400,7 @@ public class QuestionGenerator {
     }
 
     private void createITSResourcesQuestions() {
-        qITSResourcesList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are ther weather monitoring stations along the work zone?"));
+        qITSResourcesList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there weather monitoring stations along the work zone?"));
         qITSResourcesList.add(new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a local regional or state TMC that monitors the roadway?"));
         qITSResourcesList.add(new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there an existing website or traveler information system?"));
         qITSResourcesList.add(new QuestionYN(4, Question.GOAL_USER_NEEDS, "Do you have ITS on-call contracts?"));
@@ -433,21 +473,21 @@ public class QuestionGenerator {
         //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #8");
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #9");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Are there access points with vertical or horizontal sight distance restrictions?"));
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will there be a high volume of construction vehicles?"));
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will there be a high volume of construction vehicles requiring access to the work zone?"));
         refQ = this.highVolumeConstructionVehsQ; // GW#17 Will there be a high volume of construction vehicles?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #8");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will existing equipment be used for the work zone?"));
-        this.existingEquipmentQ = qApplicationList.get(qApplicationList.size() - 1);
+        //qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will existing equipment be used for the work zone?"));
+        //this.existingEquipmentQ = qApplicationList.get(qApplicationList.size() - 1);
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will any exisiting ITS devices be incorporated into the smart work zone?"));
-        refQ = this.existingEquipmentQ; // AW (previous q) Will existing equipment be used for the WZ?
-        bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "previous question");
+        //refQ = this.existingEquipmentQ; // AW (previous q) Will existing equipment be used for the WZ?
+        //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "previous question");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Is automated enforcement legal in your state?"));
         refQ = this.allowAutomatedSpeedEnforcementQ; // Same as GW#15 Does state law allow use of automated speed enforcement in WZs?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #17");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Are there specific agency policies for work zones?"));
         refQ = this.specificAgencyPoliciesQ; // GW#9 Are there specific agency policies for work zones as required by the WZ safety and mobility rule?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #10");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Does the agency have existing performance targets for work zone?"));
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Does the agency have existing performance targets for work zones?"));
         refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zone?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #11");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Is there a mobility goal?"));
@@ -483,21 +523,21 @@ public class QuestionGenerator {
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is the work zone on a roadway that is part of a signalized / coordinated system?"));
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a concern the work zone will cause unwanted diversion on to local roads?"));
         bindDependantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.driverDiversionQ, "User Needs #2");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a mobility goal? (Answered in \"Major Goals\" Step)"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a mobility goal? (Refer to \"Major Goals\" Step)"));
         bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.mobilityGoalQ, "Major Goals #1");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a productivity goal? (Answered in \"Major Goals\" Step)"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a productivity goal? (Refer to \"Major Goals\" Step)"));
         bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.productivityGoalQ, "Major Goals #3");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a regulatory goal? (Answered in \"Major Goals\" Step)"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a regulatory goal? (Refer to \"Major Goals\" Step)"));
         bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.regulatoryGoalQ, "Major Goals #4");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a safety goal? (Answered in \"Major Goals\" Step)"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a safety goal? (Refer to \"Major Goals\" Step)"));
         bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.safetyGoalQ, "Major Goals #2");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a traveler information goal? (Answered in \"Major Goals\" Step)"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a traveler information goal? (Refer to \"Major Goals\" Step)"));
         bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.travelerInfoGoalQ, "Major Goals #5");
         qIdx = 1;
         qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "What agencies are responsible for responding to incidents/patrolling the roadway?)",
                 new String[]{"Local Police/Sheriff", "State Police", "Service Patrol or Contractor", "N/A"}));
         final QuestionOption patrolQ = qStakeholderOptionList.get(qStakeholderOptionList.size() - 1);
-        proj.patrollingAgencyProperty().bind(patrolQ.answerStringProperty());
+        proj.patrollingAgencyProperty().bindBidirectional(patrolQ.answerStringProperty());
         qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "Will the work zone require lane closures? (Specified in WZ Metadata)",
                 new String[]{"Yes", "No"}));
         final QuestionOption numLanesQ = qStakeholderOptionList.get(qStakeholderOptionList.size() - 1);
@@ -620,7 +660,7 @@ public class QuestionGenerator {
         qRFPList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will the agency hire an independent evaluator for the system?"));
         // Vendor Selection (End Step 4)
         this.qVendorSelectionList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a selection committee been formed?"));
-        qVendorSelectionList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the evaluation criteria been specified for reviewing proposals with a value for each evaluation criterion?"));
+        qVendorSelectionList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have the proposal review evaluation criteria been specified?"));
         // System Plans (Start Step 5)
         this.qSysPlansList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will the system be operated as a stand-alone system?"));
         qSysPlansList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "What is the level of agency involvement?"));
@@ -737,7 +777,7 @@ public class QuestionGenerator {
                     if (proj.progressStake.get() > 0) {
                         proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
                     }
-                } else if (oldVal.equalsIgnoreCase("Select")) {
+                } else if (oldVal != null && oldVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
                 }
                 proj.getStakeholderMatrix().computeStakeholders();
@@ -747,7 +787,7 @@ public class QuestionGenerator {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
                 if (newVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
-                } else if (oldVal.equalsIgnoreCase("Select")) {
+                } else if (oldVal != null && oldVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
                 }
                 proj.getStakeholderMatrix().computeStakeholders();
@@ -822,6 +862,7 @@ public class QuestionGenerator {
         //newQ.lockedProperty().bind(origQ.responseIdxProperty().greaterThanOrEqualTo(0));
         newQ.setLocked(true);
         newQ.setRedundant(true);
+        newQ.setVisible(false);
         newQ.responseIdxProperty().bindBidirectional(origQ.responseIdxProperty());
         newQ.setRefText(refText);
     }
@@ -839,6 +880,221 @@ public class QuestionGenerator {
         newQ.setRefText(refText);
     }
 
+    private void createQuestionBindings() {
+        // Setting specific questions
+        this.congestionNoticableQ = qGoalWizardList.get(0);
+        this.driverDiversionQ = qGoalWizardList.get(1);
+        this.significantQueueingQ = qGoalWizardList.get(2);
+        this.reducedLaneWidthQ = qGoalWizardList.get(3);
+        this.reducedSightDistanceQ = qGoalWizardList.get(4);
+        this.highVolumeConstructionVehsQ = qGoalWizardList.get(7);
+        this.constructionVehAccessQ = qGoalWizardList.get(8);
+        this.specificAgencyPoliciesQ = qGoalWizardList.get(9);
+        this.existingPerformanceMeasuresQ = qGoalWizardList.get(10);
+        this.outreachTravelerInfoQ = qGoalWizardList.get(11);
+        this.emergencyShoulderQIdx = qGoalWizardList.get(14);
+        this.loweredSpeedLimitsQ = qGoalWizardList.get(15);
+        this.allowAutomatedSpeedEnforcementQ = qGoalWizardList.get(16);
+        this.rampGeometryQ = qGoalWizardList.get(17);
+        this.disableRampMetersQ = qGoalWizardList.get(18);
+        this.biannualProcessReviewQ = qGoalWizardList.get(19);
+
+        this.mobilityGoalQ = qMajorGoalsList.get(0);
+        this.safetyGoalQ = qMajorGoalsList.get(1);
+        this.productivityGoalQ = qMajorGoalsList.get(2);
+        this.regulatoryGoalQ = qMajorGoalsList.get(3);
+        this.travelerInfoGoalQ = qMajorGoalsList.get(4);
+
+        this.emergencyResponseCorridorQIdx = qStakeholderYNList.get(5);
+
+        // User Needs (Goal Wizard)
+        bindDependantQs(constructionVehAccessQ, highVolumeConstructionVehsQ, "User Needs #8");
+        proj.automatedEnforcementAllowedProperty().bindBidirectional(allowAutomatedSpeedEnforcementQ.answerIsYesProperty());
+
+        // User Needs Support
+        qUNSupportList.get(2).answerIsYesProperty().bindBidirectional(proj.crashDataAvailableProperty());
+
+        // Feasibility Wizard
+        bindDependantQs(qFeasOptionList.get(2), this.congestionNoticableQ, "User Needs #1");
+        bindDependantQs(qFeasOptionList.get(3), this.significantQueueingQ, "User Needs #3");
+        bindDependantQs(qFeasYNList.get(1), this.significantQueueingQ, "User Needs #3");
+        bindRedundantQs(qFeasYNList.get(3), this.driverDiversionQ, "User Needs #2");
+        bindDependantQs(qFeasYNList.get(9), this.highVolumeConstructionVehsQ, "User Needs #8");
+
+        // StakeholderWizard
+        bindDependantQs(qStakeholderYNList.get(11), this.driverDiversionQ, "User Needs #2");
+        bindRedundantQs(qStakeholderYNList.get(12), this.mobilityGoalQ, "Major Goals #1");
+        bindRedundantQs(qStakeholderYNList.get(13), this.productivityGoalQ, "Major Goals #3");
+        bindRedundantQs(qStakeholderYNList.get(14), this.regulatoryGoalQ, "Major Goals #4");
+        bindRedundantQs(qStakeholderYNList.get(15), this.safetyGoalQ, "Major Goals #2");
+        bindRedundantQs(qStakeholderYNList.get(16), this.travelerInfoGoalQ, "Major Goals #5");
+        proj.patrollingAgencyProperty().bindBidirectional(qStakeholderOptionList.get(0).answerStringProperty());
+        final QuestionOption numLanesQ = qStakeholderOptionList.get(1);
+        proj.numLanesClosedProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                numLanesQ.setAnswer(newVal.intValue() > 0 ? "Yes" : "No");
+            }
+        });
+        numLanesQ.setLocked(true);
+        final QuestionOption funcQ = qStakeholderOptionList.get(2);
+        proj.functionalClassProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                funcQ.setAnswer(newVal);
+            }
+        });
+        funcQ.setLocked(true);
+        proj.maintainingAgencyProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                qStakeholderOptionList.get(3).setAnswer(newVal);
+            }
+        });
+        qStakeholderOptionList.get(3).setLocked(true);
+
+        //Application Wizard
+        QuestionYN refQ;
+        qApplicationList.get(0).visibleProperty().bind(proj.numLanesClosedProperty().greaterThan(0));
+        qApplicationList.get(1).visibleProperty().bind(proj.numLanesClosedProperty().greaterThan(0));
+        refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable to drivers?
+        bindRedundantQs(qApplicationList.get(3), refQ, "User Needs #1");
+        refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable
+        bindDependantQs(qApplicationList.get(4), refQ, "User Needs #1");
+        refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable
+        bindDependantQs(qApplicationList.get(5), refQ, "User Needs #1");
+        refQ = this.significantQueueingQ; // GW#3 Do you expect significant queueing
+        bindRedundantQs(qApplicationList.get(6), refQ, "User Needs #3");
+        refQ = this.loweredSpeedLimitsQ; // GW#14 Will speed imits in the work zone be lowered compared to base conditions?
+        bindRedundantQs(qApplicationList.get(7), refQ, "User Needs #16");
+        refQ = this.disableRampMetersQ; //  GW#19 Will work zone activities disable ramp meters?
+        bindRedundantQs(qApplicationList.get(8), refQ, "User Needs #19");
+        // Redundent on GW#4 = Yes or GW#5 = Yes
+        BooleanBinding bb = new BooleanBinding() {
+
+            {
+                super.bind(reducedLaneWidthQ.answerIsYesProperty());
+                super.bind(reducedSightDistanceQ.answerIsYesProperty());
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return reducedLaneWidthQ.getAnswerIsYes() || reducedSightDistanceQ.getAnswerIsYes();
+            }
+        };
+        qApplicationList.get(9).setLocked(true);
+        qApplicationList.get(9).setRedundant(true);
+        qApplicationList.get(9).setRefText("User Needs #4&#5");
+        qApplicationList.get(9).answerIsYesProperty().bind(bb);
+        refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
+        bindRedundantQs(qApplicationList.get(10), refQ, "User Needs #15");
+        refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
+        bindRedundantQs(qApplicationList.get(11), refQ, "Stakeholder #6");
+        qApplicationList.get(12).visibleProperty().bind(proj.crashDataAvailableProperty());
+        qApplicationList.get(13).setLocked(true);
+        qApplicationList.get(13).setRedundant(true);
+        qApplicationList.get(13).setRefText("User Needs #4&#5");
+        qApplicationList.get(13).answerIsYesProperty().bind(bb);
+        refQ = this.rampGeometryQ; // GW#18 Will temporary ramp geometry constrain acceleration lanes?
+        bindRedundantQs(qApplicationList.get(14), refQ, "User Needs #18");
+        refQ = this.constructionVehAccessQ; //
+        //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #8");
+        bindRedundantQs(qApplicationList.get(15), refQ, "User Needs #9");
+        refQ = this.highVolumeConstructionVehsQ; // GW#17 Will there be a high volume of construction vehicles?
+        bindRedundantQs(qApplicationList.get(17), refQ, "User Needs #8");
+        refQ = this.allowAutomatedSpeedEnforcementQ; // Same as GW#15 Does state law allow use of automated speed enforcement in WZs?
+        bindRedundantQs(qApplicationList.get(19), refQ, "User Needs #17");
+        refQ = this.specificAgencyPoliciesQ; // GW#9 Are there specific agency policies for work zones as required by the WZ safety and mobility rule?
+        bindRedundantQs(qApplicationList.get(20), refQ, "User Needs #10");
+        refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zones?
+        bindRedundantQs(qApplicationList.get(21), refQ, "User Needs #11");
+        refQ = this.mobilityGoalQ; // Is there a mobility goal?
+        bindRedundantQs(qApplicationList.get(22), refQ, "Major Goals #1");
+        refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
+        bindRedundantQs(qApplicationList.get(23), refQ, "User Needs #20");
+        refQ = this.outreachTravelerInfoQ; // GW#11 Will outreach and traveler information be used for this work zone?
+        bindRedundantQs(qApplicationList.get(24), refQ, "User Needs #12");
+
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        // Writing question lists
+        s.writeObject(this.qAcceptanceTrainingList.toArray(new QuestionYN[qAcceptanceTrainingList.size()]));
+        s.writeObject(this.qApplicationList.toArray(new QuestionYN[qApplicationList.size()]));
+        s.writeObject(this.qBenefitList.toArray(new QuestionOptionMS[qBenefitList.size()]));
+        s.writeObject(this.qChangingConditionsList.toArray(new QuestionYN[qChangingConditionsList.size()]));
+        s.writeObject(this.qConOpsList.toArray(new QuestionYN[qConOpsList.size()]));
+        s.writeObject(this.qCostList.toArray(new QuestionYN[qCostList.size()]));
+        s.writeObject(this.qDeploymentIssuesList.toArray(new QuestionYN[qDeploymentIssuesList.size()]));
+        s.writeObject(this.qDirectIndirectList.toArray(new QuestionYN[qDirectIndirectList.size()]));
+        s.writeObject(this.qFeasOptionList.toArray(new QuestionOption[qFeasOptionList.size()]));
+        s.writeObject(this.qFeasYNList.toArray(new QuestionYN[qFeasYNList.size()]));
+        s.writeObject(this.qGoalWizardList.toArray(new QuestionYN[qGoalWizardList.size()]));
+        s.writeObject(this.qITSResourcesList.toArray(new QuestionYN[qITSResourcesList.size()]));
+        s.writeObject(this.qJurisdictionalList.toArray(new QuestionYN[qJurisdictionalList.size()]));
+        s.writeObject(this.qLegalList.toArray(new QuestionYN[qLegalList.size()]));
+        s.writeObject(this.qMajorGoalsList.toArray(new QuestionYN[qMajorGoalsList.size()]));
+        s.writeObject(this.qMechanismList.toArray(new QuestionYN[qMechanismList.size()]));
+        s.writeObject(this.qMonitoringEvalList.toArray(new QuestionYN[qMonitoringEvalList.size()]));
+        s.writeObject(this.qOpsMaintList.toArray(new QuestionYN[qOpsMaintList.size()]));
+        s.writeObject(this.qProjectEvalList.toArray(new QuestionYN[qProjectEvalList.size()]));
+        s.writeObject(this.qPublicSupportList.toArray(new QuestionYN[qPublicSupportList.size()]));
+        s.writeObject(this.qRFPList.toArray(new QuestionYN[qRFPList.size()]));
+        s.writeObject(this.qSchedulingList.toArray(new QuestionYN[qSchedulingList.size()]));
+        s.writeObject(this.qSharingInfoList.toArray(new QuestionYN[qSharingInfoList.size()]));
+        s.writeObject(this.qStaffTrainingList.toArray(new QuestionYN[qStaffTrainingList.size()]));
+        s.writeObject(this.qStaffingList.toArray(new QuestionYN[qStaffingList.size()]));
+        s.writeObject(this.qStakeholderBuyInList.toArray(new QuestionYN[qStakeholderBuyInList.size()]));
+        s.writeObject(this.qStakeholderOptionList.toArray(new QuestionOption[qStakeholderOptionList.size()]));
+        s.writeObject(this.qStakeholderYNList.toArray(new QuestionYN[qStakeholderYNList.size()]));
+        s.writeObject(this.qSysBCList.toArray(new QuestionYN[qSysBCList.size()]));
+        s.writeObject(this.qSysPlansList.toArray(new QuestionYN[qSysPlansList.size()]));
+        s.writeObject(this.qSysReqList.toArray(new QuestionYN[qSysReqList.size()]));
+        s.writeObject(this.qSysSecurityList.toArray(new QuestionYN[qSysSecurityList.size()]));
+        s.writeObject(this.qTestingStratList.toArray(new QuestionYN[qTestingStratList.size()]));
+        s.writeObject(this.qUNSupportList.toArray(new QuestionYN[qUNSupportList.size()]));
+        s.writeObject(this.qVendorSelectionList.toArray(new QuestionYN[qVendorSelectionList.size()]));
+
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        this.qAcceptanceTrainingList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qApplicationList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qBenefitList = FXCollections.observableArrayList((QuestionOptionMS[]) s.readObject());
+        this.qChangingConditionsList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qConOpsList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qCostList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qDeploymentIssuesList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qDirectIndirectList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qFeasOptionList = FXCollections.observableArrayList((QuestionOption[]) s.readObject());
+        this.qFeasYNList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qGoalWizardList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qITSResourcesList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qJurisdictionalList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qLegalList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qMajorGoalsList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qMechanismList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qMonitoringEvalList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qOpsMaintList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qProjectEvalList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qPublicSupportList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qRFPList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qSchedulingList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qSharingInfoList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qStaffTrainingList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qStaffingList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qStakeholderBuyInList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qStakeholderOptionList = FXCollections.observableArrayList((QuestionOption[]) s.readObject());
+        this.qStakeholderYNList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qSysBCList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qSysPlansList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qSysReqList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qSysSecurityList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qTestingStratList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qUNSupportList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qVendorSelectionList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+    }
+
     private QuestionYN congestionNoticableQ, significantQueueingQ,
             loweredSpeedLimitsQ, disableRampMetersQ, emergencyShoulderQIdx,
             emergencyResponseCorridorQIdx, driverDiversionQ, reducedLaneWidthQ,
@@ -849,5 +1105,5 @@ public class QuestionGenerator {
 
     private QuestionYN mobilityGoalQ, productivityGoalQ, regulatoryGoalQ, safetyGoalQ, travelerInfoGoalQ;
 
-    private QuestionYN existingEquipmentQ;
+    //private QuestionYN existingEquipmentQ;
 }

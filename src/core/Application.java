@@ -5,6 +5,10 @@
  */
 package core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -12,7 +16,9 @@ import javafx.beans.property.SimpleStringProperty;
  *
  * @author ltrask
  */
-public class Application {
+public class Application implements Serializable {
+
+    private final long serialVersionUID = 123456789L;
 
     /**
      * Name of the application.
@@ -54,6 +60,16 @@ public class Application {
 
     public SimpleIntegerProperty scoreProperty() {
         return score;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeObject(getName());
+        s.writeInt(getScore());
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        name = new SimpleStringProperty((String) s.readObject());
+        score = new SimpleIntegerProperty(s.readInt());
     }
 
     public static final String QUEUE_WARNING = "Queue Warning";

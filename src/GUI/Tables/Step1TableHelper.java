@@ -229,6 +229,15 @@ public class Step1TableHelper {
 
         table.setContextMenu(cMenu);
 
+        for (TableColumn tc : table.getColumns()) {
+            tc.setSortable(false);
+            if (tc.getColumns().size() > 0) {
+                for (Object tcc : tc.getColumns()) {
+                    ((TableColumn) tcc).setSortable(false);
+                }
+            }
+        }
+
         // Uncomment to disable selection for the table
         //table.setSelectionModel(null);
         return table;
@@ -289,6 +298,9 @@ public class Step1TableHelper {
         int qIdx = 1;
         for (final QuestionOption q : proj.getFeasWizardOptQs()) {
             final ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(q.getOptions()));
+            if (q.getResponseIdx() >= 0) {
+                cb.getSelectionModel().select(q.getResponseIdx());
+            }
             cb.setMaxWidth(MainController.MAX_WIDTH);
             cb.setMaxHeight(MainController.MAX_HEIGHT);
             cb.setOnAction(new EventHandler<ActionEvent>() {
@@ -380,6 +392,9 @@ public class Step1TableHelper {
             Node displayNode;
             if (!q.isLocked()) {
                 final ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(q.getOptions()));
+                if (q.getResponseIdx() >= 0) {
+                    cb.getSelectionModel().select(q.getResponseIdx());
+                }
                 cb.setMaxWidth(MainController.MAX_WIDTH);
                 cb.setMaxHeight(MainController.MAX_HEIGHT);
                 cb.setOnAction(new EventHandler<ActionEvent>() {

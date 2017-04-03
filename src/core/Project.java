@@ -6,13 +6,15 @@
 package core;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -24,47 +26,52 @@ import javafx.collections.ObservableList;
  *
  * @author ltrask
  */
-public class Project {
+public class Project implements Serializable {
+
+    private final long serialVersionUID = 123456789L;
 
     public static final int NUM_STEPS = 6;
 
     public static final int[] NUM_SUB_STEPS = {11, 8, 8, 4, 4, 5};
 
     // Project information
-    private final SimpleStringProperty name = new SimpleStringProperty();
-    private final SimpleStringProperty agency = new SimpleStringProperty();
-    private final SimpleStringProperty analyst = new SimpleStringProperty();
-    private final SimpleStringProperty description = new SimpleStringProperty();
-    private final SimpleStringProperty limits = new SimpleStringProperty();
-    private final SimpleStringProperty urlLink = new SimpleStringProperty();
+    private SimpleStringProperty name = new SimpleStringProperty();
+    private SimpleStringProperty agency = new SimpleStringProperty();
+    private SimpleStringProperty analyst = new SimpleStringProperty();
+    private SimpleStringProperty description = new SimpleStringProperty();
+    private SimpleStringProperty limits = new SimpleStringProperty();
+    private SimpleStringProperty urlLink = new SimpleStringProperty();
 
     // Work Zone Metadata
-    private final StringProperty functionalClass = new SimpleStringProperty();
-    private final StringProperty wzType = new SimpleStringProperty();
-    private final StringProperty maintainingAgency = new SimpleStringProperty();
-    private final StringProperty patrollingAgency = new SimpleStringProperty();
-    private final IntegerProperty aadt = new SimpleIntegerProperty();
-    private final FloatProperty wzLength = new SimpleFloatProperty();
-    private final IntegerProperty numRoadwayLanes = new SimpleIntegerProperty();
-    private final FloatProperty shoulderWidth = new SimpleFloatProperty();
-    private final IntegerProperty speedLimit = new SimpleIntegerProperty();
-    private final IntegerProperty numLanesClosed = new SimpleIntegerProperty();
-    private final IntegerProperty activityDuration = new SimpleIntegerProperty();
-    private final BooleanProperty crashDataAvailable = new SimpleBooleanProperty();
+    private StringProperty functionalClass = new SimpleStringProperty();
+    private StringProperty wzType = new SimpleStringProperty();
+    private StringProperty maintainingAgency = new SimpleStringProperty();
+    private StringProperty patrollingAgency = new SimpleStringProperty();
+    private IntegerProperty aadt = new SimpleIntegerProperty(50000);
+    private DoubleProperty wzLength = new SimpleDoubleProperty(2.0);
+    private IntegerProperty numRoadwayLanes = new SimpleIntegerProperty(3);
+    private DoubleProperty shoulderWidth = new SimpleDoubleProperty(10);
+    private IntegerProperty speedLimit = new SimpleIntegerProperty(55);
+    private IntegerProperty numLanesClosed = new SimpleIntegerProperty(1);
+    private IntegerProperty activityDuration = new SimpleIntegerProperty(6);
+
+    // Other Properties
+    private BooleanProperty crashDataAvailable = new SimpleBooleanProperty();
+    private BooleanProperty automatedEnforcementAllowed = new SimpleBooleanProperty();
 
     private File saveFile = null;
 
-    private final Step[] steps;
+    private Step[] steps;
 
-    private final QuestionGenerator qGen;
+    private QuestionGenerator qGen;
 
-    private final GoalNeedsMatrix gnMat;
+    private GoalNeedsMatrix gnMat;
 
-    private final FeasibilityMatrix feasMat;
+    private FeasibilityMatrix feasMat;
 
-    private final StakeholderMatrix stakeMat;
+    private StakeholderMatrix stakeMat;
 
-    private final ApplicationMatrix appMat;
+    private ApplicationMatrix appMat;
 
     public Project() {
         this("New Project", null);
@@ -85,7 +92,7 @@ public class Project {
         gnMat = new GoalNeedsMatrix(qGen.getGoalWizardQs(), Need.GOAL_WIZARD_NEEDS_LIST, qGen.qMajorGoalsList);
         feasMat = new FeasibilityMatrix(qGen.qFeasOptionList, qGen.qFeasYNList);
         stakeMat = new StakeholderMatrix(this, qGen.qStakeholderOptionList, qGen.qStakeholderYNList);
-        appMat = new ApplicationMatrix(qGen.qApplicationList);
+        appMat = new ApplicationMatrix(this, qGen.qApplicationList);
     }
 
     public String getName() {
@@ -96,28 +103,68 @@ public class Project {
         this.name.set(newName);
     }
 
-    public SimpleStringProperty getNameProperty() {
+    public SimpleStringProperty nameProperty() {
         return name;
     }
 
-    public SimpleStringProperty getAgencyProperty() {
+    public SimpleStringProperty agencyProperty() {
         return agency;
     }
 
-    public SimpleStringProperty getAnalystProperty() {
+    public String getAgency() {
+        return agency.get();
+    }
+
+    public void setAgency(String newAgency) {
+        this.agency.set(newAgency);
+    }
+
+    public SimpleStringProperty analystProperty() {
         return analyst;
     }
 
-    public SimpleStringProperty getDescriptionProperty() {
+    public String getAnalyst() {
+        return analyst.get();
+    }
+
+    public void setAnalyst(String newAnalyst) {
+        this.analyst.set(newAnalyst);
+    }
+
+    public SimpleStringProperty descriptionProperty() {
         return description;
     }
 
-    public SimpleStringProperty getLimitsProperty() {
+    public String getDescription() {
+        return description.get();
+    }
+
+    public void setDescription(String newDesc) {
+        this.description.set(newDesc);
+    }
+
+    public SimpleStringProperty limitsProperty() {
         return limits;
     }
 
-    public SimpleStringProperty getUrlLinkProperty() {
+    public String getLimits() {
+        return limits.get();
+    }
+
+    public void setLimits(String newLimits) {
+        this.limits.set(newLimits);
+    }
+
+    public SimpleStringProperty urlLinkProperty() {
         return urlLink;
+    }
+
+    public String getUrlLink() {
+        return urlLink.get();
+    }
+
+    public void setUrlLink(String newURL) {
+        this.urlLink.set(newURL);
     }
 
     public String getFunctionalClass() {
@@ -168,15 +215,15 @@ public class Project {
         return aadt;
     }
 
-    public float getWzLength() {
+    public double getWzLength() {
         return wzLength.get();
     }
 
-    public void setWzLength(float value) {
+    public void setWzLength(double value) {
         wzLength.set(value);
     }
 
-    public FloatProperty wzLengthProperty() {
+    public DoubleProperty wzLengthProperty() {
         return wzLength;
     }
 
@@ -204,15 +251,15 @@ public class Project {
         return numRoadwayLanes;
     }
 
-    public float getShoulderWidth() {
+    public double getShoulderWidth() {
         return shoulderWidth.get();
     }
 
-    public void setShoulderWidth(float value) {
+    public void setShoulderWidth(Double value) {
         shoulderWidth.set(value);
     }
 
-    public FloatProperty shoulderWidthProperty() {
+    public DoubleProperty shoulderWidthProperty() {
         return shoulderWidth;
     }
 
@@ -262,6 +309,18 @@ public class Project {
 
     public BooleanProperty crashDataAvailableProperty() {
         return crashDataAvailable;
+    }
+
+    public boolean isAutomatedEnforcementAllowed() {
+        return automatedEnforcementAllowed.get();
+    }
+
+    public void setAutomatedEnforcementAllowed(boolean value) {
+        automatedEnforcementAllowed.set(value);
+    }
+
+    public BooleanProperty automatedEnforcementAllowedProperty() {
+        return automatedEnforcementAllowed;
     }
 
     public Project.Step getStep(int index) {
@@ -365,6 +424,161 @@ public class Project {
         return name.get();
     }
 
+    public void setSaveFile(File file) {
+        this.saveFile = file;
+    }
+
+    public File getSaveFile() {
+        return saveFile;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        //s.defaultWriteObject();
+        s.writeInt(getAadt());
+        s.writeInt(getActivityDuration());
+        s.writeObject(getAgency());
+        s.writeObject(getAnalyst());
+        s.writeObject(getDescription());
+        s.writeObject(getFunctionalClass());
+        s.writeObject(getLimits());
+        s.writeObject(getMaintainingAgency());
+        s.writeObject(getName());
+        s.writeInt(getNumLanesClosed());
+        s.writeInt(getNumRoadwayLanes());
+        s.writeObject(getPatrollingAgency());
+        s.writeObject(saveFile);
+        s.writeDouble(getShoulderWidth());
+        s.writeInt(getSpeedLimit());
+        s.writeObject(getUrlLink());
+        s.writeDouble(getWzLength());
+        s.writeObject(getWzType());
+        s.writeBoolean(isAutomatedEnforcementAllowed());
+        s.writeBoolean(isCrashDataAvailable());
+
+        s.writeDouble(progressApp.get());
+        s.writeDouble(progressFeas.get());
+        s.writeDouble(progressGoal.get());
+        s.writeDouble(progressInfo.get());
+        s.writeDouble(progressStake.get());
+
+        s.writeObject(qGen);
+
+        s.writeObject(getApplicationMatrix());
+        //s.writeObject(getFeasibilityMatrix());
+        s.writeObject(getGoalNeedsMatrix());
+        s.writeObject(getStakeholderMatrix());
+
+        //s.writeObject(steps);
+    }
+
+    public void setFromProject(Project proj) {
+
+        setAadt(proj.getAadt());
+        setActivityDuration(proj.getActivityDuration());
+        setAgency(proj.getAgency());
+        setAnalyst(proj.getAnalyst());
+        setDescription(proj.getDescription());
+        setFunctionalClass(proj.getFunctionalClass());
+        setLimits(proj.getLimits());
+        setMaintainingAgency(proj.getMaintainingAgency());
+        setName(proj.getName());
+        setNumLanesClosed(proj.getNumLanesClosed());
+        setNumRoadwayLanes(proj.getNumRoadwayLanes());
+        setPatrollingAgency(proj.getPatrollingAgency());
+        saveFile = proj.getSaveFile();
+        setShoulderWidth(proj.getShoulderWidth());
+        setSpeedLimit(proj.getSpeedLimit());
+        setUrlLink(proj.getUrlLink());
+        setWzLength(proj.getWzLength());
+        setWzType(proj.getWzType());
+
+        setAutomatedEnforcementAllowed(proj.isAutomatedEnforcementAllowed());
+        setCrashDataAvailable(proj.isCrashDataAvailable());
+
+        steps = new Step[NUM_STEPS];
+        for (int stepIdx = 0; stepIdx < NUM_STEPS; stepIdx++) {
+            steps[stepIdx] = new Step(this, stepIdx, NUM_SUB_STEPS[stepIdx]);
+        }
+
+        progressApp.set(proj.progressApp.get());
+        progressFeas.set(proj.progressFeas.get());
+        progressGoal.set(proj.progressGoal.get());
+        progressInfo.set(proj.progressInfo.get());
+        progressStake.set(proj.progressStake.get());
+
+        qGen = new QuestionGenerator(proj.getQGen(), this);
+        appMat = new ApplicationMatrix(proj.appMat, this);
+        feasMat = new FeasibilityMatrix(proj.qGen.qFeasOptionList, proj.qGen.qFeasYNList);
+        gnMat = new GoalNeedsMatrix(proj.getGoalNeedsMatrix(), qGen.qMajorGoalsList);
+        stakeMat = new StakeholderMatrix(proj.getStakeholderMatrix(), this);
+
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        aadt = new SimpleIntegerProperty(s.readInt());
+        activityDuration = new SimpleIntegerProperty(s.readInt());
+        agency = new SimpleStringProperty((String) s.readObject());
+        analyst = new SimpleStringProperty((String) s.readObject());
+        description = new SimpleStringProperty((String) s.readObject());
+        functionalClass = new SimpleStringProperty((String) s.readObject());
+        limits = new SimpleStringProperty((String) s.readObject());
+        maintainingAgency = new SimpleStringProperty((String) s.readObject());
+        name = new SimpleStringProperty((String) s.readObject());
+        numLanesClosed = new SimpleIntegerProperty(s.readInt());
+        numRoadwayLanes = new SimpleIntegerProperty(s.readInt());
+        patrollingAgency = new SimpleStringProperty((String) s.readObject());
+        saveFile = (File) s.readObject();
+        shoulderWidth = new SimpleDoubleProperty(s.readDouble());
+        speedLimit = new SimpleIntegerProperty(s.readInt());
+        urlLink = new SimpleStringProperty((String) s.readObject());
+        wzLength = new SimpleDoubleProperty(s.readDouble());
+        wzType = new SimpleStringProperty((String) s.readObject());
+
+        this.automatedEnforcementAllowed = new SimpleBooleanProperty(s.readBoolean());
+        this.crashDataAvailable = new SimpleBooleanProperty(s.readBoolean());
+
+        progressApp = new SimpleDoubleProperty(s.readDouble());
+        progressFeas = new SimpleDoubleProperty(s.readDouble());
+        progressGoal = new SimpleDoubleProperty(s.readDouble());
+        progressInfo = new SimpleDoubleProperty(s.readDouble());
+        progressStake = new SimpleDoubleProperty(s.readDouble());
+
+        qGen = (QuestionGenerator) s.readObject();
+        appMat = (ApplicationMatrix) s.readObject();
+        //feasMat = (FeasibilityMatrix) s.readObject();
+        gnMat = (GoalNeedsMatrix) s.readObject();
+        stakeMat = (StakeholderMatrix) s.readObject();
+
+//
+//        Step[] tempArr = (Step[]) s.readObject();
+//        System.arraycopy(tempArr, 0, steps, 0, tempArr.length);
+        // Original Implementation
+//        setAadt(s.readInt());
+//        setActivityDuration(s.readInt());
+//        setAgency((String) s.readObject());
+//        setAnalyst((String) s.readObject());
+//        setDescription((String) s.readObject());
+//        setFunctionalClass((String) s.readObject());
+//        setLimits((String) s.readObject());
+//        setMaintainingAgency((String) s.readObject());
+//        setName((String) s.readObject());
+//        setPatrollingAgency((String) s.readObject());
+//        saveFile = (File) s.readObject();
+//        setShoulderWidth(s.readFloat());
+//        setSpeedLimit(s.readInt());
+//        setUrlLink((String) s.readObject());
+//        setWzLength(s.readFloat());
+//        setWzType((String) s.readObject());
+//
+//        setAutomatedEnforcementAllowed(s.readBoolean());
+//        setCrashDataAvailable(s.readBoolean());
+//        progressApp.set(s.readDouble());
+//        progressFeas.set(s.readDouble());
+//        progressGoal.set(s.readDouble());
+//        progressInfo.set(s.readDouble());
+//        progressStake.set(s.readDouble());
+    }
+
     public static class Step {
 
         private final Project proj;
@@ -450,6 +664,19 @@ public class Project {
 
         public int getNumSubSteps() {
             return this.numSubSteps;
+        }
+
+        private void writeObject(ObjectOutputStream s) throws IOException {
+//            s.writeObject(getDescription());
+//            s.writeInt(numSubSteps);
+//            s.writeBoolean(isStepFinished());
+//            s.writeInt(stepIdx);
+//            s.writeObject(stepName);
+//            s.writeBoolean(isStepStarted())
+        }
+
+        private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+
         }
 
     }
@@ -607,6 +834,14 @@ public class Project {
             return subStepProgress;
         }
 
+        private void writeObject(ObjectOutputStream s) throws IOException {
+            //s.writeObject(getOption);
+        }
+
+        private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+
+        }
+
     }
 
     public static boolean checkSubStepIsWizardSummary(int stepIdx, int subStepIdx) {
@@ -620,11 +855,11 @@ public class Project {
         }
     }
 
-    public final SimpleDoubleProperty progressInfo = new SimpleDoubleProperty(1.0);
-    public final SimpleDoubleProperty progressGoal = new SimpleDoubleProperty(0.0);
-    public final SimpleDoubleProperty progressFeas = new SimpleDoubleProperty(0.0);
-    public final SimpleDoubleProperty progressApp = new SimpleDoubleProperty(0.0);
-    public final SimpleDoubleProperty progressStake = new SimpleDoubleProperty(0.0);
+    public SimpleDoubleProperty progressInfo = new SimpleDoubleProperty(1.0);
+    public SimpleDoubleProperty progressGoal = new SimpleDoubleProperty(0.0);
+    public SimpleDoubleProperty progressFeas = new SimpleDoubleProperty(0.0);
+    public SimpleDoubleProperty progressApp = new SimpleDoubleProperty(0.0);
+    public SimpleDoubleProperty progressStake = new SimpleDoubleProperty(0.0);
 
     public static final int GOAL_WIZARD_SUMMARY_INDEX = 4; // Step 1
     public static final int FEAS_WIZARD_SUMMARY_INDEX = 6; // Step 1
@@ -633,13 +868,13 @@ public class Project {
     public static final int APP_WIZARD_SUMMARY_INDEX = 1; // Step 2
 
     public static final String[][] STEP_NAMES = {
-        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Member Selection", "Team Members", "ITS Resources"},
+        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Team Selection", "Team Members", "ITS Resources"},
         {"Step 2", "Initial Applications", "Application Wizard", "Benefits", "Costs", "Institutional/Jurisdictional", "Legal/Policy", "Stakeholder Buy-In", "Develop Concept of Operations"},
-        //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Ops & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
-        {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Ops & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefity/Cost"},
+        //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
+        {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefity/Cost"},
         {"Step 4", "Direct/Indirect", "Award Mechanism", "RFP Requirements", "Selected Vendor"},
         {"Step 5", "Implementing System Plans", "Scheduling Decisions", "System Acceptance Testing", "Handling Deployment Issues"},
-        {"Step 6", "Changin Work Zone", "Using/Sharing ITS Info", "Maintaining Adequate Staff", "Leveraging Public Support", "System Monitoring/Evaluation"}
+        {"Step 6", "Changing Work Zone", "Using/Sharing ITS Info", "Maintaining Adequate Staff", "Leveraging Public Support", "System Monitoring/Evaluation"}
     };
 
 }

@@ -88,16 +88,20 @@ public class TableHelper {
                     public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
                         if (newVal.getItem() != null) {
                             final Question q = (Question) newVal.getItem();
+                            //tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                            tfe.getStyleClass().add(q.visibleProperty().get() ? "question-visible" : "question-hidden");
                             q.visibleProperty().addListener(new ChangeListener<Boolean>() {
                                 @Override
                                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                                    tfe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    //tfe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    tfe.getStyleClass().add(newVal ? "question-visible" : "question-hidden");
                                 }
                             });
                             tfe.textFillProperty().addListener(new ChangeListener<Paint>() {
                                 @Override
                                 public void changed(ObservableValue<? extends Paint> ov, Paint oldVal, Paint newVal) {
-                                    tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    //tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    tfe.getStyleClass().add(q.visibleProperty().get() ? "question-visible" : "question-hidden");
                                 }
                             });
                         }
@@ -237,6 +241,11 @@ public class TableHelper {
 
         for (TableColumn tc : table.getColumns()) {
             tc.setSortable(false);
+            if (tc.getColumns().size() > 0) {
+                for (Object tcc : tc.getColumns()) {
+                    ((TableColumn) tcc).setSortable(false);
+                }
+            }
         }
 
         return table;

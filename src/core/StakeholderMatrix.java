@@ -8,6 +8,9 @@ package core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Comparator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -35,16 +38,18 @@ import javafx.util.Callback;
  *
  * @author ltrask
  */
-public class StakeholderMatrix {
+public class StakeholderMatrix implements Serializable {
+
+    private final long serialVersionUID = 123456789L;
 
     private final Project proj;
     private final ObservableList<QuestionOption> qOptList;
     private final ObservableList<QuestionYN> qYNList;
 
-    private final int[][] optScoreMat;
-    private final int[][] ynScoreMat;
+    private int[][] optScoreMat;
+    private int[][] ynScoreMat;
     //private final LinkedHashMap<String, Integer> stakeholderScore;
-    private final ObservableList<Stakeholder> stakeholders;
+    private ObservableList<Stakeholder> stakeholders;
     private SortedList<Stakeholder> sortedStakeholders;
 
     public StakeholderMatrix(Project proj, ObservableList<QuestionOption> qOptList, ObservableList<QuestionYN> qYNList) {
@@ -102,6 +107,20 @@ public class StakeholderMatrix {
         }
 
         setupBindings();
+    }
+
+    public StakeholderMatrix(StakeholderMatrix sm, Project proj) {
+        this.proj = proj;
+        this.qYNList = proj.getStakeWizardYNQs();
+        this.qOptList = proj.getStakeWizardOptQs();
+
+        this.stakeholders = sm.stakeholders;
+
+        this.optScoreMat = sm.optScoreMat;
+        this.ynScoreMat = sm.ynScoreMat;
+
+        setupBindings();
+        computeStakeholders();
     }
 
     private void setupBindings() {
@@ -407,7 +426,7 @@ public class StakeholderMatrix {
         return table;
     }
 
-    private final BooleanProperty hasSchools = new SimpleBooleanProperty();
+    private BooleanProperty hasSchools = new SimpleBooleanProperty();
 
     public boolean isHasSchools() {
         return hasSchools.get();
@@ -420,7 +439,7 @@ public class StakeholderMatrix {
     public BooleanProperty hasSchoolsProperty() {
         return hasSchools;
     }
-    private final BooleanProperty touristRoute = new SimpleBooleanProperty();
+    private BooleanProperty touristRoute = new SimpleBooleanProperty();
 
     public boolean isTouristRoute() {
         return touristRoute.get();
@@ -433,7 +452,7 @@ public class StakeholderMatrix {
     public BooleanProperty touristRouteProperty() {
         return touristRoute;
     }
-    private final BooleanProperty specialEventVenue = new SimpleBooleanProperty();
+    private BooleanProperty specialEventVenue = new SimpleBooleanProperty();
 
     public boolean isSpecialEventVenue() {
         return specialEventVenue.get();
@@ -446,7 +465,7 @@ public class StakeholderMatrix {
     public BooleanProperty specialEventVenueProperty() {
         return specialEventVenue;
     }
-    private final BooleanProperty transitOnRoute = new SimpleBooleanProperty();
+    private BooleanProperty transitOnRoute = new SimpleBooleanProperty();
 
     public boolean isTransitOnRoute() {
         return transitOnRoute.get();
@@ -459,7 +478,7 @@ public class StakeholderMatrix {
     public BooleanProperty transitOnRouteProperty() {
         return transitOnRoute;
     }
-    private final BooleanProperty otherWorkZones = new SimpleBooleanProperty();
+    private BooleanProperty otherWorkZones = new SimpleBooleanProperty();
 
     public boolean isOtherWorkZones() {
         return otherWorkZones.get();
@@ -472,7 +491,7 @@ public class StakeholderMatrix {
     public BooleanProperty otherWorkZonesProperty() {
         return otherWorkZones;
     }
-    private final BooleanProperty emergencyResponseCorridor = new SimpleBooleanProperty();
+    private BooleanProperty emergencyResponseCorridor = new SimpleBooleanProperty();
 
     public boolean isEmergencyResponseCorridor() {
         return emergencyResponseCorridor.get();
@@ -485,7 +504,7 @@ public class StakeholderMatrix {
     public BooleanProperty emergencyResponseCorridorProperty() {
         return emergencyResponseCorridor;
     }
-    private final BooleanProperty businessHourLnClosures = new SimpleBooleanProperty();
+    private BooleanProperty businessHourLnClosures = new SimpleBooleanProperty();
 
     public boolean isBusinessHourLnClosures() {
         return businessHourLnClosures.get();
@@ -498,7 +517,7 @@ public class StakeholderMatrix {
     public BooleanProperty businessHourLnClosuresProperty() {
         return businessHourLnClosures;
     }
-    private final BooleanProperty sideStreetRestrictions = new SimpleBooleanProperty();
+    private BooleanProperty sideStreetRestrictions = new SimpleBooleanProperty();
 
     public boolean isSideStreetRestrictions() {
         return sideStreetRestrictions.get();
@@ -511,7 +530,7 @@ public class StakeholderMatrix {
     public BooleanProperty sideStreetRestrictionsProperty() {
         return sideStreetRestrictions;
     }
-    private final BooleanProperty freightCorridor = new SimpleBooleanProperty();
+    private BooleanProperty freightCorridor = new SimpleBooleanProperty();
 
     public boolean isFreightCorridor() {
         return freightCorridor.get();
@@ -524,7 +543,7 @@ public class StakeholderMatrix {
     public BooleanProperty freightCorridorProperty() {
         return freightCorridor;
     }
-    private final BooleanProperty pedBikeImpacts = new SimpleBooleanProperty();
+    private BooleanProperty pedBikeImpacts = new SimpleBooleanProperty();
 
     public boolean isPedBikeImpacts() {
         return pedBikeImpacts.get();
@@ -537,7 +556,7 @@ public class StakeholderMatrix {
     public BooleanProperty pedBikeImpactsProperty() {
         return pedBikeImpacts;
     }
-    private final BooleanProperty signalizedSystem = new SimpleBooleanProperty();
+    private BooleanProperty signalizedSystem = new SimpleBooleanProperty();
 
     public boolean isSignalizedSystem() {
         return signalizedSystem.get();
@@ -550,7 +569,7 @@ public class StakeholderMatrix {
     public BooleanProperty signalizedSystemProperty() {
         return signalizedSystem;
     }
-    private final BooleanProperty unwantedLocalDiversion = new SimpleBooleanProperty();
+    private BooleanProperty unwantedLocalDiversion = new SimpleBooleanProperty();
 
     public boolean isUnwantedLocalDiversion() {
         return unwantedLocalDiversion.get();
@@ -564,7 +583,7 @@ public class StakeholderMatrix {
         return unwantedLocalDiversion;
     }
 
-    private final BooleanProperty mobilityGoal = new SimpleBooleanProperty();
+    private BooleanProperty mobilityGoal = new SimpleBooleanProperty();
 
     public boolean isMobilityGoal() {
         return mobilityGoal.get();
@@ -577,7 +596,7 @@ public class StakeholderMatrix {
     public BooleanProperty mobilityGoalProperty() {
         return mobilityGoal;
     }
-    private final BooleanProperty productivityGoal = new SimpleBooleanProperty();
+    private BooleanProperty productivityGoal = new SimpleBooleanProperty();
 
     public boolean isProductivityGoal() {
         return productivityGoal.get();
@@ -590,7 +609,7 @@ public class StakeholderMatrix {
     public BooleanProperty productivityGoalProperty() {
         return productivityGoal;
     }
-    private final BooleanProperty regulatoryGoal = new SimpleBooleanProperty();
+    private BooleanProperty regulatoryGoal = new SimpleBooleanProperty();
 
     public boolean isRegulatoryGoal() {
         return regulatoryGoal.get();
@@ -603,7 +622,7 @@ public class StakeholderMatrix {
     public BooleanProperty regulatoryGoalProperty() {
         return regulatoryGoal;
     }
-    private final BooleanProperty safetyGoal = new SimpleBooleanProperty();
+    private BooleanProperty safetyGoal = new SimpleBooleanProperty();
 
     public boolean isSafetyGoal() {
         return safetyGoal.get();
@@ -616,7 +635,7 @@ public class StakeholderMatrix {
     public BooleanProperty safetyGoalProperty() {
         return safetyGoal;
     }
-    private final BooleanProperty travelerInfoGoal = new SimpleBooleanProperty();
+    private BooleanProperty travelerInfoGoal = new SimpleBooleanProperty();
 
     public boolean isTravelerInfoGoal() {
         return travelerInfoGoal.get();
@@ -644,7 +663,7 @@ public class StakeholderMatrix {
             }
         }
     }
-    private final StringProperty primaryStakeholder = new SimpleStringProperty();
+    private StringProperty primaryStakeholder = new SimpleStringProperty();
 
     public String getPrimaryStakeholder() {
         return primaryStakeholder.get();
@@ -682,6 +701,58 @@ public class StakeholderMatrix {
 
     public StringProperty additionalStakeholderProperty() {
         return additionalStakeholder;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeBoolean(this.isBusinessHourLnClosures());
+        s.writeBoolean(this.isEmergencyResponseCorridor());
+        s.writeBoolean(this.isFreightCorridor());
+        s.writeBoolean(this.isHasSchools());
+        s.writeBoolean(this.isMobilityGoal());
+        s.writeBoolean(this.isOtherWorkZones());
+        s.writeBoolean(this.isPedBikeImpacts());
+        s.writeBoolean(this.isProductivityGoal());
+        s.writeBoolean(this.isRegulatoryGoal());
+        s.writeBoolean(this.isSafetyGoal());
+        s.writeBoolean(this.isSideStreetRestrictions());
+        s.writeBoolean(this.isSignalizedSystem());
+        s.writeBoolean(this.isSpecialEventVenue());
+        s.writeBoolean(this.isTouristRoute());
+        s.writeBoolean(this.isTransitOnRoute());
+        s.writeBoolean(this.isTravelerInfoGoal());
+        s.writeBoolean(this.isUnwantedLocalDiversion());
+
+        s.writeObject(optScoreMat);
+        s.writeObject(ynScoreMat);
+
+        s.writeObject(stakeholders.toArray(new Stakeholder[stakeholders.size()]));
+
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        this.businessHourLnClosures = new SimpleBooleanProperty(s.readBoolean());
+        this.emergencyResponseCorridor = new SimpleBooleanProperty(s.readBoolean());
+        this.freightCorridor = new SimpleBooleanProperty(s.readBoolean());
+        this.hasSchools = new SimpleBooleanProperty(s.readBoolean());
+        this.mobilityGoal = new SimpleBooleanProperty(s.readBoolean());
+        this.otherWorkZones = new SimpleBooleanProperty(s.readBoolean());
+        this.pedBikeImpacts = new SimpleBooleanProperty(s.readBoolean());
+        this.productivityGoal = new SimpleBooleanProperty(s.readBoolean());
+        this.regulatoryGoal = new SimpleBooleanProperty(s.readBoolean());
+        this.safetyGoal = new SimpleBooleanProperty(s.readBoolean());
+        this.sideStreetRestrictions = new SimpleBooleanProperty(s.readBoolean());
+        this.signalizedSystem = new SimpleBooleanProperty(s.readBoolean());
+        this.specialEventVenue = new SimpleBooleanProperty(s.readBoolean());
+        this.touristRoute = new SimpleBooleanProperty(s.readBoolean());
+        this.transitOnRoute = new SimpleBooleanProperty(s.readBoolean());
+        this.travelerInfoGoal = new SimpleBooleanProperty(s.readBoolean());
+        this.unwantedLocalDiversion = new SimpleBooleanProperty(s.readBoolean());
+
+        optScoreMat = (int[][]) s.readObject();
+        ynScoreMat = (int[][]) s.readObject();
+
+        stakeholders = FXCollections.observableArrayList((Stakeholder[]) s.readObject());
+
     }
 
 }

@@ -263,10 +263,10 @@ public class StatusBar extends TitledPane {
 
         statusEnabledProperty.bind(control.projectStartedProperty());
 
-        this.projNameLabel2.textProperty().bind(control.getProject().getNameProperty());
-        this.projAgencyLabel2.textProperty().bind(control.getProject().getAgencyProperty());
-        this.projAnalystLabel2.textProperty().bind(control.getProject().getAnalystProperty());
-        this.projDescriptLabel2.textProperty().bind(control.getProject().getDescriptionProperty());
+        this.projNameLabel2.textProperty().bind(control.getProject().nameProperty());
+        this.projAgencyLabel2.textProperty().bind(control.getProject().agencyProperty());
+        this.projAnalystLabel2.textProperty().bind(control.getProject().analystProperty());
+        this.projDescriptLabel2.textProperty().bind(control.getProject().descriptionProperty());
 
         this.goalsType1Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topMobilityGoalProperty());
         this.goalsType2Label2.textProperty().bind(control.getProject().getGoalNeedsMatrix().topProdGoalProperty());

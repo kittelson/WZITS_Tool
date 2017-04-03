@@ -70,7 +70,7 @@ public class FlowBar extends BorderPane {
     private final Button step1Sub6Button = new Button(Project.STEP_NAMES[0][6]);
     private final Button step1Sub7Button = new Button(Project.STEP_NAMES[0][7]);
     private final Button step1Sub8Button = new Button(Project.STEP_NAMES[0][8]);
-    private final Button step1Sub9Button = new Button(Project.STEP_NAMES[0][9]);
+    private final Button step1Sub9Button = new Button("SH Wizard & Team Selection"); //Project.STEP_NAMES[0][9]
     private final Button step1Sub10Button = new Button(Project.STEP_NAMES[0][10]);
     private final Button step1Sub11Button = new Button(Project.STEP_NAMES[0][11]);
     private final Button step1ReportButton = new Button("Step 1 Report");
@@ -79,7 +79,7 @@ public class FlowBar extends BorderPane {
     private final Button step2Sub2Button = new Button(Project.STEP_NAMES[1][2]);
     private final Button step2Sub3Button = new Button(Project.STEP_NAMES[1][3]);
     private final Button step2Sub4Button = new Button(Project.STEP_NAMES[1][4]);
-    private final Button step2Sub5Button = new Button(Project.STEP_NAMES[1][5]);
+    private final Button step2Sub5Button = new Button("Institutional & Jurisdictional"); //Project.STEP_NAMES[1][5]
     private final Button step2Sub6Button = new Button(Project.STEP_NAMES[1][6]);
     private final Button step2Sub7Button = new Button(Project.STEP_NAMES[1][7]);
     private final Button step2Sub8Button = new Button(Project.STEP_NAMES[1][8]);
@@ -111,8 +111,8 @@ public class FlowBar extends BorderPane {
 
     private final Button step6Sub1Button = new Button(Project.STEP_NAMES[5][1]);
     private final Button step6Sub2Button = new Button(Project.STEP_NAMES[5][2]);
-    private final Button step6Sub3Button = new Button(Project.STEP_NAMES[5][3]);
-    private final Button step6Sub4Button = new Button(Project.STEP_NAMES[5][4]);
+    private final Button step6Sub3Button = new Button("Maintaining\nAdequate Staff"); //Project.STEP_NAMES[5][3]
+    private final Button step6Sub4Button = new Button("Leveraging\nPublic Support"); //Project.STEP_NAMES[5][4]
     private final Button step6Sub5Button = new Button(Project.STEP_NAMES[5][5]);
     private final Button step6ReportButton = new Button("Step 6 Report");
 
@@ -147,7 +147,18 @@ public class FlowBar extends BorderPane {
 //            }
 //        });
         setFormatting();
-        //prevButton.set
+
+        int toolBarHeight = 75;
+        flowGrid.setMinHeight(toolBarHeight);
+        flowGrid.setPrefHeight(toolBarHeight);
+        flowGrid.setMaxHeight(toolBarHeight);
+        prevButton.setMinHeight(toolBarHeight);
+        prevButton.setPrefHeight(toolBarHeight);
+        prevButton.setMaxHeight(toolBarHeight);
+        nextButton.setMinHeight(toolBarHeight);
+        nextButton.setPrefHeight(toolBarHeight);
+        nextButton.setMaxHeight(toolBarHeight);
+
         this.setLeft(prevButton);
         this.setCenter(flowGrid);
         this.setRight(nextButton);
@@ -404,7 +415,7 @@ public class FlowBar extends BorderPane {
         } else if (stepIdx == Project.NUM_STEPS) {
 
         } else {
-            double split = 25;
+            double split = 15;
             // Compute collapsed button widths
             double wCollapse = split / Project.NUM_STEPS + 1;  // One of the (Project.NUM_STEPS+2) Buttons will be exanded, the rest are collapsed
             // Comput expanded button widths

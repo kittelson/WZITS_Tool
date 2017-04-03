@@ -5,6 +5,10 @@
  */
 package core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,15 +18,17 @@ import javafx.collections.ObservableList;
  *
  * @author ltrask
  */
-public class Need {
+public class Need implements Serializable {
 
-    private final SimpleStringProperty description;
+    private final long serialVersionUID = 123456789L;
 
-    private final SimpleStringProperty goal;
+    private SimpleStringProperty description;
 
-    private final SimpleIntegerProperty score = new SimpleIntegerProperty(-1);
+    private SimpleStringProperty goal;
 
-    private final boolean isPlaceholder;
+    private SimpleIntegerProperty score = new SimpleIntegerProperty(-1);
+
+    private boolean isPlaceholder;
 
     public Need(String goal, String description) {
         this(goal, description, false);
@@ -68,6 +74,20 @@ public class Need {
 
     public SimpleIntegerProperty scoreProperty() {
         return score;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeObject(getDescription());
+        s.writeObject(getGoal());
+        s.writeBoolean(isPlaceholder);
+        s.writeInt(getScore());
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        description = new SimpleStringProperty((String) s.readObject());
+        goal = new SimpleStringProperty((String) s.readObject());
+        isPlaceholder = s.readBoolean();
+        score = new SimpleIntegerProperty(s.readInt());
     }
 
     public static final ObservableList<Need> GOAL_WIZARD_NEEDS_LIST = FXCollections.observableArrayList(

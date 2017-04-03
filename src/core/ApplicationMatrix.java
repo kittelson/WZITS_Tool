@@ -8,6 +8,9 @@ package core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -29,22 +32,29 @@ import javafx.util.Callback;
  *
  * @author jlake
  */
-public class ApplicationMatrix {
+public class ApplicationMatrix implements Serializable {
+
+    private final long serialVersionUID = 123456789L;
+
+    private final Project proj;
 
     private LinkedHashMap<Application, Integer> appToColMap;
     private LinkedHashMap<Question, Integer> questionToRowMap;
-    private final int[][] matrix;
+
+    private ArrayList<Application> appTypes;
+    private int[][] matrix;
 
     private SortedList<Application> sAppList;
 
-    public ApplicationMatrix(ObservableList<QuestionYN> inputQuestions) {
-        ArrayList<Application> appList = new ArrayList();
+    public ApplicationMatrix(Project proj, ObservableList<QuestionYN> inputQuestions) {
+        this.proj = proj;
+        appTypes = new ArrayList();
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/appWizardDefaultMatrix.csv")));
             String[] header = br.readLine().split(",");
             for (String appType : header) {
-                appList.add(new Application(appType.trim()));
+                appTypes.add(new Application(appType.trim()));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,22 +64,39 @@ public class ApplicationMatrix {
         for (int qIdx = 0; qIdx < inputQuestions.size(); qIdx++) {
             questionToRowMap.put(inputQuestions.get(qIdx), qIdx);
         }
-        for (int appIdx = 0; appIdx < appList.size(); appIdx++) {
-            appToColMap.put(appList.get(appIdx), appIdx);
-        }
-        matrix = new int[inputQuestions.size()][appList.size()];
-        loadDefaultMatrix();
-    }
-
-    public ApplicationMatrix(ObservableList<QuestionYN> inputQuestions, ArrayList<Application> appTypes) {
-        for (int qIdx = 0; qIdx < inputQuestions.size(); qIdx++) {
-            questionToRowMap.put(inputQuestions.get(qIdx), qIdx);
-        }
-        for (int appIdx = 0; appIdx < inputQuestions.size(); appIdx++) {
+        for (int appIdx = 0; appIdx < appTypes.size(); appIdx++) {
             appToColMap.put(appTypes.get(appIdx), appIdx);
         }
         matrix = new int[inputQuestions.size()][appTypes.size()];
         loadDefaultMatrix();
+    }
+
+    public ApplicationMatrix(Project proj, ObservableList<QuestionYN> inputQuestions, ArrayList<Application> appTypes) {
+        this.proj = proj;
+        for (int qIdx = 0; qIdx < inputQuestions.size(); qIdx++) {
+            questionToRowMap.put(inputQuestions.get(qIdx), qIdx);
+        }
+        this.appTypes = appTypes;
+        for (int appIdx = 0; appIdx < appTypes.size(); appIdx++) {
+            appToColMap.put(appTypes.get(appIdx), appIdx);
+        }
+        matrix = new int[inputQuestions.size()][appTypes.size()];
+        loadDefaultMatrix();
+    }
+
+    public ApplicationMatrix(ApplicationMatrix am, Project proj) {
+        this.proj = proj;
+        this.appTypes = am.appTypes;
+        questionToRowMap = new LinkedHashMap();
+        for (int qIdx = 0; qIdx < proj.getQGen().qApplicationList.size(); qIdx++) {
+            questionToRowMap.put(proj.getQGen().qApplicationList.get(qIdx), qIdx);
+        }
+        appToColMap = new LinkedHashMap();
+        for (int appIdx = 0; appIdx < am.appTypes.size(); appIdx++) {
+            appToColMap.put(am.appTypes.get(appIdx), appIdx);
+        }
+        matrix = am.matrix;
+        computeScores();
     }
 
     private void loadDefaultMatrix() {
@@ -104,6 +131,16 @@ public class ApplicationMatrix {
         }
 
         ObservableList<Application> appList = FXCollections.observableArrayList(this.appToColMap.keySet());
+
+        if (!proj.isAutomatedEnforcementAllowed()) {
+            for (Application app : appList) {
+                if (app.getName().equalsIgnoreCase(Application.AUTO_ENFORCE)) {
+                    appList.remove(app);
+                    break;
+                }
+            }
+        }
+
         // Sorting the list into descending order
         sAppList = appList.sorted(new ApplicationComp());
         app1.set(sAppList.get(0).getName());
@@ -217,6 +254,16 @@ public class ApplicationMatrix {
 
     public StringProperty app4Property() {
         return app4;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeObject(appTypes);
+        s.writeObject(matrix);
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        appTypes = (ArrayList<Application>) s.readObject();
+        matrix = (int[][]) s.readObject();
     }
 
 }

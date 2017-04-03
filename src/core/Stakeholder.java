@@ -5,6 +5,10 @@
  */
 package core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -18,14 +22,16 @@ import javafx.beans.value.ObservableValue;
  *
  * @author ltrask
  */
-public class Stakeholder {
+public class Stakeholder implements Serializable {
 
-    private final IntegerProperty idx = new SimpleIntegerProperty();
-    private final StringProperty name = new SimpleStringProperty();
-    private final IntegerProperty score = new SimpleIntegerProperty();
-    private final BooleanProperty coreTeamMember = new SimpleBooleanProperty();
-    private final BooleanProperty stakeholder = new SimpleBooleanProperty();
-    private final BooleanProperty notApplicable = new SimpleBooleanProperty();
+    private final long serialVersionUID = 123456789L;
+
+    private IntegerProperty idx = new SimpleIntegerProperty();
+    private StringProperty name = new SimpleStringProperty();
+    private IntegerProperty score = new SimpleIntegerProperty();
+    private BooleanProperty coreTeamMember = new SimpleBooleanProperty();
+    private BooleanProperty stakeholder = new SimpleBooleanProperty();
+    private BooleanProperty notApplicable = new SimpleBooleanProperty();
 
     public Stakeholder(int idx, String name, int score) {
         this.idx.set(idx);
@@ -133,7 +139,7 @@ public class Stakeholder {
     public BooleanProperty notApplicableProperty() {
         return notApplicable;
     }
-    private final StringProperty email = new SimpleStringProperty();
+    private StringProperty email = new SimpleStringProperty();
 
     public String getEmail() {
         return email.get();
@@ -146,7 +152,7 @@ public class Stakeholder {
     public StringProperty emailProperty() {
         return email;
     }
-    private final StringProperty phone = new SimpleStringProperty();
+    private StringProperty phone = new SimpleStringProperty();
 
     public String getPhone() {
         return phone.get();
@@ -158,6 +164,28 @@ public class Stakeholder {
 
     public StringProperty phoneProperty() {
         return phone;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeBoolean(coreTeamMember.get());
+        s.writeObject(getEmail());
+        s.writeInt(getIdx());
+        s.writeObject(getName());
+        s.writeBoolean(notApplicable.get());
+        s.writeObject(getPhone());
+        s.writeInt(getScore());
+        s.writeBoolean(stakeholder.get());
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        coreTeamMember = new SimpleBooleanProperty(s.readBoolean());
+        email = new SimpleStringProperty((String) s.readObject());
+        idx = new SimpleIntegerProperty(s.readInt());
+        name = new SimpleStringProperty((String) s.readObject());
+        notApplicable = new SimpleBooleanProperty(s.readBoolean());
+        phone = new SimpleStringProperty((String) s.readObject());
+        score = new SimpleIntegerProperty(s.readInt());
+        stakeholder = new SimpleBooleanProperty(s.readBoolean());
     }
 
     public static final int CORE_TEAM = 0;

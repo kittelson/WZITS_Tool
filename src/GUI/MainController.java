@@ -5,15 +5,20 @@
  */
 package GUI;
 
+import GUI.Helper.IOHelper;
 import core.Project;
+import java.util.Optional;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  *
@@ -25,7 +30,7 @@ public class MainController {
 
     private final Stage stage;
 
-    private final Project proj;
+    private Project proj;
 
     /**
      * Indicates if the project has been started, bound to the activeStep
@@ -43,7 +48,7 @@ public class MainController {
 
     public MainController(Stage stage) {
         this.stage = stage;
-        proj = new Project("Sample Project");
+        proj = new Project("WZITS Project");
         for (int stepIdx = 0; stepIdx < activeSubStep.length; stepIdx++) {
             activeSubStep[stepIdx] = new SimpleIntegerProperty(-2);
         }
@@ -61,6 +66,14 @@ public class MainController {
 
     public void setMainWindow(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
+    }
+
+    public MainWindow getMainWindow() {
+        return mainWindow;
+    }
+
+    public Window getWindow() {
+        return stage.getOwner();
     }
 
     public void setMainWindowTitleLabel(String newLabelText) {
@@ -178,6 +191,15 @@ public class MainController {
         //stage.setMinWidth(mainWindow.getMinWidth());
     }
 
+    public void newProjectOpened() {
+        stage.hide();
+        stage.setMaximized(true);
+        Scene newScene = new Scene(new MainWindow(this, false));
+        newScene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
+        stage.setScene(newScene);
+        stage.show();
+    }
+
     public double getAppWidth() {
         return stage.getWidth();
     }
@@ -207,6 +229,42 @@ public class MainController {
                 } else {
                     return new Tooltip("Step 2: Concept Development and Feasibility");
                 }
+        }
+    }
+
+    public void openProject() {
+        Project openedProj = IOHelper.openProject(this);
+        if (openedProj != null) {
+            this.proj.setFromProject(openedProj);
+            this.newProjectOpened();
+        }
+    }
+
+    public void saveProject() {
+        IOHelper.saveProject(this, proj);
+    }
+
+    public void saveAsProject() {
+        IOHelper.saveAsProject(this, proj);
+    }
+
+    public void exitProgram() {
+        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
+                "Save Project Before Exiting?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+        al.setTitle("Exiting WZITS Tool");
+        al.setHeaderText("WZITS Tool");
+        Optional<ButtonType> result = al.showAndWait();
+        if (result.isPresent()) {
+            if (result.get() == ButtonType.NO) {
+                stage.close();
+            } else if (result.get() == ButtonType.YES) {
+                int saveResult = IOHelper.saveProject(this, proj);
+                if (saveResult == IOHelper.SAVE_COMPLETED) {
+                    stage.close();
+                }
+            } else {
+                // Cancelled by user, do nothing
+            }
         }
     }
 

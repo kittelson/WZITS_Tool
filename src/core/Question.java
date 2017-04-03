@@ -5,6 +5,10 @@
  */
 package core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -18,17 +22,19 @@ import javafx.util.converter.IntegerStringConverter;
  *
  * @author jlake
  */
-public abstract class Question {
+public abstract class Question implements Serializable {
 
-    protected final SimpleIntegerProperty idx;
-    protected final SimpleStringProperty goal;
-    protected final SimpleStringProperty questionText;
-    protected final SimpleIntegerProperty responseIdx;
+    private final long serialVersionUID = 123456789L;
 
-    protected final BooleanProperty visible = new SimpleBooleanProperty(true);
-    protected final BooleanProperty locked = new SimpleBooleanProperty();
-    private final StringProperty refText = new SimpleStringProperty();
-    private final StringProperty comment = new SimpleStringProperty();
+    protected SimpleIntegerProperty idx;
+    protected SimpleStringProperty goal;
+    protected SimpleStringProperty questionText;
+    protected SimpleIntegerProperty responseIdx;
+
+    protected BooleanProperty visible = new SimpleBooleanProperty(true);
+    protected BooleanProperty locked = new SimpleBooleanProperty();
+    private StringProperty refText = new SimpleStringProperty();
+    private StringProperty comment = new SimpleStringProperty();
 
     public Question(int idx, String goal, String questionText) {
         this(idx, goal, questionText, -1);
@@ -131,7 +137,7 @@ public abstract class Question {
         return refText;
     }
 
-    private final BooleanProperty redundant = new SimpleBooleanProperty(false);
+    private BooleanProperty redundant = new SimpleBooleanProperty(false);
 
     public boolean isRedundant() {
         return redundant.get();
@@ -144,7 +150,7 @@ public abstract class Question {
     public BooleanProperty redundantProperty() {
         return redundant;
     }
-    private final BooleanProperty dependant = new SimpleBooleanProperty(false);
+    private BooleanProperty dependant = new SimpleBooleanProperty(false);
 
     public boolean isDependant() {
         return dependant.get();
@@ -168,6 +174,32 @@ public abstract class Question {
 
     public StringProperty commentProperty() {
         return comment;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeObject(getComment());
+        s.writeBoolean(isDependant());
+        s.writeObject(getGoal());
+        s.writeInt(getIdx());
+        s.writeBoolean(isLocked());
+        s.writeObject(getQuestionText());
+        s.writeBoolean(isRedundant());
+        s.writeObject(getRefText());
+        s.writeInt(getResponseIdx());
+        s.writeBoolean(isVisible());
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        comment = new SimpleStringProperty((String) s.readObject());
+        dependant = new SimpleBooleanProperty(s.readBoolean());
+        goal = new SimpleStringProperty((String) s.readObject());
+        idx = new SimpleIntegerProperty(s.readInt());
+        locked = new SimpleBooleanProperty(s.readBoolean());
+        questionText = new SimpleStringProperty((String) s.readObject());
+        redundant = new SimpleBooleanProperty(s.readBoolean());
+        refText = new SimpleStringProperty((String) s.readObject());
+        responseIdx = new SimpleIntegerProperty(s.readInt());
+        visible = new SimpleBooleanProperty(s.readBoolean());
     }
 
     public static IntegerStringConverter yesNoConverter = new IntegerStringConverter() {

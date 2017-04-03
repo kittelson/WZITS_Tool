@@ -5,6 +5,10 @@
  */
 package core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -14,15 +18,17 @@ import javafx.beans.value.ObservableValue;
  *
  * @author jlake
  */
-public class QuestionOption extends Question {
+public class QuestionOption extends Question implements Serializable {
 
-    private final String[] options;
+    private final long serialVersionUID = 123456789L;
 
-    private final int[] scores;
+    private String[] options;
 
-    private final SimpleStringProperty answerString = new SimpleStringProperty();
+    private int[] scores;
 
-    private final SimpleIntegerProperty score = new SimpleIntegerProperty();
+    private SimpleStringProperty answerString = new SimpleStringProperty();
+
+    private SimpleIntegerProperty score = new SimpleIntegerProperty();
 
     public QuestionOption(int idx, String category, String text, String[] options) {
         this(idx, category, text, options, new int[options.length]);
@@ -48,7 +54,11 @@ public class QuestionOption extends Question {
 
     @Override
     public String getAnswerString() {
-        return options[this.responseIdx.get()];
+        if (this.responseIdx.get() >= 0 && this.responseIdx.get() < options.length) {
+            return options[this.responseIdx.get()];
+        } else {
+            return "No Answer";
+        }
     }
 
     @Override
@@ -98,5 +108,19 @@ public class QuestionOption extends Question {
 
     public SimpleIntegerProperty scoreProperty() {
         return score;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeObject(getAnswerString());
+        s.writeObject(getOptions());
+        s.writeInt(score.get());
+        s.writeObject(scores);
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        answerString = new SimpleStringProperty((String) s.readObject());
+        options = (String[]) s.readObject();
+        score = new SimpleIntegerProperty(s.readInt());
+        scores = (int[]) s.readObject();
     }
 }

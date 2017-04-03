@@ -49,7 +49,7 @@ public class ProjectTreeItem extends TreeItem<Project> {
         subSteps = new TreeItem[(step < 0 || subStep >= 0) ? 0 : Project.NUM_SUB_STEPS[step] + 1];
         if (step < 0) {
             final ProjectTreeItem selfRef = this;
-            proj.getNameProperty().addListener(new ChangeListener<String>() {
+            proj.nameProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
                     Event.fireEvent(selfRef, new TreeModificationEvent<>(TreeItem.valueChangedEvent(), selfRef));
@@ -183,10 +183,10 @@ public class ProjectTreeItem extends TreeItem<Project> {
                 ProjectTreeItem pti = ((ProjectTreeItem) this.getTreeItem());
                 setText(getString());
                 setTooltip(MainController.getTooltip(pti.getStep(), pti.getSubStep()));
-                if (pti.isRoot()) {
-                    this.setContentDisplay(ContentDisplay.LEFT);
-                } else {
+                if (pti.isStep()) {
                     this.setContentDisplay(ContentDisplay.RIGHT);
+                } else {
+                    this.setContentDisplay(ContentDisplay.LEFT);
                 }
                 if (pti.stepAndSubStepIsActive()) {
                     this.getTreeView().getSelectionModel().select(pti);

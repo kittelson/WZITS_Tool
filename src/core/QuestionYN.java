@@ -5,10 +5,13 @@
  */
 package core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -16,15 +19,17 @@ import javafx.beans.value.ObservableValue;
  *
  * @author jlake
  */
-public class QuestionYN extends Question {
+public class QuestionYN extends Question implements Serializable {
 
-    public final SimpleBooleanProperty answerIsYes = new SimpleBooleanProperty(false);
+    private final long serialVersionUID = 123456789L;
 
-    public final SimpleBooleanProperty answerIsNo = new SimpleBooleanProperty(false);
+    public SimpleBooleanProperty answerIsYes = new SimpleBooleanProperty(false);
 
-    protected final IntegerProperty score = new SimpleIntegerProperty(0);
+    public SimpleBooleanProperty answerIsNo = new SimpleBooleanProperty(false);
 
-    private final int weight;
+    protected IntegerProperty score = new SimpleIntegerProperty(0);
+
+    private int weight;
 
     public QuestionYN(int idx, String goal, String questionText) {
         this(idx, goal, questionText, false, 1);
@@ -138,6 +143,20 @@ public class QuestionYN extends Question {
 
     public IntegerProperty scoreProperty() {
         return score;
+    }
+
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.writeBoolean(getAnswerIsYes());
+        s.writeBoolean(getAnswerIsNo());
+        s.writeInt(getScore());
+        s.writeInt(weight);
+    }
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+        answerIsYes = new SimpleBooleanProperty(s.readBoolean());
+        answerIsNo = new SimpleBooleanProperty(s.readBoolean());
+        score = new SimpleIntegerProperty(s.readInt());
+        weight = s.readInt();
     }
 
 }

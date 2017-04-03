@@ -6,13 +6,16 @@
 package core;
 
 import GUI.Helper.NodeFactory;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -22,12 +25,14 @@ import javafx.scene.layout.RowConstraints;
  *
  * @author ltrask
  */
-public class FeasibilityMatrix {
+public class FeasibilityMatrix implements Serializable {
 
-    private final SimpleIntegerProperty feasibility = new SimpleIntegerProperty(0);
+    private final long serialVersionUID = 123456789L;
 
-    private final ObservableList<QuestionOption> qFeasOptList;
-    private final ObservableList<QuestionYN> qFeasYNList;
+    private SimpleIntegerProperty feasibility = new SimpleIntegerProperty(0);
+
+    private ObservableList<QuestionOption> qFeasOptList;
+    private ObservableList<QuestionYN> qFeasYNList;
 
     public FeasibilityMatrix(ObservableList<QuestionOption> qFeasOptList, ObservableList<QuestionYN> qFeasYNList) {
         this.qFeasOptList = qFeasOptList;
@@ -99,6 +104,35 @@ public class FeasibilityMatrix {
         return feasibility;
     }
 
+    public int getFeasibility() {
+        return feasibility.get();
+    }
+
+//    private void writeObject(ObjectOutputStream s) throws IOException {
+//        s.writeInt(getFeasibility());
+//        s.writeInt(qFeasYNList.size());
+//        for (int i = 0; i < qFeasYNList.size(); i++) {
+//            s.writeObject(qFeasYNList.get(i));
+//        }
+//        s.writeInt(qFeasOptList.size());
+//        for (int i = 0; i < qFeasOptList.size(); i++) {
+//            s.writeObject(qFeasOptList.get(i));
+//        }
+//    }
+//
+//    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+//        feasibility = new SimpleIntegerProperty(s.readInt());
+//        int numYN = s.readInt();
+//        qFeasYNList = FXCollections.observableArrayList();
+//        for (int i = 0; i < numYN; i++) {
+//            qFeasYNList.add((QuestionYN) s.readObject());
+//        }
+//        int numOpt = s.readInt();
+//        qFeasOptList = FXCollections.observableArrayList();
+//        for (int i = 0; i < numOpt; i++) {
+//            qFeasOptList.add((QuestionOption) s.readObject());
+//        }
+//    }
     public static final String DESC_30PLUS = "30 or more: ITS is likely to provide significant benefits and should be considered as a treatment to mitigate impacts.";
     public static final String DESC_10_TO_29 = "10 to 29: ITS may provide some benefits and should be considered as a treatment to mitigate impacts.";
     public static final String DESC_LESS_THAN_10 = "Less than 10: ITS may not provide enough benefit to justify the associated costs.";

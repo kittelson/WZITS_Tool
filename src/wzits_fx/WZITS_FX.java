@@ -28,8 +28,8 @@ public class WZITS_FX extends Application {
 
         // Creating Panes
         MainController control = new MainController(primaryStage);
-        BorderPane borderPane = new MainWindow(control);
-        Scene scene = new Scene(borderPane);
+        BorderPane mainPane = new MainWindow(control, true);
+        Scene scene = new Scene(mainPane);
         scene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         primaryStage.setScene(scene);
         //primaryStage.setMaximized(true);

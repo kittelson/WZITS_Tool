@@ -5,7 +5,6 @@
  */
 package GUI;
 
-import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Step.Step1Panel;
 import GUI.Launch.LaunchPane;
@@ -40,7 +39,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -52,9 +50,9 @@ public class MainWindow extends BorderPane {
 
     private final MainController control;
 
-    public MainWindow(final MainController control) {
+    public MainWindow(final MainController mc, boolean launchSplash) {
 
-        this.control = control;
+        this.control = mc;
         control.setMainWindow(this);
 
         // Creating MenuBar
@@ -71,6 +69,30 @@ public class MainWindow extends BorderPane {
         MenuItem saveMenuItem = new MenuItem("Save");
         MenuItem saveAsMenuItem = new MenuItem("Save as");
         MenuItem exitMenuItem = new MenuItem("Exit");
+        openMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.openProject();
+            }
+        });
+        saveMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.saveProject();
+            }
+        });
+        saveAsMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.saveAsProject();
+            }
+        });
+        exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.exitProgram();
+            }
+        });
         newMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
         openMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
         saveMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
@@ -121,60 +143,6 @@ public class MainWindow extends BorderPane {
         titleLabel2.setPadding(new Insets(0, 20, 0, 20));
         titleLabel2.setMaxWidth(MainController.MAX_WIDTH);
 
-        // Styling the toolbar buttons
-        SVGPath prevSVG = new SVGPath();
-        prevSVG.setContent(IconHelper.SVG_STR_PREV);
-        SVGPath nextSVG = new SVGPath();
-        nextSVG.setContent(IconHelper.SVG_STR_NEXT);
-//        prevStepButton.setGraphic(prevSVG);
-//        introButton.getStyleClass().add("flow-step-start");
-//        introButton.setStyle("-fx-background-color: " + COLOR_STEP_HL);
-//        step1Button.getStyleClass().add("flow-step");
-//        step2Button.getStyleClass().add("flow-step");
-//        step3Button.getStyleClass().add("flow-step");
-//        step4Button.getStyleClass().add("flow-step");
-//        step5Button.getStyleClass().add("flow-step");
-//        step6Button.getStyleClass().add("flow-step");
-//        summaryButton.getStyleClass().add("flow-step-end");
-//        nextStepButton.setGraphic(nextSVG);
-//
-//        // Organizing the buttons into the toolbar
-//        stepFlowGrid.add(introButton, 0, 0);
-//        stepFlowGrid.add(step1Button, 1, 0);
-//        stepFlowGrid.add(step2Button, 2, 0);
-//        stepFlowGrid.add(step3Button, 3, 0);
-//        stepFlowGrid.add(step4Button, 4, 0);
-//        stepFlowGrid.add(step5Button, 5, 0);
-//        stepFlowGrid.add(step6Button, 6, 0);
-//        stepFlowGrid.add(summaryButton, 7, 0);
-//
-//        ArrayList<Button> toolBarButtons = new ArrayList();
-//        toolBarButtons.add(introButton);
-//        toolBarButtons.add(step1Button);
-//        toolBarButtons.add(step2Button);
-//        toolBarButtons.add(step3Button);
-//        toolBarButtons.add(step4Button);
-//        toolBarButtons.add(step5Button);
-//        toolBarButtons.add(step6Button);
-//        toolBarButtons.add(summaryButton);
-
-//        for (Button b : toolBarButtons) {
-//            b.setWrapText(true);
-//            b.setTextAlignment(TextAlignment.CENTER);
-//            b.setMaxWidth(MainController.MAX_WIDTH);
-//            b.setMaxHeight(MainController.MAX_HEIGHT);
-//            GridPane.setHgrow(b, Priority.ALWAYS);
-//            GridPane.setVgrow(b, Priority.ALWAYS);
-//
-//            ColumnConstraints colConst = new ColumnConstraints();
-//            colConst.setPercentWidth(100.0 / (numSteps + 2));
-//            colConst.setFillWidth(true);
-//            stepFlowGrid.getColumnConstraints().add(colConst);
-//        }
-//        stepFlowBar.setLeft(prevStepButton);
-//        stepFlowBar.setCenter(stepFlowGrid);
-//        stepFlowBar.setRight(nextStepButton);
-//        BorderPane.setMargin(stepFlowGrid, new Insets(0, 3, 0, 3));
         //toolBarBox.setFillWidth(true);
         projectFlowBar = new FlowBar(control);
         toolBarBox.setAlignment(Pos.CENTER);
@@ -217,7 +185,6 @@ public class MainWindow extends BorderPane {
         statusBar = new StatusBar(control);
 
         // Setting up sliding panes
-        //step1Pane.setCenter(new Label("Step 1"));
         introPane = new IntroPane(control);
         step1Pane = new Step1Panel(control);
         step2Pane = new Step2Panel(control);
@@ -264,81 +231,23 @@ public class MainWindow extends BorderPane {
         // Creating Panel
         //this.setTop(stepFlow);
         //this.setBottom(allStepsPane);
-        launch = new LaunchPane(control);
-        this.setCenter(launch);
-
-//        setupActionListeners();
+        setupActionListeners();
         setupPropertyBindings();
 
-//        prevStepButton.setDisable(true);
+        launch = new LaunchPane(control);
+        if (launchSplash) {
+            this.setCenter(launch);
+        } else {
+            this.begin();
+            //control.stepForward();
+        }
+
     }
 
-//    private void setupActionListeners() {
-//
-//        prevStepButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(control.getActiveStep() - 1);
-//            }
-//        });
-//
-//        nextStepButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(control.getActiveStep() + 1);
-//            }
-//        });
-//
-//        introButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(-1);
-//            }
-//        });
-//
-//        step1Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(0);
-//            }
-//        });
-//        step2Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(1);
-//            }
-//        });
-//        step3Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(2);
-//            }
-//        });
-//        step4Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(3);
-//            }
-//        });
-//        step5Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(4);
-//            }
-//        });
-//        step6Button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(5);
-//            }
-//        });
-//        summaryButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent e) {
-//                control.setActiveStep(6);
-//            }
-//        });
-//    }
+    private void setupActionListeners() {
+
+    }
+
     private void setupPropertyBindings() {
         this.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -357,30 +266,14 @@ public class MainWindow extends BorderPane {
             @Override
             public void changed(ObservableValue<? extends Number> o, Number oldVal, Number newVal) {
                 selectStep(control.getActiveStep());
-//                introButton.setStyle("-fx-background-color: " + (control.getActiveStep() == -1 ? COLOR_STEP_HL : COLOR_STEP));
-//                step1Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 0 ? COLOR_STEP_HL : COLOR_STEP));
-//                step2Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 1 ? COLOR_STEP_HL : COLOR_STEP));
-//                step3Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 2 ? COLOR_STEP_HL : COLOR_STEP));
-//                step4Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 3 ? COLOR_STEP_HL : COLOR_STEP));
-//                step5Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 4 ? COLOR_STEP_HL : COLOR_STEP));
-//                step6Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 5 ? COLOR_STEP_HL : COLOR_STEP));
-//                summaryButton.setStyle("-fx-background-color: " + (control.getActiveStep() == 6 ? COLOR_STEP_HL : COLOR_STEP));
+
                 if (control.getActiveStep() >= 0) {
                     navigator.getRoot().setExpanded(true);
                     control.getProject().setStepStarted(control.getActiveStep(), true);
                 }
-//                prevStepButton.setDisable(control.getActiveStep() == -1);
-//                nextStepButton.setDisable(control.getActiveStep() == numSteps
-//                        || !control.getProject().isStepComplete(control.getActiveStep()));
+
             }
         });
-//        step1Button.disableProperty().bind(control.getProject().getStep(0).stepStartedProperty().not());
-//        step2Button.disableProperty().bind(control.getProject().getStep(1).stepStartedProperty().not());
-//        step3Button.disableProperty().bind(control.getProject().getStep(2).stepStartedProperty().not());
-//        step4Button.disableProperty().bind(control.getProject().getStep(3).stepStartedProperty().not());
-//        step5Button.disableProperty().bind(control.getProject().getStep(4).stepStartedProperty().not());
-//        step6Button.disableProperty().bind(control.getProject().getStep(5).stepStartedProperty().not());
-//        summaryButton.disableProperty().bind(control.getProject().getStep(5).stepFinishedProperty().not());
 
     }
 
@@ -393,7 +286,6 @@ public class MainWindow extends BorderPane {
         this.setRight(new BorderPane());
         this.setBottom(statusBar);
         this.projectFlowBar.setProceedButtonFlashing(true);
-        //this.statusBar.setStatusEnabled(false);
     }
 
     public void checkProceed() {
@@ -458,54 +350,6 @@ public class MainWindow extends BorderPane {
      * Title Label positioned below the FlowBar
      */
     private final Label titleLabel2 = new Label("Project Introduction");
-//    /**
-//     * Grid for organize the step flow toolbar
-//     */
-//    private final GridPane stepFlowGrid = new GridPane(); //private final ToolBar stepFlow;
-//    /**
-//     * Flow of steps for the User.
-//     */
-//    private final BorderPane stepFlowBar = new BorderPane(); //private final ToolBar stepFlow;
-//    /**
-//     * ToolBar Button to move to the previous step.
-//     */
-//    private final Button prevStepButton = new Button();
-//    /**
-//     * ToolBar button for the start/infoPanel.
-//     */
-//    private final Button introButton = new Button("Start");
-//    /**
-//     * ToolBar button for Step 1.
-//     */
-//    private final Button step1Button = new Button("Step 1");
-//    /**
-//     * ToolBar button for Step 2.
-//     */
-//    private final Button step2Button = new Button("Step 2");
-//    /**
-//     * ToolBar button for Step 3.
-//     */
-//    private final Button step3Button = new Button("Step 3");
-//    /**
-//     * ToolBar button for Step 4.
-//     */
-//    private final Button step4Button = new Button("Step 4");
-//    /**
-//     * ToolBar button for Step 5.
-//     */
-//    private final Button step5Button = new Button("Step 5");
-//    /**
-//     * ToolBar button for Step 6.
-//     */
-//    private final Button step6Button = new Button("Step 6");
-//    /**
-//     * ToolBar process end button
-//     */
-//    private final Button summaryButton = new Button("End");
-//    /**
-//     * ToolBar button to move to the next step.
-//     */
-//    private final Button nextStepButton = new Button();
 
     /**
      * Flow control toolbar for the main window of the tool.
