@@ -238,8 +238,9 @@ public class Step1TableHelper {
         return TableHelper.createQuestionYNTable(proj.getUNSupportQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
 
-    public static TableView getITSResourcesPanel(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getITSResourcesQs(), new TableHelper.Options(STEP1_TABLE_CSS));
+    public static Node getITSResourcesPanel(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getITSResourcesQs(), new TableHelper.Options(STEP1_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qITSResourcesList);
     }
 
     public static TableView getMajorGoalsTable(Project proj) {

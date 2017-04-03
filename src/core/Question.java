@@ -9,6 +9,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.util.converter.IntegerStringConverter;
@@ -26,8 +27,8 @@ public abstract class Question {
 
     protected final BooleanProperty visible = new SimpleBooleanProperty(true);
     protected final BooleanProperty locked = new SimpleBooleanProperty();
-
-    private String lockRefText = "";
+    private final StringProperty refText = new SimpleStringProperty();
+    private final StringProperty comment = new SimpleStringProperty();
 
     public Question(int idx, String goal, String questionText) {
         this(idx, goal, questionText, -1);
@@ -115,11 +116,58 @@ public abstract class Question {
     }
 
     public String getLockedQuestionText() {
-        return questionText.get() + " (Locked due to " + lockRefText + ")";
+        return questionText.get() + " (Locked due to " + refText.get() + ")";
     }
 
-    public void setLockedReferenceText(String refText) {
-        this.lockRefText = refText;
+    public String getRefText() {
+        return refText.get();
+    }
+
+    public void setRefText(String value) {
+        refText.set(value);
+    }
+
+    public StringProperty refTextProperty() {
+        return refText;
+    }
+
+    private final BooleanProperty redundant = new SimpleBooleanProperty(false);
+
+    public boolean isRedundant() {
+        return redundant.get();
+    }
+
+    public void setRedundant(boolean value) {
+        redundant.set(value);
+    }
+
+    public BooleanProperty redundantProperty() {
+        return redundant;
+    }
+    private final BooleanProperty dependant = new SimpleBooleanProperty(false);
+
+    public boolean isDependant() {
+        return dependant.get();
+    }
+
+    public void setDependant(boolean value) {
+        dependant.set(value);
+    }
+
+    public BooleanProperty dependantProperty() {
+        return dependant;
+    }
+
+    public String getComment() {
+        return comment.get();
+    }
+
+    public void setComment(String value) {
+        comment.set(value);
+    }
+
+    public StringProperty commentProperty() {
+        return comment;
     }
 
     public static IntegerStringConverter yesNoConverter = new IntegerStringConverter() {
@@ -158,7 +206,7 @@ public abstract class Question {
     public static final String GOAL_SAFETY = "Safety";
     public static final String GOAL_PROD = "Productivity";
     public static final String GOAL_REG = "Regulatory";
-    public static final String GOAL_TRAVELER_INFO = "Traveler Information";
+    public static final String GOAL_TRAVELER_INFO = "Traveler Info";
 
     public static final String GOAL_DOCUMENTATION = "Documentation";
 

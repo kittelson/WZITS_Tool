@@ -7,6 +7,7 @@ package core;
 
 import java.io.File;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -63,6 +64,8 @@ public class Project {
 
     private final StakeholderMatrix stakeMat;
 
+    private final ApplicationMatrix appMat;
+
     public Project() {
         this("New Project", null);
     }
@@ -82,6 +85,7 @@ public class Project {
         gnMat = new GoalNeedsMatrix(qGen.getGoalWizardQs(), Need.GOAL_WIZARD_NEEDS_LIST, qGen.qMajorGoalsList);
         feasMat = new FeasibilityMatrix(qGen.qFeasOptionList, qGen.qFeasYNList);
         stakeMat = new StakeholderMatrix(this, qGen.qStakeholderOptionList, qGen.qStakeholderYNList);
+        appMat = new ApplicationMatrix(qGen.qApplicationList);
     }
 
     public String getName() {
@@ -352,6 +356,10 @@ public class Project {
         return qGen.getAppWizardQCount();
     }
 
+    public ApplicationMatrix getApplicationMatrix() {
+        return appMat;
+    }
+
     @Override
     public String toString() {
         return name.get();
@@ -382,7 +390,7 @@ public class Project {
             this.numSubSteps = numSubSteps;
             subSteps = new SubStep[numSubSteps];
             for (int subStepIdx = 0; subStepIdx < numSubSteps; subStepIdx++) {
-                subSteps[subStepIdx] = new SubStep("Step " + String.valueOf(stepIdx + 1) + "." + String.valueOf(subStepIdx + 1),
+                subSteps[subStepIdx] = new SubStep(Project.STEP_NAMES[stepIdx][subStepIdx + 1], // "Step " + String.valueOf(stepIdx + 1) + "." + String.valueOf(subStepIdx + 1)
                         Project.checkSubStepIsWizardSummary(stepIdx, subStepIdx));
             }
             subSteps[subSteps.length - 1].stepFinishedProperty().addListener(new ChangeListener<Boolean>() {
@@ -531,6 +539,8 @@ public class Project {
 
         private final SimpleBooleanProperty wizardSummary = new SimpleBooleanProperty(false);
 
+        private final DoubleProperty subStepProgress = new SimpleDoubleProperty();
+
         public SubStep(String stepName) {
             this(stepName, false);
         }
@@ -585,14 +595,26 @@ public class Project {
             return wizardSummary.get();
         }
 
+        public double getSubStepProgress() {
+            return subStepProgress.get();
+        }
+
+        public void setSubStepProgress(double value) {
+            subStepProgress.set(value);
+        }
+
+        public DoubleProperty subStepProgressProperty() {
+            return subStepProgress;
+        }
+
     }
 
     public static boolean checkSubStepIsWizardSummary(int stepIdx, int subStepIdx) {
         switch (stepIdx) {
             case 0:
-                return subStepIdx == 4 || subStepIdx == 6 || subStepIdx == 8;
+                return subStepIdx == GOAL_WIZARD_SUMMARY_INDEX || subStepIdx == FEAS_WIZARD_SUMMARY_INDEX || subStepIdx == STAKEHOLDER_WIZARD_SUMMARY_INDEX;
             case 1:
-                return subStepIdx == 2;
+                return subStepIdx == APP_WIZARD_SUMMARY_INDEX;
             default:
                 return false;
         }
@@ -608,7 +630,7 @@ public class Project {
     public static final int FEAS_WIZARD_SUMMARY_INDEX = 6; // Step 1
     public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 8;  // Step 1
     public static final int TEAM_SUMMARY_INDEX = 9; // Step 1
-    public static final int APP_WIZARD_SUMMARY_INDEX = 2; // Step 2
+    public static final int APP_WIZARD_SUMMARY_INDEX = 1; // Step 2
 
     public static final String[][] STEP_NAMES = {
         {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Member Selection", "Team Members", "ITS Resources"},

@@ -278,6 +278,11 @@ public class StatusBar extends TitledPane {
         this.stakeSecondaryLabel2.textProperty().bind(control.getProject().getStakeholderMatrix().secondaryStakeholderProperty());
         this.stakeAdditionalLabel2.textProperty().bind(control.getProject().getStakeholderMatrix().additionalStakeholderProperty());
 
+        this.appType1Label2.textProperty().bind(control.getProject().getApplicationMatrix().app1Property());
+        this.appType2Label2.textProperty().bind(control.getProject().getApplicationMatrix().app2Property());
+        this.appType3Label2.textProperty().bind(control.getProject().getApplicationMatrix().app3Property());
+        this.appType4Label2.textProperty().bind(control.getProject().getApplicationMatrix().app4Property());
+
         this.feasScoreLabel2.textProperty().bind(control.getProject().getFeasibilityMatrix().feasibilityProperty().asString());
         this.feasScoreLabel2.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -473,6 +478,11 @@ public class StatusBar extends TitledPane {
                 });
             }
         });
+
+        appType1Label2.textProperty().addListener(createFadeFXChangeListener(appType1Label2));
+        appType2Label2.textProperty().addListener(createFadeFXChangeListener(appType2Label2));
+        appType3Label2.textProperty().addListener(createFadeFXChangeListener(appType3Label2));
+        appType4Label2.textProperty().addListener(createFadeFXChangeListener(appType4Label2));
     }
 
     private void setupActionListeners() {
@@ -537,6 +547,30 @@ public class StatusBar extends TitledPane {
 
         this.setGraphic(contentGrid);
         this.setContentDisplay(ContentDisplay.RIGHT);
+    }
+
+    private ChangeListener<String> createFadeFXChangeListener(final Label lbl) {
+        ChangeListener<String> cl = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(125), lbl);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        //descriptPaneInner.setCenter(infoPane);
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(125), lbl);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        };
+        return cl;
     }
 
     private void setupDashboardControlToggle() {
@@ -850,7 +884,7 @@ public class StatusBar extends TitledPane {
         @Override
         protected void syncProgress() {
             super.syncProgress();
-            if (workDone.get() >= totalWork) {
+            if (workDone.get() > totalWork - 0.01) {
                 bar.setStyle("-fx-accent: limegreen");
                 text.setText("Ready!");
             } else {
@@ -866,9 +900,9 @@ public class StatusBar extends TitledPane {
             this.progressProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
-                    if (newVal.doubleValue() >= 1.0 && oldVal.doubleValue() < 1.0) {
+                    if (newVal.doubleValue() > 0.99 && oldVal.doubleValue() < 1.0) {
                         setStyle("-fx-accent: limegreen");
-                    } else if (oldVal.doubleValue() >= 1.0 && newVal.doubleValue() < 1.0) {
+                    } else if (oldVal.doubleValue() > 0.99 && newVal.doubleValue() < 1.0) {
                         setStyle("-fx-accent: " + ColorHelper.WZ_ORANGE);
                     }
                 }

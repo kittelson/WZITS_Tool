@@ -6,6 +6,7 @@
 package GUI.Tables;
 
 import core.Project;
+import javafx.scene.Node;
 import javafx.scene.control.TableView;
 
 /**
@@ -20,24 +21,29 @@ public class Step6TableHelper extends TableView {
 
     private static final String STEP2_TABLE_CSS = "step-one-table";
 
-    public static TableView createChangingConditionsNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qChangingConditionsList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createChangingConditionsNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qChangingConditionsList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qChangingConditionsList);
     }
 
-    public static TableView createSharingInfoNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qSharingInfoList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createSharingInfoNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qSharingInfoList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qSharingInfoList);
     }
 
-    public static TableView createStaffingNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qStaffingList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createStaffingNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qStaffingList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qStaffingList);
     }
 
-    public static TableView createPublicSupportNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qPublicSupportList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createPublicSupportNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qPublicSupportList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qPublicSupportList);
     }
 
-    public static TableView createMonitoringEvalNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qMonitoringEvalList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createMonitoringEvalNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qMonitoringEvalList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qMonitoringEvalList);
     }
 
 }

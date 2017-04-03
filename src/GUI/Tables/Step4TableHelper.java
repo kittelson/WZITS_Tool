@@ -6,6 +6,7 @@
 package GUI.Tables;
 
 import core.Project;
+import javafx.scene.Node;
 import javafx.scene.control.TableView;
 
 /**
@@ -18,20 +19,24 @@ public class Step4TableHelper extends TableView {
 
     private static final String STEP4_TABLE_CSS = "step-one-table";
 
-    public static TableView createDirectIndirectNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qDirectIndirectList, new TableHelper.Options(STEP4_TABLE_CSS));
+    public static Node createDirectIndirectNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qDirectIndirectList, new TableHelper.Options(STEP4_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qDirectIndirectList);
     }
 
-    public static TableView createMechanismNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qMechanismList, new TableHelper.Options(STEP4_TABLE_CSS));
+    public static Node createMechanismNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qMechanismList, new TableHelper.Options(STEP4_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qMechanismList);
     }
 
-    public static TableView createRFPNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qRFPList, new TableHelper.Options(STEP4_TABLE_CSS));
+    public static Node createRFPNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qRFPList, new TableHelper.Options(STEP4_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qRFPList);
     }
 
-    public static TableView createVendorNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qVendorSelectionList, new TableHelper.Options(STEP4_TABLE_CSS));
+    public static Node createVendorNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qVendorSelectionList, new TableHelper.Options(STEP4_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qVendorSelectionList);
     }
 
 }

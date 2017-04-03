@@ -5,8 +5,11 @@
  */
 package GUI.Tables;
 
+import GUI.Helper.NodeFactory;
+import GUI.MainController;
 import core.Question;
 import core.QuestionOption;
+import core.QuestionOptionMS;
 import core.QuestionYN;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -15,7 +18,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
@@ -24,10 +33,16 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableRow;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
@@ -147,7 +162,32 @@ public class TableHelper {
         noCol.setMaxWidth(75);
         noCol.setMinWidth(75);
         responseCol.getColumns().addAll(yesCol, noCol);
-        table.getColumns().addAll(indexCol, questionCol, responseCol);
+        table.getColumns().add(indexCol);
+
+        // Adding optional columns
+        if (opts.showAppWizardGoalCategory) {
+            TableColumn catCol = new TableColumn("Category");
+            catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
+            int catWidth = 115;
+            catCol.setPrefWidth(catWidth);
+            catCol.setMinWidth(catWidth);
+            catCol.setMaxWidth(catWidth);
+            catCol.getStyleClass().add("col-style-center");
+            table.getColumns().add(catCol);
+        }
+
+        if (opts.showRedundantQIdx) {
+            TableColumn refQIdxCol = new TableColumn("Ref #");
+            refQIdxCol.setCellValueFactory(new PropertyValueFactory<>("refText"));
+            int colWidth = 150;
+            refQIdxCol.setPrefWidth(colWidth);
+            refQIdxCol.setMinWidth(colWidth);
+            refQIdxCol.setMaxWidth(colWidth);
+            refQIdxCol.getStyleClass().add("col-style-center");
+            table.getColumns().add(refQIdxCol);
+        }
+
+        table.getColumns().addAll(questionCol, responseCol);
 
         if (opts.showFeasibilityScore) {
             TableColumn scoreCol = new TableColumn<>("Contributed Score");
@@ -301,97 +341,126 @@ public class TableHelper {
         return table;
     }
 
-//    private static final ObservableList<Question> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(
-//            new UserGoal(1, "Do you expect congestion impacts to be noticable to drivers?"),
-//            new UserGoal(2, "Is driver diversion expected onto alternate routes?"),
-//            new UserGoal(3, "Do you anticipate significant queuing as a result of this work zone?"),
-//            new UserGoal(4, "Will this work zone have reduced lane widths?"),
-//            new UserGoal(5, "Will this work zone have reduced sight distance impact?"),
-//            new UserGoal(6, "Will transit vehicles need to travel through the work zone?"),
-//            new UserGoal(7, "Are you using rapid-set concrete mix?"),
-//            new UserGoal(8, "Will construction vehicles access site from travel lanes?"),
-//            new UserGoal(9, "Are there specific agency policies for work zones as required by the WZ safety and mobility rule?"),
-//            new UserGoal(10, "Does the agency have existing performance targets for work zone?"),
-//            new UserGoal(11, "Will outreach and traveler information be used for this work zone?"),
-//            new UserGoal(12, "Are there additional data needed before and during construction?"),
-//            new UserGoal(13, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"),
-//            new UserGoal(14, "Will speed imits in the work zone be lowered compared to base conditions?"),
-//            new UserGoal(15, "Does state law allow use of autmoated speed enforcement in WZs?"),
-//            new UserGoal(16, "Is there a traveler information goal?"),
-//            new UserGoal(17, "Will there be a high volume of constructions vehicles requiring to access the work zone?"),
-//            new UserGoal(18, "Will ramp geometry under WZ conditions constrain acceleration lanes?"),
-//            new UserGoal(19, "Will work zone activities disable ramp meters (if applicable)?"),
-//            new UserGoal(20, "Will the WZ be included in the federally-mandated biannual process review?")
-//    );
-//
-//    private static final ObservableList<Question> STEP_1_UN_SUP_QLIST = FXCollections.observableArrayList(new UserGoal(1, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"),
-//            new UserGoal(2, "Are probe data available for the work zone?"),
-//            new UserGoal(3, "Are crash data available, and how current are those data?"),
-//            new UserGoal(4, "Are there communications systems available?"),
-//            new UserGoal(5, "Are there computer options available?"),
-//            new UserGoal(6, "Is there software available?")
-//    );
-//
-//    private static final ObservableList<Question> STEP_1_ITS_RESOURCES = FXCollections.observableArrayList(new UserGoal(1, "Are technologies to communicate with drivers available?"),
-//            new UserGoal(2, "Are there weather monitoring stations along the work zone?"),
-//            new UserGoal(3, "Is there a local, regional or state TMC that monitors the roadway?"),
-//            new UserGoal(4, "Is there an existing website or traveler information system?"),
-//            new UserGoal(5, "Do you have ITS on-call contracts?"),
-//            new UserGoal(6, "Do you have access to leased or temporary ITS?")
-//    );
-//
-//    private static final ObservableList<Question> STEP_1_SYSTEM_GOALS = FXCollections.observableArrayList(new UserGoal(1, "Is there a mobility goal?"),
-//            new UserGoal(2, "Is there a safety goal?"),
-//            new UserGoal(3, "Is there a productivity goal?"),
-//            new UserGoal(4, "Is there a regulatory goal?"),
-//            new UserGoal(5, "Is there a traveler information goal?")
-//    );
-//    private static final ObservableList<QuestionYN> STEP_1_GOAL_QLIST = FXCollections.observableArrayList(
-//            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Do you expect congestion impacts to be noticable to drivers?"),
-//            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is driver diversion expected onto alternate routes?"),
-//            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Do you anticipate significant queuing as a result of this work zone?"),
-//            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Will this work zone have reduced lane widths?"),
-//            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Will this work zone have reduced sight distance impact?"),
-//            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Will transit vehicles need to travel through the work zone?"),
-//            new QuestionYN(7, Question.GOAL_USER_NEEDS, "Are you using rapid-set concrete mix?"),
-//            new QuestionYN(8, Question.GOAL_USER_NEEDS, "Will construction vehicles access site from travel lanes?"),
-//            new QuestionYN(9, Question.GOAL_USER_NEEDS, "Are there specific agency policies for work zones as required by the WZ safety and mobility rule?"),
-//            new QuestionYN(10, Question.GOAL_USER_NEEDS, "Does the agency have existing performance targets for work zone?"),
-//            new QuestionYN(11, Question.GOAL_USER_NEEDS, "Will outreach and traveler information be used for this work zone?"),
-//            new QuestionYN(12, Question.GOAL_USER_NEEDS, "Are there additional data needed before and during construction?"),
-//            new QuestionYN(13, Question.GOAL_USER_NEEDS, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"),
-//            new QuestionYN(14, Question.GOAL_USER_NEEDS, "Will speed imits in the work zone be lowered compared to base conditions?"),
-//            new QuestionYN(15, Question.GOAL_USER_NEEDS, "Does state law allow use of autmoated speed enforcement in WZs?"),
-//            new QuestionYN(16, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?"),
-//            new QuestionYN(17, Question.GOAL_USER_NEEDS, "Will there be a high volume of constructions vehicles requiring to access the work zone?"),
-//            new QuestionYN(18, Question.GOAL_USER_NEEDS, "Will ramp geometry under WZ conditions constrain acceleration lanes?"),
-//            new QuestionYN(19, Question.GOAL_USER_NEEDS, "Will work zone activities disable ramp meters (if applicable)?"),
-//            new QuestionYN(20, Question.GOAL_USER_NEEDS, "Will the WZ be included in the federally-mandated biannual process review?")
-//    );
-//    public static final ObservableList<QuestionYN> STEP_1_UN_SUP_QLIST = FXCollections.observableArrayList(
-//            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV camveras, CMS, or travel time data?"),
-//            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are probe data available for the work zone?"),
-//            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Are crash data available, and how current are those data?"),
-//            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Are there communications systems available?"),
-//            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Are there computer options available?"),
-//            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Is there software available?")
-//    );
-    public static final ObservableList<QuestionYN> STEP_1_ITS_RESOURCES = FXCollections.observableArrayList(
-            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are technologies to communicate with drivers available?"),
-            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are there weather monitoring stations along the work zone?"),
-            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there a local, regional or state TMC that monitors the roadway?"),
-            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Is there an existing website or traveler information system?"),
-            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Do you have ITS on-call contracts?"),
-            new QuestionYN(6, Question.GOAL_USER_NEEDS, "Do you have access to leased or temporary ITS?")
-    );
+    public static Node createCommentQ(int idx, QuestionYN q) {
+        GridPane gPane = new GridPane();
+        gPane.getStyleClass().add("comment-q-pane");
+        Label idxLabel = NodeFactory.createFormattedLabel(String.valueOf(idx) + ":", "opt-pane-question-idx");
+        Label qText = NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question");
+        GridPane subGrid = new GridPane();
+        CheckBox yesCheck = new CheckBox("Yes");
+        yesCheck.getStyleClass().add("comment-pane-checkbox");
+        yesCheck.selectedProperty().bindBidirectional(q.answerIsYesProperty());
+        CheckBox noCheck = new CheckBox("No");
+        noCheck.getStyleClass().add("comment-pane-checkbox");
+        noCheck.selectedProperty().bindBidirectional(q.answerIsNoProperty());
 
-//    public static final ObservableList<QuestionYN> STEP_1_SYSTEM_GOALS = FXCollections.observableArrayList(
-//            new QuestionYN(1, Question.GOAL_USER_NEEDS, "Is there a mobility goal?"),
-//            new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a safety goal?"),
-//            new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there a productivity goal?"),
-//            new QuestionYN(4, Question.GOAL_USER_NEEDS, "Is there a regulatory goal?"),
-//            new QuestionYN(5, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?")
-//    );
+        GridPane.setVgrow(idxLabel, Priority.ALWAYS);
+        GridPane.setVgrow(qText, Priority.ALWAYS);
+        GridPane.setVgrow(yesCheck, Priority.ALWAYS);
+        GridPane.setVgrow(noCheck, Priority.ALWAYS);
+        GridPane.setHgrow(idxLabel, Priority.ALWAYS);
+        GridPane.setHgrow(qText, Priority.ALWAYS);
+        GridPane.setHgrow(yesCheck, Priority.ALWAYS);
+        GridPane.setHgrow(noCheck, Priority.ALWAYS);
+
+        ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
+        ColumnConstraints cc3 = new ColumnConstraints(85, 85, 85, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints cc4 = new ColumnConstraints(85, 85, 85, Priority.NEVER, HPos.CENTER, true);
+
+        subGrid.getColumnConstraints().addAll(cc1, cc2, cc3, cc4);
+
+        subGrid.add(idxLabel, 0, 0);
+        subGrid.add(qText, 1, 0);
+        subGrid.add(yesCheck, 2, 0);
+        subGrid.add(noCheck, 3, 0);
+
+        TextArea commentPane = new TextArea();
+        commentPane.setPromptText("Enter additional comments here...");
+        commentPane.textProperty().bindBidirectional(q.commentProperty());
+        GridPane.setMargin(commentPane, new Insets(0, 10, 5, 10));
+        commentPane.setMinHeight(20);
+
+        RowConstraints rc1 = new RowConstraints(40, 40, 40, Priority.NEVER, VPos.BASELINE, true);
+        RowConstraints rc2 = new RowConstraints(1, 120, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true);
+        gPane.getRowConstraints().addAll(rc1, rc2);
+
+        gPane.add(subGrid, 0, 0);
+        gPane.add(commentPane, 0, 1);
+        GridPane.setVgrow(subGrid, Priority.ALWAYS);
+        GridPane.setHgrow(subGrid, Priority.ALWAYS);
+        GridPane.setHgrow(commentPane, Priority.ALWAYS);
+        return gPane;
+    }
+
+    public static Node createCommentPage(ObservableList<QuestionYN> qList) {
+        GridPane gPane = new GridPane();
+
+        for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
+            Node n = createCommentQ(qIdx + 1, qList.get(qIdx));
+            gPane.add(n, 0, qIdx);
+            RowConstraints rc = new RowConstraints();
+            rc.setPercentHeight(1.0 / qList.size() * 100.0);
+            gPane.getRowConstraints().add(rc);
+            GridPane.setHgrow(n, Priority.ALWAYS);
+        }
+
+        BorderPane bPane = new BorderPane();
+        bPane.setTop(NodeFactory.createFormattedLabel("Answer the following yes/no questions and enter any comments as necessary.", "opt-pane-title"));
+        bPane.setCenter(gPane);
+        return bPane;
+    }
+
+    public static Node createMarkAllNode(QuestionOptionMS q) {
+        int rowHeight = 40;
+        GridPane gPane = new GridPane();
+        gPane.getStyleClass().add("comment-q-pane");
+
+        GridPane subGrid = new GridPane();
+        subGrid.getStyleClass().add("comment-q-subpane");
+        subGrid.add(NodeFactory.createFormattedLabel("1", "opt-pane-question-idx"), 0, 0);
+        subGrid.add(NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question"), 1, 0);
+        ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
+        subGrid.getColumnConstraints().addAll(cc1, cc2);
+
+        GridPane.setHgrow(subGrid, Priority.ALWAYS);
+
+        gPane.add(subGrid, 0, 0);
+        gPane.getRowConstraints().add(new RowConstraints(rowHeight, rowHeight, rowHeight, Priority.NEVER, VPos.CENTER, true));
+
+        int rowCount = 1;
+        for (String option : q.getOptions()) {
+            GridPane optSubGrid = new GridPane();
+            optSubGrid.getStyleClass().add("comment-q-subpane");
+            //optSubGrid.add(NodeFactory.createFormattedLabel(idx), 0, 0);
+            CheckBox includedCheck = new CheckBox(option);
+            includedCheck.getStyleClass().add("markall-pane-checkbox");
+            includedCheck.selectedProperty().bindBidirectional(q.getOptionIncludedProperty(rowCount - 1));
+            optSubGrid.add(includedCheck, 0, 0);
+            GridPane.setMargin(includedCheck, new Insets(0, 0, 0, 25));
+            //optSubGrid.add(NodeFactory.createFormattedLabel(option, "opt-pane-question"), 1, 0);
+            //optSubGrid.add(new CheckBox(""),2,0);
+            //optSubGrid.getColumnConstraints().add(new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true));
+            //optSubGrid.getColumnConstraints().add(new ColumnConstraints(1, 350, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
+            //optSubGrid.getRowConstraints().add(new RowConstraints(35,35,35,Priority.NEVER));
+
+            gPane.add(optSubGrid, 0, rowCount++);
+            gPane.getRowConstraints().add(new RowConstraints(rowHeight, rowHeight, rowHeight, Priority.NEVER, VPos.BASELINE, true));
+            GridPane.setHgrow(optSubGrid, Priority.ALWAYS);
+
+        }
+        TextArea commentArea = new TextArea();
+        commentArea.setPromptText("Enter additional comments here...");
+        commentArea.textProperty().bindBidirectional(q.commentProperty());
+        GridPane.setMargin(commentArea, new Insets(0, 10, 5, 10));
+        commentArea.setMinHeight(20);
+        gPane.add(commentArea, 0, rowCount);
+        gPane.getRowConstraints().add(new RowConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true));
+
+        return gPane;
+    }
+
     public static final ObservableList<QuestionYN> STEP_1_FEASIBILITY = FXCollections.observableArrayList(
             new QuestionYN(1, Question.GOAL_FEASIBILITY, "Traffic speed variability"),
             new QuestionYN(2, Question.GOAL_FEASIBILITY, "Back of queue and other sight distance issues"),
@@ -475,6 +544,8 @@ public class TableHelper {
         public String qColumnHeader = "Input Question";
         public boolean autoIndex = true;
         public boolean showFeasibilityScore = false;
+        public boolean showAppWizardGoalCategory = false;
+        public boolean showRedundantQIdx = false;
 
         public Options(String tableStyleCSS) {
             this.tableStyleCSS = tableStyleCSS;

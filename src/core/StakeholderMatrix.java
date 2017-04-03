@@ -345,20 +345,24 @@ public class StakeholderMatrix {
 
     private Node createMemberTable(ObservableList<Stakeholder> sList, int listType) {
         final TableView<Stakeholder> table = new TableView();
+        table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn indexCol = new TableColumn<>("#");
+        indexCol.setEditable(false);
         indexCol.setCellValueFactory(new Callback<CellDataFeatures<Stakeholder, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(CellDataFeatures<Stakeholder, String> p) {
                 return new ReadOnlyObjectWrapper(Integer.toString(table.getItems().indexOf(p.getValue()) + 1));
             }
         });
+        indexCol.getStyleClass().add("col-style-center-bold");
         indexCol.setPrefWidth(85);
         indexCol.setMinWidth(85);
         indexCol.setMaxWidth(85);
 
         TableColumn nameCol = new TableColumn<>();
+        nameCol.setEditable(false);
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         switch (listType) {

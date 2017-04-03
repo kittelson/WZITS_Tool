@@ -64,7 +64,7 @@ public class QuestionGenerator {
     /**
      *
      */
-    public final ObservableList<QuestionYN> qBenefitList;
+    public final ObservableList<QuestionOptionMS> qBenefitList;
 
     /**
      *
@@ -272,8 +272,8 @@ public class QuestionGenerator {
         bindDependantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.significantQueueingQ, "User Needs #3");
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Are high speeds/chronic speeding expected to occur?", false, 2));
         //qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Work zone congestion", false, 1)); // Consolidated
-        qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Is driver diversion expected onto alternate routes?", false, 1));
-        bindRedundantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.driverDiversionQ);
+        qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Is driver diversion expected onto alternate routes? (Answer in User Needs #2", false, 1));
+        bindRedundantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.driverDiversionQ, "User Needs #2");
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Are merging conflicts and hazards at work zone tapers expected to occur?", false, 3));
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Do you expect the work zone layout to cause driver confusion or trouble wayfinding?", false, 3));
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Will frequently changing operating conditions for traffic be used?", false, 3));
@@ -377,7 +377,7 @@ public class QuestionGenerator {
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Will this work zone be active during the day?"));
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Do you expect congestion impacts to be noticable to drivers?"));
         refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable to drivers?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Do you expect the work zone to result in v/c greater than 1.0 during peak periods?"));
         refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable
         bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
@@ -386,46 +386,56 @@ public class QuestionGenerator {
         bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Do you anticipate significant queuing as a result of this work zone?"));
         refQ = this.significantQueueingQ; // GW#3 Do you expect significant queueing
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #3");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Will lower speed limits be advised in the work zone?"));
         refQ = this.loweredSpeedLimitsQ; // GW#14 Will speed imits in the work zone be lowered compared to base conditions?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #16");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Will work zone activities disable ramp meters (Select No if not applicable)?"));
         refQ = this.disableRampMetersQ; //  GW#19 Will work zone activities disable ramp meters?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #19");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will this work zone have reduced lane widths or reduced sight distance impact?"));
         // Redundent on GW#4 = Yes or GW#5 = Yes
         BooleanBinding bb = new BooleanBinding() {
+
+            {
+                super.bind(reducedLaneWidthQ.answerIsYesProperty());
+                super.bind(reducedSightDistanceQ.answerIsYesProperty());
+            }
+
             @Override
             protected boolean computeValue() {
                 return reducedLaneWidthQ.getAnswerIsYes() || reducedSightDistanceQ.getAnswerIsYes();
             }
         };
-        qApplicationList.get(qApplicationList.size() - 1).lockedProperty().set(true);
+        qApplicationList.get(qApplicationList.size() - 1).setLocked(true);
+        qApplicationList.get(qApplicationList.size() - 1).setRedundant(true);
+        qApplicationList.get(qApplicationList.size() - 1).setRefText("User Needs #4&#5");
         qApplicationList.get(qApplicationList.size() - 1).answerIsYesProperty().bind(bb);
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will the work zone result in closure of emergency shoulders?"));
         refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #15");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Is the work zone located on an emergency response corridor?"));
         refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Stakeholder #6");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Does the corridor have a frequent crash problem?"));
         qApplicationList.get(qIdx - 2).visibleProperty().bind(proj.crashDataAvailableProperty());
         // Redundent on GW#4 = Yes or GW#5 = Yes
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will this work zone have reduced lane widths or reduced sight distance impact?"));
-        qApplicationList.get(qApplicationList.size() - 1).lockedProperty().set(true);
+        qApplicationList.get(qApplicationList.size() - 1).setLocked(true);
+        qApplicationList.get(qApplicationList.size() - 1).setRedundant(true);
+        qApplicationList.get(qApplicationList.size() - 1).setRefText("User Needs #4&#5");
         qApplicationList.get(qApplicationList.size() - 1).answerIsYesProperty().bind(bb);
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will temporary ramp geometry constrain acceleration lanes?"));
         refQ = this.rampGeometryQ; // GW#18 Will temporary ramp geometry constrain acceleration lanes?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #18");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will construction vehicles access site from travel lanes?"));
         refQ = this.constructionVehAccessQ; //
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
-        bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #8");
+        //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #8");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #9");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Are there access points with vertical or horizontal sight distance restrictions?"));
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will there be a high volume of construction vehicles?"));
         refQ = this.highVolumeConstructionVehsQ; // GW#17 Will there be a high volume of construction vehicles?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #8");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will existing equipment be used for the work zone?"));
         this.existingEquipmentQ = qApplicationList.get(qApplicationList.size() - 1);
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will any exisiting ITS devices be incorporated into the smart work zone?"));
@@ -433,22 +443,22 @@ public class QuestionGenerator {
         bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "previous question");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Is automated enforcement legal in your state?"));
         refQ = this.allowAutomatedSpeedEnforcementQ; // Same as GW#15 Does state law allow use of automated speed enforcement in WZs?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #17");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Are there specific agency policies for work zones?"));
         refQ = this.specificAgencyPoliciesQ; // GW#9 Are there specific agency policies for work zones as required by the WZ safety and mobility rule?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #10");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Does the agency have existing performance targets for work zone?"));
         refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zone?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #11");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Is there a mobility goal?"));
         refQ = this.mobilityGoalQ; // Is there a mobility goal?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Major Goals #1");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Will the work zone be included in the federally-mandated biannual process review?"));
         refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #20");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_TRAVELER_INFO, "Will outreach and traveler information be used for this work zone?"));
         refQ = this.outreachTravelerInfoQ; // GW#11 Will outreach and traveler information be used for this work zone?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ);
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #12");
     }
 
     /**
@@ -474,15 +484,15 @@ public class QuestionGenerator {
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a concern the work zone will cause unwanted diversion on to local roads?"));
         bindDependantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.driverDiversionQ, "User Needs #2");
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a mobility goal? (Answered in \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.mobilityGoalQ);
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.mobilityGoalQ, "Major Goals #1");
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a productivity goal? (Answered in \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.productivityGoalQ);
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.productivityGoalQ, "Major Goals #3");
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a regulatory goal? (Answered in \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.regulatoryGoalQ);
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.regulatoryGoalQ, "Major Goals #4");
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a safety goal? (Answered in \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.safetyGoalQ);
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.safetyGoalQ, "Major Goals #2");
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a traveler information goal? (Answered in \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.travelerInfoGoalQ);
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.travelerInfoGoalQ, "Major Goals #5");
         qIdx = 1;
         qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "What agencies are responsible for responding to incidents/patrolling the roadway?)",
                 new String[]{"Local Police/Sheriff", "State Police", "Service Patrol or Contractor", "N/A"}));
@@ -526,121 +536,129 @@ public class QuestionGenerator {
     private void createProjectDocumentationQuesitons() {
         int qIdx = 0;
         // Benefits (Big list, mark all that apply) (Step 2)
-        this.qBenefitList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "What will the WZITS be used for? (reducing traffic volumes, reducing speed variance, reducing queue-related crashes, reducing vehicle conflicts, reducing/eliminating dangerous merges, reducing travel time, reducing incident response time, reducing speeds/increasing motorist speed compliance)"));
+        String[] benefitOpts = {"Reducing traffic volumes",
+            "Reducing speed variance", "Reducing queue-related crashes",
+            "Reducing vehicle conflicts",
+            "Reducing/eliminating dangerous merges",
+            "Reducing travel time",
+            "Reducing incident response time",
+            "Reducing speeds/increasing motorist speed compliance"
+        };
+        this.qBenefitList.add(new QuestionOptionMS(qIdx++, Question.GOAL_DOCUMENTATION, "What will the WZITS be used for?", benefitOpts));
         // Costs
-        this.qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of sensors will be deployed?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of portable variable message signs will be deployed?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of cameras will be deployed?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Which ITS devices will be rented/leased?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Which ITS devices will be purchased?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Who will maintain and calibrate the system?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have system goals, objectives and a concept of operations been defined?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "How much time is scheduled for SWZ set-up?"));
-        qCostList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Stand-alone or customized software to manage the SWZ?"));
+        this.qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of sensors will be deployed?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of portable variable message signs will be deployed?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of cameras will be deployed?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Which ITS devices will be rented/leased?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Which ITS devices will be purchased?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Who will maintain and calibrate the system?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have system goals, objectives and a concept of operations been defined?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How much time is scheduled for SWZ set-up?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Stand-alone or customized software to manage the SWZ?"));
         // Institutional/Jurisdictional
-        this.qJurisdictionalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient funding been provided in the construction contract for the work zone?"));
-        qJurisdictionalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is your agency relunctant to adopt smart work zone ITS?"));
-        qJurisdictionalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Do your agency ITS experts interact with road design and construction experts in relation to work zones?"));
-        qJurisdictionalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Does your agency have staff with experience in smart work zone ITS?"));
-        qJurisdictionalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Do long standing operational procedures (SOPs)  need to be adopted?"));
+        this.qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient funding been provided in the construction contract for the work zone?"));
+        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is your agency relunctant to adopt smart work zone ITS?"));
+        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do your agency ITS experts interact with road design and construction experts in relation to work zones?"));
+        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Does your agency have staff with experience in smart work zone ITS?"));
+        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do long standing operational procedures (SOPs)  need to be adopted?"));
         // Legal/Policy
-        this.qLegalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is the type of system being implemented permitted under the current laws and regulations?"));
-        qLegalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any liability issues for placing ITS equipment in a work zone?"));
-        qLegalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are there restrictions regarding the archiving of data in your state?"));
-        qLegalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any liability issues regarding the posting of warning messages?"));
+        this.qLegalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is the type of system being implemented permitted under the current laws and regulations?"));
+        qLegalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any liability issues for placing ITS equipment in a work zone?"));
+        qLegalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there restrictions regarding the archiving of data in your state?"));
+        qLegalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any liability issues regarding the posting of warning messages?"));
         // Stakeholder buy-in
-        this.qStakeholderBuyInList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have inter-agency relationships been established between stakeholders?"));
-        qStakeholderBuyInList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are regular meetings held with stakeholders to keep them appraised of the project?"));
-        qStakeholderBuyInList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a champion for the project?"));
-        qStakeholderBuyInList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have the estimated benefits of the project been documented?"));
+        this.qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have inter-agency relationships been established between stakeholders?"));
+        qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are regular meetings held with stakeholders to keep them appraised of the project?"));
+        qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a champion for the project?"));
+        qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have the estimated benefits of the project been documented?"));
         // Concept of operations (End Step 2/Start Step 3)
-        this.qConOpsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there data flow between system components?"));
-        qConOpsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Information flow between the agency and the public?"));
-        qConOpsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Do you have communication flow charts?"));
-        qConOpsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "How will the system ultimately operate?"));
-        qConOpsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there an overall strategy for the system?"));
-        qConOpsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "How does the work zone fit into the overall construction project?"));
+        this.qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there data flow between system components?"));
+        qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Information flow between the agency and the public?"));
+        qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do you have communication flow charts?"));
+        qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How will the system ultimately operate?"));
+        qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there an overall strategy for the system?"));
+        qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How does the work zone fit into the overall construction project?"));
         // System Requirement (Start Step 3)
-        this.qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have physical requirements been defined?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have functional requirements been defined?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have system requirements been defined?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has a traceability matrix been established?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has interoperability or connectivity been established with other ITS equipment in the region?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has connectivity been established with the TMC in the region?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Will changes in the work zone environment be addressed over time?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has a contingency plan been included with the design to address delays in the project?"));
-        qSysReqList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have operation, maintenance, and calibration requirements been defined?"));
+        this.qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have physical requirements been defined?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have functional requirements been defined?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have system requirements been defined?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a traceability matrix been established?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has interoperability or connectivity been established with other ITS equipment in the region?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has connectivity been established with the TMC in the region?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will changes in the work zone environment be addressed over time?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a contingency plan been included with the design to address delays in the project?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have operation, maintenance, and calibration requirements been defined?"));
         // System Design (?)
         // Testing Strategy
-        this.qTestingStratList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has a test plan for the project been developed?"));
+        this.qTestingStratList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a test plan for the project been developed?"));
         // Operations & Maintenance
-        this.qOpsMaintList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are there requirements for response times when there are equipment failures?"));
-        qOpsMaintList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a procedure for enforcing penalties for system downtime?"));
+        this.qOpsMaintList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there requirements for response times when there are equipment failures?"));
+        qOpsMaintList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a procedure for enforcing penalties for system downtime?"));
         // Staff Training needs
-        this.qStaffTrainingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Where will training be held?"));
-        qStaffTrainingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has staff been trained on contractor notification procedures?"));
+        this.qStaffTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Where will training be held?"));
+        qStaffTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has staff been trained on contractor notification procedures?"));
         // System Security
-        this.qSysSecurityList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is access to the smart work zone ITS application protected from unauthorized users?"));
-        qSysSecurityList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has protection and recovery from vandalism and stolen system components such as batteries been addressed?"));
+        this.qSysSecurityList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is access to the smart work zone ITS application protected from unauthorized users?"));
+        qSysSecurityList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has protection and recovery from vandalism and stolen system components such as batteries been addressed?"));
         // Project Evaluation
-        this.qProjectEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is a system evaluation of the project planned?"));
-        qProjectEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Were the system goals and objectives explicity stated?"));
-        qProjectEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Was an evaluation for the project considered at the beginning of the project?"));
-        qProjectEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a mechanism in place for the public to offer feedback on the smart work zone system?"));
-        qProjectEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Should changes be made to optimize the system or improve performance?"));
+        this.qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is a system evaluation of the project planned?"));
+        qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Were the system goals and objectives explicity stated?"));
+        qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Was an evaluation for the project considered at the beginning of the project?"));
+        qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a mechanism in place for the public to offer feedback on the smart work zone system?"));
+        qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Should changes be made to optimize the system or improve performance?"));
         // System Benefit/Cost (End Step 3)
-        this.qSysBCList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have the benefits that the system will have on mobility been considered?"));
-        qSysBCList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have the benefits that the system will have on safety been considered?"));
-        qSysBCList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the cost estimate been re-examined now that the system requirements have been defined?"));
+        this.qSysBCList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have the benefits that the system will have on mobility been considered?"));
+        qSysBCList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have the benefits that the system will have on safety been considered?"));
+        qSysBCList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the cost estimate been re-examined now that the system requirements have been defined?"));
         // Direct/Indirect (Start Step 4)
-        this.qDirectIndirectList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "How much control does the agency want to have over the work zone setup, opeation and management?"));
+        this.qDirectIndirectList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How much control does the agency want to have over the work zone setup, opeation and management?"));
         // Mechanism
-        this.qMechanismList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "What type of award mechanism do you plan to use?"));
+        this.qMechanismList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "What type of award mechanism do you plan to use?"));
         // Request for Proposals
-        this.qRFPList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is your agency issuing a request for proposals (RFP)?"));
-        qRFPList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have clear specifications for the system been defined?"));
-        qRFPList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Will the agency hire an independent evaluator for the system?"));
+        this.qRFPList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is your agency issuing a request for proposals (RFP)?"));
+        qRFPList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have clear specifications for the system been defined?"));
+        qRFPList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will the agency hire an independent evaluator for the system?"));
         // Vendor Selection (End Step 4)
-        this.qVendorSelectionList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has a selection committee been formed?"));
-        qVendorSelectionList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the evaluation criteria been specified for reviewing proposals with a value for each evaluation criterion?"));
+        this.qVendorSelectionList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a selection committee been formed?"));
+        qVendorSelectionList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the evaluation criteria been specified for reviewing proposals with a value for each evaluation criterion?"));
         // System Plans (Start Step 5)
-        this.qSysPlansList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Will the system be operated as a stand-alone system?"));
-        qSysPlansList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "What is the level of agency involvement?"));
+        this.qSysPlansList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will the system be operated as a stand-alone system?"));
+        qSysPlansList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "What is the level of agency involvement?"));
         // Scheduling
-        this.qSchedulingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient lead time to deploy the smart work zone ITS system been included in the construction project schedule?"));
-        qSchedulingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient testing and calibration time and effort been included in the construction project schedule?"));
-        qSchedulingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the evaluation process been included in the schedule?"));
+        this.qSchedulingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient lead time to deploy the smart work zone ITS system been included in the construction project schedule?"));
+        qSchedulingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient testing and calibration time and effort been included in the construction project schedule?"));
+        qSchedulingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the evaluation process been included in the schedule?"));
         // Acceptance Testing
-        this.qAcceptanceTrainingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has system acceptance testing been conducted using the test plan?"));
-        qAcceptanceTrainingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is the smart work zone ITS system flexible enough to incorporate construction design changes and delays?"));
-        qAcceptanceTrainingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the system been verified from a drivers' expectation?"));
-        qAcceptanceTrainingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the system deployment been field verified by agency personnel?"));
+        this.qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has system acceptance testing been conducted using the test plan?"));
+        qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is the smart work zone ITS system flexible enough to incorporate construction design changes and delays?"));
+        qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the system been verified from a drivers' expectation?"));
+        qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the system deployment been field verified by agency personnel?"));
         // PDeploymjent Issues (End Step 5)
-        this.qDeploymentIssuesList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a contingency plan for addressing communication issues with the equipment?"));
-        qDeploymentIssuesList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any weather related issues that need to be considered with the smart work zone ITS deployment?"));
-        qDeploymentIssuesList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has an experienced/qualified contractor been selected?"));
-        qDeploymentIssuesList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is regular communication with the stakeholders continuing during the deployment phase?"));
-        qDeploymentIssuesList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a way to incorporate user feedback into the system?"));
+        this.qDeploymentIssuesList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a contingency plan for addressing communication issues with the equipment?"));
+        qDeploymentIssuesList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any weather related issues that need to be considered with the smart work zone ITS deployment?"));
+        qDeploymentIssuesList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has an experienced/qualified contractor been selected?"));
+        qDeploymentIssuesList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is regular communication with the stakeholders continuing during the deployment phase?"));
+        qDeploymentIssuesList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a way to incorporate user feedback into the system?"));
         // Changing Conditions (Start Step 6)
-        this.qChangingConditionsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has support for changing work zone requirements been considered?"));
-        qChangingConditionsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is the agency or contractor personnel prepared to make changes to the work zone?"));
-        qChangingConditionsList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is coordination between construction team, agency personnel and ITS operators clearly defined?"));
+        this.qChangingConditionsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has support for changing work zone requirements been considered?"));
+        qChangingConditionsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is the agency or contractor personnel prepared to make changes to the work zone?"));
+        qChangingConditionsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is coordination between construction team, agency personnel and ITS operators clearly defined?"));
         // Using/Sharing Info
-        this.qSharingInfoList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is data being collected on the project?"));
-        qSharingInfoList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the agency considered making the data available through an XML feed?"));
-        qSharingInfoList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Will camera images be made available to the public through the agency website?"));
-        qSharingInfoList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are performance measures being collected through the smart work zone ITS data?"));
+        this.qSharingInfoList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is data being collected on the project?"));
+        qSharingInfoList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the agency considered making the data available through an XML feed?"));
+        qSharingInfoList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will camera images be made available to the public through the agency website?"));
+        qSharingInfoList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are performance measures being collected through the smart work zone ITS data?"));
         // Staffing
-        this.qStaffingList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Will consistent personnel be available through the duration of the project?"));
+        this.qStaffingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will consistent personnel be available through the duration of the project?"));
         // Public Support
-        this.qPublicSupportList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is there public support for the project?"));
-        qPublicSupportList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the public been adequately prepared for the project?"));
-        qPublicSupportList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Have elected officials been adequately briefed on the project?"));
-        qPublicSupportList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has the media and public affairs office been adequately briefed on the project?"));
+        this.qPublicSupportList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there public support for the project?"));
+        qPublicSupportList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the public been adequately prepared for the project?"));
+        qPublicSupportList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have elected officials been adequately briefed on the project?"));
+        qPublicSupportList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the media and public affairs office been adequately briefed on the project?"));
         // Monitoring/Evaluation (End Step 6)
-        this.qMonitoringEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Has a system been put in place for ongoing monitoring and evaluation of the project?"));
-        qMonitoringEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Are there provisions in place to modify or recalibrate the smart work zone ITS set-up throughout the project?"));
-        qMonitoringEvalList.add(new QuestionYNComment(qIdx++, Question.GOAL_DOCUMENTATION, "Is a final evaluation of the project planned?"));
+        this.qMonitoringEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a system been put in place for ongoing monitoring and evaluation of the project?"));
+        qMonitoringEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there provisions in place to modify or recalibrate the smart work zone ITS set-up throughout the project?"));
+        qMonitoringEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is a final evaluation of the project planned?"));
 
     }
 
@@ -648,6 +666,7 @@ public class QuestionGenerator {
         connectGoalsProgress();
         connectFeasibilityProgress();
         connectStakeholderProgress();
+        connectApplicationProgress();
     }
 
     private void connectGoalsProgress() {
@@ -711,7 +730,7 @@ public class QuestionGenerator {
     }
 
     private void connectStakeholderProgress() {
-        final int numRequiredQs = 1 + this.qStakeholderYNList.size(); // + this.qStakeholderOptionList.size();
+        final int numRequiredQs = 2 + this.qStakeholderYNList.size(); // + this.qStakeholderOptionList.size();
         proj.functionalClassProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
                 if (newVal.equalsIgnoreCase("Select")) {
@@ -747,19 +766,23 @@ public class QuestionGenerator {
                 }
             });
         }
-//        for (QuestionOption q : qStakeholderOptionList) {
-//            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
-//                @Override
-//                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
-//                    if (newVal.intValue() < 0) {
-//                        proj.progressStake.set(proj.progressStake.get() - 1.0 / numRequiredQs);
-//                    } else if (oldVal.intValue() < 0) {
-//                        proj.progressStake.set(proj.progressStake.get() + 1.0 / numRequiredQs);
-//                    }
-//                    proj.getStakeholderMatrix().computeStakeholders();
-//                }
-//            });
-//    }
+    }
+
+    private void connectApplicationProgress() {
+        final int numRequiredQs = this.qApplicationList.size();
+        for (Question q : this.qApplicationList) {
+            q.responseIdxProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                    if (newVal.intValue() < 0) {
+                        proj.progressApp.set(Math.max(0, proj.progressApp.get() - 1.0 / numRequiredQs));
+                    } else if (oldVal.intValue() < 0) {
+                        proj.progressApp.set(Math.min(1.0, proj.progressApp.get() + 1.0 / numRequiredQs));
+                    }
+                    proj.getApplicationMatrix().computeScores();
+                }
+            });
+        }
     }
 
     /**
@@ -795,10 +818,12 @@ public class QuestionGenerator {
      * @param newQ
      * @param origQ
      */
-    private void bindRedundantQs(Question newQ, Question origQ) {
+    private void bindRedundantQs(Question newQ, Question origQ, String refText) {
         //newQ.lockedProperty().bind(origQ.responseIdxProperty().greaterThanOrEqualTo(0));
-        newQ.lockedProperty().set(true);
+        newQ.setLocked(true);
+        newQ.setRedundant(true);
         newQ.responseIdxProperty().bindBidirectional(origQ.responseIdxProperty());
+        newQ.setRefText(refText);
     }
 
     /**
@@ -811,7 +836,7 @@ public class QuestionGenerator {
     private void bindDependantQs(Question newQ, QuestionYN origQ, String refText) {
         newQ.visibleProperty().bind(origQ.answerIsNoProperty().not());
         newQ.lockedProperty().bind(origQ.answerIsNoProperty());
-        newQ.setLockedReferenceText(refText);
+        newQ.setRefText(refText);
     }
 
     private QuestionYN congestionNoticableQ, significantQueueingQ,

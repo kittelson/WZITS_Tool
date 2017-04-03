@@ -40,12 +40,20 @@ public class Application {
         this.name.set(val);
     }
 
+    public SimpleStringProperty nameProperty() {
+        return name;
+    }
+
     public int getScore() {
         return score.get();
     }
 
     public void setScore(int val) {
         score.set(val);
+    }
+
+    public SimpleIntegerProperty scoreProperty() {
+        return score;
     }
 
     public static final String QUEUE_WARNING = "Queue Warning";

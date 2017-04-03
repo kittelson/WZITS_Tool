@@ -17,6 +17,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -35,7 +36,9 @@ public class Step2Panel extends BorderPane {
 
     private final MainController control;
 
-    private int stepIndex = 1;
+    private final int stepIndex = 1;
+
+    private final String stepTitle = "Concept Development and Feasibility";
 
     private final VBox mainVBox = new VBox();
 
@@ -52,9 +55,9 @@ public class Step2Panel extends BorderPane {
     private final BorderPane conOpsPane = new BorderPane();
     private final BorderPane stepReportPane = new BorderPane();
 
-    public Step2Panel(MainController control) {
+    public Step2Panel(MainController mc) {
 
-        this.control = control;
+        this.control = mc;
 
         mainVBox.setFillWidth(true);
         Label startLabel = new Label("Step");
@@ -67,7 +70,7 @@ public class Step2Panel extends BorderPane {
         infoLabel.setMaxHeight(MainController.MAX_HEIGHT);
         infoLabel.setMaxWidth(MainController.MAX_WIDTH);
         infoLabel.setAlignment(Pos.TOP_CENTER);
-        Label instructionLabel = new Label("Concept Development and Feasibility");
+        Label instructionLabel = new Label(stepTitle);
         instructionLabel.setWrapText(true);
         instructionLabel.setTextAlignment(TextAlignment.CENTER);
         instructionLabel.setMaxHeight(MainController.MAX_HEIGHT);
@@ -128,46 +131,63 @@ public class Step2Panel extends BorderPane {
         stepIntroGrid.getColumnConstraints().addAll(colConst1, colConst2);
         GridPane.setHgrow(instructionLabel, Priority.ALWAYS);
 
-        int subStepIndex = 1;
+        int subStepTitleIndex = 1;
         // Initial Applications Questions Panel
-        applicationPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
-        applicationPane.setCenter(Step2TableHelper.createApplicationWizard(control.getProject()));
+        applicationPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
+        TableView tv1 = Step2TableHelper.createApplicationWizard1(control.getProject());
+        TableView tv2 = Step2TableHelper.createApplicationWizard2(control.getProject());
+        GridPane gPane = new GridPane();
+        gPane.add(tv1, 0, 0);
+        gPane.add(tv2, 0, 1);
+        RowConstraints rc1 = new RowConstraints();
+        rc1.setPercentHeight(50);
+        RowConstraints rc2 = new RowConstraints();
+        rc2.setPercentHeight(50);
+        gPane.getRowConstraints().addAll(rc1, rc2);
+        GridPane.setHgrow(tv1, Priority.ALWAYS);
+        GridPane.setHgrow(tv2, Priority.ALWAYS);
+        applicationPane.setCenter(gPane);
         applicationPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Application Wizard Summary Panel
-        awSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
-        awSummaryPane.setCenter(new Label("Coming Soon"));
+        awSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
+        awSummaryPane.setCenter(control.getProject().getApplicationMatrix().getSummaryNode());
         awSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Benefits Questions Panel
-        benefitsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        benefitsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         benefitsPane.setCenter(Step2TableHelper.createBenefitsNode(control.getProject()));
         benefitsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Costs Questions Panel
-        costPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        costPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         costPane.setCenter(Step2TableHelper.createCostsNode(control.getProject()));
         costPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Institutional/Jurisdictional Questions Panel
-        this.instJurPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        this.instJurPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         instJurPane.setCenter(Step2TableHelper.createInstJurNode(control.getProject()));
         instJurPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Legal/Policy Questions Panel
-        legalPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        legalPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         legalPane.setCenter(Step2TableHelper.createLegalNode(control.getProject()));
         legalPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Stakeholder Buy-in Questions Panel
-        stakeholderBuyInPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        stakeholderBuyInPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         stakeholderBuyInPane.setCenter(Step2TableHelper.createStakeholderBuyInNode(control.getProject()));
         stakeholderBuyInPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Develop Concept of Operations Questions Panel
-        conOpsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
+        conOpsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         conOpsPane.setCenter(Step2TableHelper.createConOpsNode(control.getProject()));
         conOpsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        // Step Report Pane
+        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
+        stepReportPane.setCenter(new BorderPane());
+        stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         mainVBox.getChildren().addAll(allSubStepsPane);
         allSubStepsPane.add(stepIntroGrid, 0, 0);
@@ -223,6 +243,19 @@ public class Step2Panel extends BorderPane {
             }
         });
 
+        control.activeStepProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (newVal.intValue() > stepIndex) {
+                    selectSubStep(Project.NUM_SUB_STEPS[stepIndex], false);
+                } else if (newVal.intValue() < stepIndex) {
+                    selectSubStep(-1, false);
+                } else {
+                    selectSubStep(control.getActiveSubStep(stepIndex));
+                }
+            }
+        });
+
         control.activeSubStepProperty(stepIndex).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
@@ -232,7 +265,7 @@ public class Step2Panel extends BorderPane {
 
                 switch (getActiveSubStep()) {
                     case Project.APP_WIZARD_SUMMARY_INDEX:
-                        awSummaryPane.setCenter(new Label("Need to fix this too"));
+                        awSummaryPane.setCenter(control.getProject().getApplicationMatrix().getSummaryNode());
                         break;
                 }
 
@@ -257,8 +290,12 @@ public class Step2Panel extends BorderPane {
         }
     }
 
-    private void selectSubStep(int stepIndex) {
-        moveScreen((stepIndex + 1) * stepIntroGrid.getWidth(), 0);
+    private void selectSubStep(int subStepIndex) {
+        selectSubStep(subStepIndex, true);
+    }
+
+    private void selectSubStep(int subStepIndex, boolean animated) {
+        moveScreen((subStepIndex + 1) * stepIntroGrid.getWidth(), 0, animated);
     }
 
     private void moveScreen(double toX, double toY) {

@@ -6,6 +6,7 @@
 package GUI.Tables;
 
 import core.Project;
+import javafx.scene.Node;
 import javafx.scene.control.TableView;
 
 /**
@@ -20,20 +21,24 @@ public class Step5TableHelper extends TableView {
 
     private static final String STEP2_TABLE_CSS = "step-one-table";
 
-    public static TableView createSysPlansNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qSysPlansList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createSysPlansNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qSysPlansList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qSysPlansList);
     }
 
-    public static TableView createSchedulingNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qSchedulingList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createSchedulingNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qSchedulingList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qSchedulingList);
     }
 
-    public static TableView createAcceptanceTrainingNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qAcceptanceTrainingList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createAcceptanceTrainingNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qAcceptanceTrainingList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qAcceptanceTrainingList);
     }
 
-    public static TableView createDeploymentIssuesNode(Project proj) {
-        return TableHelper.createQuestionYNTable(proj.getQGen().qDeploymentIssuesList, new TableHelper.Options(STEP2_TABLE_CSS));
+    public static Node createDeploymentIssuesNode(Project proj) {
+        //return TableHelper.createQuestionYNTable(proj.getQGen().qDeploymentIssuesList, new TableHelper.Options(STEP2_TABLE_CSS));
+        return TableHelper.createCommentPage(proj.getQGen().qDeploymentIssuesList);
     }
 
 }

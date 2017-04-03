@@ -35,7 +35,9 @@ public class Step3Panel extends BorderPane {
 
     private final MainController control;
 
-    private int stepIndex = 2;
+    private final int stepIndex = 2;
+
+    private final String stepTitle = "Detailed System Planning and Design";
 
     private final VBox mainVBox = new VBox();
 
@@ -68,7 +70,7 @@ public class Step3Panel extends BorderPane {
         infoLabel.setMaxHeight(MainController.MAX_HEIGHT);
         infoLabel.setMaxWidth(MainController.MAX_WIDTH);
         infoLabel.setAlignment(Pos.TOP_CENTER);
-        Label instructionLabel = new Label("Detailed System Planning and Design");
+        Label instructionLabel = new Label(stepTitle);
         instructionLabel.setWrapText(true);
         instructionLabel.setTextAlignment(TextAlignment.CENTER);
         instructionLabel.setMaxHeight(MainController.MAX_HEIGHT);
@@ -174,6 +176,11 @@ public class Step3Panel extends BorderPane {
         sysBCPane.setCenter(Step3TableHelper.createSysBCNode(control.getProject()));
         sysBCPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
+        // Step Report Pane
+        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
+        stepReportPane.setCenter(new BorderPane());
+        stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
         int i = 0;
         mainVBox.getChildren().addAll(allSubStepsPane);
         allSubStepsPane.add(stepIntroGrid, i++, 0);
@@ -231,6 +238,19 @@ public class Step3Panel extends BorderPane {
             }
         });
 
+        control.activeStepProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (newVal.intValue() > stepIndex) {
+                    selectSubStep(Project.NUM_SUB_STEPS[stepIndex], false);
+                } else if (newVal.intValue() < stepIndex) {
+                    selectSubStep(-1, false);
+                } else {
+                    selectSubStep(control.getActiveSubStep(stepIndex));
+                }
+            }
+        });
+
         control.activeSubStepProperty(stepIndex).addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
@@ -259,8 +279,12 @@ public class Step3Panel extends BorderPane {
         }
     }
 
-    private void selectSubStep(int stepIndex) {
-        moveScreen((stepIndex + 1) * stepIntroGrid.getWidth(), 0);
+    private void selectSubStep(int subStepIndex) {
+        selectSubStep(subStepIndex, true);
+    }
+
+    private void selectSubStep(int subStepIndex, boolean animated) {
+        moveScreen((subStepIndex + 1) * stepIntroGrid.getWidth(), 0, animated);
     }
 
     private void moveScreen(double toX, double toY) {
