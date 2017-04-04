@@ -29,6 +29,8 @@ public class IconHelper {
 
     public static final Image TREE_NODE_STEP_COMPLETE = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/check16.png"));
 
+    public static final Image SPLASH_SCREEN = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/splash.PNG"));
+
     public static final Image NAV_HELPER = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/navigatorHelp.PNG"));
 
     public static final Image FIG_FLOW_ALL_STEPS = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/all_steps.png"));
@@ -44,4 +46,6 @@ public class IconHelper {
     public static final Image FIG_FLOW_STEP_5 = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/step_5.png"));
 
     public static final Image FIG_FLOW_STEP_6 = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/step_6.png"));
+
+    public static final Image PROJ_IMAGE = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/wz.jpg"));
 }

@@ -23,22 +23,22 @@ public class Step5TableHelper extends TableView {
 
     public static Node createSysPlansNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSysPlansList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qSysPlansList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qSysPlansList);
     }
 
     public static Node createSchedulingNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSchedulingList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qSchedulingList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qSchedulingList);
     }
 
     public static Node createAcceptanceTrainingNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qAcceptanceTrainingList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qAcceptanceTrainingList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qAcceptanceTrainingList);
     }
 
     public static Node createDeploymentIssuesNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qDeploymentIssuesList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qDeploymentIssuesList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qDeploymentIssuesList);
     }
 
 }

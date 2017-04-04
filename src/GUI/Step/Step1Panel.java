@@ -11,9 +11,6 @@ import GUI.Helper.IconHelper;
 import GUI.MainController;
 import GUI.Tables.Step1TableHelper;
 import core.Question;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -81,7 +78,7 @@ public class Step1Panel extends BorderPane {
     private final BorderPane majorGoalsPane = new BorderPane();
     private final BorderPane gwSummaryPane = new BorderPane();
     private final BorderPane feasibilityPane = new BorderPane();
-    private final BorderPane fwSummaryPane = new BorderPane();
+    //private final BorderPane fwSummaryPane = new BorderPane();
     private final BorderPane stakeholderPane = new BorderPane();
     private final BorderPane swSummaryPane = new BorderPane();
     private final BorderPane teamMembersPane = new BorderPane();
@@ -233,7 +230,7 @@ public class Step1Panel extends BorderPane {
         gwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Feasibility Questions Panel
-        feasibilityPane.setTop(NodeFactory.createFormattedLabel("Feasibility", "substep-title-label"));
+        feasibilityPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard", "substep-title-label"));
         GridPane fwgp1 = new GridPane();
         fwgp1.add(Step1TableHelper.getFeasibilityWizard(control.getProject()), 0, 0);
         fwgp1.add(control.getProject().getFeasibilityMatrix().createSummaryPanel(), 0, 1);
@@ -246,11 +243,10 @@ public class Step1Panel extends BorderPane {
         feasibilityPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Feasibility Wizard panel
-        fwSummaryPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard Summary", "substep-title-label"));
-        BorderPane fwbp2 = new BorderPane();
-        fwSummaryPane.setCenter(fwbp2);
-        fwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
-
+        //fwSummaryPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard Summary", "substep-title-label"));
+        //BorderPane fwbp2 = new BorderPane();
+        //fwSummaryPane.setCenter(fwbp2);
+        //fwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
         // Stakeholders Questions Panel
         stakeholderPane.setTop(NodeFactory.createFormattedLabel("Stakeholders", "substep-title-label"));
         stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject()));
@@ -273,27 +269,28 @@ public class Step1Panel extends BorderPane {
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-        stepReportPane.setCenter(new BorderPane());
+        stepReportPane.setCenter(Step1TableHelper.createStepSummary(control));
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Adding to main substep VBox
+        int colIdx = 0;
         mainVBox.getChildren().addAll(allSubStepsPane);
-        allSubStepsPane.add(stepIntroGrid, 0, 0);
-        allSubStepsPane.add(projInfoGrid, 1, 0);
-        allSubStepsPane.add(unPane, 2, 0);
-        allSubStepsPane.add(unSuppPane, 3, 0);
-        allSubStepsPane.add(majorGoalsPane, 4, 0);
-        allSubStepsPane.add(gwSummaryPane, 5, 0);
-        allSubStepsPane.add(feasibilityPane, 6, 0);
-        allSubStepsPane.add(fwSummaryPane, 7, 0);
-        allSubStepsPane.add(stakeholderPane, 8, 0);
-        allSubStepsPane.add(swSummaryPane, 9, 0);
-        allSubStepsPane.add(teamMembersPane, 10, 0);
-        allSubStepsPane.add(itsPane, 11, 0);
-        allSubStepsPane.add(stepReportPane, 12, 0);
+        allSubStepsPane.add(stepIntroGrid, colIdx++, 0);
+        allSubStepsPane.add(projInfoGrid, colIdx++, 0);
+        allSubStepsPane.add(unPane, colIdx++, 0);
+        allSubStepsPane.add(unSuppPane, colIdx++, 0);
+        allSubStepsPane.add(majorGoalsPane, colIdx++, 0);
+        allSubStepsPane.add(gwSummaryPane, colIdx++, 0);
+        allSubStepsPane.add(feasibilityPane, colIdx++, 0);
+        //allSubStepsPane.add(fwSummaryPane, colIdx++, 0);
+        allSubStepsPane.add(stakeholderPane, colIdx++, 0);
+        allSubStepsPane.add(swSummaryPane, colIdx++, 0);
+        allSubStepsPane.add(teamMembersPane, colIdx++, 0);
+        allSubStepsPane.add(itsPane, colIdx++, 0);
+        allSubStepsPane.add(stepReportPane, colIdx++, 0);
 
         int numPanes = getNumSubSteps() + 2;
-        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
+        for (int col = 0; col < numPanes; col++) {
             ColumnConstraints tcc = new ColumnConstraints();
             tcc.setPercentWidth(100.0 / numPanes);
             allSubStepsPane.getColumnConstraints().add(tcc);
@@ -309,7 +306,7 @@ public class Step1Panel extends BorderPane {
         GridPane.setVgrow(majorGoalsPane, Priority.ALWAYS);
         GridPane.setVgrow(gwSummaryPane, Priority.ALWAYS);
         GridPane.setVgrow(feasibilityPane, Priority.ALWAYS);
-        GridPane.setVgrow(fwSummaryPane, Priority.ALWAYS);
+        //GridPane.setVgrow(fwSummaryPane, Priority.ALWAYS);
         GridPane.setVgrow(stakeholderPane, Priority.ALWAYS);
         GridPane.setVgrow(swSummaryPane, Priority.ALWAYS);
         GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
@@ -386,13 +383,12 @@ public class Step1Panel extends BorderPane {
                 selectSubStep(getActiveSubStep());
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
-
                 switch (getActiveSubStep()) {
                     case Project.GOAL_WIZARD_SUMMARY_INDEX:
                         gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
                         break;
                     case Project.FEAS_WIZARD_SUMMARY_INDEX:
-                        fwSummaryPane.setCenter(control.getProject().getFeasibilityMatrix().createSummaryPanel());
+                        //fwSummaryPane.setCenter(control.getProject().getFeasibilityMatrix().createSummaryPanel());
                         break;
                     case Project.STAKEHOLDER_WIZARD_SUMMARY_INDEX:
                         swSummaryPane.setCenter(control.getProject().getStakeholderMatrix().createSummaryTable());
@@ -400,6 +396,10 @@ public class Step1Panel extends BorderPane {
                     case Project.TEAM_SUMMARY_INDEX:
                         teamMembersPane.setCenter(control.getProject().getStakeholderMatrix().createSelectedMembersPanel());
                         break;
+                }
+
+                if (getActiveSubStep() == Project.NUM_SUB_STEPS[stepIndex]) {
+                    stepReportPane.setCenter(Step1TableHelper.createStepSummary(control));
                 }
 
                 control.checkProceed();
@@ -447,9 +447,7 @@ public class Step1Panel extends BorderPane {
         genInfoLabel7.getStyleClass().add("gen-info-label-style");
         genInfoLabel8.getStyleClass().add("gen-info-label-style");
 
-        Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-        genInfoDateToday.setText(df.format(today));
+        genInfoDateToday.setText(control.getProject().getDateString());
 
         genInfoTA1.setWrapText(true);
         genInfoTA2.setWrapText(true);

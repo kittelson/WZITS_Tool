@@ -21,22 +21,22 @@ public class Step4TableHelper extends TableView {
 
     public static Node createDirectIndirectNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qDirectIndirectList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qDirectIndirectList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qDirectIndirectList);
     }
 
     public static Node createMechanismNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qMechanismList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qMechanismList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qMechanismList);
     }
 
     public static Node createRFPNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qRFPList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qRFPList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qRFPList);
     }
 
     public static Node createVendorNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qVendorSelectionList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qVendorSelectionList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qVendorSelectionList);
     }
 
 }

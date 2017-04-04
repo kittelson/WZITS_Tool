@@ -5,6 +5,8 @@
  */
 package GUI.Launch;
 
+import GUI.Helper.IconHelper;
+import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -24,7 +27,9 @@ public class LaunchPane extends BorderPane {
 
     private final MainController controller;
 
-    private final Label titleLabel1, titleLabel2;
+    private final Label welcomeLabel;
+
+    private final ImageView splash;
 
     private final TextArea infoText;
 
@@ -32,17 +37,16 @@ public class LaunchPane extends BorderPane {
 
     public LaunchPane(final MainController controller) {
         this.controller = controller;
-        titleLabel1 = new Label("Work Zone ITS Tool");
-        titleLabel1.setMaxWidth(MainController.MAX_WIDTH);
-        titleLabel2 = new Label("Welcome");
-        titleLabel2.setMaxWidth(MainController.MAX_WIDTH);
-        infoText = new TextArea("This area will display welcome and "
-                + "informational text.  This area can also provide the user with "
-                + "a basic outline of the program and information on how to get "
-                + "started.\n\n\n Tool Disclaimers: This tool is a prototype.");
+        welcomeLabel = NodeFactory.createFormattedLabel("Welcome", "launch-title-label-bottom");
+        splash = new ImageView(IconHelper.SPLASH_SCREEN);
+        splash.setPreserveRatio(true);
+        splash.setSmooth(true);
+        splash.setFitHeight(600);
+        infoText = new TextArea("Tool Disclaimers: This tool is a prototype.");
         infoText.setWrapText(true);
         infoText.setEditable(false);
-        infoText.setFont(Font.font("Calibri", 20));
+        infoText.setFont(Font.font("Calibri", 12));
+        infoText.getStyleClass().add("launch-info-text");
         startButton.setStyle("-fx-font-size: 20px");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -51,20 +55,15 @@ public class LaunchPane extends BorderPane {
             }
         });
 
-        setupFormatting();
-
         VBox vBox = new VBox();
         vBox.setFillWidth(true);
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(titleLabel1, titleLabel2, infoText, startButton);
+        vBox.getChildren().addAll(welcomeLabel, splash, infoText, startButton);
         this.setCenter(vBox);
 
         startButton.setDefaultButton(true);
-    }
 
-    private void setupFormatting() {
-        titleLabel1.getStyleClass().add("launch-title-label-top");
-        titleLabel2.getStyleClass().add("launch-title-label-bottom");
-        infoText.getStyleClass().add("launch-info-text");
+        this.setMaxHeight(600);
+        this.setMaxWidth(800);
     }
 }

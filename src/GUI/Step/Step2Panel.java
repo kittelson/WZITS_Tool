@@ -181,12 +181,18 @@ public class Step2Panel extends BorderPane {
 
         // Develop Concept of Operations Questions Panel
         conOpsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
-        conOpsPane.setCenter(Step2TableHelper.createConOpsNode(control.getProject()));
+        //conOpsPane.setCenter(Step2TableHelper.createConOpsNode(control.getProject()));
+        Label tempConOpsDesignLabel = new Label("Design Concept of Operations Summary Panel Under Development");
+        tempConOpsDesignLabel.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
+        conOpsPane.setCenter(tempConOpsDesignLabel);
         conOpsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-        stepReportPane.setCenter(new BorderPane());
+        Label tempSummaryLabel = new Label("Step 2 Summary Panel Under Development");
+        tempSummaryLabel.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
+        stepReportPane.setCenter(tempSummaryLabel);
+
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         mainVBox.getChildren().addAll(allSubStepsPane);

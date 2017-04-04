@@ -49,7 +49,7 @@ public class StakeholderMatrix implements Serializable {
     private int[][] optScoreMat;
     private int[][] ynScoreMat;
     //private final LinkedHashMap<String, Integer> stakeholderScore;
-    private ObservableList<Stakeholder> stakeholders;
+    public ObservableList<Stakeholder> stakeholders;
     private SortedList<Stakeholder> sortedStakeholders;
 
     public StakeholderMatrix(Project proj, ObservableList<QuestionOption> qOptList, ObservableList<QuestionYN> qYNList) {

@@ -10,17 +10,23 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.scene.image.Image;
 
 /**
  *
@@ -32,7 +38,7 @@ public class Project implements Serializable {
 
     public static final int NUM_STEPS = 6;
 
-    public static final int[] NUM_SUB_STEPS = {11, 8, 8, 4, 4, 5};
+    public static final int[] NUM_SUB_STEPS = {10, 8, 8, 4, 4, 5};
 
     // Project information
     private SimpleStringProperty name = new SimpleStringProperty();
@@ -41,6 +47,7 @@ public class Project implements Serializable {
     private SimpleStringProperty description = new SimpleStringProperty();
     private SimpleStringProperty limits = new SimpleStringProperty();
     private SimpleStringProperty urlLink = new SimpleStringProperty();
+    private ObjectProperty<Image> projPhoto = new SimpleObjectProperty<>();
 
     // Work Zone Metadata
     private StringProperty functionalClass = new SimpleStringProperty();
@@ -165,6 +172,18 @@ public class Project implements Serializable {
 
     public void setUrlLink(String newURL) {
         this.urlLink.set(newURL);
+    }
+
+    public Image getProjPhoto() {
+        return projPhoto.get();
+    }
+
+    public void setProjPhoto(Image value) {
+        projPhoto.set(value);
+    }
+
+    public ObjectProperty projPhotoProperty() {
+        return projPhoto;
     }
 
     public String getFunctionalClass() {
@@ -432,6 +451,12 @@ public class Project implements Serializable {
         return saveFile;
     }
 
+    public String getDateString() {
+        Date today = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+        return df.format(today);
+    }
+
     private void writeObject(ObjectOutputStream s) throws IOException {
         //s.defaultWriteObject();
         s.writeInt(getAadt());
@@ -446,6 +471,7 @@ public class Project implements Serializable {
         s.writeInt(getNumLanesClosed());
         s.writeInt(getNumRoadwayLanes());
         s.writeObject(getPatrollingAgency());
+        s.writeObject(getProjPhoto());
         s.writeObject(saveFile);
         s.writeDouble(getShoulderWidth());
         s.writeInt(getSpeedLimit());
@@ -485,6 +511,7 @@ public class Project implements Serializable {
         setNumLanesClosed(proj.getNumLanesClosed());
         setNumRoadwayLanes(proj.getNumRoadwayLanes());
         setPatrollingAgency(proj.getPatrollingAgency());
+        setProjPhoto(proj.getProjPhoto());
         saveFile = proj.getSaveFile();
         setShoulderWidth(proj.getShoulderWidth());
         setSpeedLimit(proj.getSpeedLimit());
@@ -527,6 +554,7 @@ public class Project implements Serializable {
         numLanesClosed = new SimpleIntegerProperty(s.readInt());
         numRoadwayLanes = new SimpleIntegerProperty(s.readInt());
         patrollingAgency = new SimpleStringProperty((String) s.readObject());
+        projPhoto = new SimpleObjectProperty<>((Image) s.readObject());
         saveFile = (File) s.readObject();
         shoulderWidth = new SimpleDoubleProperty(s.readDouble());
         speedLimit = new SimpleIntegerProperty(s.readInt());
@@ -862,13 +890,14 @@ public class Project implements Serializable {
     public SimpleDoubleProperty progressStake = new SimpleDoubleProperty(0.0);
 
     public static final int GOAL_WIZARD_SUMMARY_INDEX = 4; // Step 1
-    public static final int FEAS_WIZARD_SUMMARY_INDEX = 6; // Step 1
-    public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 8;  // Step 1
-    public static final int TEAM_SUMMARY_INDEX = 9; // Step 1
+    public static final int FEAS_WIZARD_SUMMARY_INDEX = 5; // Step 1
+    public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 7;  // Step 1
+    public static final int TEAM_SUMMARY_INDEX = 8; // Step 1
     public static final int APP_WIZARD_SUMMARY_INDEX = 1; // Step 2
 
     public static final String[][] STEP_NAMES = {
-        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Team Selection", "Team Members", "ITS Resources"},
+        //{"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Team Selection", "Team Members", "ITS Resources"},
+        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility Wizard", "Stakeholders", "SH Wizard & Team Selection", "Team Members", "ITS Resources"},
         {"Step 2", "Initial Applications", "Application Wizard", "Benefits", "Costs", "Institutional/Jurisdictional", "Legal/Policy", "Stakeholder Buy-In", "Develop Concept of Operations"},
         //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
         {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefity/Cost"},

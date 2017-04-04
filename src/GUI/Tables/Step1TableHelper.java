@@ -5,12 +5,20 @@
  */
 package GUI.Tables;
 
+import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
+import core.GoalNeedsMatrix;
+import core.Need;
 import core.Project;
 import core.Question;
 import core.QuestionOption;
 import core.QuestionYN;
+import core.Stakeholder;
+import core.StakeholderMatrix;
+import java.io.IOException;
+import java.util.ArrayList;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,9 +31,11 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -33,10 +43,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
@@ -249,7 +262,7 @@ public class Step1TableHelper {
 
     public static Node getITSResourcesPanel(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getITSResourcesQs(), new TableHelper.Options(STEP1_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qITSResourcesList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qITSResourcesList);
     }
 
     public static TableView getMajorGoalsTable(Project proj) {
@@ -424,6 +437,230 @@ public class Step1TableHelper {
         pane.getColumnConstraints().add(2, new ColumnConstraints(col3Width, col3Width, col3Width, Priority.NEVER, HPos.RIGHT, true));
 
         return pane;
+    }
+
+    public static Node createStepSummary(MainController mc) {
+        int lfs = 16;
+        final Project p = mc.getProject();
+        BorderPane bPane = new BorderPane();
+        bPane.getStyleClass().add("fact-sheet-pane");
+        bPane.setTop(NodeFactory.createFormattedLabel("Project Info and WZ Metadata", "fact-sheet-title-large"));
+        final GridPane infoGrid = new GridPane();
+        int infoC1Width = 115;
+        int rowIdx = 0;
+        infoGrid.add(NodeFactory.createFormattedLabel("State Agency:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedLabel(p.getAgency(), "fact-sheet-label"), 1, rowIdx++);
+        infoGrid.add(NodeFactory.createFormattedLabel("Analyst:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedLabel(p.getAnalyst(), "fact-sheet-label"), 1, rowIdx++);
+        infoGrid.add(NodeFactory.createFormattedLabel("Date:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedLabel(p.getDateString(), "fact-sheet-label"), 1, rowIdx++);
+        infoGrid.add(NodeFactory.createFormattedLabel("Project Name:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedLabel(p.getName(), "fact-sheet-label"), 1, rowIdx++);
+        infoGrid.add(NodeFactory.createFormattedLabel("Project Description:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedDescLabel(p.getDescription(), "fact-sheet-description", lfs, 4), 1, rowIdx++);
+        infoGrid.add(NodeFactory.createFormattedLabel("Project Limits:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedDescLabel(p.getLimits(), "fact-sheet-description", lfs, 4), 1, rowIdx++);
+        infoGrid.add(NodeFactory.createFormattedLabel("Project Website:", "fact-sheet-label-bold"), 0, rowIdx);
+        Hyperlink projHL = new Hyperlink(p.getUrlLink());
+        projHL.getStyleClass().add("fact-sheet-label-url");
+        projHL.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                try {
+                    Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        projHL.setMaxWidth(MainController.MAX_WIDTH);
+        projHL.setMaxHeight(MainController.MAX_HEIGHT);
+        infoGrid.add(projHL, 1, rowIdx++);
+
+        ColumnConstraints igcc1 = new ColumnConstraints(infoC1Width, infoC1Width, infoC1Width, Priority.NEVER, HPos.LEFT, true);
+        ColumnConstraints igcc2 = new ColumnConstraints(1, 100, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true);
+        infoGrid.getColumnConstraints().addAll(igcc1, igcc2);
+        infoGrid.setMaxWidth(500);
+
+        final GridPane wzMetaGrid = new GridPane();
+        rowIdx = 0;
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Work Zone Meta Data", "fact-sheet-label-bold"), 0, rowIdx, 1, 9);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Average Annual Daily Traffic:", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getAadt()), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Functional Class of Roadway:", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getFunctionalClass(), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Length of Work Zone (mi):", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getWzLength()), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Type of Work Zone:", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getWzType(), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Number of Lanes (1 Direction):", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getNumRoadwayLanes()), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Shoulder Width (ft):", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getShoulderWidth()), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Posted Speed Limit (mph):", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getSpeedLimit()), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Number of Lanes to be Closed:", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getNumLanesClosed()), "fact-sheet-label"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel("Duration of Activity:", "fact-sheet-label"), 1, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getActivityDuration()), "fact-sheet-label"), 2, rowIdx++);
+
+        ColumnConstraints wzgcc1 = new ColumnConstraints(infoC1Width, infoC1Width, infoC1Width, Priority.NEVER, HPos.LEFT, true);
+        ColumnConstraints wzgcc2 = new ColumnConstraints(275, 275, 275, Priority.ALWAYS, HPos.LEFT, true);
+        ColumnConstraints wzgcc3 = new ColumnConstraints(1, 100, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true);
+        wzMetaGrid.getColumnConstraints().addAll(wzgcc1, wzgcc2, wzgcc3);
+        wzMetaGrid.setMaxWidth(500);
+
+        ImageView projImage = new ImageView(p.getProjPhoto() != null ? p.getProjPhoto() : IconHelper.PROJ_IMAGE);
+        projImage.setPreserveRatio(true);
+//        final GridPane infoMetaGrid = new GridPane();
+//        infoMetaGrid.add(infoGrid, 0, 0);
+//        infoMetaGrid.add(wzMetaGrid, 0, 1);
+        final VBox infoMetaGrid = new VBox();
+        infoMetaGrid.getChildren().addAll(infoGrid, wzMetaGrid);
+        final GridPane infoAndPicGrid = new GridPane();
+        infoAndPicGrid.getStyleClass().add("fact-sheet-pane-info");
+//        DoubleBinding widthBinding = new DoubleBinding() {
+//            {
+//                super.bind(infoAndPicGrid.widthProperty());
+//            }
+//
+//            @Override
+//            protected double computeValue() {
+//                return infoAndPicGrid.widthProperty().get() - 505;
+//            }
+//        };
+//        projImage.fitWidthProperty().bind(widthBinding);
+//        DoubleBinding heightBinding = new DoubleBinding() {
+//            {
+//                super.bind(infoGrid.heightProperty());
+//                super.bind(wzMetaGrid.heightProperty());
+//            }
+//
+//            @Override
+//            protected double computeValue() {
+//                return infoGrid.heightProperty().get() + wzMetaGrid.heightProperty().get();
+//            }
+//        };
+//        projImage.fitHeightProperty().bind(heightBinding);
+        projImage.setFitHeight(350);
+        infoAndPicGrid.getStyleClass().add("fact-sheet-pane");
+        //infoMetaGrid.setStyle("-fx-background-color: green");
+        //infoAndPicGrid.setStyle("-fx-background-color: blue");
+        infoAndPicGrid.add(infoMetaGrid, 0, 0);
+        infoAndPicGrid.add(projImage, 1, 0);
+        infoAndPicGrid.getColumnConstraints().add(new ColumnConstraints(500, 500, 500, Priority.NEVER, HPos.LEFT, true));
+        infoAndPicGrid.getColumnConstraints().add(new ColumnConstraints(1, 500, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.CENTER, true));
+        //VBox.setVgrow(infoAndPicGrid, Priority.NEVER);
+
+        // Create recommended user goals
+        GoalNeedsMatrix gnm = p.getGoalNeedsMatrix();
+        gnm.computeScores();
+        // Mobility Goals
+        ArrayList<Need> ml = gnm.getGoalListByType(Question.GOAL_MOBILITY);
+        // Safety Goals
+        ArrayList<Need> sl = gnm.getGoalListByType(Question.GOAL_SAFETY);
+        // Productivity Goals
+        ArrayList<Need> pl = gnm.getGoalListByType(Question.GOAL_PROD);
+        // Regulatory Goals
+        ArrayList<Need> rl = gnm.getGoalListByType(Question.GOAL_REG);
+        // Traveler Information Goals
+        ArrayList<Need> tl = gnm.getGoalListByType(Question.GOAL_TRAVELER_INFO);
+        // Creating panel
+        GridPane goalsGrid = new GridPane();
+        goalsGrid.getStyleClass().add("fact-sheet-pane-goal");
+        goalsGrid.add(NodeFactory.createFormattedLabel("Category", "fact-sheet-title-small"), 0, 0);
+        goalsGrid.add(NodeFactory.createFormattedLabel("Recommended User Goals by WZITS Tool", "fact-sheet-title-small"), 1, 0);
+        goalsGrid.add(NodeFactory.createFormattedLabel("Score", "fact-sheet-title-small"), 2, 0);
+
+        rowIdx = 1;
+        goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_MOBILITY, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, ml.size());
+        for (Need n : ml) {
+            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+        }
+
+        goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_SAFETY, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, sl.size());
+        for (Need n : sl) {
+            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+        }
+
+        goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_PROD, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, pl.size());
+        for (Need n : pl) {
+            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+        }
+
+        goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_REG, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, rl.size());
+        for (Need n : rl) {
+            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+        }
+
+        goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_TRAVELER_INFO, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, tl.size());
+        for (Need n : tl) {
+            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+        }
+
+        goalsGrid.getColumnConstraints().add(new ColumnConstraints(infoC1Width, infoC1Width, infoC1Width, Priority.NEVER, HPos.CENTER, true));
+        goalsGrid.getColumnConstraints().add(new ColumnConstraints(1, infoC1Width, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.CENTER, true));
+        goalsGrid.getColumnConstraints().add(new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true));
+
+        // Feasibility
+        GridPane feasGrid = p.getFeasibilityMatrix().createSummaryPanel();
+        feasGrid.getStyleClass().add("fact-sheet-pane-feasibility");
+
+        // Team Members and Stake Holders
+        StakeholderMatrix sMat = p.getStakeholderMatrix();
+        sMat.computeStakeholders();
+        ArrayList<Stakeholder> coreTeam = new ArrayList();
+        ArrayList<Stakeholder> stakeholders = new ArrayList();
+        for (Stakeholder sh : sMat.stakeholders) {
+            if (sh.isCoreTeamMember()) {
+                coreTeam.add(sh);
+            } else if (sh.isStakeholder()) {
+                stakeholders.add(sh);
+            }
+        }
+
+        GridPane stakeGrid = new GridPane();
+        stakeGrid.add(NodeFactory.createFormattedLabel("Selected Team and Stakeholders", "fact-sheet-title-stake-grid"), 0, 0, 4, 1);
+        rowIdx = 1;
+        stakeGrid.add(NodeFactory.createFormattedLabel("#", "fact-sheet-title-core-team"), 0, rowIdx, 1, 1);
+        stakeGrid.add(NodeFactory.createFormattedLabel("Core Team Members", "fact-sheet-title-core-team"), 1, rowIdx, 1, 1);
+        stakeGrid.add(NodeFactory.createFormattedLabel("Email", "fact-sheet-title-core-team"), 2, rowIdx, 1, 1);
+        stakeGrid.add(NodeFactory.createFormattedLabel("Phone", "fact-sheet-title-core-team"), 3, rowIdx++, 1, 1);
+        for (Stakeholder sh : coreTeam) {
+            stakeGrid.add(NodeFactory.createFormattedLabel(String.valueOf(rowIdx - 1), "fact-sheet-label-core-team"), 0, rowIdx);
+            stakeGrid.add(NodeFactory.createFormattedLabel(sh.getName(), "fact-sheet-label-core-team"), 1, rowIdx);
+            stakeGrid.add(NodeFactory.createFormattedLabel(sh.getEmail(), "fact-sheet-label-core-team"), 2, rowIdx);
+            stakeGrid.add(NodeFactory.createFormattedLabel(sh.getPhone(), "fact-sheet-label-core-team"), 3, rowIdx++);
+        }
+        stakeGrid.add(NodeFactory.createFormattedLabel("#", "fact-sheet-title-stakeholder"), 0, rowIdx, 1, 1);
+        stakeGrid.add(NodeFactory.createFormattedLabel("Stakeholders", "fact-sheet-title-stakeholder"), 1, rowIdx, 1, 1);
+        stakeGrid.add(NodeFactory.createFormattedLabel("Email", "fact-sheet-title-stakeholder"), 2, rowIdx, 1, 1);
+        stakeGrid.add(NodeFactory.createFormattedLabel("Phone", "fact-sheet-title-stakeholder"), 3, rowIdx++, 1, 1);
+        for (Stakeholder sh : stakeholders) {
+            stakeGrid.add(NodeFactory.createFormattedLabel(String.valueOf(rowIdx - 1), "fact-sheet-label-stakeholder"), 0, rowIdx);
+            stakeGrid.add(NodeFactory.createFormattedLabel(sh.getName(), "fact-sheet-label-stakeholder"), 1, rowIdx);
+            stakeGrid.add(NodeFactory.createFormattedLabel(sh.getEmail(), "fact-sheet-label-stakeholder"), 2, rowIdx);
+            stakeGrid.add(NodeFactory.createFormattedLabel(sh.getPhone(), "fact-sheet-label-stakeholder"), 3, rowIdx++);
+        }
+
+        stakeGrid.getColumnConstraints().add(new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true));
+        stakeGrid.getColumnConstraints().add(new ColumnConstraints(1, 200, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
+        stakeGrid.getColumnConstraints().add(new ColumnConstraints(250, 250, 250, Priority.NEVER, HPos.CENTER, true));
+        stakeGrid.getColumnConstraints().add(new ColumnConstraints(150, 150, 150, Priority.NEVER, HPos.CENTER, true));
+
+        VBox factSheetVBox = new VBox();
+        factSheetVBox.getChildren().addAll(infoAndPicGrid, goalsGrid, feasGrid, stakeGrid);
+        ScrollPane sp = new ScrollPane();
+
+        bPane.setCenter(factSheetVBox);
+        sp.setContent(bPane);
+        //System.out.println("Here");
+        return sp;
     }
 
     private static TableView createStakeholderYNTable(Project proj) {

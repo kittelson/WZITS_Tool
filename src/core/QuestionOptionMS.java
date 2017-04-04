@@ -23,6 +23,7 @@ public class QuestionOptionMS extends QuestionOption implements Serializable {
 
     public QuestionOptionMS(int idx, String category, String text, String[] options) {
         super(idx, category, text, options, new int[options.length]);
+        this.commentQType = Question.COMMENT_QTYPE_OPT_MS;
         optionIsIncluded = new SimpleBooleanProperty[options.length];
         for (int i = 0; i < optionIsIncluded.length; i++) {
             optionIsIncluded[i] = new SimpleBooleanProperty(false);
@@ -31,6 +32,7 @@ public class QuestionOptionMS extends QuestionOption implements Serializable {
 
     public QuestionOptionMS(int idx, String category, String text, String[] opts, int[] scoresList) {
         super(idx, category, text, opts, scoresList);
+        this.commentQType = Question.COMMENT_QTYPE_OPT_MS;
         optionIsIncluded = new SimpleBooleanProperty[opts.length];
         for (int i = 0; i < optionIsIncluded.length; i++) {
             optionIsIncluded[i] = new SimpleBooleanProperty(false);

@@ -65,22 +65,22 @@ public class Step2TableHelper extends TableView {
 
     public static Node createInstJurNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qJurisdictionalList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qJurisdictionalList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qJurisdictionalList);
     }
 
     public static Node createLegalNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qLegalList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qLegalList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qLegalList);
     }
 
     public static Node createStakeholderBuyInNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qStakeholderBuyInList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qStakeholderBuyInList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qStakeholderBuyInList);
     }
 
     public static Node createConOpsNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qConOpsList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qConOpsList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qConOpsList);
     }
 
 }

@@ -23,6 +23,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -102,6 +103,12 @@ public class TableHelper {
                                 public void changed(ObservableValue<? extends Paint> ov, Paint oldVal, Paint newVal) {
                                     //tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
                                     tfe.getStyleClass().add(q.visibleProperty().get() ? "question-visible" : "question-hidden");
+                                }
+                            });
+                            newVal.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                                    tfe.setStyle(newVal ? "-fx-background-insets: 0, 1 0 1 0" : "-fx-background-insets: 0, 0 0 1 0");
                                 }
                             });
                         }
@@ -350,48 +357,74 @@ public class TableHelper {
         return table;
     }
 
-    public static Node createCommentQ(int idx, QuestionYN q) {
+    public static Node createCommentQ(int idx, Question q) {
         GridPane gPane = new GridPane();
         gPane.getStyleClass().add("comment-q-pane");
         Label idxLabel = NodeFactory.createFormattedLabel(String.valueOf(idx) + ":", "opt-pane-question-idx");
         Label qText = NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question");
-        GridPane subGrid = new GridPane();
-        CheckBox yesCheck = new CheckBox("Yes");
-        yesCheck.getStyleClass().add("comment-pane-checkbox");
-        yesCheck.selectedProperty().bindBidirectional(q.answerIsYesProperty());
-        CheckBox noCheck = new CheckBox("No");
-        noCheck.getStyleClass().add("comment-pane-checkbox");
-        noCheck.selectedProperty().bindBidirectional(q.answerIsNoProperty());
-
+        // Ensuring Components will grow
         GridPane.setVgrow(idxLabel, Priority.ALWAYS);
         GridPane.setVgrow(qText, Priority.ALWAYS);
-        GridPane.setVgrow(yesCheck, Priority.ALWAYS);
-        GridPane.setVgrow(noCheck, Priority.ALWAYS);
         GridPane.setHgrow(idxLabel, Priority.ALWAYS);
         GridPane.setHgrow(qText, Priority.ALWAYS);
-        GridPane.setHgrow(yesCheck, Priority.ALWAYS);
-        GridPane.setHgrow(noCheck, Priority.ALWAYS);
-
-        ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
-        ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
-        ColumnConstraints cc3 = new ColumnConstraints(85, 85, 85, Priority.NEVER, HPos.CENTER, true);
-        ColumnConstraints cc4 = new ColumnConstraints(85, 85, 85, Priority.NEVER, HPos.CENTER, true);
-
-        subGrid.getColumnConstraints().addAll(cc1, cc2, cc3, cc4);
-
+        // Adding components to sub gridpane
+        GridPane subGrid = new GridPane();
         subGrid.add(idxLabel, 0, 0);
         subGrid.add(qText, 1, 0);
-        subGrid.add(yesCheck, 2, 0);
-        subGrid.add(noCheck, 3, 0);
+        // Adding column constraints, idx is fixed, question text fills remaining space
+        ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
+
+        subGrid.getColumnConstraints().addAll(cc1, cc2);
+
+        switch (q.getCommentQType()) {
+            case Question.COMMENT_QTYPE_YN:
+                QuestionYN qyn = (QuestionYN) q;
+                CheckBox yesCheck = new CheckBox("Yes");
+                yesCheck.getStyleClass().add("comment-pane-checkbox");
+                yesCheck.selectedProperty().bindBidirectional(qyn.answerIsYesProperty());
+                CheckBox noCheck = new CheckBox("No");
+                noCheck.getStyleClass().add("comment-pane-checkbox");
+                noCheck.selectedProperty().bindBidirectional(qyn.answerIsNoProperty());
+                GridPane.setVgrow(yesCheck, Priority.ALWAYS);
+                GridPane.setVgrow(noCheck, Priority.ALWAYS);
+                GridPane.setHgrow(yesCheck, Priority.ALWAYS);
+                GridPane.setHgrow(noCheck, Priority.ALWAYS);
+                subGrid.add(yesCheck, 2, 0);
+                subGrid.add(noCheck, 3, 0);
+                ColumnConstraints ccY = new ColumnConstraints(85, 85, 85, Priority.NEVER, HPos.CENTER, true);
+                ColumnConstraints ccN = new ColumnConstraints(85, 85, 85, Priority.NEVER, HPos.CENTER, true);
+                subGrid.getColumnConstraints().addAll(ccY, ccN);
+                break;
+            case Question.COMMENT_QTYPE_OPT:
+                QuestionOption qo = (QuestionOption) q;
+                ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(qo.getOptions()));
+                cb.setMaxWidth(MainController.MAX_WIDTH);
+                GridPane.setHgrow(cb, Priority.ALWAYS);
+                GridPane.setVgrow(cb, Priority.ALWAYS);
+                if (qo.getResponseIdx() >= 0) {
+                    cb.getSelectionModel().select(idx);
+                }
+                qo.responseIdxProperty().bind(cb.getSelectionModel().selectedIndexProperty());
+                subGrid.add(cb, 2, 0);
+                ColumnConstraints ccChoice = new ColumnConstraints(350, 350, 350, Priority.NEVER, HPos.CENTER, true);
+                subGrid.getColumnConstraints().add(ccChoice);
+                break;
+            case Question.COMMENT_QTYPE_NA:
+                // Do Nothing
+                break;
+        }
 
         TextArea commentPane = new TextArea();
-        commentPane.setPromptText("Enter additional comments here...");
+        commentPane.setPromptText(q.getCommentPrompt());
         commentPane.textProperty().bindBidirectional(q.commentProperty());
         GridPane.setMargin(commentPane, new Insets(0, 10, 5, 10));
         commentPane.setMinHeight(20);
+        //commentPane.setPrefRowCount(5);
+        commentPane.setMaxHeight(100);
 
         RowConstraints rc1 = new RowConstraints(40, 40, 40, Priority.NEVER, VPos.BASELINE, true);
-        RowConstraints rc2 = new RowConstraints(1, 120, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true);
+        RowConstraints rc2 = new RowConstraints(1, 120, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.TOP, true);
         gPane.getRowConstraints().addAll(rc1, rc2);
 
         gPane.add(subGrid, 0, 0);
@@ -402,7 +435,25 @@ public class TableHelper {
         return gPane;
     }
 
-    public static Node createCommentPage(ObservableList<QuestionYN> qList) {
+    public static Node createCommentPage(ObservableList<Question> qList) {
+        GridPane gPane = new GridPane();
+
+        for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
+            Node n = createCommentQ(qIdx + 1, qList.get(qIdx));
+            gPane.add(n, 0, qIdx);
+            RowConstraints rc = new RowConstraints();
+            rc.setPercentHeight(1.0 / qList.size() * 100.0);
+            gPane.getRowConstraints().add(rc);
+            GridPane.setHgrow(n, Priority.ALWAYS);
+        }
+
+        BorderPane bPane = new BorderPane();
+        bPane.setTop(NodeFactory.createFormattedLabel("Answer the following questions and enter any comments as necessary.", "opt-pane-title"));
+        bPane.setCenter(gPane);
+        return bPane;
+    }
+
+    public static Node createCommentPageYN(ObservableList<QuestionYN> qList) {
         GridPane gPane = new GridPane();
 
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {

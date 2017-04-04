@@ -21,42 +21,42 @@ public class Step3TableHelper extends TableView {
 
     public static Node createConOpsNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qConOpsList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qConOpsList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qConOpsList);
     }
 
     public static Node createSysReqNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSysReqList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qSysReqList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qSysReqList);
     }
 
     public static Node createTestingStratNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qTestingStratList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qTestingStratList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qTestingStratList);
     }
 
     public static Node createOpsMaintNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qOpsMaintList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qOpsMaintList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qOpsMaintList);
     }
 
     public static Node createStaffTrainingNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qStaffTrainingList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qStaffTrainingList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qStaffTrainingList);
     }
 
     public static Node createSysSecurityNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSysSecurityList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qSysSecurityList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qSysSecurityList);
     }
 
     public static Node createProjEvalNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qProjectEvalList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qProjectEvalList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qProjectEvalList);
     }
 
     public static Node createSysBCNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSysBCList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qSysBCList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qSysBCList);
     }
 
 }

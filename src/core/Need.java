@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -27,8 +29,9 @@ public class Need implements Serializable {
     private SimpleStringProperty goal;
 
     private SimpleIntegerProperty score = new SimpleIntegerProperty(-1);
+    private BooleanProperty selected = new SimpleBooleanProperty(false);
 
-    private boolean isPlaceholder;
+    public boolean isPlaceholder;
 
     public Need(String goal, String description) {
         this(goal, description, false);
@@ -76,11 +79,24 @@ public class Need implements Serializable {
         return score;
     }
 
+    public boolean isSelected() {
+        return selected.get();
+    }
+
+    public void setSelected(boolean value) {
+        selected.set(value);
+    }
+
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+
     private void writeObject(ObjectOutputStream s) throws IOException {
         s.writeObject(getDescription());
         s.writeObject(getGoal());
         s.writeBoolean(isPlaceholder);
         s.writeInt(getScore());
+        s.writeBoolean(isSelected());
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
@@ -88,10 +104,11 @@ public class Need implements Serializable {
         goal = new SimpleStringProperty((String) s.readObject());
         isPlaceholder = s.readBoolean();
         score = new SimpleIntegerProperty(s.readInt());
+        selected = new SimpleBooleanProperty(s.readBoolean());
     }
 
     public static final ObservableList<Need> GOAL_WIZARD_NEEDS_LIST = FXCollections.observableArrayList(
-            new Need(Question.GOAL_MOBILITY, "Reduce daily peek period delays to XX minutes"),
+            new Need(Question.GOAL_MOBILITY, "Reduce daily peak period delays to XX minutes"),
             new Need(Question.GOAL_MOBILITY, "Facilitate the movement of emergency and construction vehicles through the work zone"),
             new Need(Question.GOAL_MOBILITY, "Reduce the number of single-vehicle trips through the work zone"),
             new Need(Question.GOAL_MOBILITY, "Reduce variability of travel times"),

@@ -22,6 +22,15 @@ public class NodeFactory {
         return lbl;
     }
 
+    public static Label createFormattedDescLabel(String text, String formatStyle, int fontSize, int numLines) {
+        Label lbl = new Label(text);
+        lbl.setMaxWidth(MainController.MAX_WIDTH);
+        lbl.setMinHeight(numLines * (fontSize + 2));
+        lbl.setMaxHeight(numLines * (fontSize + 2));
+        lbl.getStyleClass().add(formatStyle);
+        return lbl;
+    }
+
     public static int NAVIGATOR_MAX_WIDTH = 200;
 
 }

@@ -36,8 +36,8 @@ public class WZITS_FX extends Application {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int maxScreenWidth = gd.getDisplayMode().getWidth();
         int maxScreenHeight = gd.getDisplayMode().getHeight();
-        primaryStage.setMinHeight(Math.min(maxScreenHeight, 750));
-        primaryStage.setMinWidth(Math.min(maxScreenWidth, 1100));
+        primaryStage.setMinHeight(Math.min(maxScreenHeight, 600));
+        primaryStage.setMinWidth(Math.min(maxScreenWidth, 800));
         primaryStage.setMaxHeight(maxScreenHeight);
         primaryStage.setMaxWidth(maxScreenWidth);
 

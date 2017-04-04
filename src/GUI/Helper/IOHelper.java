@@ -47,7 +47,7 @@ public class IOHelper {
     public static int saveAsProject(MainController mc, Project proj) {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save WZITS Tool Project");
-        fc.getExtensionFilters().add(new ExtensionFilter("WZITS Project File (.wzp)", ".wzp"));
+        fc.getExtensionFilters().add(new ExtensionFilter("WZITS Project File (.wzp)", "*.wzp"));
         File saveFile = fc.showSaveDialog(mc.getWindow());  //mc.getMainWindow()
         if (saveFile != null) {
             try {
@@ -72,7 +72,7 @@ public class IOHelper {
     public static Project openProject(MainController mc) {
         FileChooser fc = new FileChooser();
         fc.setTitle("Open WZITS Tool Project");
-        fc.getExtensionFilters().add(new ExtensionFilter("WZITS Project File (.wzp)", ".wzp"));
+        fc.getExtensionFilters().add(new ExtensionFilter("WZITS Project File (.wzp)", "*.wzp"));
         File openFile = fc.showOpenDialog(null);
         Project proj = null;
         if (openFile != null) {

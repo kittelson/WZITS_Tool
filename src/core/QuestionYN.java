@@ -37,9 +37,14 @@ public class QuestionYN extends Question implements Serializable {
 
     public QuestionYN(int idx, String goal, String questionText, boolean isYes, int weightVal) {
         super(idx, goal, questionText);
+        this.commentQType = Question.COMMENT_QTYPE_YN;
         this.weight = weightVal;
 
         answerIsYes.set(isYes);
+        bindProperties();
+    }
+
+    private void bindProperties() {
         answerIsYes.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
@@ -157,6 +162,8 @@ public class QuestionYN extends Question implements Serializable {
         answerIsNo = new SimpleBooleanProperty(s.readBoolean());
         score = new SimpleIntegerProperty(s.readInt());
         weight = s.readInt();
+
+        bindProperties();
     }
 
 }

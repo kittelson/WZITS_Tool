@@ -23,27 +23,27 @@ public class Step6TableHelper extends TableView {
 
     public static Node createChangingConditionsNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qChangingConditionsList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qChangingConditionsList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qChangingConditionsList);
     }
 
     public static Node createSharingInfoNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSharingInfoList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qSharingInfoList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qSharingInfoList);
     }
 
     public static Node createStaffingNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qStaffingList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qStaffingList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qStaffingList);
     }
 
     public static Node createPublicSupportNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qPublicSupportList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qPublicSupportList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qPublicSupportList);
     }
 
     public static Node createMonitoringEvalNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qMonitoringEvalList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPage(proj.getQGen().qMonitoringEvalList);
+        return TableHelper.createCommentPageYN(proj.getQGen().qMonitoringEvalList);
     }
 
 }

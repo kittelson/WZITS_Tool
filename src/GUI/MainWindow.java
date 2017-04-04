@@ -239,7 +239,6 @@ public class MainWindow extends BorderPane {
             this.setCenter(launch);
         } else {
             this.begin();
-            //control.stepForward();
         }
 
     }

@@ -35,6 +35,8 @@ public abstract class Question implements Serializable {
     protected BooleanProperty locked = new SimpleBooleanProperty();
     private StringProperty refText = new SimpleStringProperty();
     private StringProperty comment = new SimpleStringProperty();
+    private String commentPrompt = "Enter additional comments here...";
+    protected int commentQType = COMMENT_QTYPE_NA;
 
     public Question(int idx, String goal, String questionText) {
         this(idx, goal, questionText, -1);
@@ -45,15 +47,6 @@ public abstract class Question implements Serializable {
         this.goal = new SimpleStringProperty(goal);
         this.questionText = new SimpleStringProperty(questionTxt);
         this.responseIdx = new SimpleIntegerProperty(responseIdx);
-        this.visibleProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                //System.out.println("Visibility Changed");
-                //if (newVal == false) {
-                //    questionText.set(questionText.get() + LOCKED_TEXT);
-                //}
-            }
-        });
     }
 
     public int getIdx() {
@@ -176,6 +169,22 @@ public abstract class Question implements Serializable {
         return comment;
     }
 
+    public String getCommentPrompt() {
+        return this.commentPrompt;
+    }
+
+    public void setCommentPrompt(String newPrompt) {
+        this.commentPrompt = newPrompt;
+    }
+
+    public int getCommentQType() {
+        return this.commentQType;
+    }
+
+    public void setCommentQType(int newCommentQType) {
+        this.commentQType = newCommentQType;
+    }
+
     private void writeObject(ObjectOutputStream s) throws IOException {
         s.writeObject(getComment());
         s.writeBoolean(isDependant());
@@ -187,6 +196,8 @@ public abstract class Question implements Serializable {
         s.writeObject(getRefText());
         s.writeInt(getResponseIdx());
         s.writeBoolean(isVisible());
+        s.writeObject(commentPrompt);
+        s.writeInt(commentQType);
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
@@ -200,6 +211,8 @@ public abstract class Question implements Serializable {
         refText = new SimpleStringProperty((String) s.readObject());
         responseIdx = new SimpleIntegerProperty(s.readInt());
         visible = new SimpleBooleanProperty(s.readBoolean());
+        commentPrompt = (String) s.readObject();
+        commentQType = s.readInt();
     }
 
     public static IntegerStringConverter yesNoConverter = new IntegerStringConverter() {
@@ -243,5 +256,10 @@ public abstract class Question implements Serializable {
     public static final String GOAL_DOCUMENTATION = "Documentation";
 
     public static final String LOCKED_TEXT = " (Locked)";
+
+    public static final int COMMENT_QTYPE_NA = -1;
+    public static final int COMMENT_QTYPE_YN = 0;
+    public static final int COMMENT_QTYPE_OPT = 1;
+    public static final int COMMENT_QTYPE_OPT_MS = 2;
 
 }

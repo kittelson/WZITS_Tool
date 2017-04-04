@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import GUI.Helper.ColorHelper;
 import GUI.Helper.IOHelper;
 import core.Project;
 import java.util.Optional;
@@ -15,7 +16,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -193,11 +196,25 @@ public class MainController {
 
     public void newProjectOpened() {
         stage.hide();
+        Alert al = new Alert(Alert.AlertType.NONE);
+        al.setTitle("Please Wait");
+        al.setHeaderText("Loading WZITS Project...");
+        ProgressBar ipb = new ProgressBar(1.0);
+        ipb.setStyle("-fx-accent: " + ColorHelper.WZ_ORANGE);
+        al.setGraphic(ipb);
+        al.getButtonTypes().add(ButtonType.OK);
+        Button cancelButton = (Button) al.getDialogPane().lookupButton(ButtonType.OK);
+        al.show();
         stage.setMaximized(true);
         Scene newScene = new Scene(new MainWindow(this, false));
         newScene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         stage.setScene(newScene);
+
         stage.show();
+        cancelButton.fire();
+        selectStep(-1);
+        selectStep(0, 0);
+
     }
 
     public double getAppWidth() {

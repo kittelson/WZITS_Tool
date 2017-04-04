@@ -155,7 +155,9 @@ public class Step6Panel extends BorderPane {
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-        stepReportPane.setCenter(new BorderPane());
+        Label tempSummaryLabel = new Label("Step 6 Summary Panel Under Development");
+        tempSummaryLabel.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
+        stepReportPane.setCenter(tempSummaryLabel);
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         mainVBox.getChildren().addAll(allSubStepsPane);

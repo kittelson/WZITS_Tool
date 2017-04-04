@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -225,6 +226,21 @@ public class GoalNeedsMatrix implements Serializable {
         summary.setPlaceholder(new Label("Steps 1.2 - 1.4 must be completed to view."));
 
         return summary;
+    }
+
+    public ArrayList<Need> getGoalListByType(String goalType) {
+        //computeScores();
+        final ArrayList<Need> al = new ArrayList();
+        if (this.includeGoalCat.get(goalType).get()) {
+            for (Need n : needsList) {
+                if (n.getGoal().equalsIgnoreCase(goalType) && !n.isPlaceholder) {
+                    al.add(n);
+                }
+            }
+        } else {
+            al.add(new Need(goalType, "No recommended goals"));
+        }
+        return al;
     }
 
 //    public TableView createSummarySpanTable() {

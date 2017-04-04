@@ -75,7 +75,7 @@ public class QuestionGenerator implements Serializable {
     /**
      *
      */
-    public ObservableList<QuestionYN> qCostList;
+    public ObservableList<Question> qCostList;
 
     /**
      *
@@ -433,8 +433,16 @@ public class QuestionGenerator implements Serializable {
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Will work zone activities disable ramp meters (Select No if not applicable)?"));
         refQ = this.disableRampMetersQ; //  GW#19 Will work zone activities disable ramp meters?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #19");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will this work zone have reduced lane widths or reduced sight distance impact?"));
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will the work zone result in closure of emergency shoulders?"));
+        refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #15");
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Is the work zone located on an emergency response corridor?"));
+        refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Stakeholder #6");
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Does the corridor have a frequent crash problem?"));
+        //qApplicationList.get(qIdx - 2).visibleProperty().bind(proj.crashDataAvailableProperty());
         // Redundent on GW#4 = Yes or GW#5 = Yes
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will this work zone have reduced lane widths or reduced sight distance impact?"));
         BooleanBinding bb = new BooleanBinding() {
 
             {
@@ -448,20 +456,7 @@ public class QuestionGenerator implements Serializable {
             }
         };
         qApplicationList.get(qApplicationList.size() - 1).setLocked(true);
-        qApplicationList.get(qApplicationList.size() - 1).setRedundant(true);
-        qApplicationList.get(qApplicationList.size() - 1).setRefText("User Needs #4&#5");
-        qApplicationList.get(qApplicationList.size() - 1).answerIsYesProperty().bind(bb);
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will the work zone result in closure of emergency shoulders?"));
-        refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #15");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Is the work zone located on an emergency response corridor?"));
-        refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Stakeholder #6");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Does the corridor have a frequent crash problem?"));
-        qApplicationList.get(qIdx - 2).visibleProperty().bind(proj.crashDataAvailableProperty());
-        // Redundent on GW#4 = Yes or GW#5 = Yes
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will this work zone have reduced lane widths or reduced sight distance impact?"));
-        qApplicationList.get(qApplicationList.size() - 1).setLocked(true);
+        qApplicationList.get(qApplicationList.size() - 1).setVisible(false);
         qApplicationList.get(qApplicationList.size() - 1).setRedundant(true);
         qApplicationList.get(qApplicationList.size() - 1).setRefText("User Needs #4&#5");
         qApplicationList.get(qApplicationList.size() - 1).answerIsYesProperty().bind(bb);
@@ -541,6 +536,7 @@ public class QuestionGenerator implements Serializable {
         qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "Will the work zone require lane closures? (Specified in WZ Metadata)",
                 new String[]{"Yes", "No"}));
         final QuestionOption numLanesQ = qStakeholderOptionList.get(qStakeholderOptionList.size() - 1);
+        numLanesQ.setResponseIdx(proj.getNumLanesClosed() > 0 ? 0 : 1);
         proj.numLanesClosedProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
@@ -586,15 +582,26 @@ public class QuestionGenerator implements Serializable {
         };
         this.qBenefitList.add(new QuestionOptionMS(qIdx++, Question.GOAL_DOCUMENTATION, "What will the WZITS be used for?", benefitOpts));
         // Costs
-        this.qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of sensors will be deployed?"));
-        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of portable variable message signs will be deployed?"));
-        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How many / what type of cameras will be deployed?"));
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will any sensors be deployed?"));
+        qCostList.get(qCostList.size() - 1).setCommentPrompt("How many / what type?  Additional comments...");
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will portable variable message signs will be deployed?"));
+        qCostList.get(qCostList.size() - 1).setCommentPrompt("How many / what type?  Additional comments...");
+        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will cameras will be deployed?"));
+        qCostList.get(qCostList.size() - 1).setCommentPrompt("How many / what type?  Additional comments...");
         qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Which ITS devices will be rented/leased?"));
+        qCostList.get(qCostList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
+        qCostList.get(qCostList.size() - 1).setCommentPrompt("Describe...");
         qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Which ITS devices will be purchased?"));
+        qCostList.get(qCostList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
+        qCostList.get(qCostList.size() - 1).setCommentPrompt("Describe...");
         qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Who will maintain and calibrate the system?"));
+        qCostList.get(qCostList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
+        qCostList.get(qCostList.size() - 1).setCommentPrompt("Describe...");
         qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have system goals, objectives and a concept of operations been defined?"));
-        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How much time is scheduled for SWZ set-up?"));
-        qCostList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Stand-alone or customized software to manage the SWZ?"));
+        qCostList.add(new QuestionOption(qIdx++, Question.GOAL_DOCUMENTATION, "How much time is scheduled for smart work zone set-up?",
+                new String[]{"<1 Week", "1-4 Weeks", "4-12 Weeks", "12-25 Weeks", "25+ Weeks"}));
+        qCostList.add(new QuestionOption(qIdx++, Question.GOAL_DOCUMENTATION, "What type of software will be to manage the smart work zone?",
+                new String[]{"Standalone", "Customizable", "N/A"}));
         // Institutional/Jurisdictional
         this.qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient funding been provided in the construction contract for the work zone?"));
         qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is your agency relunctant to adopt smart work zone ITS?"));
@@ -770,14 +777,14 @@ public class QuestionGenerator implements Serializable {
     }
 
     private void connectStakeholderProgress() {
-        final int numRequiredQs = 2 + this.qStakeholderYNList.size(); // + this.qStakeholderOptionList.size();
+        final int numRequiredQs = 3 + this.qStakeholderYNList.size(); // + this.qStakeholderOptionList.size();
         proj.functionalClassProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
                 if (newVal.equalsIgnoreCase("Select")) {
                     if (proj.progressStake.get() > 0) {
                         proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
                     }
-                } else if (oldVal != null && oldVal.equalsIgnoreCase("Select")) {
+                } else if (oldVal == null || oldVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
                 }
                 proj.getStakeholderMatrix().computeStakeholders();
@@ -787,7 +794,33 @@ public class QuestionGenerator implements Serializable {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
                 if (newVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
-                } else if (oldVal != null && oldVal.equalsIgnoreCase("Select")) {
+                } else if (oldVal == null || oldVal.equalsIgnoreCase("Select")) {
+                    proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
+                }
+                proj.getStakeholderMatrix().computeStakeholders();
+            }
+        });
+        if (proj.getNumLanesClosed() > 0) {
+            proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
+        }
+        proj.numLanesClosedProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (newVal.intValue() <= 0) {
+                    proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
+                } else {
+                    proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
+                }
+                proj.getStakeholderMatrix().computeStakeholders();
+            }
+        });
+        proj.patrollingAgencyProperty().addListener(new ChangeListener<String>() {
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                if (newVal.equalsIgnoreCase("Select")) {
+                    if (proj.progressStake.get() > 0) {
+                        proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
+                    }
+                } else if (oldVal == null || oldVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
                 }
                 proj.getStakeholderMatrix().computeStakeholders();
@@ -930,6 +963,7 @@ public class QuestionGenerator implements Serializable {
         bindRedundantQs(qStakeholderYNList.get(16), this.travelerInfoGoalQ, "Major Goals #5");
         proj.patrollingAgencyProperty().bindBidirectional(qStakeholderOptionList.get(0).answerStringProperty());
         final QuestionOption numLanesQ = qStakeholderOptionList.get(1);
+        numLanesQ.setResponseIdx(proj.getNumLanesClosed() > 0 ? 0 : 1);
         proj.numLanesClosedProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
@@ -969,6 +1003,11 @@ public class QuestionGenerator implements Serializable {
         bindRedundantQs(qApplicationList.get(7), refQ, "User Needs #16");
         refQ = this.disableRampMetersQ; //  GW#19 Will work zone activities disable ramp meters?
         bindRedundantQs(qApplicationList.get(8), refQ, "User Needs #19");
+        refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
+        bindRedundantQs(qApplicationList.get(9), refQ, "User Needs #15");
+        refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
+        bindRedundantQs(qApplicationList.get(10), refQ, "Stakeholder #6");
+        //qApplicationList.get(11).visibleProperty().bind(proj.crashDataAvailableProperty());
         // Redundent on GW#4 = Yes or GW#5 = Yes
         BooleanBinding bb = new BooleanBinding() {
 
@@ -982,38 +1021,30 @@ public class QuestionGenerator implements Serializable {
                 return reducedLaneWidthQ.getAnswerIsYes() || reducedSightDistanceQ.getAnswerIsYes();
             }
         };
-        qApplicationList.get(9).setLocked(true);
-        qApplicationList.get(9).setRedundant(true);
-        qApplicationList.get(9).setRefText("User Needs #4&#5");
-        qApplicationList.get(9).answerIsYesProperty().bind(bb);
-        refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
-        bindRedundantQs(qApplicationList.get(10), refQ, "User Needs #15");
-        refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
-        bindRedundantQs(qApplicationList.get(11), refQ, "Stakeholder #6");
-        qApplicationList.get(12).visibleProperty().bind(proj.crashDataAvailableProperty());
-        qApplicationList.get(13).setLocked(true);
-        qApplicationList.get(13).setRedundant(true);
-        qApplicationList.get(13).setRefText("User Needs #4&#5");
-        qApplicationList.get(13).answerIsYesProperty().bind(bb);
+        qApplicationList.get(12).setLocked(true);
+        qApplicationList.get(12).setVisible(false);
+        qApplicationList.get(12).setRedundant(true);
+        qApplicationList.get(12).setRefText("User Needs #4&#5");
+        qApplicationList.get(12).answerIsYesProperty().bind(bb);
         refQ = this.rampGeometryQ; // GW#18 Will temporary ramp geometry constrain acceleration lanes?
-        bindRedundantQs(qApplicationList.get(14), refQ, "User Needs #18");
+        bindRedundantQs(qApplicationList.get(13), refQ, "User Needs #18");
         refQ = this.constructionVehAccessQ; //
         //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #8");
-        bindRedundantQs(qApplicationList.get(15), refQ, "User Needs #9");
+        bindRedundantQs(qApplicationList.get(14), refQ, "User Needs #9");
         refQ = this.highVolumeConstructionVehsQ; // GW#17 Will there be a high volume of construction vehicles?
-        bindRedundantQs(qApplicationList.get(17), refQ, "User Needs #8");
+        bindRedundantQs(qApplicationList.get(16), refQ, "User Needs #8");
         refQ = this.allowAutomatedSpeedEnforcementQ; // Same as GW#15 Does state law allow use of automated speed enforcement in WZs?
-        bindRedundantQs(qApplicationList.get(19), refQ, "User Needs #17");
+        bindRedundantQs(qApplicationList.get(18), refQ, "User Needs #17");
         refQ = this.specificAgencyPoliciesQ; // GW#9 Are there specific agency policies for work zones as required by the WZ safety and mobility rule?
-        bindRedundantQs(qApplicationList.get(20), refQ, "User Needs #10");
+        bindRedundantQs(qApplicationList.get(19), refQ, "User Needs #10");
         refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zones?
-        bindRedundantQs(qApplicationList.get(21), refQ, "User Needs #11");
+        bindRedundantQs(qApplicationList.get(20), refQ, "User Needs #11");
         refQ = this.mobilityGoalQ; // Is there a mobility goal?
-        bindRedundantQs(qApplicationList.get(22), refQ, "Major Goals #1");
+        bindRedundantQs(qApplicationList.get(21), refQ, "Major Goals #1");
         refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
-        bindRedundantQs(qApplicationList.get(23), refQ, "User Needs #20");
+        bindRedundantQs(qApplicationList.get(22), refQ, "User Needs #20");
         refQ = this.outreachTravelerInfoQ; // GW#11 Will outreach and traveler information be used for this work zone?
-        bindRedundantQs(qApplicationList.get(24), refQ, "User Needs #12");
+        bindRedundantQs(qApplicationList.get(23), refQ, "User Needs #12");
 
     }
 
@@ -1024,7 +1055,7 @@ public class QuestionGenerator implements Serializable {
         s.writeObject(this.qBenefitList.toArray(new QuestionOptionMS[qBenefitList.size()]));
         s.writeObject(this.qChangingConditionsList.toArray(new QuestionYN[qChangingConditionsList.size()]));
         s.writeObject(this.qConOpsList.toArray(new QuestionYN[qConOpsList.size()]));
-        s.writeObject(this.qCostList.toArray(new QuestionYN[qCostList.size()]));
+        s.writeObject(this.qCostList.toArray(new Question[qCostList.size()]));
         s.writeObject(this.qDeploymentIssuesList.toArray(new QuestionYN[qDeploymentIssuesList.size()]));
         s.writeObject(this.qDirectIndirectList.toArray(new QuestionYN[qDirectIndirectList.size()]));
         s.writeObject(this.qFeasOptionList.toArray(new QuestionOption[qFeasOptionList.size()]));
@@ -1063,7 +1094,7 @@ public class QuestionGenerator implements Serializable {
         this.qBenefitList = FXCollections.observableArrayList((QuestionOptionMS[]) s.readObject());
         this.qChangingConditionsList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
         this.qConOpsList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
-        this.qCostList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
+        this.qCostList = FXCollections.observableArrayList((Question[]) s.readObject());
         this.qDeploymentIssuesList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
         this.qDirectIndirectList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
         this.qFeasOptionList = FXCollections.observableArrayList((QuestionOption[]) s.readObject());

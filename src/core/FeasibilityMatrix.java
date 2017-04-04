@@ -6,14 +6,10 @@
 package core;
 
 import GUI.Helper.NodeFactory;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
@@ -31,8 +27,8 @@ public class FeasibilityMatrix implements Serializable {
 
     private SimpleIntegerProperty feasibility = new SimpleIntegerProperty(0);
 
-    private ObservableList<QuestionOption> qFeasOptList;
-    private ObservableList<QuestionYN> qFeasYNList;
+    private final ObservableList<QuestionOption> qFeasOptList;
+    private final ObservableList<QuestionYN> qFeasYNList;
 
     public FeasibilityMatrix(ObservableList<QuestionOption> qFeasOptList, ObservableList<QuestionYN> qFeasYNList) {
         this.qFeasOptList = qFeasOptList;

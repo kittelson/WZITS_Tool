@@ -70,9 +70,9 @@ public class FlowBar extends BorderPane {
     private final Button step1Sub6Button = new Button(Project.STEP_NAMES[0][6]);
     private final Button step1Sub7Button = new Button(Project.STEP_NAMES[0][7]);
     private final Button step1Sub8Button = new Button(Project.STEP_NAMES[0][8]);
-    private final Button step1Sub9Button = new Button("SH Wizard & Team Selection"); //Project.STEP_NAMES[0][9]
+    private final Button step1Sub9Button = new Button(Project.STEP_NAMES[0][9]); //
     private final Button step1Sub10Button = new Button(Project.STEP_NAMES[0][10]);
-    private final Button step1Sub11Button = new Button(Project.STEP_NAMES[0][11]);
+    //private final Button step1Sub11Button = new Button(Project.STEP_NAMES[0][11]);
     private final Button step1ReportButton = new Button("Step 1 Report");
 
     private final Button step2Sub1Button = new Button(Project.STEP_NAMES[1][1]);
@@ -211,7 +211,7 @@ public class FlowBar extends BorderPane {
         step1List.add(step1Sub8Button);
         step1List.add(step1Sub9Button);
         step1List.add(step1Sub10Button);
-        step1List.add(step1Sub11Button);
+        //step1List.add(step1Sub11Button);
         step1List.add(step1ReportButton);
 
         step2List.add(step2Button);
@@ -282,7 +282,7 @@ public class FlowBar extends BorderPane {
         allButtonList.add(step1Sub8Button);
         allButtonList.add(step1Sub9Button);
         allButtonList.add(step1Sub10Button);
-        allButtonList.add(step1Sub11Button);
+        //allButtonList.add(step1Sub11Button);
         allButtonList.add(step1ReportButton);
 
         allButtonList.add(step2Button);
@@ -705,7 +705,7 @@ public class FlowBar extends BorderPane {
         step1Sub8Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(7).stepStartedProperty().not());
         //step1Sub9Button.disableProperty().bind(control.getProject().progressStake.lessThan(1.0));
         step1Sub10Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(9).stepStartedProperty().not());
-        step1Sub11Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(10).stepStartedProperty().not());
+        //step1Sub11Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(10).stepStartedProperty().not());
 
         control.activeSubStepProperty(1).addListener(new ChangeListener() {
             @Override

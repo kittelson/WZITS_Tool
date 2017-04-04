@@ -36,8 +36,13 @@ public class QuestionOption extends Question implements Serializable {
 
     public QuestionOption(int idx, String category, String text, String[] opts, int[] scoresList) {
         super(idx, category, text);
+        this.commentQType = Question.COMMENT_QTYPE_OPT;
         this.options = opts;
         this.scores = scoresList;
+        bindProperties();
+    }
+
+    private void bindProperties() {
         responseIdx.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
@@ -122,5 +127,7 @@ public class QuestionOption extends Question implements Serializable {
         options = (String[]) s.readObject();
         score = new SimpleIntegerProperty(s.readInt());
         scores = (int[]) s.readObject();
+
+        bindProperties();
     }
 }
