@@ -301,11 +301,11 @@ public class GoalNeedsMatrix implements Serializable {
 
             }
         }
-        this.topMobilityGoal.set(topMobNeed != null ? topMobNeed.getDescription() : "No mobility goals selected by user.");
-        this.topProdGoal.set(topProdNeed != null ? topProdNeed.getDescription() : "No productivity goals selected by user.");
-        this.topRegGoal.set(topRegNeed != null ? topRegNeed.getDescription() : "No regulatory goals selected by user.");
-        this.topSafetyGoal.set(topSafetyNeed != null ? topSafetyNeed.getDescription() : "No safety goals selected by user.");
-        this.topTIGoal.set(topTINeed != null ? topTINeed.getDescription() : "No traveler goals selected by user.");
+        this.topMobilityGoal.set(topMobNeed != null ? topMobNeed.getDescription() : "No mobility goals selected by user (See Goal Wizard in Step 1).");
+        this.topProdGoal.set(topProdNeed != null ? topProdNeed.getDescription() : "No productivity goals selected by user(See Goal Wizard in Step 1).");
+        this.topRegGoal.set(topRegNeed != null ? topRegNeed.getDescription() : "No regulatory goals selected by user(See Goal Wizard in Step 1).");
+        this.topSafetyGoal.set(topSafetyNeed != null ? topSafetyNeed.getDescription() : "No safety goals selected by user(See Goal Wizard in Step 1).");
+        this.topTIGoal.set(topTINeed != null ? topTINeed.getDescription() : "No traveler goals selected by user(See Goal Wizard in Step 1).");
     }
 
     public TableView createSummaryTable() {

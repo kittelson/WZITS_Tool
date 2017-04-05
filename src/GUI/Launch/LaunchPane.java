@@ -36,6 +36,10 @@ public class LaunchPane extends BorderPane {
     private final Button startButton = new Button("Ok");
 
     public LaunchPane(final MainController controller) {
+        this(controller, false);
+    }
+
+    public LaunchPane(final MainController controller, final boolean isAboutScreen) {
         this.controller = controller;
         welcomeLabel = NodeFactory.createFormattedLabel("Welcome", "launch-title-label-bottom");
         splash = new ImageView(IconHelper.SPLASH_SCREEN);
@@ -51,14 +55,20 @@ public class LaunchPane extends BorderPane {
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                controller.begin();
+                if (!isAboutScreen) {
+                    controller.begin();
+                }
             }
         });
 
         VBox vBox = new VBox();
         vBox.setFillWidth(true);
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(welcomeLabel, splash, infoText, startButton);
+        if (!isAboutScreen) {
+            vBox.getChildren().addAll(welcomeLabel, splash, infoText, startButton);
+        } else {
+            vBox.getChildren().addAll(splash, infoText);
+        }
         this.setCenter(vBox);
 
         startButton.setDefaultButton(true);

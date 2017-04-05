@@ -204,13 +204,15 @@ public class MainController {
         al.setGraphic(ipb);
         al.getButtonTypes().add(ButtonType.OK);
         Button cancelButton = (Button) al.getDialogPane().lookupButton(ButtonType.OK);
+        cancelButton.setText("Loading...");
+        cancelButton.setDisable(true);
         al.show();
         stage.setMaximized(true);
         Scene newScene = new Scene(new MainWindow(this, false));
         newScene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         stage.setScene(newScene);
-
         stage.show();
+        cancelButton.setDisable(false);
         cancelButton.fire();
         selectStep(-1);
         selectStep(0, 0);

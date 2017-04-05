@@ -12,14 +12,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.function.Predicate;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -143,6 +146,33 @@ public class StakeholderMatrix implements Serializable {
         this.regulatoryGoal.bind(proj.getMajorGoalsQs().get(3).answerIsYes);
         this.safetyGoal.bind(proj.getMajorGoalsQs().get(1).answerIsYes);
         this.travelerInfoGoal.bind(proj.getMajorGoalsQs().get(4).answerIsYes);
+
+        for (Stakeholder sh : stakeholders) {
+            sh.coreTeamMemberProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (newVal) {
+                        updateSelectedStakeholders();
+                    }
+                }
+            });
+            sh.stakeholderProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (newVal) {
+                        updateSelectedStakeholders();
+                    }
+                }
+            });
+            sh.notApplicableProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
+                    if (newVal) {
+                        updateSelectedStakeholders();
+                    }
+                }
+            });
+        }
     }
 
     public void computeStakeholders() {
@@ -248,9 +278,27 @@ public class StakeholderMatrix implements Serializable {
         ObservableList<Stakeholder> osl = FXCollections.observableArrayList(stakeholders);
         StakeholderComp sc = new StakeholderComp();
         sortedStakeholders = osl.sorted(sc);
-        primaryStakeholder.set(sortedStakeholders.get(0).getName());
-        secondaryStakeholder.set(sortedStakeholders.get(1).getName());
-        additionalStakeholder.set(sortedStakeholders.get(2).getName());
+        updateSelectedStakeholders();
+    }
+
+    private void updateSelectedStakeholders() {
+        if (sortedStakeholders != null) {
+        FilteredList<Stakeholder> fsl = sortedStakeholders.filtered(new Predicate<Stakeholder>() {
+            @Override
+            public boolean test(Stakeholder sh) {
+                return sh.isCoreTeamMember();
+            }
+        });
+        primaryStakeholder.set(fsl.size() > 0 ? fsl.get(0).getName() : "No core team members selected.");
+        secondaryStakeholder.set(fsl.size() > 1 ? fsl.get(1).getName() : "");
+        fsl = sortedStakeholders.filtered(new Predicate<Stakeholder>() {
+            @Override
+            public boolean test(Stakeholder sh) {
+                return sh.isStakeholder();
+            }
+        });
+            additionalStakeholder.set(fsl.size() > 0 ? fsl.get(0).getName() : "No non-team member stakeholders selected.");
+        }
     }
 
     public TableView createSummaryTable() {

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -28,6 +30,10 @@ public class Application implements Serializable {
      * Score associated with the application.
      */
     private SimpleIntegerProperty score;
+    /**
+     * Indicates if the application has been selected by the user.
+     */
+    private BooleanProperty selected = new SimpleBooleanProperty(false);
 
     public Application(String name) {
         this(name, 0);
@@ -62,14 +68,28 @@ public class Application implements Serializable {
         return score;
     }
 
+    public boolean isSelected() {
+        return selected.get();
+    }
+
+    public void setSelected(boolean value) {
+        selected.set(value);
+    }
+
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+
     private void writeObject(ObjectOutputStream s) throws IOException {
         s.writeObject(getName());
         s.writeInt(getScore());
+        s.writeBoolean(isSelected());
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
         name = new SimpleStringProperty((String) s.readObject());
         score = new SimpleIntegerProperty(s.readInt());
+        selected = new SimpleBooleanProperty(s.readBoolean());
     }
 
     public static final String QUEUE_WARNING = "Queue Warning";

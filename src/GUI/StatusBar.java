@@ -5,8 +5,8 @@
  */
 package GUI;
 
-import GUI.Helper.IconHelper;
 import GUI.Helper.ColorHelper;
+import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Helper.ProgressIndicatorBar;
 import core.FeasibilityMatrix;
@@ -126,11 +126,11 @@ public class StatusBar extends TitledPane {
 
     private final GridPane stakePane = new GridPane();
     private final Label stakePaneTitle = new Label("WZITS Stakeholders");
-    private final Label stakePrimaryLabel1 = new Label("Primary:");
+    private final Label stakePrimaryLabel1 = new Label("Top Team Member:");
     private final Label stakePrimaryLabel2 = new Label();
-    private final Label stakeSecondaryLabel1 = new Label("Secondary:");
+    private final Label stakeSecondaryLabel1 = new Label("Next Team Member:");
     private final Label stakeSecondaryLabel2 = new Label();
-    private final Label stakeAdditionalLabel1 = new Label("Additional:");
+    private final Label stakeAdditionalLabel1 = new Label("Top Additional Stakeholder:");
     private final Label stakeAdditionalLabel2 = new Label();
 
     private final SimpleBooleanProperty statusEnabledProperty = new SimpleBooleanProperty(true);
@@ -755,7 +755,7 @@ public class StatusBar extends TitledPane {
         this.stakePane.add(this.stakeAdditionalLabel2, 1, rowIdx++);
 
         // Setting grid constraints
-        ColumnConstraints scc1 = new ColumnConstraints(100);
+        ColumnConstraints scc1 = new ColumnConstraints(150);
         stakePane.getColumnConstraints().addAll(scc1);
 
         // Setting formatting

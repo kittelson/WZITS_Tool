@@ -14,17 +14,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.function.Predicate;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
@@ -68,6 +72,7 @@ public class ApplicationMatrix implements Serializable {
             appToColMap.put(appTypes.get(appIdx), appIdx);
         }
         matrix = new int[inputQuestions.size()][appTypes.size()];
+        connectAppProperties();
         loadDefaultMatrix();
     }
 
@@ -81,6 +86,7 @@ public class ApplicationMatrix implements Serializable {
             appToColMap.put(appTypes.get(appIdx), appIdx);
         }
         matrix = new int[inputQuestions.size()][appTypes.size()];
+        connectAppProperties();
         loadDefaultMatrix();
     }
 
@@ -96,7 +102,19 @@ public class ApplicationMatrix implements Serializable {
             appToColMap.put(am.appTypes.get(appIdx), appIdx);
         }
         matrix = am.matrix;
+        connectAppProperties();
         computeScores();
+    }
+
+    private void connectAppProperties() {
+        for (Application app : appTypes) {
+            app.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    updateSelectedApps();
+                }
+            });
+        }
     }
 
     private void loadDefaultMatrix() {
@@ -143,10 +161,20 @@ public class ApplicationMatrix implements Serializable {
 
         // Sorting the list into descending order
         sAppList = appList.sorted(new ApplicationComp());
-        app1.set(sAppList.get(0).getName());
-        app2.set(sAppList.get(1).getName());
-        app3.set(sAppList.get(2).getName());
-        app4.set(sAppList.get(3).getName());
+        updateSelectedApps();
+    }
+
+    private void updateSelectedApps() {
+        FilteredList<Application> ssAppList = sAppList.filtered(new Predicate<Application>() {
+            @Override
+            public boolean test(Application app) {
+                return app.isSelected();
+            }
+        });
+        app1.set(ssAppList.size() > 0 ? ssAppList.get(0).getName() : "No applications selected by user (See Application Wizard in Step 2).");
+        app2.set(ssAppList.size() > 1 ? ssAppList.get(1).getName() : "");
+        app3.set(ssAppList.size() > 2 ? ssAppList.get(2).getName() : "");
+        app4.set(ssAppList.size() > 3 ? ssAppList.get(3).getName() : "");
     }
 
     public Node getSummaryNode() {
@@ -154,7 +182,7 @@ public class ApplicationMatrix implements Serializable {
 
         final TableView<Application> summary = new TableView();
         summary.getStyleClass().add("step-summary-table");
-
+        summary.setEditable(true);
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn indexCol = new TableColumn<>("#");
@@ -180,7 +208,14 @@ public class ApplicationMatrix implements Serializable {
         scoreCol.setMinWidth(100);
         scoreCol.getStyleClass().add("col-style-center");
 
-        summary.getColumns().addAll(indexCol, catCol, scoreCol);
+        TableColumn selectedCol = new TableColumn("Selected");
+        selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
+        selectedCol.setCellFactory(CheckBoxTableCell.forTableColumn(selectedCol));
+        selectedCol.setPrefWidth(85);
+        selectedCol.setMaxWidth(85);
+        selectedCol.setMinWidth(85);
+
+        summary.getColumns().addAll(indexCol, catCol, scoreCol, selectedCol);
 
         summary.getItems().addAll(sAppList);
 

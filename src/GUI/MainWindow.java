@@ -6,9 +6,9 @@
 package GUI;
 
 import GUI.Helper.NodeFactory;
-import GUI.Step.Step1Panel;
 import GUI.Launch.LaunchPane;
 import GUI.Step.IntroPane;
+import GUI.Step.Step1Panel;
 import GUI.Step.Step2Panel;
 import GUI.Step.Step3Panel;
 import GUI.Step.Step4Panel;
@@ -23,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -99,6 +100,14 @@ public class MainWindow extends BorderPane {
         exitMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
         menuFile.getItems().addAll(newMenuItem, openMenuItem, saveMenuItem, saveAsMenuItem, exitMenuItem);
         // Creating Edit Menu
+        MenuItem projInfoMenuItem = new MenuItem("Project Info/WZ Metadata");
+        menuEdit.getItems().add(projInfoMenuItem);
+        projInfoMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(0, 0);
+            }
+        });
         // Creating Results Menu
         Menu menuStep1Results = new Menu("Step 1");
         MenuItem goalWizMenuItem = new MenuItem("Goal Wizard");
@@ -123,6 +132,66 @@ public class MainWindow extends BorderPane {
         Menu menuStep6Results = new Menu("Step 6");
         MenuItem step6SummaryMenuItem = new MenuItem("Step 6 Summary");
         menuStep6Results.getItems().addAll(step6SummaryMenuItem);
+        goalWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(0, Project.GOAL_SELECTION_INDEX);
+            }
+        });
+        feasibilityWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(0, Project.FEAS_WIZARD_SUMMARY_INDEX);
+            }
+        });
+        stakeholdersWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(0, Project.STAKEHOLDER_WIZARD_SUMMARY_INDEX);
+            }
+        });
+        step1SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(0, Project.NUM_SUB_STEPS[0]);
+            }
+        });
+        appWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(1, Project.APP_WIZARD_SUMMARY_INDEX);
+            }
+        });
+        step2SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(1, Project.NUM_SUB_STEPS[1]);
+            }
+        });
+        step3SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(2, Project.NUM_SUB_STEPS[2]);
+            }
+        });
+        step4SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(3, Project.NUM_SUB_STEPS[3]);
+            }
+        });
+        step5SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(4, Project.NUM_SUB_STEPS[4]);
+            }
+        });
+        step6SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.selectStep(5, Project.NUM_SUB_STEPS[5]);
+            }
+        });
         menuResults.getItems().addAll(menuStep1Results, menuStep2Results,
                 menuStep3Results, menuStep4Results, menuStep5Results,
                 menuStep6Results);
@@ -130,10 +199,31 @@ public class MainWindow extends BorderPane {
         MenuItem loadTemplateMenuItem = new MenuItem("Load");
         MenuItem createTemplateMenuItem = new MenuItem("Create");
         MenuItem exportTemplateMenuItem = new MenuItem("Export");
+        loadTemplateMenuItem.setDisable(true);
+        createTemplateMenuItem.setDisable(true);
+        exportTemplateMenuItem.setDisable(true);
         menuTemplate.getItems().addAll(loadTemplateMenuItem, createTemplateMenuItem, exportTemplateMenuItem);
         // Creating HelpMenu
         MenuItem helpMenuItem = new MenuItem("Help");
-        menuHelp.getItems().add(helpMenuItem);
+        MenuItem aboutMenuItem = new MenuItem("About");
+        aboutMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                LaunchPane lp = new LaunchPane(control, true);
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.getDialogPane().getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
+                al.getDialogPane().setMaxHeight(500);
+                al.getDialogPane().setMaxWidth(700);
+                al.setHeight(600);
+                al.setWidth(800);
+                al.setTitle("Help: WZITS Tool");
+                al.setHeaderText("About");
+                al.getDialogPane().setContent(lp);
+                al.showAndWait();
+            }
+        });
+        helpMenuItem.setDisable(true);
+        menuHelp.getItems().addAll(aboutMenuItem, helpMenuItem);
 
         titleLabel1.getStyleClass().add("launch-title-label-top");
         titleLabel1.setPadding(new Insets(0, 20, 0, 20));
