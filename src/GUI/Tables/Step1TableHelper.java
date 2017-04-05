@@ -18,7 +18,6 @@ import core.Stakeholder;
 import core.StakeholderMatrix;
 import java.io.IOException;
 import java.util.ArrayList;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -556,15 +555,15 @@ public class Step1TableHelper {
         GoalNeedsMatrix gnm = p.getGoalNeedsMatrix();
         gnm.computeScores();
         // Mobility Goals
-        ArrayList<Need> ml = gnm.getGoalListByType(Question.GOAL_MOBILITY);
+        ObservableList<Need> ml = gnm.getGoalListByType(Question.GOAL_MOBILITY);
         // Safety Goals
-        ArrayList<Need> sl = gnm.getGoalListByType(Question.GOAL_SAFETY);
+        ObservableList<Need> sl = gnm.getGoalListByType(Question.GOAL_SAFETY);
         // Productivity Goals
-        ArrayList<Need> pl = gnm.getGoalListByType(Question.GOAL_PROD);
+        ObservableList<Need> pl = gnm.getGoalListByType(Question.GOAL_PROD);
         // Regulatory Goals
-        ArrayList<Need> rl = gnm.getGoalListByType(Question.GOAL_REG);
+        ObservableList<Need> rl = gnm.getGoalListByType(Question.GOAL_REG);
         // Traveler Information Goals
-        ArrayList<Need> tl = gnm.getGoalListByType(Question.GOAL_TRAVELER_INFO);
+        ObservableList<Need> tl = gnm.getGoalListByType(Question.GOAL_TRAVELER_INFO);
         // Creating panel
         GridPane goalsGrid = new GridPane();
         goalsGrid.getStyleClass().add("fact-sheet-pane-goal");
@@ -575,32 +574,82 @@ public class Step1TableHelper {
         rowIdx = 1;
         goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_MOBILITY, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, ml.size());
         for (Need n : ml) {
-            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            if (!n.isPlaceholder) {
+                goalsGrid.add(NodeFactory.createFormattedLabel((n.isSelected() ? "*" : "") + n.getDescription(),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 2, rowIdx++);
+            } else {
+                goalsGrid.add(NodeFactory.createFormattedLabel("(*Indicates the goal was selected by the user.)",
+                        "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel("", "fact-sheet-label-goal"), 2, rowIdx++);
+            }
         }
 
         goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_SAFETY, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, sl.size());
         for (Need n : sl) {
-            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            if (!n.isPlaceholder) {
+                goalsGrid.add(NodeFactory.createFormattedLabel((n.isSelected() ? "*" : "") + n.getDescription(),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 2, rowIdx++);
+            } else {
+                goalsGrid.add(NodeFactory.createFormattedLabel("(*Indicates the goal was selected by the user.)",
+                        "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel("", "fact-sheet-label-goal"), 2, rowIdx++);
+            }
         }
 
         goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_PROD, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, pl.size());
         for (Need n : pl) {
-            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            if (!n.isPlaceholder) {
+                goalsGrid.add(NodeFactory.createFormattedLabel((n.isSelected() ? "*" : "") + n.getDescription(),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 2, rowIdx++);
+            } else {
+                goalsGrid.add(NodeFactory.createFormattedLabel("(*Indicates the goal was selected by the user.)",
+                        "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel("", "fact-sheet-label-goal"), 2, rowIdx++);
+            }
         }
 
         goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_REG, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, rl.size());
         for (Need n : rl) {
-            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            if (!n.isPlaceholder) {
+                goalsGrid.add(NodeFactory.createFormattedLabel((n.isSelected() ? "*" : "") + n.getDescription(),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 2, rowIdx++);
+            } else {
+                goalsGrid.add(NodeFactory.createFormattedLabel("(*Indicates the goal was selected by the user.)",
+                        "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel("", "fact-sheet-label-goal"), 2, rowIdx++);
+            }
         }
 
         goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_TRAVELER_INFO, "fact-sheet-label-goal-bold"), 0, rowIdx, 1, tl.size());
         for (Need n : tl) {
-            goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-            goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
+            //goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+            if (!n.isPlaceholder) {
+                goalsGrid.add(NodeFactory.createFormattedLabel((n.isSelected() ? "*" : "") + n.getDescription(),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()),
+                        n.isSelected() ? "fact-sheet-label-goal-bold" : "fact-sheet-label-goal"), 2, rowIdx++);
+            } else {
+                goalsGrid.add(NodeFactory.createFormattedLabel("(*Indicates the goal was selected by the user.)",
+                        "fact-sheet-label-goal"), 1, rowIdx);
+                goalsGrid.add(NodeFactory.createFormattedLabel("", "fact-sheet-label-goal"), 2, rowIdx++);
+            }
         }
 
         goalsGrid.getColumnConstraints().add(new ColumnConstraints(infoC1Width, infoC1Width, infoC1Width, Priority.NEVER, HPos.CENTER, true));

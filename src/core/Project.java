@@ -889,6 +889,7 @@ public class Project implements Serializable {
     public SimpleDoubleProperty progressApp = new SimpleDoubleProperty(0.0);
     public SimpleDoubleProperty progressStake = new SimpleDoubleProperty(0.0);
 
+    public static final int GOAL_SELECTION_INDEX = 3;
     public static final int GOAL_WIZARD_SUMMARY_INDEX = 4; // Step 1
     public static final int FEAS_WIZARD_SUMMARY_INDEX = 5; // Step 1
     public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 7;  // Step 1
@@ -897,7 +898,7 @@ public class Project implements Serializable {
 
     public static final String[][] STEP_NAMES = {
         //{"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Team Selection", "Team Members", "ITS Resources"},
-        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility Wizard", "Stakeholders", "SH Wizard & Team Selection", "Team Members", "ITS Resources"},
+        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Goals", "Goal Wizard", "Feasibility Wizard", "Stakeholders", "SH Wizard & Team Selection", "Team Members", "ITS Resources"},
         {"Step 2", "Initial Applications", "Application Wizard", "Benefits", "Costs", "Institutional/Jurisdictional", "Legal/Policy", "Stakeholder Buy-In", "Develop Concept of Operations"},
         //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
         {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefity/Cost"},

@@ -377,14 +377,19 @@ public class QuestionGenerator implements Serializable {
     private void createMajorGoalsQuestions() {
         qMajorGoalsList.addAll(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Is there a mobility goal?"));
         this.mobilityGoalQ = qMajorGoalsList.get(qMajorGoalsList.size() - 1);
+        this.mobilityGoalQ.setAnswerIsNo(true);
         qMajorGoalsList.addAll(new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a safety goal?"));
         this.safetyGoalQ = qMajorGoalsList.get(qMajorGoalsList.size() - 1);
+        this.safetyGoalQ.setAnswerIsNo(true);
         qMajorGoalsList.addAll(new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there a productivity goal?"));
         this.productivityGoalQ = qMajorGoalsList.get(qMajorGoalsList.size() - 1);
+        this.productivityGoalQ.setAnswerIsNo(true);
         qMajorGoalsList.addAll(new QuestionYN(4, Question.GOAL_USER_NEEDS, "Is there a regulatory goal?"));
         this.regulatoryGoalQ = qMajorGoalsList.get(qMajorGoalsList.size() - 1);
+        this.regulatoryGoalQ.setAnswerIsNo(true);
         qMajorGoalsList.addAll(new QuestionYN(5, Question.GOAL_USER_NEEDS, "Is there a traveler information goal?"));
         this.travelerInfoGoalQ = qMajorGoalsList.get(qMajorGoalsList.size() - 1);
+        this.travelerInfoGoalQ.setAnswerIsNo(true);
     }
 
     private void createUserNeedsSupportQuestions() {
@@ -487,7 +492,7 @@ public class QuestionGenerator implements Serializable {
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #11");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Is there a mobility goal?"));
         refQ = this.mobilityGoalQ; // Is there a mobility goal?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Major Goals #1");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Selected Goals #1");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Will the work zone be included in the federally-mandated biannual process review?"));
         refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #20");
@@ -518,16 +523,16 @@ public class QuestionGenerator implements Serializable {
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is the work zone on a roadway that is part of a signalized / coordinated system?"));
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a concern the work zone will cause unwanted diversion on to local roads?"));
         bindDependantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.driverDiversionQ, "User Needs #2");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a mobility goal? (Refer to \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.mobilityGoalQ, "Major Goals #1");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a productivity goal? (Refer to \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.productivityGoalQ, "Major Goals #3");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a regulatory goal? (Refer to \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.regulatoryGoalQ, "Major Goals #4");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a safety goal? (Refer to \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.safetyGoalQ, "Major Goals #2");
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a traveler information goal? (Refer to \"Major Goals\" Step)"));
-        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.travelerInfoGoalQ, "Major Goals #5");
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a mobility goal? (Refer to \"Goals\" Step)"));
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.mobilityGoalQ, "Selected Goals #1");
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a productivity goal? (Refer to \"Goals\" Step)"));
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.productivityGoalQ, "Selected Goals #3");
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a regulatory goal? (Refer to \"Goals\" Step)"));
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.regulatoryGoalQ, "Selected Goals #4");
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a safety goal? (Refer to \"Goals\" Step)"));
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.safetyGoalQ, "Selected Goals #2");
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a traveler information goal? (Refer to \"Goals\" Step)"));
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.travelerInfoGoalQ, "Selected Goals #5");
         qIdx = 1;
         qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "What agencies are responsible for responding to incidents/patrolling the roadway?)",
                 new String[]{"Local Police/Sheriff", "State Police", "Service Patrol or Contractor", "N/A"}));
@@ -717,7 +722,7 @@ public class QuestionGenerator implements Serializable {
     }
 
     private void connectGoalsProgress() {
-        final int numRequiredQs = this.qGoalWizardList.size() + this.qMajorGoalsList.size();
+        final int numRequiredQs = this.qGoalWizardList.size();// + this.qMajorGoalsList.size();
         for (QuestionYN q : qGoalWizardList) {
             q.responseIdxProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -777,7 +782,7 @@ public class QuestionGenerator implements Serializable {
     }
 
     private void connectStakeholderProgress() {
-        final int numRequiredQs = 3 + this.qStakeholderYNList.size(); // + this.qStakeholderOptionList.size();
+        final int numRequiredQs = 3 + this.qStakeholderYNList.size() - 5; // + this.qStakeholderOptionList.size();
         proj.functionalClassProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
                 if (newVal.equalsIgnoreCase("Select")) {
@@ -842,7 +847,7 @@ public class QuestionGenerator implements Serializable {
     }
 
     private void connectApplicationProgress() {
-        final int numRequiredQs = this.qApplicationList.size();
+        final int numRequiredQs = this.qApplicationList.size() - 1;
         for (Question q : this.qApplicationList) {
             q.responseIdxProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -956,11 +961,11 @@ public class QuestionGenerator implements Serializable {
 
         // StakeholderWizard
         bindDependantQs(qStakeholderYNList.get(11), this.driverDiversionQ, "User Needs #2");
-        bindRedundantQs(qStakeholderYNList.get(12), this.mobilityGoalQ, "Major Goals #1");
-        bindRedundantQs(qStakeholderYNList.get(13), this.productivityGoalQ, "Major Goals #3");
-        bindRedundantQs(qStakeholderYNList.get(14), this.regulatoryGoalQ, "Major Goals #4");
-        bindRedundantQs(qStakeholderYNList.get(15), this.safetyGoalQ, "Major Goals #2");
-        bindRedundantQs(qStakeholderYNList.get(16), this.travelerInfoGoalQ, "Major Goals #5");
+        bindRedundantQs(qStakeholderYNList.get(12), this.mobilityGoalQ, "Selected Goals #1");
+        bindRedundantQs(qStakeholderYNList.get(13), this.productivityGoalQ, "Selected Goals #3");
+        bindRedundantQs(qStakeholderYNList.get(14), this.regulatoryGoalQ, "Selected Goals #4");
+        bindRedundantQs(qStakeholderYNList.get(15), this.safetyGoalQ, "Selected Goals #2");
+        bindRedundantQs(qStakeholderYNList.get(16), this.travelerInfoGoalQ, "Selected Goals #5");
         proj.patrollingAgencyProperty().bindBidirectional(qStakeholderOptionList.get(0).answerStringProperty());
         final QuestionOption numLanesQ = qStakeholderOptionList.get(1);
         numLanesQ.setResponseIdx(proj.getNumLanesClosed() > 0 ? 0 : 1);
@@ -1040,7 +1045,7 @@ public class QuestionGenerator implements Serializable {
         refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zones?
         bindRedundantQs(qApplicationList.get(20), refQ, "User Needs #11");
         refQ = this.mobilityGoalQ; // Is there a mobility goal?
-        bindRedundantQs(qApplicationList.get(21), refQ, "Major Goals #1");
+        bindRedundantQs(qApplicationList.get(21), refQ, "Selected Goals #1");
         refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
         bindRedundantQs(qApplicationList.get(22), refQ, "User Needs #20");
         refQ = this.outreachTravelerInfoQ; // GW#11 Will outreach and traveler information be used for this work zone?

@@ -50,7 +50,9 @@ public class QuestionYN extends Question implements Serializable {
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                 //System.out.println("AnswerIsYes change from " + oldVal.toString() + " to " + newVal.toString());
                 if (newVal) {
-                    responseIdx.set(1);
+                    if (responseIdx.get() != 1) {
+                        responseIdx.set(1);
+                    }
                     answerIsNo.set(false);
                 } else {
                     score.set(0);
@@ -65,7 +67,9 @@ public class QuestionYN extends Question implements Serializable {
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                 //System.out.println("AnswerIsNo change from " + oldVal.toString() + " to " + newVal.toString());
                 if (newVal) {
-                    responseIdx.set(0);
+                    if (responseIdx.get() != 0) {
+                        responseIdx.set(0);
+                    }
                     answerIsYes.set(false);
                 } else {
                     if (!answerIsYes.get()) {

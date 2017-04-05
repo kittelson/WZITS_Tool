@@ -6,11 +6,16 @@
 package GUI.Step;
 
 import GUI.Helper.ColorHelper;
-import GUI.Helper.NodeFactory;
 import GUI.Helper.IconHelper;
+import GUI.Helper.NodeFactory;
+import GUI.Helper.ProgressIndicatorBar;
 import GUI.MainController;
 import GUI.Tables.Step1TableHelper;
+import core.Project;
 import core.Question;
+import javafx.animation.TranslateTransition;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,11 +27,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
-import GUI.Helper.ProgressIndicatorBar;
-import core.Project;
-import javafx.animation.TranslateTransition;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
@@ -221,12 +221,14 @@ public class Step1Panel extends BorderPane {
 
         // Major Goal Types Questions Panel
         majorGoalsPane.setTop(NodeFactory.createFormattedLabel("Major Goals", "substep-title-label"));
-        majorGoalsPane.setCenter(Step1TableHelper.getMajorGoalsTable(control.getProject()));
+        //majorGoalsPane.setCenter(Step1TableHelper.getMajorGoalsTable(control.getProject()));
+        majorGoalsPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
         majorGoalsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Goal Wizard Summary Panel
         gwSummaryPane.setTop(NodeFactory.createFormattedLabel("Goal Wizard Summary", "substep-title-label"));
-        gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+        //gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+        gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSelectedGoalsNode());
         gwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Feasibility Questions Panel
@@ -384,8 +386,11 @@ public class Step1Panel extends BorderPane {
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
                 switch (getActiveSubStep()) {
+                    case Project.GOAL_SELECTION_INDEX:
+                        majorGoalsPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
                     case Project.GOAL_WIZARD_SUMMARY_INDEX:
-                        gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+                        //gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+                        gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSelectedGoalsNode());
                         break;
                     case Project.FEAS_WIZARD_SUMMARY_INDEX:
                         //fwSummaryPane.setCenter(control.getProject().getFeasibilityMatrix().createSummaryPanel());

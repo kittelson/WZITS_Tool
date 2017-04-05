@@ -11,19 +11,27 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import javafx.beans.property.SimpleBooleanProperty;
+import java.util.function.Predicate;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 /**
  *
@@ -41,7 +49,7 @@ public class GoalNeedsMatrix implements Serializable {
 
     private LinkedHashMap<Need, Integer> needToColMap = new LinkedHashMap();
 
-    private HashMap<String, SimpleBooleanProperty> includeGoalCat;
+    private final HashMap<String, SimpleIntegerProperty> hasGoalCat;
 
     //private int numMob;
     //private int numProd;
@@ -60,12 +68,14 @@ public class GoalNeedsMatrix implements Serializable {
             needToColMap.put(needsList.get(needIdx), needIdx);
         }
 
-        includeGoalCat = new HashMap();
-        includeGoalCat.put(Question.GOAL_MOBILITY, majorGoalsList.get(0).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_SAFETY, majorGoalsList.get(1).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_PROD, majorGoalsList.get(2).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_REG, majorGoalsList.get(3).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_TRAVELER_INFO, majorGoalsList.get(4).answerIsYesProperty());
+        hasGoalCat = new HashMap();
+        hasGoalCat.put(Question.GOAL_MOBILITY, majorGoalsList.get(0).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_SAFETY, majorGoalsList.get(1).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_PROD, majorGoalsList.get(2).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_REG, majorGoalsList.get(3).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_TRAVELER_INFO, majorGoalsList.get(4).responseIdxProperty());
+
+        connectNeedsProperties();
 
         matrix = new int[qList.size()][needsList.size()];
 
@@ -86,12 +96,121 @@ public class GoalNeedsMatrix implements Serializable {
         }
         matrix = gnMat.matrix;
 
-        includeGoalCat = new HashMap();
-        includeGoalCat.put(Question.GOAL_MOBILITY, majorGoalsList.get(0).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_SAFETY, majorGoalsList.get(1).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_PROD, majorGoalsList.get(2).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_REG, majorGoalsList.get(3).answerIsYesProperty());
-        includeGoalCat.put(Question.GOAL_TRAVELER_INFO, majorGoalsList.get(4).answerIsYesProperty());
+        hasGoalCat = new HashMap();
+        hasGoalCat.put(Question.GOAL_MOBILITY, majorGoalsList.get(0).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_SAFETY, majorGoalsList.get(1).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_PROD, majorGoalsList.get(2).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_REG, majorGoalsList.get(3).responseIdxProperty());
+        hasGoalCat.put(Question.GOAL_TRAVELER_INFO, majorGoalsList.get(4).responseIdxProperty());
+
+        connectNeedsProperties();
+    }
+
+    private void connectNeedsProperties() {
+        for (Need n : needsList) {
+            n.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    updateTopGoals();
+                }
+            });
+        }
+        IntegerBinding ibMob = new IntegerBinding() {
+
+            {
+                for (Need n : getGoalListByType(Question.GOAL_MOBILITY)) {
+                    super.bind(n.selectedProperty());
+                }
+            }
+
+            @Override
+            protected int computeValue() {
+                for (Need n : getGoalListByType(Question.GOAL_MOBILITY)) {
+                    if (n.isSelected()) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        };
+        hasGoalCat.get(Question.GOAL_MOBILITY).bind(ibMob);
+        IntegerBinding ibProd = new IntegerBinding() {
+
+            {
+                for (Need n : getGoalListByType(Question.GOAL_PROD)) {
+                    super.bind(n.selectedProperty());
+                }
+            }
+
+            @Override
+            protected int computeValue() {
+                for (Need n : getGoalListByType(Question.GOAL_PROD)) {
+                    if (n.isSelected()) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        };
+        hasGoalCat.get(Question.GOAL_PROD).bind(ibProd);
+        IntegerBinding ibReg = new IntegerBinding() {
+
+            {
+                for (Need n : getGoalListByType(Question.GOAL_REG)) {
+                    super.bind(n.selectedProperty());
+                }
+            }
+
+            @Override
+            protected int computeValue() {
+                for (Need n : getGoalListByType(Question.GOAL_REG)) {
+                    if (n.isSelected()) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        };
+        hasGoalCat.get(Question.GOAL_REG).bind(ibReg);
+        IntegerBinding ibSafety = new IntegerBinding() {
+
+            {
+                for (Need n : getGoalListByType(Question.GOAL_SAFETY)) {
+                    super.bind(n.selectedProperty());
+                }
+            }
+
+            @Override
+            protected int computeValue() {
+                for (Need n : getGoalListByType(Question.GOAL_SAFETY)) {
+                    if (n.isSelected()) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        };
+        hasGoalCat.get(Question.GOAL_SAFETY).bind(ibSafety);
+        IntegerBinding ibTI = new IntegerBinding() {
+
+            {
+                for (Need n : getGoalListByType(Question.GOAL_TRAVELER_INFO)) {
+                    super.bind(n.selectedProperty());
+                }
+            }
+
+            @Override
+            protected int computeValue() {
+                for (Need n : getGoalListByType(Question.GOAL_TRAVELER_INFO)) {
+                    if (n.isSelected()) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        };
+        hasGoalCat.get(Question.GOAL_TRAVELER_INFO).bind(ibTI);
+
     }
 
     private void loadDefault() {
@@ -127,6 +246,10 @@ public class GoalNeedsMatrix implements Serializable {
         }
 
         //numMob = numProd = numReg = numSafety = numTravInfo = 0;
+        updateTopGoals();
+    }
+
+    public void updateTopGoals() {
         // Finding Top Scores
         int topMobScore = 0;
         Need topMobNeed = null;
@@ -142,35 +265,35 @@ public class GoalNeedsMatrix implements Serializable {
             switch (n.getGoal()) {
                 case Question.GOAL_MOBILITY:
                     //numMob++;
-                    if (n.getScore() > topMobScore) {
+                    if (n.isSelected() && n.getScore() > topMobScore) {
                         topMobScore = n.getScore();
                         topMobNeed = n;
                     }
                     break;
                 case Question.GOAL_PROD:
                     //numProd++;
-                    if (n.getScore() > topProdScore) {
+                    if (n.isSelected() && n.getScore() > topProdScore) {
                         topProdScore = n.getScore();
                         topProdNeed = n;
                     }
                     break;
                 case Question.GOAL_REG:
                     //numReg++;
-                    if (n.getScore() > topRegScore) {
+                    if (n.isSelected() && n.getScore() > topRegScore) {
                         topRegScore = n.getScore();
                         topRegNeed = n;
                     }
                     break;
                 case Question.GOAL_SAFETY:
                     //numSafety++;
-                    if (n.getScore() > topSafetyScore) {
+                    if (n.isSelected() && n.getScore() > topSafetyScore) {
                         topSafetyScore = n.getScore();
                         topSafetyNeed = n;
                     }
                     break;
                 case Question.GOAL_TRAVELER_INFO:
                     //numTravInfo++;
-                    if (n.getScore() > topTIScore) {
+                    if (n.isSelected() && n.getScore() > topTIScore) {
                         topTIScore = n.getScore();
                         topTINeed = n;
                     }
@@ -178,11 +301,11 @@ public class GoalNeedsMatrix implements Serializable {
 
             }
         }
-        this.topMobilityGoal.set(topMobNeed != null ? topMobNeed.getDescription() : "");
-        this.topProdGoal.set(topProdNeed != null ? topProdNeed.getDescription() : "");
-        this.topRegGoal.set(topRegNeed != null ? topRegNeed.getDescription() : "");
-        this.topSafetyGoal.set(topSafetyNeed != null ? topSafetyNeed.getDescription() : "");
-        this.topTIGoal.set(topTINeed != null ? topTINeed.getDescription() : "");
+        this.topMobilityGoal.set(topMobNeed != null ? topMobNeed.getDescription() : "No mobility goals selected by user.");
+        this.topProdGoal.set(topProdNeed != null ? topProdNeed.getDescription() : "No productivity goals selected by user.");
+        this.topRegGoal.set(topRegNeed != null ? topRegNeed.getDescription() : "No regulatory goals selected by user.");
+        this.topSafetyGoal.set(topSafetyNeed != null ? topSafetyNeed.getDescription() : "No safety goals selected by user.");
+        this.topTIGoal.set(topTINeed != null ? topTINeed.getDescription() : "No traveler goals selected by user.");
     }
 
     public TableView createSummaryTable() {
@@ -190,8 +313,69 @@ public class GoalNeedsMatrix implements Serializable {
 
         TableView<Need> summary = new TableView();
         summary.getStyleClass().add("step-summary-table");
+        summary.setEditable(true);
+        summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn catCol = new TableColumn("Category");
+        catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
+        catCol.setPrefWidth(175);
+        catCol.setMaxWidth(175);
+        catCol.setMinWidth(175);
+        catCol.getStyleClass().add("col-style-center");
+        catCol.setSortType(SortType.ASCENDING);
+
+        TableColumn recCol = new TableColumn("Recommended User Goals");
+        recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        TableColumn scoreCol = new TableColumn("Score");
+        scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
+        scoreCol.setPrefWidth(100);
+        scoreCol.setMaxWidth(100);
+        scoreCol.setMinWidth(100);
+        scoreCol.getStyleClass().add("col-style-center");
+        scoreCol.setSortType(SortType.DESCENDING);
+
+        TableColumn selectedCol = new TableColumn("Selected");
+        selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
+        selectedCol.setCellFactory(CheckBoxTableCell.forTableColumn(selectedCol));
+        selectedCol.setPrefWidth(85);
+        selectedCol.setMaxWidth(85);
+        selectedCol.setMinWidth(85);
+
+        summary.getColumns().addAll(catCol, recCol, scoreCol, selectedCol);
+
+        summary.setItems(needsList);
+//        for (Need n : needsList) {
+//            if (this.includeGoalCat.get(n.getGoal()).get()) {
+//                summary.getItems().add(n);
+//            }
+//        }
+
+        summary.getSortOrder().setAll(catCol, scoreCol);
+
+        summary.setPlaceholder(new Label("The \"User Needs\" step must be completed to view."));
+
+        return summary;
+    }
+
+    public Node createSelectedGoalsNode() {
+        computeScores();
+        final TableView<Need> summary = new TableView();
+        summary.getStyleClass().add("step-summary-table");
 
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn indexCol = new TableColumn("#");
+        indexCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<QuestionYN, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<QuestionYN, String> p) {
+                return new ReadOnlyObjectWrapper(Integer.toString(summary.getItems().indexOf(p.getValue()) + 1));
+            }
+        });
+        indexCol.setPrefWidth(35);
+        indexCol.setMaxWidth(35);
+        indexCol.setMinWidth(35);
+        indexCol.getStyleClass().add("col-style-center-bold");
 
         TableColumn catCol = new TableColumn("Category");
         catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
@@ -214,31 +398,39 @@ public class GoalNeedsMatrix implements Serializable {
 
         summary.getColumns().addAll(catCol, recCol, scoreCol);
 
-        //summary.setItems(needsList);
-        for (Need n : needsList) {
-            if (this.includeGoalCat.get(n.getGoal()).get()) {
-                summary.getItems().add(n);
+        FilteredList<Need> filteredNeeds = needsList.filtered(new Predicate<Need>() {
+            @Override
+            public boolean test(Need nn) {
+                return nn.isSelected();
             }
-        }
+        });
+        //summary.setItems(needsList);
+        summary.setItems(filteredNeeds);
 
         summary.getSortOrder().setAll(catCol, scoreCol);
 
-        summary.setPlaceholder(new Label("Steps 1.2 - 1.4 must be completed to view."));
+        summary.setPlaceholder(new Label("At least one goal must be selected in the previous step."));
 
         return summary;
     }
 
-    public ArrayList<Need> getGoalListByType(String goalType) {
+    public ObservableList<Need> getGoalListByType(final String goalType) {
         //computeScores();
-        final ArrayList<Need> al = new ArrayList();
-        if (this.includeGoalCat.get(goalType).get()) {
-            for (Need n : needsList) {
-                if (n.getGoal().equalsIgnoreCase(goalType) && !n.isPlaceholder) {
-                    al.add(n);
-                }
+//        final ArrayList<Need> al = new ArrayList();
+//        for (Need n : needsList) {
+//            if (n.getGoal().equalsIgnoreCase(goalType) && !n.isPlaceholder && n.isSelected()) {
+//                al.add(n);
+//            }
+//        }
+        FilteredList al = needsList.filtered(new Predicate<Need>() {
+            @Override
+            public boolean test(Need nn) {
+                return nn.getGoal().equalsIgnoreCase(goalType);
             }
-        } else {
-            al.add(new Need(goalType, "No recommended goals"));
+        });
+
+        if (al.isEmpty()) {
+            return FXCollections.observableArrayList(new Need(goalType, "No selected " + goalType + " goals."));
         }
         return al;
     }
