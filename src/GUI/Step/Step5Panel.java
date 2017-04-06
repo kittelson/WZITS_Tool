@@ -192,7 +192,7 @@ public class Step5Panel extends BorderPane {
         this.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-                System.out.println("Step 5 Width Resized");
+                //System.out.println("Step 5 Width Resized");
                 if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
                     allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
                     allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));

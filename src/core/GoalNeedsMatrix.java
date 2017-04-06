@@ -5,6 +5,7 @@
  */
 package core;
 
+import GUI.Helper.NodeFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,6 +32,7 @@ import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 
 /**
@@ -308,7 +310,7 @@ public class GoalNeedsMatrix implements Serializable {
         this.topTIGoal.set(topTINeed != null ? topTINeed.getDescription() : "No traveler goals selected by user(See Goal Wizard in Step 1).");
     }
 
-    public TableView createSummaryTable() {
+    public Node createSummaryTable() {
         computeScores();
 
         TableView<Need> summary = new TableView();
@@ -355,7 +357,10 @@ public class GoalNeedsMatrix implements Serializable {
 
         summary.setPlaceholder(new Label("The \"User Needs\" step must be completed to view."));
 
-        return summary;
+        BorderPane bPane = new BorderPane();
+        bPane.setTop(NodeFactory.createFormattedLabel("Use the checkboxs in the far right column to select goals for the project.", "opt-pane-title"));
+        bPane.setCenter(summary);
+        return bPane;
     }
 
     public Node createSelectedGoalsNode() {

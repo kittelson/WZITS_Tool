@@ -722,7 +722,7 @@ public class Project implements Serializable {
         if (stepIdx >= 0 && stepIdx < steps.length) {
             steps[stepIdx].setStepFinished(val);
         } else {
-            System.out.println("Invalid step index");
+            //System.out.println("Invalid step index");
         }
     }
 
@@ -734,7 +734,7 @@ public class Project implements Serializable {
         if (stepIdx >= 0 && stepIdx < steps.length) {
             steps[stepIdx].setStepStarted(val);
         } else {
-            System.out.println("Invalid step index");
+            //System.out.println("Invalid step index");
         }
     }
 
@@ -753,10 +753,10 @@ public class Project implements Serializable {
             if (subStepIdx >= 0 && subStepIdx < steps[stepIdx].getNumSubSteps()) {
                 steps[stepIdx].getSubStep(subStepIdx).setStepStarted(val);
             } else {
-                System.out.println("Invalid substep index");
+                //System.out.println("Invalid substep index");
             }
         } else {
-            System.out.println("Invalid step index");
+            //System.out.println("Invalid step index");
         }
     }
 
@@ -775,10 +775,10 @@ public class Project implements Serializable {
             if (subStepIdx >= 0 && subStepIdx < steps[stepIdx].getNumSubSteps()) {
                 steps[stepIdx].getSubStep(subStepIdx).setStepFinished(val);
             } else {
-                System.out.println("Invalid substep index");
+                //System.out.println("Invalid substep index");
             }
         } else {
-            System.out.println("Invalid step index");
+            //System.out.println("Invalid step index");
         }
     }
 
@@ -900,8 +900,8 @@ public class Project implements Serializable {
         //{"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Team Selection", "Team Members", "ITS Resources"},
         {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Goals", "Goal Wizard", "Feasibility Wizard", "Stakeholders", "SH Wizard & Team Selection", "Team Members", "ITS Resources"},
         {"Step 2", "Initial Applications", "Application Wizard", "Benefits", "Costs", "Institutional/Jurisdictional", "Legal/Policy", "Stakeholder Buy-In", "Develop Concept of Operations"},
-        //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefity/Cost"},
-        {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefity/Cost"},
+        //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefit/Cost"},
+        {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefit/Cost"},
         {"Step 4", "Direct/Indirect", "Award Mechanism", "RFP Requirements", "Selected Vendor"},
         {"Step 5", "Implementing System Plans", "Scheduling Decisions", "System Acceptance Testing", "Handling Deployment Issues"},
         {"Step 6", "Changing Work Zone", "Using/Sharing ITS Info", "Maintaining Adequate Staff", "Leveraging Public Support", "System Monitoring/Evaluation"}

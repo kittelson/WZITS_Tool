@@ -33,9 +33,9 @@ public class IconHelper {
 
     public static final Image NAV_HELPER = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/navigatorHelp.PNG"));
 
-    public static final Image FIG_FLOW_ALL_STEPS = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/all_steps.PNG"));
+    public static final Image FIG_FLOW_ALL_STEPS = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/all_steps.png"));
 
-    public static final Image FIG_FLOW_STEP_1 = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/step_1.PNG"));
+    public static final Image FIG_FLOW_STEP_1 = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/step_1.png"));
 
     public static final Image FIG_FLOW_STEP_2 = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/step_2.png"));
 

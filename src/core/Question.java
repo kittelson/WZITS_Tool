@@ -67,7 +67,7 @@ public abstract class Question implements Serializable {
 
     public void setResponseIdx(Integer val) {
         responseIdx.set(val);
-        System.out.println("Edited");
+        //System.out.println("Edited");
     }
 
     public SimpleIntegerProperty responseIdxProperty() {

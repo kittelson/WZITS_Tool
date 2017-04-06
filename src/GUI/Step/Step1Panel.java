@@ -220,7 +220,7 @@ public class Step1Panel extends BorderPane {
         unSuppPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Major Goal Types Questions Panel
-        majorGoalsPane.setTop(NodeFactory.createFormattedLabel("Major Goals", "substep-title-label"));
+        majorGoalsPane.setTop(NodeFactory.createFormattedLabel("Goals Selection", "substep-title-label"));
         //majorGoalsPane.setCenter(Step1TableHelper.getMajorGoalsTable(control.getProject()));
         majorGoalsPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
         majorGoalsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
@@ -357,7 +357,7 @@ public class Step1Panel extends BorderPane {
         this.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-                System.out.println("Step 1 Width Resized");
+                //System.out.println("Step 1 Width Resized");
                 if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
                     allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
                     allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
