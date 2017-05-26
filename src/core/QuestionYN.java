@@ -21,7 +21,7 @@ import javafx.beans.value.ObservableValue;
  */
 public class QuestionYN extends Question implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     public SimpleBooleanProperty answerIsYes = new SimpleBooleanProperty(false);
 

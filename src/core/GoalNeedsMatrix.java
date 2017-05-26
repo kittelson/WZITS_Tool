@@ -41,7 +41,7 @@ import javafx.util.Callback;
  */
 public class GoalNeedsMatrix implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     public ObservableList<QuestionYN> qList;
 
@@ -324,9 +324,9 @@ public class GoalNeedsMatrix implements Serializable {
         catCol.setMaxWidth(175);
         catCol.setMinWidth(175);
         catCol.getStyleClass().add("col-style-center");
-        catCol.setSortType(SortType.ASCENDING);
+        //catCol.setSortType(SortType.ASCENDING);
 
-        TableColumn recCol = new TableColumn("Recommended User Goals");
+        TableColumn recCol = new TableColumn("Recommended Goals");
         recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         TableColumn scoreCol = new TableColumn("Score");
@@ -335,7 +335,7 @@ public class GoalNeedsMatrix implements Serializable {
         scoreCol.setMaxWidth(100);
         scoreCol.setMinWidth(100);
         scoreCol.getStyleClass().add("col-style-center");
-        scoreCol.setSortType(SortType.DESCENDING);
+        //scoreCol.setSortType(SortType.DESCENDING);
 
         TableColumn selectedCol = new TableColumn("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
@@ -346,19 +346,13 @@ public class GoalNeedsMatrix implements Serializable {
 
         summary.getColumns().addAll(catCol, recCol, scoreCol, selectedCol);
 
-        summary.setItems(needsList);
-//        for (Need n : needsList) {
-//            if (this.includeGoalCat.get(n.getGoal()).get()) {
-//                summary.getItems().add(n);
-//            }
-//        }
+        summary.setItems(Need.getSortedNeedsList(needsList));
 
-        summary.getSortOrder().setAll(catCol, scoreCol);
-
+        //summary.getSortOrder().setAll(catCol, scoreCol);
         summary.setPlaceholder(new Label("The \"User Needs\" step must be completed to view."));
 
         BorderPane bPane = new BorderPane();
-        bPane.setTop(NodeFactory.createFormattedLabel("Use the checkboxs in the far right column to select goals for the project.", "opt-pane-title"));
+        bPane.setTop(NodeFactory.createFormattedLabel("Use the checkboxes in the far right column to select goals for the project.", "opt-pane-title"));
         bPane.setCenter(summary);
         return bPane;
     }
@@ -388,9 +382,9 @@ public class GoalNeedsMatrix implements Serializable {
         catCol.setMaxWidth(175);
         catCol.setMinWidth(175);
         catCol.getStyleClass().add("col-style-center");
-        catCol.setSortType(SortType.ASCENDING);
+        //catCol.setSortType(SortType.ASCENDING);
 
-        TableColumn recCol = new TableColumn("Recommended User Goals");
+        TableColumn recCol = new TableColumn("Selected Goals");
         recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         TableColumn scoreCol = new TableColumn("Score");
@@ -399,7 +393,7 @@ public class GoalNeedsMatrix implements Serializable {
         scoreCol.setMaxWidth(100);
         scoreCol.setMinWidth(100);
         scoreCol.getStyleClass().add("col-style-center");
-        scoreCol.setSortType(SortType.DESCENDING);
+        //scoreCol.setSortType(SortType.DESCENDING);
 
         summary.getColumns().addAll(catCol, recCol, scoreCol);
 
@@ -410,10 +404,9 @@ public class GoalNeedsMatrix implements Serializable {
             }
         });
         //summary.setItems(needsList);
-        summary.setItems(filteredNeeds);
+        summary.setItems(Need.getSortedNeedsList(filteredNeeds));
 
-        summary.getSortOrder().setAll(catCol, scoreCol);
-
+        //summary.getSortOrder().setAll(catCol, scoreCol);
         summary.setPlaceholder(new Label("At least one goal must be selected in the previous step."));
 
         return summary;
@@ -440,82 +433,6 @@ public class GoalNeedsMatrix implements Serializable {
         return al;
     }
 
-//    public TableView createSummarySpanTable() {
-//        computeScores();
-//
-//        final CellSpanTableView<Need> summary = new CellSpanTableView();
-//        //summary.getStyleClass().add("step-summary-table");
-//
-//        summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-//
-//        TableColumn catCol = new TableColumn("Category");
-//        catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
-//        catCol.setPrefWidth(175);
-//        catCol.setMaxWidth(175);
-//        catCol.setMinWidth(175);
-//        catCol.getStyleClass().add("col-style-center");
-//        catCol.setSortType(SortType.ASCENDING);
-//
-//        TableColumn recCol = new TableColumn("Recommended User Goals");
-//        recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
-//
-//        TableColumn scoreCol = new TableColumn("Score");
-//        scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
-//        scoreCol.setPrefWidth(100);
-//        scoreCol.setMaxWidth(100);
-//        scoreCol.setMinWidth(100);
-//        scoreCol.getStyleClass().add("col-style-center");
-//        scoreCol.setSortType(SortType.DESCENDING);
-//
-//        summary.getColumns().addAll(catCol, recCol, scoreCol);
-//
-//        //summary.setItems(needsList);
-//        for (Need n : needsList) {
-//            if (this.includeGoalCat.get(n.getGoal()).get()) {
-//                summary.getItems().add(n);
-//            }
-//        }
-//
-//        summary.setSpanModel(new SpanModel() {
-//            private final CellSpan mobSpan = new CellSpan(numMob, 1);
-//            private final CellSpan prodSpan = new CellSpan(numProd, 1);
-//            private final CellSpan regSpan = new CellSpan(numReg, 1);
-//            private final CellSpan safetySpan = new CellSpan(numSafety, 1);
-//            private final CellSpan travInfoSpan = new CellSpan(numTravInfo, 1);
-//
-//            @Override
-//            public CellSpan getCellSpanAt(int rowIndex, int columnIndex) {
-//                if (rowIndex == 0) {
-//                    return mobSpan;
-//                }
-//                if (rowIndex == numMob + 1) {
-//                    return prodSpan;
-//                }
-//                if (rowIndex == numMob + numProd + 2) {
-//                    return regSpan;
-//                }
-//                if (rowIndex == numMob + numProd + numReg + 3) {
-//                    return safetySpan;
-//                }
-//                if (rowIndex == numMob + numProd + numReg + numSafety + 4) {
-//                    return travInfoSpan;
-//                }
-//                return null;
-//                //return summary.getItems().get(rowIndex).getSpan();
-//            }
-//
-//            @Override
-//            public boolean isCellSpanEnabled() {
-//                return true;
-//            }
-//        });
-//
-//        summary.getSortOrder().setAll(catCol, scoreCol);
-//
-//        summary.setPlaceholder(new Label("Steps 1.2 - 1.4 must be completed to view."));
-//
-//        return summary;
-//    }
     private final StringProperty topMobilityGoal = new SimpleStringProperty();
 
     public String getTopMobilityGoal() {

@@ -568,7 +568,7 @@ public class Step1TableHelper {
         GridPane goalsGrid = new GridPane();
         goalsGrid.getStyleClass().add("fact-sheet-pane-goal");
         goalsGrid.add(NodeFactory.createFormattedLabel("Category", "fact-sheet-title-small"), 0, 0);
-        goalsGrid.add(NodeFactory.createFormattedLabel("Recommended User Goals by WZITS Tool", "fact-sheet-title-small"), 1, 0);
+        goalsGrid.add(NodeFactory.createFormattedLabel("Recommended Goals by WZITS Tool", "fact-sheet-title-small"), 1, 0);
         goalsGrid.add(NodeFactory.createFormattedLabel("Score", "fact-sheet-title-small"), 2, 0);
 
         rowIdx = 1;

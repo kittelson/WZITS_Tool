@@ -316,4 +316,6 @@ public class MainController {
 
     public static final String SUMMARY_TITLE = "Project Summary";
 
+    public static final int FADE_TIME = 50;
+
 }

@@ -9,12 +9,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Comparator;
+import java.util.function.Predicate;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
 /**
  *
@@ -22,7 +26,7 @@ import javafx.collections.ObservableList;
  */
 public class Need implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     private SimpleStringProperty description;
 
@@ -107,6 +111,29 @@ public class Need implements Serializable {
         selected = new SimpleBooleanProperty(s.readBoolean());
     }
 
+    public static int getTypeConverter(Need n) {
+        switch (n.getGoal()) {
+            case Question.GOAL_SAFETY:
+                return 0;
+            case Question.GOAL_MOBILITY:
+                return 1;
+            case Question.GOAL_PROD:
+                return 2;
+            case Question.GOAL_REG:
+                return 3;
+            case Question.GOAL_TRAVELER_INFO:
+                return 4;
+            default:
+                return 5;
+        }
+    }
+
+    public static ObservableList getSortedNeedsList(ObservableList<Need> needsList) {
+        FilteredList fl = needsList.filtered(NEED_PRED);
+        SortedList sl = fl.sorted(NEED_COMP);
+        return sl;
+    }
+
     public static final ObservableList<Need> GOAL_WIZARD_NEEDS_LIST = FXCollections.observableArrayList(
             new Need(Question.GOAL_MOBILITY, "Reduce daily peak period delays to XX minutes"),
             new Need(Question.GOAL_MOBILITY, "Facilitate the movement of emergency and construction vehicles through the work zone"),
@@ -131,5 +158,28 @@ public class Need implements Serializable {
             new Need(Question.GOAL_TRAVELER_INFO, "Provide roadway users real-time alternate route information"),
             new Need(Question.GOAL_TRAVELER_INFO, "", true)
     );
+
+    private static final Comparator<Need> NEED_COMP = new Comparator<Need>() {
+        @Override
+        public int compare(Need n1, Need n2) {
+            // lower goal type indicates "less than" (should appear above in list)
+            int goalType1 = Need.getTypeConverter(n1);
+            int goalType2 = Need.getTypeConverter(n2);
+            if (goalType1 == goalType2) {
+                return n1.getScore() > n2.getScore() ? -1 : n1.getScore() == n2.getScore() ? 0 : 1;
+            } else if (goalType1 < goalType2) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    };
+
+    private static final Predicate<Need> NEED_PRED = new Predicate<Need>() {
+        @Override
+        public boolean test(Need n) {
+            return !n.isPlaceholder;
+        }
+    };
 
 }

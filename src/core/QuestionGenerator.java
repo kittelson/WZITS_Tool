@@ -21,7 +21,7 @@ import javafx.collections.ObservableList;
  */
 public class QuestionGenerator implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     /**
      * List of yes/no questions for the goal wizard.
@@ -319,7 +319,7 @@ public class QuestionGenerator implements Serializable {
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Will variable work activities occur?", false, 3));
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Are oversize vehicles expected?", false, 3));
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Do you expect a construction vehicle entry/exit speed differential relative to traffic?", false, 2));
-        bindDependantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.highVolumeConstructionVehsQ, "User Needs #8");
+        bindDependantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.highVolumeConstructionVehsQ, "User Needs #7");
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Will data be collected for work zone performance measures?", false, 3));
         qFeasYNList.add(new QuestionYN(qIdx++, Question.GOAL_FEASIBILITY, "Do you expect any unusual or unpredictable weather patterns to occur?", false, 3));
         // Just in stakeholder wizard as not scored in excel feasibility wizard
@@ -342,25 +342,26 @@ public class QuestionGenerator implements Serializable {
         this.significantQueueingQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(4, Question.GOAL_USER_NEEDS, "Will this work zone have reduced lane widths?"));
         this.reducedLaneWidthQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
-        qGoalWizardList.add(new QuestionYN(5, Question.GOAL_USER_NEEDS, "Will this work zone have reduced sight distance impact?"));
+        qGoalWizardList.add(new QuestionYN(5, Question.GOAL_USER_NEEDS, "Will this work zone result in reduced sight distances that impact roadway users?"));
         this.reducedSightDistanceQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(9, Question.GOAL_USER_NEEDS, "Will transit vehicles need to travel through the work zone?"));
-        qGoalWizardList.add(new QuestionYN(7, Question.GOAL_USER_NEEDS, "Are you using rapid-set concrete mix?"));
-        qGoalWizardList.add(new QuestionYN(17, Question.GOAL_USER_NEEDS, "Will there be a high volume of construction vehicles requiring access to the work zone?"));
+        //qGoalWizardList.add(new QuestionYN(7, Question.GOAL_USER_NEEDS, "Are you using rapid-set concrete mix?"));
+        qGoalWizardList.add(new QuestionYN(17, Question.GOAL_USER_NEEDS, "Will there be a high volume of construction vehicles requiring access to the work zone via travel lanes?"));
         this.highVolumeConstructionVehsQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
-        qGoalWizardList.add(new QuestionYN(8, Question.GOAL_USER_NEEDS, "Will construction vehicles access site from travel lanes?"));
-        this.constructionVehAccessQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
-        bindDependantQs(constructionVehAccessQ, highVolumeConstructionVehsQ, "User Needs #8");
+        //qGoalWizardList.add(new QuestionYN(8, Question.GOAL_USER_NEEDS, "Will construction vehicles access site from travel lanes?"));
+        //this.constructionVehAccessQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
+        //bindDependantQs(constructionVehAccessQ, highVolumeConstructionVehsQ, "User Needs #8");
         qGoalWizardList.add(new QuestionYN(10, Question.GOAL_USER_NEEDS, "Are there specific agency policies for work zones as required by the work zone safety and mobility rule?"));
         this.specificAgencyPoliciesQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(11, Question.GOAL_USER_NEEDS, "Does the agency have existing performance targets for work zones?"));
         this.existingPerformanceMeasuresQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(12, Question.GOAL_USER_NEEDS, "Will outreach and traveler information be used for this work zone?"));
         this.outreachTravelerInfoQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
-        qGoalWizardList.add(new QuestionYN(13, Question.GOAL_USER_NEEDS, "Are there additional data needed before and during construction?"));
-        qGoalWizardList.add(new QuestionYN(6, Question.GOAL_USER_NEEDS, "Will the shoulder in this work zone be eliminated (to where breakdowns can't be accomodated)?"));
-        qGoalWizardList.add(new QuestionYN(14, Question.GOAL_USER_NEEDS, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"));
+        qGoalWizardList.add(new QuestionYN(13, Question.GOAL_USER_NEEDS, "Is additional data collection needed before and/or during construction for work zone performance measures?"));
+        qGoalWizardList.add(new QuestionYN(6, Question.GOAL_USER_NEEDS, "Will the shoulder in this work zone be eliminated/reduced (to where breakdowns can't be accomodated)?"));
         this.emergencyShoulderQIdx = qGoalWizardList.get(qGoalWizardList.size() - 1);
+        //qGoalWizardList.add(new QuestionYN(14, Question.GOAL_USER_NEEDS, "Will the work zone result in the closure of emergency shoulders (to where breakdowns can't be accomodated)?"));
+        //this.emergencyShoulderQIdx = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(15, Question.GOAL_USER_NEEDS, "Will speed imits in the work zone be lowered compared to base conditions?"));
         this.loweredSpeedLimitsQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         qGoalWizardList.add(new QuestionYN(16, Question.GOAL_USER_NEEDS, "Does state law allow use of automated speed enforcement in work zones?"));
@@ -393,7 +394,7 @@ public class QuestionGenerator implements Serializable {
     }
 
     private void createUserNeedsSupportQuestions() {
-        qUNSupportList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV camveras, variable message signs, or travel time sensors in the work zone?"));
+        qUNSupportList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there existing sensors, closed-circuit TV cameras, variable message signs, or travel time sensors in the work zone?"));
         qUNSupportList.add(new QuestionYN(2, Question.GOAL_USER_NEEDS, "Are probe data available for the work zone?"));
         qUNSupportList.add(new QuestionYN(3, Question.GOAL_USER_NEEDS, "Are crash data available?"));
         qUNSupportList.get(qUNSupportList.size() - 1).answerIsYesProperty().bindBidirectional(proj.crashDataAvailableProperty());
@@ -406,7 +407,7 @@ public class QuestionGenerator implements Serializable {
 
     private void createITSResourcesQuestions() {
         qITSResourcesList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Are there weather monitoring stations along the work zone?"));
-        qITSResourcesList.add(new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a local regional or state TMC that monitors the roadway?"));
+        qITSResourcesList.add(new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is there a local regional or state traffic management center (TMC) that monitors the roadway?"));
         qITSResourcesList.add(new QuestionYN(3, Question.GOAL_USER_NEEDS, "Is there an existing website or traveler information system?"));
         qITSResourcesList.add(new QuestionYN(4, Question.GOAL_USER_NEEDS, "Do you have ITS on-call contracts?"));
         qITSResourcesList.add(new QuestionYN(5, Question.GOAL_USER_NEEDS, "Do you have access to leased or temporary ITS devices?"));
@@ -423,10 +424,10 @@ public class QuestionGenerator implements Serializable {
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Do you expect congestion impacts to be noticable to drivers?"));
         refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable to drivers?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Do you expect the work zone to result in v/c greater than 1.0 during peak periods?"));
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Do you expect the work zone to cause V/C to be greater than 1.0 during peak periods?"));
         refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable
         bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Do you expect the work zone to result in v/c greater than 1.0 during off-peak periods?"));
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Do you expect the work zone to cause V/C to be greater than 1.0 during off-peak periods?"));
         refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable
         bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Do you anticipate significant queuing as a result of this work zone?"));
@@ -434,13 +435,13 @@ public class QuestionGenerator implements Serializable {
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #3");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Will lower speed limits be advised in the work zone?"));
         refQ = this.loweredSpeedLimitsQ; // GW#14 Will speed imits in the work zone be lowered compared to base conditions?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #16");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #13");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_MOBILITY, "Will work zone activities disable ramp meters (Select No if not applicable)?"));
         refQ = this.disableRampMetersQ; //  GW#19 Will work zone activities disable ramp meters?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #19");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #16");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will the work zone result in closure of emergency shoulders?"));
         refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #15");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #12");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Is the work zone located on an emergency response corridor?"));
         refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Stakeholder #6");
@@ -467,15 +468,15 @@ public class QuestionGenerator implements Serializable {
         qApplicationList.get(qApplicationList.size() - 1).answerIsYesProperty().bind(bb);
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_SAFETY, "Will temporary ramp geometry constrain acceleration lanes?"));
         refQ = this.rampGeometryQ; // GW#18 Will temporary ramp geometry constrain acceleration lanes?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #18");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #15");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will construction vehicles access site from travel lanes?"));
-        refQ = this.constructionVehAccessQ; //
-        //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #8");
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #9");
-        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Are there access points with vertical or horizontal sight distance restrictions?"));
+        //refQ = this.constructionVehAccessQ; //
+        bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #7");
+        //bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #9");
+        qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Are there ramps or construction access points with vertical or horizontal sight distance restrictions?"));
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will there be a high volume of construction vehicles requiring access to the work zone?"));
         refQ = this.highVolumeConstructionVehsQ; // GW#17 Will there be a high volume of construction vehicles?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #8");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #7");
         //qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will existing equipment be used for the work zone?"));
         //this.existingEquipmentQ = qApplicationList.get(qApplicationList.size() - 1);
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will any exisiting ITS devices be incorporated into the smart work zone?"));
@@ -483,19 +484,19 @@ public class QuestionGenerator implements Serializable {
         //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "previous question");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Is automated enforcement legal in your state?"));
         refQ = this.allowAutomatedSpeedEnforcementQ; // Same as GW#15 Does state law allow use of automated speed enforcement in WZs?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #17");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #14");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Are there specific agency policies for work zones?"));
         refQ = this.specificAgencyPoliciesQ; // GW#9 Are there specific agency policies for work zones as required by the WZ safety and mobility rule?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #10");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #8");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Does the agency have existing performance targets for work zones?"));
         refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zone?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #11");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #9");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Is there a mobility goal?"));
         refQ = this.mobilityGoalQ; // Is there a mobility goal?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Selected Goals #1");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_REG, "Will the work zone be included in the federally-mandated biannual process review?"));
         refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
-        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #20");
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #17");
         qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_TRAVELER_INFO, "Will outreach and traveler information be used for this work zone?"));
         refQ = this.outreachTravelerInfoQ; // GW#11 Will outreach and traveler information be used for this work zone?
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #12");
@@ -510,7 +511,7 @@ public class QuestionGenerator implements Serializable {
     private void createStakeholderWizardQuestions() {
         int qIdx = 1;
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Are there schools or universities in the area?"));
-        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is this a tourist route?"));
+        qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Do you expect a high percentage of tourists or unfamiliar drivers using the routes?"));
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Is there a special event venue nearby?"));
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Does a transit line run parallel to the work zone?"));
         qStakeholderYNList.add(new QuestionYN(qIdx++, Question.GOAL_STAKEHOLDER, "Are there other work zones in the area?"));
@@ -550,7 +551,7 @@ public class QuestionGenerator implements Serializable {
         });
         qStakeholderOptionList.get(qStakeholderOptionList.size() - 1).setLocked(true);
         qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "What is the functional class of the roadway? (Specified in WZ Metadata)",
-                new String[]{"Freeway", "Arterial", "Local"}));
+                Project.FUNCTIONAL_CLASS_LIST));
         final QuestionOption funcQ = qStakeholderOptionList.get(qStakeholderOptionList.size() - 1);
         proj.functionalClassProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -560,7 +561,7 @@ public class QuestionGenerator implements Serializable {
         });
         qStakeholderOptionList.get(qStakeholderOptionList.size() - 1).setLocked(true);
         qStakeholderOptionList.add(new QuestionOption(qIdx++, Question.GOAL_STAKEHOLDER, "Which agency is reponsible for maintaining the roadway? (Specified in WZ Metadata)",
-                new String[]{"State", "Country", "City/Town", "Other"}));
+                Project.AGENCY_LIST));
         proj.maintainingAgencyProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
@@ -625,18 +626,20 @@ public class QuestionGenerator implements Serializable {
         qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have the estimated benefits of the project been documented?"));
         // Concept of operations (End Step 2/Start Step 3)
         this.qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there data flow between system components?"));
-        qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Information flow between the agency and the public?"));
+        qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there information flow between the agency and the public?"));
         qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do you have communication flow charts?"));
         qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How will the system ultimately operate?"));
+        qConOpsList.get(qConOpsList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
         qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there an overall strategy for the system?"));
         qConOpsList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How does the work zone fit into the overall construction project?"));
+        qConOpsList.get(qConOpsList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
         // System Requirement (Start Step 3)
         this.qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have physical requirements been defined?"));
         qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have functional requirements been defined?"));
         qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have system requirements been defined?"));
         qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a traceability matrix been established?"));
         qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has interoperability or connectivity been established with other ITS equipment in the region?"));
-        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has connectivity been established with the TMC in the region?"));
+        qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has connectivity been established with the traffic management center (TMC) in the region?"));
         qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will changes in the work zone environment be addressed over time?"));
         qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has a contingency plan been included with the design to address delays in the project?"));
         qSysReqList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have operation, maintenance, and calibration requirements been defined?"));
@@ -648,14 +651,16 @@ public class QuestionGenerator implements Serializable {
         qOpsMaintList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a procedure for enforcing penalties for system downtime?"));
         // Staff Training needs
         this.qStaffTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Where will training be held?"));
+        qStaffTrainingList.get(qStaffTrainingList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
         qStaffTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has staff been trained on contractor notification procedures?"));
         // System Security
         this.qSysSecurityList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is access to the smart work zone ITS application protected from unauthorized users?"));
         qSysSecurityList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has protection and recovery from vandalism and stolen system components such as batteries been addressed?"));
         // Project Evaluation
         this.qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is a system evaluation of the project planned?"));
+        qProjectEvalList.get(qProjectEvalList.size() - 1).setCommentPrompt("Describe the planned evaluation, or elaborate as to why it is not being considered...");
         qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Were the system goals and objectives explicity stated?"));
-        qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Was an evaluation for the project considered at the beginning of the project?"));
+        //qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Was an evaluation for the project considered at the beginning of the project?"));
         qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a mechanism in place for the public to offer feedback on the smart work zone system?"));
         qProjectEvalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Should changes be made to optimize the system or improve performance?"));
         // System Benefit/Cost (End Step 3)
@@ -663,9 +668,10 @@ public class QuestionGenerator implements Serializable {
         qSysBCList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have the benefits that the system will have on safety been considered?"));
         qSysBCList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the cost estimate been re-examined now that the system requirements have been defined?"));
         // Direct/Indirect (Start Step 4)
-        this.qDirectIndirectList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "How much control does the agency want to have over the work zone setup, opeation and management?"));
+        this.qDirectIndirectList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Does the agency want control over the work zone setup, operation and management? If yes, please describe the extent below."));
         // Mechanism
         this.qMechanismList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "What type of award mechanism do you plan to use?"));
+        qMechanismList.get(qMechanismList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
         // Request for Proposals
         this.qRFPList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is your agency issuing a request for proposals (RFP)?"));
         qRFPList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have clear specifications for the system been defined?"));
@@ -676,6 +682,7 @@ public class QuestionGenerator implements Serializable {
         // System Plans (Start Step 5)
         this.qSysPlansList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will the system be operated as a stand-alone system?"));
         qSysPlansList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "What is the level of agency involvement?"));
+        qSysPlansList.get(qSysPlansList.size() - 1).setCommentQType(Question.COMMENT_QTYPE_NA);
         // Scheduling
         this.qSchedulingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient lead time to deploy the smart work zone ITS system been included in the construction project schedule?"));
         qSchedulingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient testing and calibration time and effort been included in the construction project schedule?"));
@@ -925,17 +932,17 @@ public class QuestionGenerator implements Serializable {
         this.significantQueueingQ = qGoalWizardList.get(2);
         this.reducedLaneWidthQ = qGoalWizardList.get(3);
         this.reducedSightDistanceQ = qGoalWizardList.get(4);
-        this.highVolumeConstructionVehsQ = qGoalWizardList.get(7);
-        this.constructionVehAccessQ = qGoalWizardList.get(8);
-        this.specificAgencyPoliciesQ = qGoalWizardList.get(9);
-        this.existingPerformanceMeasuresQ = qGoalWizardList.get(10);
-        this.outreachTravelerInfoQ = qGoalWizardList.get(11);
-        this.emergencyShoulderQIdx = qGoalWizardList.get(14);
-        this.loweredSpeedLimitsQ = qGoalWizardList.get(15);
-        this.allowAutomatedSpeedEnforcementQ = qGoalWizardList.get(16);
-        this.rampGeometryQ = qGoalWizardList.get(17);
-        this.disableRampMetersQ = qGoalWizardList.get(18);
-        this.biannualProcessReviewQ = qGoalWizardList.get(19);
+        this.highVolumeConstructionVehsQ = qGoalWizardList.get(6);
+        //this.constructionVehAccessQ = qGoalWizardList.get(8);
+        this.specificAgencyPoliciesQ = qGoalWizardList.get(7);
+        this.existingPerformanceMeasuresQ = qGoalWizardList.get(8);
+        this.outreachTravelerInfoQ = qGoalWizardList.get(9);
+        this.emergencyShoulderQIdx = qGoalWizardList.get(12);
+        this.loweredSpeedLimitsQ = qGoalWizardList.get(13);
+        this.allowAutomatedSpeedEnforcementQ = qGoalWizardList.get(14);
+        this.rampGeometryQ = qGoalWizardList.get(15);
+        this.disableRampMetersQ = qGoalWizardList.get(16);
+        this.biannualProcessReviewQ = qGoalWizardList.get(17);
 
         this.mobilityGoalQ = qMajorGoalsList.get(0);
         this.safetyGoalQ = qMajorGoalsList.get(1);
@@ -946,7 +953,7 @@ public class QuestionGenerator implements Serializable {
         this.emergencyResponseCorridorQIdx = qStakeholderYNList.get(5);
 
         // User Needs (Goal Wizard)
-        bindDependantQs(constructionVehAccessQ, highVolumeConstructionVehsQ, "User Needs #8");
+        //bindDependantQs(constructionVehAccessQ, highVolumeConstructionVehsQ, "User Needs #8");
         proj.automatedEnforcementAllowedProperty().bindBidirectional(allowAutomatedSpeedEnforcementQ.answerIsYesProperty());
 
         // User Needs Support
@@ -957,7 +964,7 @@ public class QuestionGenerator implements Serializable {
         bindDependantQs(qFeasOptionList.get(3), this.significantQueueingQ, "User Needs #3");
         bindDependantQs(qFeasYNList.get(1), this.significantQueueingQ, "User Needs #3");
         bindRedundantQs(qFeasYNList.get(3), this.driverDiversionQ, "User Needs #2");
-        bindDependantQs(qFeasYNList.get(9), this.highVolumeConstructionVehsQ, "User Needs #8");
+        bindDependantQs(qFeasYNList.get(9), this.highVolumeConstructionVehsQ, "User Needs #7");
 
         // StakeholderWizard
         bindDependantQs(qStakeholderYNList.get(11), this.driverDiversionQ, "User Needs #2");
@@ -1005,11 +1012,11 @@ public class QuestionGenerator implements Serializable {
         refQ = this.significantQueueingQ; // GW#3 Do you expect significant queueing
         bindRedundantQs(qApplicationList.get(6), refQ, "User Needs #3");
         refQ = this.loweredSpeedLimitsQ; // GW#14 Will speed imits in the work zone be lowered compared to base conditions?
-        bindRedundantQs(qApplicationList.get(7), refQ, "User Needs #16");
+        bindRedundantQs(qApplicationList.get(7), refQ, "User Needs #13");
         refQ = this.disableRampMetersQ; //  GW#19 Will work zone activities disable ramp meters?
-        bindRedundantQs(qApplicationList.get(8), refQ, "User Needs #19");
+        bindRedundantQs(qApplicationList.get(8), refQ, "User Needs #16");
         refQ = this.emergencyShoulderQIdx; // GW#13 Will the work zone result in closure of emergency shoulders?
-        bindRedundantQs(qApplicationList.get(9), refQ, "User Needs #15");
+        bindRedundantQs(qApplicationList.get(9), refQ, "User Needs #12");
         refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
         bindRedundantQs(qApplicationList.get(10), refQ, "Stakeholder #6");
         //qApplicationList.get(11).visibleProperty().bind(proj.crashDataAvailableProperty());
@@ -1032,24 +1039,24 @@ public class QuestionGenerator implements Serializable {
         qApplicationList.get(12).setRefText("User Needs #4&#5");
         qApplicationList.get(12).answerIsYesProperty().bind(bb);
         refQ = this.rampGeometryQ; // GW#18 Will temporary ramp geometry constrain acceleration lanes?
-        bindRedundantQs(qApplicationList.get(13), refQ, "User Needs #18");
-        refQ = this.constructionVehAccessQ; //
-        //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #8");
-        bindRedundantQs(qApplicationList.get(14), refQ, "User Needs #9");
+        bindRedundantQs(qApplicationList.get(13), refQ, "User Needs #15");
+        //refQ = this.constructionVehAccessQ; //
+        bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #7");
+        //bindRedundantQs(qApplicationList.get(14), refQ, "User Needs #9");
         refQ = this.highVolumeConstructionVehsQ; // GW#17 Will there be a high volume of construction vehicles?
-        bindRedundantQs(qApplicationList.get(16), refQ, "User Needs #8");
+        bindRedundantQs(qApplicationList.get(16), refQ, "User Needs #7");
         refQ = this.allowAutomatedSpeedEnforcementQ; // Same as GW#15 Does state law allow use of automated speed enforcement in WZs?
-        bindRedundantQs(qApplicationList.get(18), refQ, "User Needs #17");
+        bindRedundantQs(qApplicationList.get(18), refQ, "User Needs #14");
         refQ = this.specificAgencyPoliciesQ; // GW#9 Are there specific agency policies for work zones as required by the WZ safety and mobility rule?
-        bindRedundantQs(qApplicationList.get(19), refQ, "User Needs #10");
+        bindRedundantQs(qApplicationList.get(19), refQ, "User Needs #8");
         refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zones?
-        bindRedundantQs(qApplicationList.get(20), refQ, "User Needs #11");
+        bindRedundantQs(qApplicationList.get(20), refQ, "User Needs #9");
         refQ = this.mobilityGoalQ; // Is there a mobility goal?
-        bindRedundantQs(qApplicationList.get(21), refQ, "Selected Goals #1");
+        bindRedundantQs(qApplicationList.get(21), refQ, "Selected Goals");
         refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
-        bindRedundantQs(qApplicationList.get(22), refQ, "User Needs #20");
+        bindRedundantQs(qApplicationList.get(22), refQ, "User Needs #17");
         refQ = this.outreachTravelerInfoQ; // GW#11 Will outreach and traveler information be used for this work zone?
-        bindRedundantQs(qApplicationList.get(23), refQ, "User Needs #12");
+        bindRedundantQs(qApplicationList.get(23), refQ, "User Needs #17");
 
     }
 
@@ -1131,10 +1138,10 @@ public class QuestionGenerator implements Serializable {
         this.qVendorSelectionList = FXCollections.observableArrayList((QuestionYN[]) s.readObject());
     }
 
-    private QuestionYN congestionNoticableQ, significantQueueingQ,
+    public QuestionYN congestionNoticableQ, significantQueueingQ,
             loweredSpeedLimitsQ, disableRampMetersQ, emergencyShoulderQIdx,
             emergencyResponseCorridorQIdx, driverDiversionQ, reducedLaneWidthQ,
-            reducedSightDistanceQ, constructionVehAccessQ,
+            reducedSightDistanceQ, //constructionVehAccessQ,
             specificAgencyPoliciesQ, existingPerformanceMeasuresQ,
             outreachTravelerInfoQ, allowAutomatedSpeedEnforcementQ,
             highVolumeConstructionVehsQ, rampGeometryQ, biannualProcessReviewQ;

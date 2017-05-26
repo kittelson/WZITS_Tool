@@ -10,12 +10,17 @@ import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import GUI.Tables.Step2TableHelper;
 import core.Project;
+import java.util.ArrayList;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
@@ -42,7 +47,8 @@ public class Step2Panel extends BorderPane {
 
     private final VBox mainVBox = new VBox();
 
-    private final GridPane allSubStepsPane = new GridPane();
+    //private final GridPane allSubStepsPane = new GridPane();
+    private final BorderPane centerPane = new BorderPane();
 
     private final GridPane stepIntroGrid = new GridPane();
     private final BorderPane applicationPane = new BorderPane();
@@ -54,6 +60,7 @@ public class Step2Panel extends BorderPane {
     private final BorderPane stakeholderBuyInPane = new BorderPane();
     private final BorderPane conOpsPane = new BorderPane();
     private final BorderPane stepReportPane = new BorderPane();
+    private final ArrayList<Node> subStepPanesList = new ArrayList();
 
     public Step2Panel(MainController mc) {
 
@@ -88,7 +95,7 @@ public class Step2Panel extends BorderPane {
             @Override
             protected double computeValue() {
                 //return Math.max(widthProperty().get() * 0.70, 700);
-                return (widthProperty().get() / (Project.NUM_SUB_STEPS[1] + 2) - 150); // 0.9
+                return (widthProperty().get() - 150); // 0.9
                 //return (widthProperty().get()) * 0.2;
             }
         };
@@ -195,25 +202,36 @@ public class Step2Panel extends BorderPane {
 
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
-        mainVBox.getChildren().addAll(allSubStepsPane);
-        allSubStepsPane.add(stepIntroGrid, 0, 0);
-        allSubStepsPane.add(applicationPane, 1, 0);
-        allSubStepsPane.add(awSummaryPane, 2, 0);
-        allSubStepsPane.add(benefitsPane, 3, 0);
-        allSubStepsPane.add(costPane, 4, 0);
-        allSubStepsPane.add(instJurPane, 5, 0);
-        allSubStepsPane.add(legalPane, 6, 0);
-        allSubStepsPane.add(stakeholderBuyInPane, 7, 0);
-        allSubStepsPane.add(conOpsPane, 8, 0);
-        allSubStepsPane.add(stepReportPane, 9, 0);
+        mainVBox.getChildren().addAll(centerPane);  //allSubStepsPane
+//        allSubStepsPane.add(stepIntroGrid, 0, 0);
+//        allSubStepsPane.add(applicationPane, 1, 0);
+//        allSubStepsPane.add(awSummaryPane, 2, 0);
+//        allSubStepsPane.add(benefitsPane, 3, 0);
+//        allSubStepsPane.add(costPane, 4, 0);
+//        allSubStepsPane.add(instJurPane, 5, 0);
+//        allSubStepsPane.add(legalPane, 6, 0);
+//        allSubStepsPane.add(stakeholderBuyInPane, 7, 0);
+//        allSubStepsPane.add(conOpsPane, 8, 0);
+//        allSubStepsPane.add(stepReportPane, 9, 0);
+        this.subStepPanesList.add(stepIntroGrid);
+        this.subStepPanesList.add(applicationPane);
+        this.subStepPanesList.add(awSummaryPane);
+        this.subStepPanesList.add(benefitsPane);
+        this.subStepPanesList.add(costPane);
+        this.subStepPanesList.add(instJurPane);
+        this.subStepPanesList.add(legalPane);
+        this.subStepPanesList.add(stakeholderBuyInPane);
+        this.subStepPanesList.add(conOpsPane);
+        this.subStepPanesList.add(stepReportPane);
 
-        int numPanes = getNumSubSteps() + 2;
-        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
-            ColumnConstraints tcc = new ColumnConstraints();
-            tcc.setPercentWidth(100.0 / numPanes);
-            allSubStepsPane.getColumnConstraints().add(tcc);
-        }
+        centerPane.setCenter(stepIntroGrid);
 
+//        int numPanes = getNumSubSteps() + 2;
+//        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
+//            ColumnConstraints tcc = new ColumnConstraints();
+//            tcc.setPercentWidth(100.0 / numPanes);
+//            allSubStepsPane.getColumnConstraints().add(tcc);
+//        }
         GridPane.setVgrow(stepIntroGrid, Priority.ALWAYS);
         GridPane.setVgrow(applicationPane, Priority.ALWAYS);
         GridPane.setVgrow(awSummaryPane, Priority.ALWAYS);
@@ -224,7 +242,7 @@ public class Step2Panel extends BorderPane {
         GridPane.setVgrow(stakeholderBuyInPane, Priority.ALWAYS);
         GridPane.setVgrow(conOpsPane, Priority.ALWAYS);
         GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
-        VBox.setVgrow(allSubStepsPane, Priority.ALWAYS);
+        VBox.setVgrow(centerPane, Priority.ALWAYS);
         this.setCenter(mainVBox);
 
         setupActionListeners();
@@ -237,17 +255,17 @@ public class Step2Panel extends BorderPane {
     }
 
     private void setupPropertyBindings() {
-        this.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-                //System.out.println("Step 2 Width Resized");
-                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
-                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-                }
-            }
-        });
+//        this.widthProperty().addListener(new ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
+//                //System.out.println("Step 2 Width Resized");
+//                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
+//                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+//                }
+//            }
+//        });
 
         control.activeStepProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -289,11 +307,11 @@ public class Step2Panel extends BorderPane {
     }
 
     public void setViewWidth(double viewWidth) {
-        if (allSubStepsPane != null) {
-            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-        }
+//        if (allSubStepsPane != null) {
+//            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+//        }
     }
 
     private void selectSubStep(int subStepIndex) {
@@ -301,22 +319,43 @@ public class Step2Panel extends BorderPane {
     }
 
     private void selectSubStep(int subStepIndex, boolean animated) {
-        moveScreen((subStepIndex + 1) * stepIntroGrid.getWidth(), 0, animated);
+        //moveScreen((subStepIndex + 1) * stepIntroGrid.getWidth(), 0, animated);
+        changePanel(subStepIndex, animated);
     }
 
-    private void moveScreen(double toX, double toY) {
-        moveScreen(toX, toY, true);
-    }
+    private void changePanel(int subStepIndex, boolean animated) {
+        if (subStepIndex > -2) {
+            if (!animated) {
+                centerPane.setCenter(this.subStepPanesList.get(subStepIndex + 1));
+            } else {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
 
-    private void moveScreen(double toX, double toY, boolean animated) {
-        if (animated) {
-            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allSubStepsPane);
-            moveMe.setToX(-1 * toX);
-            moveMe.setToY(toY);
-            moveMe.play();
-        } else {
-            allSubStepsPane.setTranslateX(-1 * toX);
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        centerPane.setCenter(subStepPanesList.get(subStepIndex + 1));
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
         }
     }
 
+//    private void moveScreen(double toX, double toY, boolean animated) {
+//        if (animated) {
+//            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allSubStepsPane);
+//            moveMe.setToX(-1 * toX);
+//            moveMe.setToY(toY);
+//            moveMe.play();
+//        } else {
+//            allSubStepsPane.setTranslateX(-1 * toX);
+//        }
+//    }
 }

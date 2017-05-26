@@ -17,7 +17,7 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public class QuestionOptionMS extends QuestionOption implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     private SimpleBooleanProperty[] optionIsIncluded;
 

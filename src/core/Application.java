@@ -20,7 +20,7 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Application implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     /**
      * Name of the application.

@@ -20,7 +20,7 @@ import javafx.beans.value.ObservableValue;
  */
 public class QuestionOption extends Question implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     private String[] options;
 

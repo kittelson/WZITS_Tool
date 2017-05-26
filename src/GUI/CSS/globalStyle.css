@@ -45,7 +45,8 @@
 .intro-begin-button {
     -fx-font-size: 36;
     -fx-font-family: "calibri";
-    -fx-background-color: #29abe2;
+    /*-fx-background-color: #29abe2;*/
+    -fx-default-button: #29abe2;
     -fx-text-fill: white;
     -fx-text-alignment: center;
 }
@@ -155,11 +156,32 @@
     -fx-font-size: 18px;
 }
 
+.wz-input-title-style {
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-background-color: #bac5cc;
+    -fx-font-family: 'calibri';
+    -fx-wrap-text: true;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
 .wz-input-label-style {
     -fx-text-alignment: center;
     -fx-text-fill: black;
     -fx-font-family: 'calibri';
     -fx-font-size: 18px;
+}
+
+.wz-input-hyperlink-small-superscript {
+    -fx-font-size: 10;
+    -fx-alignment: top-left;
+}
+
+.wz-input-hyperlink-small-superscript:visited {
+    -fx-font-size: 10;
+    -fx-alignment: top-left;
+    -fx-text-fill: #ED7D31;
 }
 
 .wzits-choice-box {

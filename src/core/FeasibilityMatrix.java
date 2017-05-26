@@ -23,7 +23,7 @@ import javafx.scene.layout.RowConstraints;
  */
 public class FeasibilityMatrix implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     private SimpleIntegerProperty feasibility = new SimpleIntegerProperty(0);
 
@@ -62,6 +62,13 @@ public class FeasibilityMatrix implements Serializable {
         scoreGrid.getColumnConstraints().addAll(cc1, cc2);
 
         final Label descriptionlabel = NodeFactory.createFormattedLabel(DESC_30PLUS, "feasibility-output-desc");
+        if (feasibility.get() >= 30) {
+            descriptionlabel.setText(DESC_30PLUS);
+        } else if (feasibility.get() >= 10) {
+            descriptionlabel.setText(DESC_10_TO_29);
+        } else {
+            descriptionlabel.setText(DESC_LESS_THAN_10);
+        }
         feasibility.addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
                 if (newVal.intValue() >= 30) {

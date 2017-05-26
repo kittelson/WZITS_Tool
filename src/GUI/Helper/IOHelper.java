@@ -9,12 +9,14 @@ import GUI.MainController;
 import core.Project;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -87,6 +89,26 @@ public class IOHelper {
             }
         }
         return proj;
+    }
+
+    public static boolean getProjectImage(MainController mc) {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Select WZITS Project Image");
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.*"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+        File openFile = fc.showOpenDialog(mc.getWindow());  //mc.getMainWindow()
+        if (openFile != null) {
+            try {
+                mc.getProject().setProjPhoto(new Image(new FileInputStream(openFile)));
+                return true;
+            } catch (FileNotFoundException e) {
+
+            }
+        }
+        return false;
     }
 
     public static final int SAVE_COMPLETED = 1;

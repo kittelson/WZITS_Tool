@@ -14,8 +14,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.util.converter.IntegerStringConverter;
 
 /**
@@ -24,7 +22,7 @@ import javafx.util.converter.IntegerStringConverter;
  */
 public abstract class Question implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     protected SimpleIntegerProperty idx;
     protected SimpleStringProperty goal;
@@ -35,7 +33,7 @@ public abstract class Question implements Serializable {
     protected BooleanProperty locked = new SimpleBooleanProperty();
     private StringProperty refText = new SimpleStringProperty();
     private StringProperty comment = new SimpleStringProperty();
-    private String commentPrompt = "Enter additional comments here...";
+    private String commentPrompt = "Additional comments...";
     protected int commentQType = COMMENT_QTYPE_NA;
 
     public Question(int idx, String goal, String questionText) {

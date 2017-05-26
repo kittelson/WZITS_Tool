@@ -27,10 +27,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -71,7 +75,7 @@ public class FlowBar extends BorderPane {
     private final Button step1Sub7Button = new Button(Project.STEP_NAMES[0][7]);
     private final Button step1Sub8Button = new Button(Project.STEP_NAMES[0][8]);
     private final Button step1Sub9Button = new Button(Project.STEP_NAMES[0][9]); //
-    private final Button step1Sub10Button = new Button(Project.STEP_NAMES[0][10]);
+    //private final Button step1Sub10Button = new Button(Project.STEP_NAMES[0][10]);
     //private final Button step1Sub11Button = new Button(Project.STEP_NAMES[0][11]);
     private final Button step1ReportButton = new Button("Step 1 Report");
 
@@ -210,7 +214,7 @@ public class FlowBar extends BorderPane {
         step1List.add(step1Sub7Button);
         step1List.add(step1Sub8Button);
         step1List.add(step1Sub9Button);
-        step1List.add(step1Sub10Button);
+        //step1List.add(step1Sub10Button);
         //step1List.add(step1Sub11Button);
         step1List.add(step1ReportButton);
 
@@ -281,7 +285,7 @@ public class FlowBar extends BorderPane {
         allButtonList.add(step1Sub7Button);
         allButtonList.add(step1Sub8Button);
         allButtonList.add(step1Sub9Button);
-        allButtonList.add(step1Sub10Button);
+        //allButtonList.add(step1Sub10Button);
         //allButtonList.add(step1Sub11Button);
         allButtonList.add(step1ReportButton);
 
@@ -363,8 +367,24 @@ public class FlowBar extends BorderPane {
         prevSVG.setContent(IconHelper.SVG_STR_PREV);
         //nextSVG = new SVGPath();
         nextSVG.setContent(IconHelper.SVG_STR_NEXT);
-        prevButton.setGraphic(prevSVG);
-        nextButton.setGraphic(nextSVG);
+        Label lp = new Label("-");
+        lp.setStyle("-fx-font-size: 60; -fx-alignment: center; -fx-text-alignment: center;");
+        //lp.setRotate(270);
+        lp.setPadding(new Insets(0, 10, 9, 0));
+        HBox hbp = new HBox();
+        hbp.setAlignment(Pos.CENTER);
+        hbp.getChildren().add(lp);
+        hbp.getChildren().add(prevSVG);
+        prevButton.setGraphic(hbp);
+        Label ln = new Label("+");
+        ln.setStyle("-fx-font-size: 60; -fx-alignment: center; -fx-text-alignment: center;");
+        //ln.setRotate(270);
+        ln.setPadding(new Insets(0, 0, 5, 10));
+        HBox hbn = new HBox();
+        hbn.setAlignment(Pos.CENTER);
+        hbn.getChildren().add(nextSVG);
+        hbn.getChildren().add(ln);
+        nextButton.setGraphic(hbn);
 
         introButton.getStyleClass().add("sub-flow-step-start");
         step1Button.getStyleClass().add("sub-flow-step");
@@ -415,7 +435,7 @@ public class FlowBar extends BorderPane {
         } else if (stepIdx == Project.NUM_STEPS) {
 
         } else {
-            double split = 15;
+            double split = 10;
             // Compute collapsed button widths
             double wCollapse = split / Project.NUM_STEPS + 1;  // One of the (Project.NUM_STEPS+2) Buttons will be exanded, the rest are collapsed
             // Comput expanded button widths
@@ -423,7 +443,11 @@ public class FlowBar extends BorderPane {
 
             // Shrink all Steps before stepIdx
             this.introCC.setPercentWidth(wCollapse);
-            this.introButton.setText("Intro");
+            this.introButton.setText(""); //Intro
+            Label l1 = new Label("Intro");
+            l1.setStyle("-fx-text-fill: white");
+            l1.setRotate(270);
+            this.introButton.setGraphic(new Group(l1));
             for (int i = 0; i < stepIdx; i++) {
                 ccStep.get(i).setPercentWidth(wCollapse);
                 this.flowList.get(i + 1).setText(String.valueOf(i + 1));
@@ -450,6 +474,11 @@ public class FlowBar extends BorderPane {
                 this.flowList.get(i + 1).setText(String.valueOf(i + 1));
             }
             this.summaryCC.setPercentWidth(wCollapse);
+            this.summaryButton.setText("");
+            Label sl = new Label("Summary");
+            sl.setStyle("-fx-text-fill: white");
+            sl.setRotate(270);
+            this.summaryButton.setGraphic(new Group(sl));
         }
     }
 
@@ -704,7 +733,7 @@ public class FlowBar extends BorderPane {
         //step1Sub7Button.disableProperty().bind(control.getProject().progressFeas.lessThan(1.0));
         step1Sub8Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(7).stepStartedProperty().not());
         //step1Sub9Button.disableProperty().bind(control.getProject().progressStake.lessThan(1.0));
-        step1Sub10Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(9).stepStartedProperty().not());
+        //step1Sub10Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(9).stepStartedProperty().not());
         //step1Sub11Button.disableProperty().bind(control.getProject().getStep(0).getSubStep(10).stepStartedProperty().not());
 
         control.activeSubStepProperty(1).addListener(new ChangeListener() {

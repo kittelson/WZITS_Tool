@@ -70,6 +70,7 @@ public class IntroPane extends BorderPane {
         instructionLabel.getStyleClass().add("intro-instructions");
 
         startNewButton.getStyleClass().add("intro-begin-button");
+        startNewButton.setDefaultButton(true);
         //startNewButton.setStyle("-fx-font-size: 36");
 
         DoubleBinding widthBinding = new DoubleBinding() {

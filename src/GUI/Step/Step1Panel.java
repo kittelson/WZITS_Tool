@@ -6,6 +6,7 @@
 package GUI.Step;
 
 import GUI.Helper.ColorHelper;
+import GUI.Helper.IOHelper;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Helper.ProgressIndicatorBar;
@@ -13,18 +14,24 @@ import GUI.MainController;
 import GUI.Tables.Step1TableHelper;
 import core.Project;
 import core.Question;
-import javafx.animation.TranslateTransition;
+import java.util.ArrayList;
+import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.Spinner;
@@ -41,6 +48,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 /**
  *
@@ -57,7 +65,8 @@ public class Step1Panel extends BorderPane {
 
     private final VBox mainVBox = new VBox();
 
-    private final GridPane allSubStepsPane = new GridPane();
+    //private final GridPane allSubStepsPane = new GridPane();
+    private final BorderPane centerPane = new BorderPane();
 
     private final VBox pVBox = new VBox();
 
@@ -74,8 +83,8 @@ public class Step1Panel extends BorderPane {
     private final BorderPane wzMetaDataPane = new BorderPane();
     private final GridPane wzMetaDataGrid;
     private final BorderPane unPane = new BorderPane();
-    private final BorderPane unSuppPane = new BorderPane();
-    private final BorderPane majorGoalsPane = new BorderPane();
+    //private final BorderPane unSuppPane = new BorderPane();
+    private final BorderPane goalSelectionPane = new BorderPane();
     private final BorderPane gwSummaryPane = new BorderPane();
     private final BorderPane feasibilityPane = new BorderPane();
     //private final BorderPane fwSummaryPane = new BorderPane();
@@ -84,6 +93,7 @@ public class Step1Panel extends BorderPane {
     private final BorderPane teamMembersPane = new BorderPane();
     private final BorderPane itsPane = new BorderPane();
     private final BorderPane stepReportPane = new BorderPane();
+    private final ArrayList<Node> subStepPanesList = new ArrayList();
 
     public Step1Panel(MainController mc) {
 
@@ -116,7 +126,7 @@ public class Step1Panel extends BorderPane {
             @Override
             protected double computeValue() {
                 //return Math.max(widthProperty().get() * 0.70, 700);
-                return (widthProperty().get() / (Project.NUM_SUB_STEPS[0] + 2) - 150); // 0.9
+                return (widthProperty().get() - 150); // 0.9
                 //return (widthProperty().get()) * 0.2;
             }
         };
@@ -167,7 +177,7 @@ public class Step1Panel extends BorderPane {
         genInfoPane.setCenter(genInfoGrid);
         genInfoPane.setBottom(NodeFactory.createFormattedLabel("", "launch-title-label-top"));
 
-        Label wzMetaDataTitleLabel = new Label("Work Zone Meta Data");
+        Label wzMetaDataTitleLabel = new Label("Facility and Work Zone Configuration");
         wzMetaDataTitleLabel.setMaxWidth(MainController.MAX_WIDTH);
         wzMetaDataTitleLabel.getStyleClass().add("launch-title-label-top");
         wzMetaDataGrid = createWZInputGrid();
@@ -210,29 +220,28 @@ public class Step1Panel extends BorderPane {
             });
         }
         pVBox.getChildren().addAll(pagination, pbGW);
-        unPane.setTop(NodeFactory.createFormattedLabel("User Needs", "substep-title-label"));
+        unPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][2], "substep-title-label"));  // "User Needs"
         unPane.setCenter(pVBox);
         unPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // User Needs Supplemental Questions Panel
-        unSuppPane.setTop(NodeFactory.createFormattedLabel("User Needs Supplemental Questions", "substep-title-label"));
-        unSuppPane.setCenter(Step1TableHelper.createUserNeedsSupplemental(control.getProject()));
-        unSuppPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
-
+        //unSuppPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][3], "substep-title-label"));  //  "User Needs Supplemental Questions"
+        //unSuppPane.setCenter(Step1TableHelper.createUserNeedsSupplemental(control.getProject()));
+        //unSuppPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
         // Major Goal Types Questions Panel
-        majorGoalsPane.setTop(NodeFactory.createFormattedLabel("Goals Selection", "substep-title-label"));
+        goalSelectionPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][4], "substep-title-label"));  // "Goals Selection"
         //majorGoalsPane.setCenter(Step1TableHelper.getMajorGoalsTable(control.getProject()));
-        majorGoalsPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
-        majorGoalsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+        goalSelectionPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+        goalSelectionPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Goal Wizard Summary Panel
-        gwSummaryPane.setTop(NodeFactory.createFormattedLabel("Goal Wizard Summary", "substep-title-label"));
+        gwSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][5], "substep-title-label"));  // "Goal Wizard Summary"
         //gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
         gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSelectedGoalsNode());
         gwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Feasibility Questions Panel
-        feasibilityPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard", "substep-title-label"));
+        feasibilityPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][6], "substep-title-label"));  // "Feasibility Wizard"
         GridPane fwgp1 = new GridPane();
         fwgp1.add(Step1TableHelper.getFeasibilityWizard(control.getProject()), 0, 0);
         fwgp1.add(control.getProject().getFeasibilityMatrix().createSummaryPanel(), 0, 1);
@@ -250,69 +259,82 @@ public class Step1Panel extends BorderPane {
         //fwSummaryPane.setCenter(fwbp2);
         //fwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
         // Stakeholders Questions Panel
-        stakeholderPane.setTop(NodeFactory.createFormattedLabel("Stakeholders", "substep-title-label"));
+        stakeholderPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][7], "substep-title-label")); // "Stakeholders"
         stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject()));
         stakeholderPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Stakeholder Wizard panel
-        swSummaryPane.setTop(NodeFactory.createFormattedLabel("Stakeholder Wizard Summary", "substep-title-label"));
+        swSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][8], "substep-title-label"));  // "Stakeholder Wizard Summary"
         swSummaryPane.setCenter(control.getProject().getStakeholderMatrix().createSummaryTable());
         swSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Team Members and Stakeholders Panel
-        teamMembersPane.setTop(NodeFactory.createFormattedLabel("Selected Core Team Members and Stakeholders", "substep-title-label"));
+        teamMembersPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][6], "substep-title-label"));  // "Selected Core Team Members and Stakeholders"
         teamMembersPane.setCenter(control.getProject().getStakeholderMatrix().createSelectedMembersPanel());
         teamMembersPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // ITS Panel
-        itsPane.setTop(NodeFactory.createFormattedLabel("ITS Resources", "substep-title-label"));
+        itsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][9], "substep-title-label"));  // "ITS Resources"
         itsPane.setCenter(Step1TableHelper.getITSResourcesPanel(control.getProject()));
         itsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Step Report Pane
-        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
+        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));  //
         stepReportPane.setCenter(Step1TableHelper.createStepSummary(control));
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Adding to main substep VBox
         int colIdx = 0;
-        mainVBox.getChildren().addAll(allSubStepsPane);
-        allSubStepsPane.add(stepIntroGrid, colIdx++, 0);
-        allSubStepsPane.add(projInfoGrid, colIdx++, 0);
-        allSubStepsPane.add(unPane, colIdx++, 0);
-        allSubStepsPane.add(unSuppPane, colIdx++, 0);
-        allSubStepsPane.add(majorGoalsPane, colIdx++, 0);
-        allSubStepsPane.add(gwSummaryPane, colIdx++, 0);
-        allSubStepsPane.add(feasibilityPane, colIdx++, 0);
-        //allSubStepsPane.add(fwSummaryPane, colIdx++, 0);
-        allSubStepsPane.add(stakeholderPane, colIdx++, 0);
-        allSubStepsPane.add(swSummaryPane, colIdx++, 0);
-        allSubStepsPane.add(teamMembersPane, colIdx++, 0);
-        allSubStepsPane.add(itsPane, colIdx++, 0);
-        allSubStepsPane.add(stepReportPane, colIdx++, 0);
+        mainVBox.getChildren().addAll(centerPane); //allSubStepsPane
+//        allSubStepsPane.add(stepIntroGrid, colIdx++, 0);
+//        allSubStepsPane.add(projInfoGrid, colIdx++, 0);
+//        allSubStepsPane.add(unPane, colIdx++, 0);
+//        allSubStepsPane.add(unSuppPane, colIdx++, 0);
+//        allSubStepsPane.add(goalSelectionPane, colIdx++, 0);
+//        allSubStepsPane.add(gwSummaryPane, colIdx++, 0);
+//        allSubStepsPane.add(feasibilityPane, colIdx++, 0);
+//        //allSubStepsPane.add(fwSummaryPane, colIdx++, 0);
+//        allSubStepsPane.add(stakeholderPane, colIdx++, 0);
+//        allSubStepsPane.add(swSummaryPane, colIdx++, 0);
+//        allSubStepsPane.add(teamMembersPane, colIdx++, 0);
+//        allSubStepsPane.add(itsPane, colIdx++, 0);
+//        allSubStepsPane.add(stepReportPane, colIdx++, 0);
+        subStepPanesList.add(stepIntroGrid);
+        subStepPanesList.add(projInfoGrid);
+        subStepPanesList.add(unPane);
+        //subStepPanesList.add(unSuppPane);
+        subStepPanesList.add(goalSelectionPane);
+        subStepPanesList.add(gwSummaryPane);
+        subStepPanesList.add(feasibilityPane);
+        subStepPanesList.add(stakeholderPane);
+        subStepPanesList.add(swSummaryPane);
+        subStepPanesList.add(teamMembersPane);
+        subStepPanesList.add(itsPane);
+        subStepPanesList.add(stepReportPane);
 
-        int numPanes = getNumSubSteps() + 2;
-        for (int col = 0; col < numPanes; col++) {
-            ColumnConstraints tcc = new ColumnConstraints();
-            tcc.setPercentWidth(100.0 / numPanes);
-            allSubStepsPane.getColumnConstraints().add(tcc);
-        }
+        centerPane.setCenter(stepIntroGrid);
 
+//        int numPanes = getNumSubSteps() + 2;
+//        for (int col = 0; col < numPanes; col++) {
+//            ColumnConstraints tcc = new ColumnConstraints();
+//            tcc.setPercentWidth(100.0 / numPanes);
+//            allSubStepsPane.getColumnConstraints().add(tcc);
+//        }
         pagination.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(pagination, Priority.ALWAYS);
 
         GridPane.setVgrow(stepIntroGrid, Priority.ALWAYS);
         GridPane.setVgrow(projInfoGrid, Priority.ALWAYS);
         GridPane.setVgrow(unPane, Priority.ALWAYS);
-        GridPane.setVgrow(unSuppPane, Priority.ALWAYS);
-        GridPane.setVgrow(majorGoalsPane, Priority.ALWAYS);
+        //GridPane.setVgrow(unSuppPane, Priority.ALWAYS);
+        GridPane.setVgrow(goalSelectionPane, Priority.ALWAYS);
         GridPane.setVgrow(gwSummaryPane, Priority.ALWAYS);
         GridPane.setVgrow(feasibilityPane, Priority.ALWAYS);
         //GridPane.setVgrow(fwSummaryPane, Priority.ALWAYS);
         GridPane.setVgrow(stakeholderPane, Priority.ALWAYS);
         GridPane.setVgrow(swSummaryPane, Priority.ALWAYS);
         GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
-        VBox.setVgrow(allSubStepsPane, Priority.ALWAYS);
+        VBox.setVgrow(centerPane, Priority.ALWAYS);  //allSubStepsPane
         this.setCenter(mainVBox);
 
         setupActionListeners();
@@ -346,25 +368,25 @@ public class Step1Panel extends BorderPane {
     }
 
     public void setViewWidth(double viewWidth) {
-        if (allSubStepsPane != null) {
-            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-        }
+//        if (allSubStepsPane != null) {
+//            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+//        }
     }
 
     private void setupPropertyBindings() {
-        this.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-                //System.out.println("Step 1 Width Resized");
-                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
-                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-                }
-            }
-        });
+//        this.widthProperty().addListener(new ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
+//                //System.out.println("Step 1 Width Resized");
+//                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
+//                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
+//                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+//                }
+//            }
+//        });
 
         control.activeStepProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -387,7 +409,7 @@ public class Step1Panel extends BorderPane {
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
                 switch (getActiveSubStep()) {
                     case Project.GOAL_SELECTION_INDEX:
-                        majorGoalsPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
+                        goalSelectionPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
                     case Project.GOAL_WIZARD_SUMMARY_INDEX:
                         //gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
                         gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSelectedGoalsNode());
@@ -421,15 +443,105 @@ public class Step1Panel extends BorderPane {
 
         // Work zone metadata bindings
         control.getProject().aadtProperty().bindBidirectional(this.wzInputSpin1.getValueFactory().valueProperty());
-        control.getProject().functionalClassProperty().bindBidirectional(this.wzInputChoice1.valueProperty());
         control.getProject().wzLengthProperty().bindBidirectional(this.wzInputSpin2.getValueFactory().valueProperty());
-        control.getProject().wzTypeProperty().bindBidirectional(this.wzInputChoice2.valueProperty());
-        control.getProject().maintainingAgencyProperty().bindBidirectional(this.wzInputChoice3.valueProperty());
         control.getProject().numRoadwayLanesProperty().bindBidirectional(this.wzInputSpin3.getValueFactory().valueProperty());
         control.getProject().shoulderWidthProperty().bindBidirectional(this.wzInputSpin4.getValueFactory().valueProperty());
         control.getProject().speedLimitProperty().bindBidirectional(this.wzInputSpin5.getValueFactory().valueProperty());
-        control.getProject().numLanesClosedProperty().bindBidirectional(this.wzInputSpin6.getValueFactory().valueProperty());
-        control.getProject().activityDurationProperty().bindBidirectional(this.wzInputSpin7.getValueFactory().valueProperty());
+        control.getProject().laneWidthBaseProperty().bindBidirectional(this.wzInputSpin6.getValueFactory().valueProperty());
+        control.getProject().wzSpeedLimitProperty().bindBidirectional(this.wzInputSpin7.getValueFactory().valueProperty());
+        control.getProject().numLanesClosedProperty().bindBidirectional(this.wzInputSpin8.getValueFactory().valueProperty());
+        control.getProject().laneWidthWZProperty().bindBidirectional(this.wzInputSpin9.getValueFactory().valueProperty());
+        control.getProject().functionalClassProperty().bindBidirectional(this.wzInputChoice1.valueProperty());
+        control.getProject().wzTypeProperty().bindBidirectional(this.wzInputChoice2.valueProperty());
+        control.getProject().maintainingAgencyProperty().bindBidirectional(this.wzInputChoice3.valueProperty());
+        control.getProject().areaTypeProperty().bindBidirectional(this.wzInputChoice4.valueProperty());
+        control.getProject().signalizedCorridorProperty().bindBidirectional(this.wzInputChoice5.valueProperty());
+        control.getProject().nationalHighwaySystemProperty().bindBidirectional(this.wzInputChoice6.valueProperty());
+        control.getProject().shoulderClosureProperty().bindBidirectional(this.wzInputChoice7.valueProperty());
+        control.getProject().federalAidProperty().bindBidirectional(this.wzInputChoice8.valueProperty());
+
+        control.getProject().laneWidthBaseProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (control.getProject().getLaneWidthBase() > control.getProject().getLaneWidthWZ()) {
+                    control.getProject().getQGen().reducedLaneWidthQ.setAnswerIsYes(true);
+                } else {
+                    control.getProject().getQGen().reducedLaneWidthQ.setAnswerIsNo(true);
+                }
+            }
+        });
+        control.getProject().laneWidthWZProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (control.getProject().getLaneWidthBase() > control.getProject().getLaneWidthWZ()) {
+                    control.getProject().getQGen().reducedLaneWidthQ.setAnswerIsYes(true);
+                } else {
+                    control.getProject().getQGen().reducedLaneWidthQ.setAnswerIsNo(true);
+                }
+            }
+        });
+
+        control.getProject().shoulderWidthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (control.getProject().getShoulderWidth() == 0) {
+                    control.getProject().getQGen().emergencyShoulderQIdx.setAnswerIsNo(true);
+                    //control.getProject().getQGen().shoulderQIdx.setAnswerIsNo(true);
+                }
+            }
+        });
+        control.getProject().shoulderClosureProperty().addListener(new ChangeListener<Object>() {
+            @Override
+            public void changed(ObservableValue<? extends Object> ov, Object oldVal, Object newVal) {
+                if (control.getProject().getShoulderClosure().equalsIgnoreCase("yes")) {
+                    control.getProject().getQGen().emergencyShoulderQIdx.setAnswerIsYes(true);
+                    //control.getProject().getQGen().shoulderQIdx.setAnswerIsYes(true);
+                } else {
+                    control.getProject().getQGen().emergencyShoulderQIdx.setAnswerIsNo(true);
+                    //control.getProject().getQGen().shoulderQIdx.setAnswerIsNo(true);
+                }
+            }
+        });
+        control.getProject().speedLimitProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (control.getProject().getSpeedLimit() > control.getProject().getWzSpeedLimit()) {
+                    control.getProject().getQGen().loweredSpeedLimitsQ.setAnswerIsYes(true);
+                } else {
+                    control.getProject().getQGen().loweredSpeedLimitsQ.setAnswerIsNo(true);
+                }
+            }
+        });
+        control.getProject().wzSpeedLimitProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+                if (control.getProject().getSpeedLimit() > control.getProject().getWzSpeedLimit()) {
+                    control.getProject().getQGen().loweredSpeedLimitsQ.setAnswerIsYes(true);
+                } else {
+                    control.getProject().getQGen().loweredSpeedLimitsQ.setAnswerIsNo(true);
+                }
+            }
+        });
+
+        control.getProject().functionalClassProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                if (!(control.getProject().getFunctionalClass().equalsIgnoreCase(Project.FUNCTIONAL_CLASS_LIST[0]) || control.getProject().getFunctionalClass().equalsIgnoreCase(Project.FUNCTIONAL_CLASS_LIST[1]))) {
+                    control.getProject().getQGen().disableRampMetersQ.setAnswerIsNo(true);
+                }
+            }
+        });
+        control.getProject().federalAidProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                if (control.getProject().getFederalAid().equalsIgnoreCase("yes")) {
+                    control.getProject().getQGen().biannualProcessReviewQ.setAnswerIsYes(true);
+                } else {
+                    control.getProject().getQGen().biannualProcessReviewQ.setAnswerIsNo(true);
+                }
+            }
+        });
+
     }
 
     private GridPane createGeneralInfoGrid() {
@@ -457,10 +569,20 @@ public class Step1Panel extends BorderPane {
         genInfoTA1.setWrapText(true);
         genInfoTA2.setWrapText(true);
 
+        genInfoButton1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                boolean success = IOHelper.getProjectImage(control);
+                if (success) {
+                    photoUploaded();
+                }
+            }
+        });
+
         genInfoPicGrid.add(genInfoPicLabel, 0, 0);
         genInfoPicGrid.add(genInfoButton1, 1, 0);
         genInfoButton1.setMaxWidth(125);
-        genInfoButton1.setDisable(true);
+        //genInfoButton1.setDisable(true);
         genInfoPicLabel.setMaxWidth(MainController.MAX_WIDTH);
         genInfoPicGrid.getColumnConstraints().add(0, new ColumnConstraints(1, 125, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
         genInfoPicGrid.getColumnConstraints().add(1, new ColumnConstraints(75, 75, 75, Priority.NEVER, HPos.RIGHT, true));
@@ -499,6 +621,28 @@ public class Step1Panel extends BorderPane {
 
     private GridPane createWZInputGrid() {
 
+        Hyperlink mutcdButton = new Hyperlink("(?)");
+        mutcdButton.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutcdButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Long-term stationary - Work that occupies a location more than 3 days\n\n"
+                        + "2) Intermediate-term stationary - Work that occupies a location more than one daylight period up to 3 days, or nightime work lasting more than 1 hour\n\n"
+                        + "3) Short-term stationary - Daytime work lasting more than 1 hour within a single daylight period\n\n"
+                        + "4) Short duration - Work that occupies a location up to 1 hour\n\n"
+                        + "5) Mobile - Work that moves intermittently or continuously\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+        wzInputLabel12.setGraphic(mutcdButton);
+        wzInputLabel12.setContentDisplay(ContentDisplay.RIGHT);
+
+        wzTitleLabel1.setMaxWidth(MainController.MAX_WIDTH);
+        wzTitleLabel2.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel1.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel2.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel3.setMaxWidth(MainController.MAX_WIDTH);
@@ -509,10 +653,38 @@ public class Step1Panel extends BorderPane {
         wzInputLabel8.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel9.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel10.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel11.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel12.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel13.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel14.setMaxWidth(MainController.MAX_WIDTH);
+        //wzInputLabel15.setMaxWidth(MainController.MAX_WIDTH);
+        //wzInputLabel16.setMaxWidth(MainController.MAX_WIDTH);
+        //wzInputLabel17.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel18.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel19.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel20.setMaxWidth(MainController.MAX_WIDTH);
+
         wzInputChoice1.setMaxWidth(MainController.MAX_WIDTH);
         wzInputChoice2.setMaxWidth(MainController.MAX_WIDTH);
         wzInputChoice3.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputChoice4.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputChoice5.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputChoice6.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputChoice7.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputChoice8.setMaxWidth(MainController.MAX_WIDTH);
 
+        wzInputSpin1.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin2.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin3.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin4.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin5.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin6.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin7.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin8.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin9.setMaxWidth(MainController.MAX_WIDTH);
+
+        wzTitleLabel1.getStyleClass().add("wz-input-title-style");
+        wzTitleLabel2.getStyleClass().add("wz-input-title-style");
         wzInputLabel1.getStyleClass().add("wz-input-label-style");
         wzInputLabel2.getStyleClass().add("wz-input-label-style");
         wzInputLabel3.getStyleClass().add("wz-input-label-style");
@@ -523,21 +695,102 @@ public class Step1Panel extends BorderPane {
         wzInputLabel8.getStyleClass().add("wz-input-label-style");
         wzInputLabel9.getStyleClass().add("wz-input-label-style");
         wzInputLabel10.getStyleClass().add("wz-input-label-style");
+        wzInputLabel11.getStyleClass().add("wz-input-label-style");
+        wzInputLabel12.getStyleClass().add("wz-input-label-style");
+        wzInputLabel13.getStyleClass().add("wz-input-label-style");
+        wzInputLabel14.getStyleClass().add("wz-input-label-style");
+        //wzInputLabel15.getStyleClass().add("wz-input-label-style");
+        //wzInputLabel16.getStyleClass().add("wz-input-label-style");
+        //wzInputLabel17.getStyleClass().add("wz-input-label-style");
+        wzInputLabel18.getStyleClass().add("wz-input-label-style");
+        wzInputLabel19.getStyleClass().add("wz-input-label-style");
+        wzInputLabel20.getStyleClass().add("wz-input-label-style");
         //wzInputChoice1.getStyleClass().add("wzits-choice-box");
         //wzInputChoice2.getStyleClass().add("wzits-choice-box");
         //wzInputChoice3.getStyleClass().add("wzits-choice-box");
 
-        wzInputSpin1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(25000, 125000, control.getProject().getAadt(), 5000));
+        wzInputSpin1.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1000, 400000, control.getProject().getAadt(), 500));
         wzInputSpin2.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 50, control.getProject().getWzLength(), 0.1));
         wzInputSpin3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 8, control.getProject().getNumRoadwayLanes(), 1));
         wzInputSpin4.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 25, control.getProject().getShoulderWidth(), 0.5));
         wzInputSpin5.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 100, control.getProject().getSpeedLimit(), 5));
-        wzInputSpin6.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 8, control.getProject().getNumLanesClosed(), 1));
-        wzInputSpin7.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 24, control.getProject().getActivityDuration(), 1));
+        wzInputSpin6.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(5, 25, control.getProject().getLaneWidthBase(), 0.5));
+        wzInputSpin7.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 100, control.getProject().getWzSpeedLimit(), 5));
+        wzInputSpin8.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 8, control.getProject().getNumLanesClosed(), 1));
+        wzInputSpin9.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(5, 25, control.getProject().getLaneWidthWZ(), 0.5));
+
+        wzInputSpin1.setEditable(true);
+        wzInputSpin1.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin1);
+        });
+        wzInputSpin2.setEditable(true);
+        wzInputSpin2.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin2);
+        });
+        wzInputSpin3.setEditable(true);
+        wzInputSpin3.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin3);
+        });
+        wzInputSpin4.setEditable(true);
+        wzInputSpin4.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin4);
+        });
+        wzInputSpin5.setEditable(true);
+        wzInputSpin5.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin5);
+        });
+        wzInputSpin6.setEditable(true);
+        wzInputSpin6.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin6);
+        });
+        wzInputSpin7.setEditable(true);
+        wzInputSpin7.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin7);
+        });
+        wzInputSpin8.setEditable(true);
+        wzInputSpin8.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin8);
+        });
+        wzInputSpin9.setEditable(true);
+        wzInputSpin9.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin9);
+        });
 
         wzInputChoice1.getSelectionModel().select(control.getProject().getFunctionalClass());
         wzInputChoice2.getSelectionModel().select(control.getProject().getWzType());
         wzInputChoice3.getSelectionModel().select(control.getProject().getMaintainingAgency());
+        wzInputChoice4.getSelectionModel().select(control.getProject().getAreaType());
+        wzInputChoice5.getSelectionModel().select(control.getProject().getSignalizedCorridor());
+        wzInputChoice6.getSelectionModel().select(control.getProject().getNationalHighwaySystem());
+        wzInputChoice7.getSelectionModel().select(control.getProject().getShoulderClosure());
+        wzInputChoice8.getSelectionModel().select(control.getProject().getFederalAid());
 
 //        proceedButton.setOnAction(new EventHandler<ActionEvent>() {
 //            @Override
@@ -545,28 +798,51 @@ public class Step1Panel extends BorderPane {
 //                control.getProject().getStep(1).setStepStarted(true);
 //            }
 //        });
-        int colIdx = 0;
+        int rowIdx = 0;
         GridPane inputGrid = new GridPane();
-        inputGrid.add(wzInputLabel2, 0, colIdx);
-        inputGrid.add(wzInputChoice1, 1, colIdx++);
-        inputGrid.add(wzInputLabel4, 0, colIdx);
-        inputGrid.add(wzInputChoice2, 1, colIdx++);
-        inputGrid.add(wzInputLabel10, 0, colIdx);
-        inputGrid.add(wzInputChoice3, 1, colIdx++);
-        inputGrid.add(wzInputLabel1, 0, colIdx);
-        inputGrid.add(wzInputSpin1, 1, colIdx++);
-        inputGrid.add(wzInputLabel3, 0, colIdx);
-        inputGrid.add(wzInputSpin2, 1, colIdx++);
-        inputGrid.add(wzInputLabel5, 0, colIdx);
-        inputGrid.add(wzInputSpin3, 1, colIdx++);
-        inputGrid.add(wzInputLabel6, 0, colIdx);
-        inputGrid.add(wzInputSpin4, 1, colIdx++);
-        inputGrid.add(wzInputLabel7, 0, colIdx);
-        inputGrid.add(wzInputSpin5, 1, colIdx++);
-        inputGrid.add(wzInputLabel8, 0, colIdx);
-        inputGrid.add(wzInputSpin6, 1, colIdx++);
-        inputGrid.add(wzInputLabel9, 0, colIdx);
-        inputGrid.add(wzInputSpin7, 1, colIdx++);
+        inputGrid.add(wzTitleLabel1, 0, rowIdx++, 2, 1);
+        inputGrid.add(wzInputLabel1, 0, rowIdx);    // Functional Class
+        inputGrid.add(wzInputChoice1, 1, rowIdx++);
+        inputGrid.add(wzInputLabel2, 0, rowIdx);    // Maintaining Agency
+        inputGrid.add(wzInputChoice3, 1, rowIdx++);
+        inputGrid.add(wzInputLabel3, 0, rowIdx);    // Area Type
+        inputGrid.add(wzInputChoice4, 1, rowIdx++);
+        inputGrid.add(wzInputLabel4, 0, rowIdx);    // AADT
+        inputGrid.add(wzInputSpin1, 1, rowIdx++);
+        inputGrid.add(wzInputLabel5, 0, rowIdx);    // Number of Roadway Lanes
+        inputGrid.add(wzInputSpin3, 1, rowIdx++);
+        inputGrid.add(wzInputLabel6, 0, rowIdx);    // Shoulder Width
+        inputGrid.add(wzInputSpin4, 1, rowIdx++);
+        inputGrid.add(wzInputLabel7, 0, rowIdx);    // Posted Speed Limit
+        inputGrid.add(wzInputSpin5, 1, rowIdx++);
+        inputGrid.add(wzInputLabel8, 0, rowIdx);    // Lane Width
+        inputGrid.add(wzInputSpin6, 1, rowIdx++);
+        inputGrid.add(wzInputLabel9, 0, rowIdx);    // Part of a signalized corridor
+        inputGrid.add(wzInputChoice5, 1, rowIdx++);
+        inputGrid.add(wzInputLabel10, 0, rowIdx);   // National highway system
+        inputGrid.add(wzInputChoice6, 1, rowIdx++);
+
+        inputGrid.add(wzTitleLabel2, 0, rowIdx++, 2, 1);
+        inputGrid.add(wzInputLabel11, 0, rowIdx);    // Work Zone Length
+        inputGrid.add(wzInputSpin2, 1, rowIdx++);
+        inputGrid.add(wzInputLabel12, 0, rowIdx);    // Work Zone Type
+        inputGrid.add(wzInputChoice2, 1, rowIdx++);
+        inputGrid.add(wzInputLabel13, 0, rowIdx);    // Work Zone Speed Limit
+        inputGrid.add(wzInputSpin7, 1, rowIdx++);
+        inputGrid.add(wzInputLabel14, 0, rowIdx);    // Number of Lanes to be closed
+        inputGrid.add(wzInputSpin8, 1, rowIdx++);
+        //inputGrid.add(wzInputLabel15, 0, rowIdx);    // Daily Duration of Activity
+        //inputGrid.add(wzInputSpin, 1, rowIdx++);
+        //inputGrid.add(wzInputLabel16, 0, rowIdx);    // Work Zone Duration
+        //inputGrid.add(wzInputSpin3, 1, rowIdx++);
+        //inputGrid.add(wzInputLabel17, 0, rowIdx);    // Mobile work zone duration
+        //inputGrid.add(wzInputSpin4, 1, rowIdx++);
+        inputGrid.add(wzInputLabel18, 0, rowIdx);    // Reduced Lane Width
+        inputGrid.add(wzInputSpin9, 1, rowIdx++);
+        inputGrid.add(wzInputLabel19, 0, rowIdx);    // Shoulder Closure
+        inputGrid.add(wzInputChoice7, 1, rowIdx++);
+        inputGrid.add(wzInputLabel20, 0, rowIdx);    // Federal-Aid Project
+        inputGrid.add(wzInputChoice8, 1, rowIdx++);
 
         //inputGrid.add(proceedButton, 1, 9);
         double leftColsplit = 65;
@@ -577,6 +853,8 @@ public class Step1Panel extends BorderPane {
 
         inputGrid.getColumnConstraints().addAll(col1, col2);
 
+        GridPane.setHgrow(wzTitleLabel1, Priority.ALWAYS);
+        GridPane.setHgrow(wzTitleLabel2, Priority.ALWAYS);
         GridPane.setHgrow(wzInputLabel1, Priority.ALWAYS);
         GridPane.setHgrow(wzInputLabel2, Priority.ALWAYS);
         GridPane.setHgrow(wzInputLabel3, Priority.ALWAYS);
@@ -587,6 +865,16 @@ public class Step1Panel extends BorderPane {
         GridPane.setHgrow(wzInputLabel8, Priority.ALWAYS);
         GridPane.setHgrow(wzInputLabel9, Priority.ALWAYS);
         GridPane.setHgrow(wzInputLabel10, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel11, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel12, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel13, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel14, Priority.ALWAYS);
+        //GridPane.setHgrow(wzInputLabel15, Priority.ALWAYS);
+        //GridPane.setHgrow(wzInputLabel16, Priority.ALWAYS);
+        //GridPane.setHgrow(wzInputLabel17, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel18, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel19, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputLabel20, Priority.ALWAYS);
 
         GridPane.setHgrow(wzInputSpin1, Priority.ALWAYS);
         GridPane.setHgrow(wzInputSpin2, Priority.ALWAYS);
@@ -595,9 +883,16 @@ public class Step1Panel extends BorderPane {
         GridPane.setHgrow(wzInputSpin5, Priority.ALWAYS);
         GridPane.setHgrow(wzInputSpin6, Priority.ALWAYS);
         GridPane.setHgrow(wzInputSpin7, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputSpin8, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputSpin9, Priority.ALWAYS);
         GridPane.setHgrow(wzInputChoice1, Priority.ALWAYS);
         GridPane.setHgrow(wzInputChoice2, Priority.ALWAYS);
         GridPane.setHgrow(wzInputChoice3, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputChoice4, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputChoice5, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputChoice6, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputChoice7, Priority.ALWAYS);
+        GridPane.setHgrow(wzInputChoice8, Priority.ALWAYS);
 
         return inputGrid;
     }
@@ -607,21 +902,70 @@ public class Step1Panel extends BorderPane {
     }
 
     private void selectSubStep(int subStepIndex, boolean animated) {
-        moveScreen((subStepIndex + 1) * stepIntroGrid.getWidth(), 0, animated);
+        //moveScreen((subStepIndex + 1) * stepIntroGrid.getWidth(), 0, animated);
+        changePanel(subStepIndex, animated);
     }
 
-    private void moveScreen(double toX, double toY) {
-        moveScreen(toX, toY, true);
+    private void changePanel(int subStepIndex, boolean animated) {
+        if (subStepIndex > -2) {
+            if (!animated) {
+                centerPane.setCenter(this.subStepPanesList.get(subStepIndex + 1));
+            } else {
+                FadeTransition ft1 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                ft1.setFromValue(1.0);
+                ft1.setToValue(0.0);
+
+                ft1.play();
+
+                ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent ae) {
+                        centerPane.setCenter(subStepPanesList.get(subStepIndex + 1));
+                        FadeTransition ft2 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                        ft2.setFromValue(0.0);
+                        ft2.setToValue(1.0);
+                        ft2.play();
+                    }
+                });
+            }
+        }
     }
 
-    private void moveScreen(double toX, double toY, boolean animated) {
-        if (animated) {
-            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allSubStepsPane);
-            moveMe.setToX(-1 * toX);
-            moveMe.setToY(toY);
-            moveMe.play();
+    private void photoUploaded() {
+        if (control.getProject().getProjPhoto() != null) {
+            this.genInfoPicLabel.setText("");
+            this.genInfoPicLabel.setGraphic(new ImageView(control.getProject().getProjPhoto()));
         } else {
-            allSubStepsPane.setTranslateX(-1 * toX);
+            this.genInfoPicLabel.setText("Upload from file...");
+            this.genInfoPicLabel.setGraphic(null);
+        }
+    }
+
+//    private void moveScreen(double toX, double toY, boolean animated) {
+//        if (animated) {
+//            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allSubStepsPane);
+//            moveMe.setToX(-1 * toX);
+//            moveMe.setToY(toY);
+//            moveMe.play();
+//        } else {
+//            allSubStepsPane.setTranslateX(-1 * toX);
+//        }
+//    }
+    /**
+     * c&p from Spinner
+     */
+    private <T> void commitEditorText(Spinner<T> spinner) {
+        if (!spinner.isEditable()) {
+            return;
+        }
+        String text = spinner.getEditor().getText();
+        SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            StringConverter<T> converter = valueFactory.getConverter();
+            if (converter != null) {
+                T value = converter.fromString(text);
+                valueFactory.setValue(value);
+            }
         }
     }
 
@@ -632,7 +976,7 @@ public class Step1Panel extends BorderPane {
     private final Label genInfoLabel5 = new Label("Project Description");
     private final Label genInfoLabel6 = new Label("Project Limits");
     private final Label genInfoLabel7 = new Label("Link to Project Website");
-    private final Label genInfoLabel8 = new Label("Upload Photo");
+    private final Label genInfoLabel8 = new Label("Upload Project Photo (Optional)");
 
     private final TextField genInfoTF1 = new TextField("");
     private final TextField genInfoTF2 = new TextField("");
@@ -645,17 +989,34 @@ public class Step1Panel extends BorderPane {
     private final Button genInfoButton1 = new Button("Browse");
     private final GridPane genInfoPicGrid = new GridPane();
 
-    private final Label wzInputLabel1 = new Label("Annual Average Daily Traffic (AADT):");
-    private final Label wzInputLabel2 = new Label("Functional Class of Roadway:");
-    private final Label wzInputLabel3 = new Label("Work Zone Length (mi):");
-    private final Label wzInputLabel4 = new Label("Work Zone Type:");
+    // Facility Information and Base Conditions
+    private final Label wzTitleLabel1 = new Label("Facility and Base Conditions");
+    private final Label wzInputLabel1 = new Label("Functional Class of Roadway:");
+    private final Label wzInputLabel2 = new Label("Maintaining Agency:");
+    private final Label wzInputLabel3 = new Label("Area Type:");
+    private final Label wzInputLabel4 = new Label("Annual Average Daily Traffic (Bidirectional AADT):");
     private final Label wzInputLabel5 = new Label("Number of Roadway Lanes (1 Direction):");
     private final Label wzInputLabel6 = new Label("Shoulder Width (ft):");
     private final Label wzInputLabel7 = new Label("Posted Speed Limit (mph):");
-    private final Label wzInputLabel8 = new Label("Number of Lanes to be Closed:");
-    private final Label wzInputLabel9 = new Label("Duration of Activity (hr):");
-    private final Label wzInputLabel10 = new Label("Maintaining Agency:");
+    private final Label wzInputLabel8 = new Label("Lane Width:");
+    private final Label wzInputLabel9 = new Label("Part of a Signalized Corridor?");
+    private final Label wzInputLabel10 = new Label("On the National Highway System?");
 
+    // Work Zone Confifuration
+    private final Label wzTitleLabel2 = new Label("Work Zone Configuration");
+    private final Label wzInputLabel11 = new Label("Work Zone Length (mi):");
+    private final Label wzInputLabel12 = new Label("Work Zone Type (MUTCD Designation):");
+    private final Label wzInputLabel13 = new Label("Work Zone Speed Limit:");
+    private final Label wzInputLabel14 = new Label("Number of Lanes to be Closed:");
+    //private final Label wzInputLabel15 = new Label("Daily Duration of Activity (hr):");
+    //private final Label wzInputLabel16 = new Label("Work Zone Duration (days):");
+    //private final Label wzInputLabel17 = new Label("NEED MOBILE DURATION INPUT:");
+    private final Label wzInputLabel18 = new Label("Work Zone Lane Width:");
+    private final Label wzInputLabel19 = new Label("Shoulder Closure:");
+    private final Label wzInputLabel20 = new Label("Federal-Aid Project:");
+
+    //private final Label wzInputLabel1 = new Label("");
+    //private final Label wzInputLabel1 = new Label("");
     /**
      * Annual Average Daily Traffic (AADT)(Integer) Input Spinner
      */
@@ -679,14 +1040,57 @@ public class Step1Panel extends BorderPane {
     /**
      * Number of Lanes to be Closed (Integer) Input Spinner
      */
+    //private final Spinner wzInputSpin = new Spinner();
+    /**
+     * Total Work Zone Duration (hr) (Integer) Input Spinner
+     */
+    //private final Spinner wzInputSpin = new Spinner();
+    /**
+     * Lane Width (Base Conditions)
+     */
     private final Spinner wzInputSpin6 = new Spinner();
     /**
-     * Duration of Activity (hr) (Integer) Input Spinner
+     * Work Zone Speed Limit
      */
     private final Spinner wzInputSpin7 = new Spinner();
-
-    private final ChoiceBox wzInputChoice1 = new ChoiceBox(FXCollections.observableArrayList("Select", "Freeway", "Arterial", "Local"));
-    private final ChoiceBox wzInputChoice2 = new ChoiceBox(FXCollections.observableArrayList("Select", "Mobile", "Permanent"));
-    private final ChoiceBox wzInputChoice3 = new ChoiceBox(FXCollections.observableArrayList("Select", "State", "County", "City/Town", "Other"));
-
+    /**
+     * Work Zone Number of Lanes to be closed
+     */
+    private final Spinner wzInputSpin8 = new Spinner();
+    /**
+     * Work Zone Reduced Lane Width
+     */
+    private final Spinner wzInputSpin9 = new Spinner();
+    /**
+     * Functional Class (prev "Select", "Freeway", "Arterial", "Local")
+     */
+    private final ChoiceBox wzInputChoice1 = new ChoiceBox(FXCollections.observableArrayList(Project.FUNCTIONAL_CLASS_LIST));
+    /**
+     * Work Zone Type (prev Select", "Mobile", "Permanent")
+     */
+    private final ChoiceBox wzInputChoice2 = new ChoiceBox(FXCollections.observableArrayList(Project.MUTCD_LIST));
+    /**
+     * Maintaining Agency
+     */
+    private final ChoiceBox wzInputChoice3 = new ChoiceBox(FXCollections.observableArrayList("State", "County", "City/Town", "Other"));
+    /**
+     * Area Type
+     */
+    private final ChoiceBox wzInputChoice4 = new ChoiceBox(FXCollections.observableArrayList("Urban", "Rural"));
+    /**
+     * Part of signalized corridor
+     */
+    private final ChoiceBox wzInputChoice5 = new ChoiceBox(FXCollections.observableArrayList("Yes", "No"));
+    /**
+     * national highway system
+     */
+    private final ChoiceBox wzInputChoice6 = new ChoiceBox(FXCollections.observableArrayList("Yes", "No"));
+    /**
+     * Has Shoulder Closure
+     */
+    private final ChoiceBox wzInputChoice7 = new ChoiceBox(FXCollections.observableArrayList("Yes", "No"));
+    /**
+     * Federal-aid project
+     */
+    private final ChoiceBox wzInputChoice8 = new ChoiceBox(FXCollections.observableArrayList("Yes", "No"));
 }

@@ -26,6 +26,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -43,7 +44,7 @@ import javafx.util.Callback;
  */
 public class StakeholderMatrix implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     private final Project proj;
     private final ObservableList<QuestionOption> qOptList;
@@ -178,16 +179,11 @@ public class StakeholderMatrix implements Serializable {
     public void computeStakeholders() {
         int funcIdx = -1;
         if (proj.functionalClassProperty().get() != null) {
-            switch (proj.functionalClassProperty().get()) {
-                case "Freeway":
-                    funcIdx = 0;
+            for (int i = 0; i < Project.FUNCTIONAL_CLASS_LIST.length; i++) {
+                if (proj.getFunctionalClass().equalsIgnoreCase(Project.FUNCTIONAL_CLASS_LIST[i])) {
+                    funcIdx = i < 2 ? 0 : i < 4 ? 1 : 2;
                     break;
-                case "Arterial":
-                    funcIdx = 1;
-                    break;
-                case "Local":
-                    funcIdx = 2;
-                    break;
+                }
             }
         }
 
@@ -283,20 +279,20 @@ public class StakeholderMatrix implements Serializable {
 
     private void updateSelectedStakeholders() {
         if (sortedStakeholders != null) {
-        FilteredList<Stakeholder> fsl = sortedStakeholders.filtered(new Predicate<Stakeholder>() {
-            @Override
-            public boolean test(Stakeholder sh) {
-                return sh.isCoreTeamMember();
-            }
-        });
-        primaryStakeholder.set(fsl.size() > 0 ? fsl.get(0).getName() : "No core team members selected.");
-        secondaryStakeholder.set(fsl.size() > 1 ? fsl.get(1).getName() : "");
-        fsl = sortedStakeholders.filtered(new Predicate<Stakeholder>() {
-            @Override
-            public boolean test(Stakeholder sh) {
-                return sh.isStakeholder();
-            }
-        });
+            FilteredList<Stakeholder> fsl = sortedStakeholders.filtered(new Predicate<Stakeholder>() {
+                @Override
+                public boolean test(Stakeholder sh) {
+                    return sh.isCoreTeamMember();
+                }
+            });
+            primaryStakeholder.set(fsl.size() > 0 ? fsl.get(0).getName() : "No core team members selected.");
+            secondaryStakeholder.set(fsl.size() > 1 ? fsl.get(1).getName() : "");
+            fsl = sortedStakeholders.filtered(new Predicate<Stakeholder>() {
+                @Override
+                public boolean test(Stakeholder sh) {
+                    return sh.isStakeholder();
+                }
+            });
             additionalStakeholder.set(fsl.size() > 0 ? fsl.get(0).getName() : "No non-team member stakeholders selected.");
         }
     }
@@ -453,7 +449,21 @@ public class StakeholderMatrix implements Serializable {
 
         TableColumn emailCol = new TableColumn<>("Email");
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
-        emailCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        //emailCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        emailCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
+            @Override
+            public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
+                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell();
+                //tfe.setEditable(false);
+                tfe.focusedProperty().addListener((s, ov, nv) -> {
+                    if (nv) {
+                        return;
+                    }
+                    commitEditorText(tfe);
+                });
+                return tfe;
+            }
+        });
         emailCol.setEditable(true);
         emailCol.setPrefWidth(150);
         emailCol.setMinWidth(150);
@@ -472,6 +482,13 @@ public class StakeholderMatrix implements Serializable {
         table.setItems(sList);
 
         return table;
+    }
+
+    private <T> void commitEditorText(TextFieldTableCell<QuestionYN, String> tfe) {
+        if (!tfe.isEditable()) {
+            return;
+        }
+        tfe.commitEdit(tfe.getText());
     }
 
     private BooleanProperty hasSchools = new SimpleBooleanProperty();

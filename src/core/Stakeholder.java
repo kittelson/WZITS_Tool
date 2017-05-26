@@ -24,7 +24,7 @@ import javafx.beans.value.ObservableValue;
  */
 public class Stakeholder implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     private IntegerProperty idx = new SimpleIntegerProperty();
     private StringProperty name = new SimpleStringProperty();

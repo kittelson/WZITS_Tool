@@ -5,6 +5,7 @@
  */
 package core;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,7 +27,9 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -34,11 +37,11 @@ import javafx.scene.image.Image;
  */
 public class Project implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     public static final int NUM_STEPS = 6;
 
-    public static final int[] NUM_SUB_STEPS = {10, 8, 8, 4, 4, 5};
+    public static final int[] NUM_SUB_STEPS = {9, 8, 8, 4, 4, 5};
 
     // Project information
     private SimpleStringProperty name = new SimpleStringProperty();
@@ -456,6 +459,118 @@ public class Project implements Serializable {
         SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
         return df.format(today);
     }
+    private StringProperty areaType = new SimpleStringProperty();
+
+    public String getAreaType() {
+        return areaType.get();
+    }
+
+    public void setAreaType(String value) {
+        areaType.set(value);
+    }
+
+    public StringProperty areaTypeProperty() {
+        return areaType;
+    }
+    private StringProperty signalizedCorridor = new SimpleStringProperty();
+
+    public String getSignalizedCorridor() {
+        return signalizedCorridor.get();
+    }
+
+    public void setSignalizedCorridor(String value) {
+        signalizedCorridor.set(value);
+    }
+
+    public StringProperty signalizedCorridorProperty() {
+        return signalizedCorridor;
+    }
+    private StringProperty nationalHighwaySystem = new SimpleStringProperty();
+
+    public String getNationalHighwaySystem() {
+        return nationalHighwaySystem.get();
+    }
+
+    public void setNationalHighwaySystem(String value) {
+        nationalHighwaySystem.set(value);
+    }
+
+    public StringProperty nationalHighwaySystemProperty() {
+        return nationalHighwaySystem;
+    }
+    private StringProperty shoulderClosure = new SimpleStringProperty();
+
+    public String getShoulderClosure() {
+        return shoulderClosure.get();
+    }
+
+    public void setShoulderClosure(String value) {
+        shoulderClosure.set(value);
+    }
+
+    public StringProperty shoulderClosureProperty() {
+        return shoulderClosure;
+    }
+    private StringProperty federalAid = new SimpleStringProperty();
+
+    public String getFederalAid() {
+        return federalAid.get();
+    }
+
+    public void setFederalAid(String value) {
+        federalAid.set(value);
+    }
+
+    public StringProperty federalAidProperty() {
+        return federalAid;
+    }
+
+    private IntegerProperty wzSpeedLimit = new SimpleIntegerProperty();
+    private IntegerProperty futureIntProp2 = new SimpleIntegerProperty();
+    private IntegerProperty futureIntProp3 = new SimpleIntegerProperty();
+    private IntegerProperty futureIntProp4 = new SimpleIntegerProperty();
+    private IntegerProperty futureIntProp5 = new SimpleIntegerProperty();
+    private DoubleProperty laneWidthBase = new SimpleDoubleProperty(12);
+    private DoubleProperty laneWidthWZ = new SimpleDoubleProperty(12);
+    private DoubleProperty futureDoubleProp3 = new SimpleDoubleProperty();
+    private DoubleProperty futureDoubleProp4 = new SimpleDoubleProperty();
+    private DoubleProperty futureDoubleProp5 = new SimpleDoubleProperty();
+
+    public int getWzSpeedLimit() {
+        return wzSpeedLimit.get();
+    }
+
+    public void setWzSpeedLimit(int value) {
+        wzSpeedLimit.set(value);
+    }
+
+    public IntegerProperty wzSpeedLimitProperty() {
+        return wzSpeedLimit;
+    }
+
+    public double getLaneWidthBase() {
+        return laneWidthBase.get();
+    }
+
+    public void setLaneWidthBase(double value) {
+        laneWidthBase.set(value);
+    }
+
+    public DoubleProperty laneWidthBaseProperty() {
+        return laneWidthBase;
+    }
+
+    public double getLaneWidthWZ() {
+        return laneWidthWZ.get();
+    }
+
+    public void setLaneWidthWZ(double value) {
+        laneWidthWZ.set(value);
+    }
+
+    public DoubleProperty laneWidthWZProperty() {
+        return laneWidthWZ;
+    }
 
     private void writeObject(ObjectOutputStream s) throws IOException {
         //s.defaultWriteObject();
@@ -471,7 +586,6 @@ public class Project implements Serializable {
         s.writeInt(getNumLanesClosed());
         s.writeInt(getNumRoadwayLanes());
         s.writeObject(getPatrollingAgency());
-        s.writeObject(getProjPhoto());
         s.writeObject(saveFile);
         s.writeDouble(getShoulderWidth());
         s.writeInt(getSpeedLimit());
@@ -494,7 +608,27 @@ public class Project implements Serializable {
         s.writeObject(getGoalNeedsMatrix());
         s.writeObject(getStakeholderMatrix());
 
-        //s.writeObject(steps);
+        s.writeInt(wzSpeedLimit.get());
+        s.writeInt(futureIntProp2.get());
+        s.writeInt(futureIntProp3.get());
+        s.writeInt(futureIntProp4.get());
+        s.writeInt(futureIntProp5.get());
+        s.writeDouble(laneWidthBase.get());
+        s.writeDouble(laneWidthWZ.get());
+        s.writeDouble(futureDoubleProp3.get());
+        s.writeDouble(futureDoubleProp4.get());
+        s.writeDouble(futureDoubleProp5.get());
+        s.writeObject(areaType.get());
+        s.writeObject(signalizedCorridor.get());
+        s.writeObject(nationalHighwaySystem.get());
+        s.writeObject(shoulderClosure.get());
+        s.writeObject(federalAid.get());
+
+        if (getProjPhoto() != null) {
+            ImageIO.write(SwingFXUtils.fromFXImage(getProjPhoto(), null), "png", s);
+        } else {
+            s.writeObject(getProjPhoto());
+        }
     }
 
     public void setFromProject(Project proj) {
@@ -518,6 +652,15 @@ public class Project implements Serializable {
         setUrlLink(proj.getUrlLink());
         setWzLength(proj.getWzLength());
         setWzType(proj.getWzType());
+
+        setWzSpeedLimit(proj.getWzSpeedLimit());
+        setLaneWidthBase(proj.getLaneWidthBase());
+        setLaneWidthWZ(proj.getLaneWidthBase());
+        setAreaType(proj.getAreaType());
+        setSignalizedCorridor(proj.getSignalizedCorridor());
+        setNationalHighwaySystem(proj.getNationalHighwaySystem());
+        setShoulderClosure(proj.getShoulderClosure());
+        setFederalAid(proj.getFederalAid());
 
         setAutomatedEnforcementAllowed(proj.isAutomatedEnforcementAllowed());
         setCrashDataAvailable(proj.isCrashDataAvailable());
@@ -554,7 +697,7 @@ public class Project implements Serializable {
         numLanesClosed = new SimpleIntegerProperty(s.readInt());
         numRoadwayLanes = new SimpleIntegerProperty(s.readInt());
         patrollingAgency = new SimpleStringProperty((String) s.readObject());
-        projPhoto = new SimpleObjectProperty<>((Image) s.readObject());
+        //projPhoto = new SimpleObjectProperty<>((Image) s.readObject());
         saveFile = (File) s.readObject();
         shoulderWidth = new SimpleDoubleProperty(s.readDouble());
         speedLimit = new SimpleIntegerProperty(s.readInt());
@@ -577,37 +720,33 @@ public class Project implements Serializable {
         gnMat = (GoalNeedsMatrix) s.readObject();
         stakeMat = (StakeholderMatrix) s.readObject();
 
-//
-//        Step[] tempArr = (Step[]) s.readObject();
-//        System.arraycopy(tempArr, 0, steps, 0, tempArr.length);
-        // Original Implementation
-//        setAadt(s.readInt());
-//        setActivityDuration(s.readInt());
-//        setAgency((String) s.readObject());
-//        setAnalyst((String) s.readObject());
-//        setDescription((String) s.readObject());
-//        setFunctionalClass((String) s.readObject());
-//        setLimits((String) s.readObject());
-//        setMaintainingAgency((String) s.readObject());
-//        setName((String) s.readObject());
-//        setPatrollingAgency((String) s.readObject());
-//        saveFile = (File) s.readObject();
-//        setShoulderWidth(s.readFloat());
-//        setSpeedLimit(s.readInt());
-//        setUrlLink((String) s.readObject());
-//        setWzLength(s.readFloat());
-//        setWzType((String) s.readObject());
-//
-//        setAutomatedEnforcementAllowed(s.readBoolean());
-//        setCrashDataAvailable(s.readBoolean());
-//        progressApp.set(s.readDouble());
-//        progressFeas.set(s.readDouble());
-//        progressGoal.set(s.readDouble());
-//        progressInfo.set(s.readDouble());
-//        progressStake.set(s.readDouble());
+        wzSpeedLimit = new SimpleIntegerProperty(s.readInt());
+        futureIntProp2 = new SimpleIntegerProperty(s.readInt());
+        futureIntProp3 = new SimpleIntegerProperty(s.readInt());
+        futureIntProp4 = new SimpleIntegerProperty(s.readInt());
+        futureIntProp5 = new SimpleIntegerProperty(s.readInt());
+        laneWidthBase = new SimpleDoubleProperty(s.readDouble());
+        laneWidthWZ = new SimpleDoubleProperty(s.readDouble());
+        futureDoubleProp3 = new SimpleDoubleProperty(s.readDouble());
+        futureDoubleProp4 = new SimpleDoubleProperty(s.readDouble());
+        futureDoubleProp5 = new SimpleDoubleProperty(s.readDouble());
+        areaType = new SimpleStringProperty((String) s.readObject());
+        signalizedCorridor = new SimpleStringProperty((String) s.readObject());
+        nationalHighwaySystem = new SimpleStringProperty((String) s.readObject());
+        shoulderClosure = new SimpleStringProperty((String) s.readObject());
+        federalAid = new SimpleStringProperty((String) s.readObject());
+
+        BufferedImage bimg = ImageIO.read(s);
+        if (bimg != null) {
+            projPhoto = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(bimg, null));
+        } else {
+            projPhoto = new SimpleObjectProperty<>();
+        }
     }
 
-    public static class Step {
+    public static class Step implements Serializable {
+
+        private static final long serialVersionUID = 123456789L;
 
         private final Project proj;
 
@@ -782,7 +921,9 @@ public class Project implements Serializable {
         }
     }
 
-    public static class SubStep {
+    public static class SubStep implements Serializable {
+
+        private static final long serialVersionUID = 123456789L;
 
         private final String stepName;
 
@@ -889,16 +1030,16 @@ public class Project implements Serializable {
     public SimpleDoubleProperty progressApp = new SimpleDoubleProperty(0.0);
     public SimpleDoubleProperty progressStake = new SimpleDoubleProperty(0.0);
 
-    public static final int GOAL_SELECTION_INDEX = 3;
-    public static final int GOAL_WIZARD_SUMMARY_INDEX = 4; // Step 1
-    public static final int FEAS_WIZARD_SUMMARY_INDEX = 5; // Step 1
-    public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 7;  // Step 1
-    public static final int TEAM_SUMMARY_INDEX = 8; // Step 1
+    public static final int GOAL_SELECTION_INDEX = 2;
+    public static final int GOAL_WIZARD_SUMMARY_INDEX = 3; // Step 1
+    public static final int FEAS_WIZARD_SUMMARY_INDEX = 4; // Step 1
+    public static final int STAKEHOLDER_WIZARD_SUMMARY_INDEX = 6;  // Step 1
+    public static final int TEAM_SUMMARY_INDEX = 7; // Step 1
     public static final int APP_WIZARD_SUMMARY_INDEX = 1; // Step 2
 
     public static final String[][] STEP_NAMES = {
         //{"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Major Goals", "Goal Wizard", "Feasibility", "Feasibility Wizard", "Stakeholders", "Stakeholders Wizard & Team Selection", "Team Members", "ITS Resources"},
-        {"Step 1", "WZ Metadata", "User Needs", "User Needs Support", "Goals", "Goal Wizard", "Feasibility Wizard", "Stakeholders", "SH Wizard & Team Selection", "Team Members", "ITS Resources"},
+        {"Step 1", "General Info", "User Needs", "Goals Selection", "Selected Goals", "Feasibility Assessment", "Stakeholder Assessment", "Stakeholders & Team Selection", "Team Members", "ITS Resources"}, //"User Needs Support"
         {"Step 2", "Initial Applications", "Application Wizard", "Benefits", "Costs", "Institutional/Jurisdictional", "Legal/Policy", "Stakeholder Buy-In", "Develop Concept of Operations"},
         //{"Step 3", "Document Concept of Operations", "Requirements", "System Design", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "Public Outreach", "System Security", "Evaluation", "Benefit/Cost"},
         {"Step 3", "Document Concept of Operations", "Requirements", "Testing Strategy", "Operations & Maintenance", "Staff Training Needs", "System Security", "Evaluation", "Benefit/Cost"},
@@ -906,5 +1047,9 @@ public class Project implements Serializable {
         {"Step 5", "Implementing System Plans", "Scheduling Decisions", "System Acceptance Testing", "Handling Deployment Issues"},
         {"Step 6", "Changing Work Zone", "Using/Sharing ITS Info", "Maintaining Adequate Staff", "Leveraging Public Support", "System Monitoring/Evaluation"}
     };
+
+    public static final String[] FUNCTIONAL_CLASS_LIST = {"Interstate", "Other Freeway", "Principal Arterial", "Minor Arterial", "Major Collector", "Minor Collector", "Local"};
+    public static final String[] MUTCD_LIST = {"Long-Term Stationary", "Intermediate-Term Stationary", "Short-Term Stationary", "Short Duartion", "Mobile"};
+    public static final String[] AGENCY_LIST = {"State", "County", "City/Town", "Other"};
 
 }

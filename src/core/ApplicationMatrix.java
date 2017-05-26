@@ -38,7 +38,7 @@ import javafx.util.Callback;
  */
 public class ApplicationMatrix implements Serializable {
 
-    private final long serialVersionUID = 123456789L;
+    private static final long serialVersionUID = 123456789L;
 
     private final Project proj;
 
