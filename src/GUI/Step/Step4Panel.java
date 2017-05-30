@@ -155,9 +155,7 @@ public class Step4Panel extends BorderPane {
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-        Label tempSummaryLabel = new Label("Step 4 Summary Panel Under Development");
-        tempSummaryLabel.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
-        stepReportPane.setCenter(tempSummaryLabel);
+        stepReportPane.setCenter(Step4TableHelper.createStepSummary(control));
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         mainVBox.getChildren().addAll(centerPane);  //allSubStepsPane
@@ -233,6 +231,10 @@ public class Step4Panel extends BorderPane {
                 selectSubStep(getActiveSubStep());
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
+
+                if (getActiveSubStep() == Project.NUM_SUB_STEPS[stepIndex]) {
+                    stepReportPane.setCenter(Step4TableHelper.createStepSummary(control));
+                }
 
                 control.checkProceed();
             }

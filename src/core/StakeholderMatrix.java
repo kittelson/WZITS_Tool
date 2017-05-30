@@ -24,11 +24,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -37,6 +42,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.util.Callback;
+import javafx.util.converter.DefaultStringConverter;
 
 /**
  *
@@ -262,12 +268,14 @@ public class StakeholderMatrix implements Serializable {
             scores[stakeIdx] += this.unwantedLocalDiversion.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
             ynIdx++;
             stakeholders.get(stakeIdx).setScore(scores[stakeIdx]);
-            if (scores[stakeIdx] > 2) {
-                stakeholders.get(stakeIdx).setCoreTeamMember(true);
-            } else if (scores[stakeIdx] > 0) {
-                stakeholders.get(stakeIdx).setStakeholder(true);
-            } else {
-                stakeholders.get(stakeIdx).setNotApplicable(true);
+            if (false) {
+                if (scores[stakeIdx] > 2) {
+                    stakeholders.get(stakeIdx).setCoreTeamMember(true);
+                } else if (scores[stakeIdx] > 0) {
+                    stakeholders.get(stakeIdx).setStakeholder(true);
+                } else {
+                    stakeholders.get(stakeIdx).setNotApplicable(true);
+                }
             }
         }
 
@@ -301,7 +309,7 @@ public class StakeholderMatrix implements Serializable {
         computeStakeholders();
 
         final TableView<Stakeholder> summary = new TableView();
-        summary.getStyleClass().add("step-summary-table");
+        summary.getStyleClass().add("step-selection-table");
         summary.setEditable(true);
 
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -411,6 +419,23 @@ public class StakeholderMatrix implements Serializable {
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        // Workaround to get tab/enter/escape key presses working (in progress)
+//        table.getSelectionModel().setCellSelectionEnabled(true);
+//        table.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//            @Override
+//            public void handle(KeyEvent t) {
+//                switch (t.getCode()) {
+//                    case TAB:
+//                        t.consume();
+//                        if (t.isShiftDown()) {
+//                            table.getSelectionModel().selectPrevious();
+//                        } else {
+//                            table.getSelectionModel().selectNext();
+//                        }
+//                        break;
+//                }
+//            }
+//        });
         TableColumn indexCol = new TableColumn<>("#");
         indexCol.setEditable(false);
         indexCol.setCellValueFactory(new Callback<CellDataFeatures<Stakeholder, String>, ObservableValue<String>>() {
@@ -427,6 +452,50 @@ public class StakeholderMatrix implements Serializable {
         TableColumn nameCol = new TableColumn<>();
         nameCol.setEditable(false);
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
+            @Override
+            public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
+                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell<QuestionYN, String>() {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (!empty && item != null) {
+                            setText(item);
+                            Hyperlink hl = new Hyperlink("(edit)");
+                            hl.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent ae) {
+                                    Stakeholder.editInfo(sList.get(getIndex()));
+                                }
+                            });
+                            hl.getStyleClass().add("wz-input-hyperlink");
+                            setGraphic(hl);
+                            setContentDisplay(ContentDisplay.RIGHT);
+                        }
+                    }
+                };
+                tfe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
+                    @Override
+                    public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
+                        if (newVal != null) {
+                            newVal.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Boolean> ob, Boolean oldVal, Boolean newVal) {
+                                    if (tfe.getGraphic() != null) {
+                                        if (newVal) {
+                                            ((Hyperlink) tfe.getGraphic()).setStyle("-fx-text-fill: white");
+                                        } else {
+                                            ((Hyperlink) tfe.getGraphic()).setStyle("-fx-text-fill: #ED7D31");
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+                return tfe;
+            }
+        });
 
         switch (listType) {
             default:
@@ -453,14 +522,24 @@ public class StakeholderMatrix implements Serializable {
         emailCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
             @Override
             public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
-                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell();
-                //tfe.setEditable(false);
-                tfe.focusedProperty().addListener((s, ov, nv) -> {
-                    if (nv) {
-                        return;
-                    }
-                    commitEditorText(tfe);
-                });
+                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell<QuestionYN, String>();
+                tfe.setConverter(new DefaultStringConverter());
+//                tfe.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//                    @Override
+//                    public void handle(KeyEvent t) {
+//                        switch (t.getCode()) {
+//                            case ENTER:
+//                                tfe.commitEdit(tfe.getText());
+//                                break;
+//                            case ESCAPE:
+//                                tfe.cancelEdit();
+//                                break;
+//                            case TAB:
+//                                tfe.commitEdit(tfe.getText());
+//                                break;
+//                        }
+//                    }
+//                });
                 return tfe;
             }
         });

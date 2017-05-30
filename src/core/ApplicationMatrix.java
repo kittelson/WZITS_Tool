@@ -5,6 +5,7 @@
  */
 package core;
 
+import static core.GoalNeedsMatrix.ZERO_SCORE_TXT;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,10 +27,12 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 
 /**
@@ -181,7 +184,7 @@ public class ApplicationMatrix implements Serializable {
         computeScores();
 
         final TableView<Application> summary = new TableView();
-        summary.getStyleClass().add("step-summary-table");
+        summary.getStyleClass().add("step-selection-table");
         summary.setEditable(true);
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -203,10 +206,25 @@ public class ApplicationMatrix implements Serializable {
 
         TableColumn scoreCol = new TableColumn("Score");
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
-        scoreCol.setPrefWidth(100);
-        scoreCol.setMaxWidth(100);
-        scoreCol.setMinWidth(100);
+        scoreCol.setPrefWidth(200);
+        scoreCol.setMaxWidth(200);
+        scoreCol.setMinWidth(200);
         scoreCol.getStyleClass().add("col-style-center");
+        scoreCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
+            @Override
+            public TableCell<Need, String> call(TableColumn<Need, String> tc) {
+                final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell();
+                tfe.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                        if (newVal != null && newVal.equalsIgnoreCase("0")) {
+                            tfe.setText(ZERO_SCORE_TXT);
+                        }
+                    }
+                });
+                return tfe;
+            }
+        });
 
         TableColumn selectedCol = new TableColumn("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
@@ -289,6 +307,10 @@ public class ApplicationMatrix implements Serializable {
 
     public StringProperty app4Property() {
         return app4;
+    }
+
+    public ObservableList<Application> getAppList() {
+        return FXCollections.observableArrayList(appTypes);
     }
 
     private void writeObject(ObjectOutputStream s) throws IOException {

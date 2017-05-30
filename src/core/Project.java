@@ -525,7 +525,7 @@ public class Project implements Serializable {
         return federalAid;
     }
 
-    private IntegerProperty wzSpeedLimit = new SimpleIntegerProperty();
+    private IntegerProperty wzSpeedLimit = new SimpleIntegerProperty(45);
     private IntegerProperty futureIntProp2 = new SimpleIntegerProperty();
     private IntegerProperty futureIntProp3 = new SimpleIntegerProperty();
     private IntegerProperty futureIntProp4 = new SimpleIntegerProperty();

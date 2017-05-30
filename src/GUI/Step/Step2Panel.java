@@ -5,6 +5,7 @@
  */
 package GUI.Step;
 
+import GUI.Helper.IOHelper;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
@@ -12,7 +13,6 @@ import GUI.Tables.Step2TableHelper;
 import core.Project;
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,8 +21,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -189,17 +191,28 @@ public class Step2Panel extends BorderPane {
         // Develop Concept of Operations Questions Panel
         conOpsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         //conOpsPane.setCenter(Step2TableHelper.createConOpsNode(control.getProject()));
-        Label tempConOpsDesignLabel = new Label("Design Concept of Operations Summary Panel Under Development");
-        tempConOpsDesignLabel.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
-        conOpsPane.setCenter(tempConOpsDesignLabel);
+        BorderPane uploadPane = new BorderPane();
+        Button uploadButton = new Button("Upload Concept of Operations Figure");
+        uploadButton.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
+        BorderPane.setAlignment(uploadButton, Pos.CENTER);
+        final ImageView conOpsIV = new ImageView();
+        uploadButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                Image conOpsImage = IOHelper.openImage(control);
+                if (conOpsImage != null) {
+                    conOpsIV.setImage(conOpsImage);
+                }
+            }
+        });
+        uploadPane.setTop(uploadButton);
+        uploadPane.setCenter(conOpsIV);
+        conOpsPane.setCenter(uploadPane);
         conOpsPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-        Label tempSummaryLabel = new Label("Step 2 Summary Panel Under Development");
-        tempSummaryLabel.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
-        stepReportPane.setCenter(tempSummaryLabel);
-
+        stepReportPane.setCenter(Step2TableHelper.createStepSummary(control));
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         mainVBox.getChildren().addAll(centerPane);  //allSubStepsPane
@@ -291,6 +304,10 @@ public class Step2Panel extends BorderPane {
                     case Project.APP_WIZARD_SUMMARY_INDEX:
                         awSummaryPane.setCenter(control.getProject().getApplicationMatrix().getSummaryNode());
                         break;
+                }
+
+                if (getActiveSubStep() == Project.NUM_SUB_STEPS[stepIndex]) {
+                    stepReportPane.setCenter(Step2TableHelper.createStepSummary(control));
                 }
 
                 control.checkProceed();

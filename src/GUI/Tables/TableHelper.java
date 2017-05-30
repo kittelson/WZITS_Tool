@@ -22,9 +22,12 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -82,13 +85,41 @@ public class TableHelper {
         questionCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
             @Override
             public TableCell<QuestionYN, String> call(TableColumn<QuestionYN, String> tc) {
-                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell();
+                final TextFieldTableCell<QuestionYN, String> tfe = new TextFieldTableCell<QuestionYN, String>() {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (!empty && item != null) {
+                            setText(item);
+                            if (qList.get(this.getIndex()).hasMoreInfo) {
+                                Hyperlink hl = new Hyperlink("(more info)");
+                                hl.getStyleClass().add("wz-input-hyperlink");
+                                final String comm = qList.get(this.getIndex()).getComment();
+                                hl.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent ae) {
+                                        Alert al = new Alert(Alert.AlertType.INFORMATION);
+                                        al.initOwner(MainController.getWindow());
+                                        al.setTitle("More Information");
+                                        al.setHeaderText("Emergency Response Corridor");
+                                        al.setContentText(comm);
+                                        al.showAndWait();
+                                    }
+                                });
+                                this.setGraphic(hl);
+                                this.setContentDisplay(ContentDisplay.RIGHT);
+                                //setTextFill(qList.get(this.getIndex()).isVisible() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                            }
+                        }
+                    }
+                };
                 tfe.setEditable(false);
                 tfe.tableRowProperty().addListener(new ChangeListener<TableRow>() {
                     @Override
                     public void changed(ObservableValue<? extends TableRow> ov, TableRow oldVal, TableRow newVal) {
                         if (newVal.getItem() != null) {
                             final Question q = (Question) newVal.getItem();
+
                             tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
                             //tfe.getStyleClass().add(q.visibleProperty().get() ? "question-visible" : "question-hidden");
                             q.visibleProperty().addListener(new ChangeListener<Boolean>() {

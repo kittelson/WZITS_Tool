@@ -274,7 +274,7 @@ public class Step1PanelDep extends BorderPane {
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-        stepReportPane.setCenter(Step1TableHelper.createStepSummary(control));
+        stepReportPane.setCenter(Step1TableHelper.createStepSummary1(control));
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Adding to main substep VBox
@@ -407,7 +407,7 @@ public class Step1PanelDep extends BorderPane {
                 }
 
                 if (getActiveSubStep() == Project.NUM_SUB_STEPS[stepIndex]) {
-                    stepReportPane.setCenter(Step1TableHelper.createStepSummary(control));
+                    stepReportPane.setCenter(Step1TableHelper.createStepSummary1(control));
                 }
 
                 control.checkProceed();

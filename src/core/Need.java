@@ -5,6 +5,7 @@
  */
 package core;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,6 +20,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.TextInputDialog;
 
 /**
  *
@@ -36,6 +42,8 @@ public class Need implements Serializable {
     private BooleanProperty selected = new SimpleBooleanProperty(false);
 
     public boolean isPlaceholder;
+    public boolean hasHL = false;
+    public Node hl = new Hyperlink("?");
 
     public Need(String goal, String description) {
         this(goal, description, false);
@@ -45,6 +53,33 @@ public class Need implements Serializable {
         this.goal = new SimpleStringProperty(goal);
         this.description = new SimpleStringProperty(description);
         this.isPlaceholder = isPlaceholder;
+    }
+
+    public Need(String goal, String description, Node hl) {
+        this(goal, description, false);
+        this.hl = hl;
+        hl.getStyleClass().add("wz-input-hyperlink");
+        ((Hyperlink) hl).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                String[] tokens = getDescription().split(" ");
+                TextInputDialog tid = new TextInputDialog(tokens[6]);
+                tid.setTitle("Goal Specification");
+                tid.setHeaderText("Specify the delay minutes");
+                tid.showAndWait();
+                String newMin = tid.getResult();
+                String newDesc = "";
+                for (int tIdx = 0; tIdx < 6; tIdx++) {
+                    newDesc = newDesc + tokens[tIdx] + " ";
+                }
+                newDesc = newDesc + newMin;
+                for (int tIdx = 7; tIdx < tokens.length; tIdx++) {
+                    newDesc = newDesc + " " + tokens[tIdx];
+                }
+                setDescription(newDesc);
+            }
+        });
+        this.hasHL = true;
     }
 
     public String getGoal() {
@@ -101,6 +136,8 @@ public class Need implements Serializable {
         s.writeBoolean(isPlaceholder);
         s.writeInt(getScore());
         s.writeBoolean(isSelected());
+        s.writeBoolean(hasHL);
+        s.writeObject(((Hyperlink) hl).getText());
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
@@ -109,6 +146,33 @@ public class Need implements Serializable {
         isPlaceholder = s.readBoolean();
         score = new SimpleIntegerProperty(s.readInt());
         selected = new SimpleBooleanProperty(s.readBoolean());
+        try {
+            hasHL = s.readBoolean();
+            hl = new Hyperlink((String) s.readObject());
+            hl.getStyleClass().add("wz-input-hyperlink");
+            ((Hyperlink) hl).setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent ae) {
+                    String[] tokens = getDescription().split(" ");
+                    TextInputDialog tid = new TextInputDialog(tokens[6]);
+                    tid.setTitle("Goal Specification");
+                    tid.setHeaderText("Specify the delay minutes");
+                    tid.showAndWait();
+                    String newMin = tid.getResult();
+                    String newDesc = "";
+                    for (int tIdx = 0; tIdx < 6; tIdx++) {
+                        newDesc = newDesc + tokens[tIdx] + " ";
+                    }
+                    newDesc = newDesc + newMin;
+                    for (int tIdx = 7; tIdx < tokens.length; tIdx++) {
+                        newDesc = newDesc + " " + tokens[tIdx];
+                    }
+                    setDescription(newDesc);
+                }
+            });
+        } catch (EOFException e) {
+            // Future
+        }
     }
 
     public static int getTypeConverter(Need n) {
@@ -135,7 +199,7 @@ public class Need implements Serializable {
     }
 
     public static final ObservableList<Need> GOAL_WIZARD_NEEDS_LIST = FXCollections.observableArrayList(
-            new Need(Question.GOAL_MOBILITY, "Reduce daily peak period delays to XX minutes"),
+            new Need(Question.GOAL_MOBILITY, "Reduce daily peak period delays to XX minutes", new Hyperlink("(edit)")),
             new Need(Question.GOAL_MOBILITY, "Facilitate the movement of emergency and construction vehicles through the work zone"),
             new Need(Question.GOAL_MOBILITY, "Reduce the number of single-vehicle trips through the work zone"),
             new Need(Question.GOAL_MOBILITY, "Reduce variability of travel times"),
@@ -149,7 +213,7 @@ public class Need implements Serializable {
             new Need(Question.GOAL_PROD, "Minimize delays in construction vehicle access to the work zone"),
             new Need(Question.GOAL_PROD, "Provide an egress from work zone for haul vehicles"),
             new Need(Question.GOAL_PROD, "", true),
-            new Need(Question.GOAL_REG, "Reduce work zone delays to within XX minutes"),
+            //new Need(Question.GOAL_REG, "Reduce work zone delays to within XX minutes", new Hyperlink("(edit)")),
             new Need(Question.GOAL_REG, "Monitor work zone operations and safety performance in real-time"),
             new Need(Question.GOAL_REG, "Monitor alternative route operations and safety performance in real-time"),
             new Need(Question.GOAL_REG, "Optimize contractor work periods"),

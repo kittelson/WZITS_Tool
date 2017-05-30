@@ -5,10 +5,12 @@
  */
 package core;
 
+import GUI.MainController;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Optional;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -17,6 +19,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 
 /**
  *
@@ -186,6 +194,31 @@ public class Stakeholder implements Serializable {
         phone = new SimpleStringProperty((String) s.readObject());
         score = new SimpleIntegerProperty(s.readInt());
         stakeholder = new SimpleBooleanProperty(s.readBoolean());
+    }
+
+    public static void editInfo(Stakeholder sh) {
+        GridPane gp = new GridPane();
+        Label l1 = new Label("Email: ");
+        TextField emailTF = new TextField(sh.getEmail());
+        emailTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l2 = new Label("Phone #: ");
+        TextField phoneTF = new TextField(sh.getPhone());
+        phoneTF.setPadding(new Insets(0, 0, 0, 5));
+        gp.add(new Label(sh.getName()), 0, 0, 2, 1);
+        gp.add(l1, 0, 1);
+        gp.add(emailTF, 1, 1);
+        gp.add(l2, 0, 2);
+        gp.add(phoneTF, 1, 2);
+        Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
+        al.initOwner(MainController.getWindow());
+        al.setTitle("Enter/Edit Stakeholder Contact Information");
+        al.setHeaderText("Enter/Edit Stakeholder Contact Information");
+        al.getDialogPane().setContent(gp);
+        Optional<ButtonType> result = al.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            sh.setEmail(emailTF.getText());
+            sh.setPhone(phoneTF.getText());
+        }
     }
 
     public static final int CORE_TEAM = 0;

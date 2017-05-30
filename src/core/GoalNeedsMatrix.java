@@ -26,12 +26,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 
@@ -63,7 +65,7 @@ public class GoalNeedsMatrix implements Serializable {
     public GoalNeedsMatrix(ObservableList<QuestionYN> qList, ObservableList<Need> needsList, ObservableList<QuestionYN> majorGoalsList) {
         this.qList = qList;
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
-            qToRowMap.put(qList.get(qIdx), qList.get(qIdx).getIdx() - 1);
+            qToRowMap.put(qList.get(qIdx), qIdx); //qList.get(qIdx).getIdx() - 1
         }
         this.needsList = needsList;
         for (int needIdx = 0; needIdx < needsList.size(); needIdx++) {
@@ -89,7 +91,7 @@ public class GoalNeedsMatrix implements Serializable {
         qList = gnMat.qList;
         qToRowMap = new LinkedHashMap();
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
-            qToRowMap.put(qList.get(qIdx), qList.get(qIdx).getIdx() - 1);
+            qToRowMap.put(qList.get(qIdx), qIdx);  //qList.get(qIdx).getIdx() - 1
         }
         needsList = gnMat.needsList;
         needToColMap = new LinkedHashMap();
@@ -314,7 +316,7 @@ public class GoalNeedsMatrix implements Serializable {
         computeScores();
 
         TableView<Need> summary = new TableView();
-        summary.getStyleClass().add("step-summary-table");
+        summary.getStyleClass().add("step-selection-table");
         summary.setEditable(true);
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -324,18 +326,56 @@ public class GoalNeedsMatrix implements Serializable {
         catCol.setMaxWidth(175);
         catCol.setMinWidth(175);
         catCol.getStyleClass().add("col-style-center");
-        //catCol.setSortType(SortType.ASCENDING);
 
         TableColumn recCol = new TableColumn("Recommended Goals");
+        recCol.setEditable(false);
         recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
+        recCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
+            @Override
+            public TableCell<Need, String> call(TableColumn<Need, String> tc) {
+                final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell<Need, String>() {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (!empty && item != null) {
+                            setText(item);
+                            for (Need n : needsList) {
+                                if (n.getDescription().equalsIgnoreCase(item)) {
+                                    if (n.hasHL) {
+                                        setGraphic(n.hl);
+                                        this.setContentDisplay(ContentDisplay.RIGHT);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                };
+                return tfe;
+            }
+        });
 
         TableColumn scoreCol = new TableColumn("Score");
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
-        scoreCol.setPrefWidth(100);
-        scoreCol.setMaxWidth(100);
-        scoreCol.setMinWidth(100);
+        scoreCol.setPrefWidth(200);
+        scoreCol.setMaxWidth(200);
+        scoreCol.setMinWidth(200);
         scoreCol.getStyleClass().add("col-style-center");
-        //scoreCol.setSortType(SortType.DESCENDING);
+        scoreCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
+            @Override
+            public TableCell<Need, String> call(TableColumn<Need, String> tc) {
+                final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell();
+                tfe.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                        if (newVal != null && newVal.equalsIgnoreCase("0")) {
+                            tfe.setText(ZERO_SCORE_TXT);
+                        }
+                    }
+                });
+                return tfe;
+            }
+        });
 
         TableColumn selectedCol = new TableColumn("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
@@ -352,7 +392,10 @@ public class GoalNeedsMatrix implements Serializable {
         summary.setPlaceholder(new Label("The \"User Needs\" step must be completed to view."));
 
         BorderPane bPane = new BorderPane();
-        bPane.setTop(NodeFactory.createFormattedLabel("Use the checkboxes in the far right column to select goals for the project.", "opt-pane-title"));
+        bPane.setTop(NodeFactory.createFormattedLabel("Use the checkboxes in the far right column to select goals for the project. "
+                + "These goals and their associated scores are based on user input from prior steps. "
+                + "Specific goals should be selected for emphasis for this project based on "
+                + "both the score recommendations and the analyst's judgement.", "opt-pane-title"));
         bPane.setCenter(summary);
         return bPane;
     }
@@ -530,4 +573,5 @@ public class GoalNeedsMatrix implements Serializable {
         matrix = (int[][]) s.readObject();
     }
 
+    public static final String ZERO_SCORE_TXT = "Not Recommended";
 }

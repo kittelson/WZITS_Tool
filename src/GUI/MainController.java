@@ -31,7 +31,7 @@ public class MainController {
 
     private MainWindow mainWindow;
 
-    private final Stage stage;
+    private static Stage stage;
 
     private Project proj;
 
@@ -75,7 +75,8 @@ public class MainController {
         return mainWindow;
     }
 
-    public Window getWindow() {
+    public static Window getWindow() {
+        //return stage.getOwner();
         return stage.getOwner();
     }
 
@@ -134,7 +135,7 @@ public class MainController {
      * @param subStepIdx
      */
     public void setActiveSubStep(int stepIdx, int subStepIdx) {
-        if (stepIdx >= 0) {
+        if (stepIdx >= 0 && stepIdx < Project.NUM_STEPS) {
             this.activeSubStep[stepIdx].set(subStepIdx);
         }
     }
@@ -197,6 +198,7 @@ public class MainController {
     public void newProjectOpened() {
         stage.hide();
         Alert al = new Alert(Alert.AlertType.NONE);
+        al.initOwner(getWindow());
         al.setTitle("Please Wait");
         al.setHeaderText("Loading WZITS Project...");
         ProgressBar ipb = new ProgressBar(1.0);

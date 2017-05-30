@@ -111,6 +111,25 @@ public class IOHelper {
         return false;
     }
 
+    public static Image openImage(MainController mc) {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Select WZITS Project Image");
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.*"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+        File openFile = fc.showOpenDialog(mc.getWindow());  //mc.getMainWindow()
+        if (openFile != null) {
+            try {
+                return new Image(new FileInputStream(openFile));
+            } catch (FileNotFoundException e) {
+
+            }
+        }
+        return null;
+    }
+
     public static final int SAVE_COMPLETED = 1;
     public static final int SAVE_FAILED = 0;
     public static final int SAVE_CANCELLED = -1;

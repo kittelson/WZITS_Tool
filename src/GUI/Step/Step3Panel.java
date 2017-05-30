@@ -184,9 +184,7 @@ public class Step3Panel extends BorderPane {
 
         // Step Report Pane
         stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-        Label tempSummaryLabel = new Label("Step 3 Summary Panel Under Development");
-        tempSummaryLabel.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
-        stepReportPane.setCenter(tempSummaryLabel);
+        stepReportPane.setCenter(Step3TableHelper.createStepSummary(control));
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         int i = 0;
@@ -276,6 +274,10 @@ public class Step3Panel extends BorderPane {
                 selectSubStep(getActiveSubStep());
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
+
+                if (getActiveSubStep() == Project.NUM_SUB_STEPS[stepIndex]) {
+                    stepReportPane.setCenter(Step3TableHelper.createStepSummary(control));
+                }
 
                 control.checkProceed();
             }

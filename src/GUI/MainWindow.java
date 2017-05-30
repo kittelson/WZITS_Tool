@@ -6,6 +6,7 @@
 package GUI;
 
 import GUI.Helper.NodeFactory;
+import GUI.Helper.PDFIOHelper;
 import GUI.Launch.LaunchPane;
 import GUI.Step.IntroPane;
 import GUI.Step.Step1Panel;
@@ -14,9 +15,11 @@ import GUI.Step.Step3Panel;
 import GUI.Step.Step4Panel;
 import GUI.Step.Step5Panel;
 import GUI.Step.Step6Panel;
+import GUI.Step.SummaryPanel;
 import core.Project;
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -111,8 +114,10 @@ public class MainWindow extends BorderPane {
         MenuItem feasibilityWizMenuItem = new MenuItem("Feasibility Wizard");
         MenuItem stakeholdersWizMenuItem = new MenuItem("Stakeholders Wizard");
         MenuItem step1SummaryMenuItem = new MenuItem("Step 1 Summary");
+        MenuItem exportStep1SummaryMenuItem = new MenuItem("Export Step 1 Summary");
         menuStep1Results.getItems().addAll(feasibilityWizMenuItem,
-                goalWizMenuItem, stakeholdersWizMenuItem, step1SummaryMenuItem);
+                goalWizMenuItem, stakeholdersWizMenuItem, step1SummaryMenuItem, exportStep1SummaryMenuItem);
+
         Menu menuStep2Results = new Menu("Step 2");
         MenuItem appWizMenuItem = new MenuItem("Application Wizard");
         MenuItem step2SummaryMenuItem = new MenuItem("Step 2 Summary");
@@ -153,6 +158,25 @@ public class MainWindow extends BorderPane {
                 control.selectStep(0, Project.NUM_SUB_STEPS[0]);
             }
         });
+        BooleanBinding bb = new BooleanBinding() {
+            {
+                super.bind(control.activeStepProperty());
+                super.bind(control.activeSubStepProperty(0));
+            }
+
+            @Override
+            public boolean computeValue() {
+                return control.getActiveStep() == 0 && control.getActiveSubStep(0) == Project.NUM_SUB_STEPS[0];
+            }
+        };
+        exportStep1SummaryMenuItem.disableProperty().bind(bb.not());
+        exportStep1SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStep1Summary(((Step1Panel) step1Pane).getSummaryNode());
+            }
+        });
+
         appWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
@@ -208,6 +232,7 @@ public class MainWindow extends BorderPane {
             public void handle(ActionEvent ae) {
                 LaunchPane lp = new LaunchPane(control, true);
                 Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.initOwner(mc.getWindow());
                 al.getDialogPane().getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
                 al.getDialogPane().setMaxHeight(500);
                 al.getDialogPane().setMaxWidth(700);
@@ -279,7 +304,7 @@ public class MainWindow extends BorderPane {
         step4Pane = new Step4Panel(control);
         step5Pane = new Step5Panel(control);
         step6Pane = new Step6Panel(control);
-        summaryPane.setCenter(new Label("Summary"));
+        summaryPane.setCenter(SummaryPanel.createStepSummary(control));
         stepPanesList.add(introPane);
         stepPanesList.add(step1Pane);
         stepPanesList.add(step2Pane);

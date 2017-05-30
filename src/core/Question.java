@@ -5,6 +5,7 @@
  */
 package core;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,6 +36,8 @@ public abstract class Question implements Serializable {
     private StringProperty comment = new SimpleStringProperty();
     private String commentPrompt = "Additional comments...";
     protected int commentQType = COMMENT_QTYPE_NA;
+
+    public boolean hasMoreInfo = false;
 
     public Question(int idx, String goal, String questionText) {
         this(idx, goal, questionText, -1);
@@ -196,6 +199,7 @@ public abstract class Question implements Serializable {
         s.writeBoolean(isVisible());
         s.writeObject(commentPrompt);
         s.writeInt(commentQType);
+        s.writeBoolean(hasMoreInfo);
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
@@ -211,6 +215,12 @@ public abstract class Question implements Serializable {
         visible = new SimpleBooleanProperty(s.readBoolean());
         commentPrompt = (String) s.readObject();
         commentQType = s.readInt();
+
+        try {
+            hasMoreInfo = s.readBoolean();
+        } catch (EOFException e) {
+
+        }
     }
 
     public static IntegerStringConverter yesNoConverter = new IntegerStringConverter() {

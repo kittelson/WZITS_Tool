@@ -14,6 +14,7 @@ import GUI.MainController;
 import GUI.Tables.Step1TableHelper;
 import core.Project;
 import core.Question;
+import core.QuestionGenerator;
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
@@ -36,6 +37,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -229,19 +231,19 @@ public class Step1Panel extends BorderPane {
         //unSuppPane.setCenter(Step1TableHelper.createUserNeedsSupplemental(control.getProject()));
         //unSuppPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
         // Major Goal Types Questions Panel
-        goalSelectionPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][4], "substep-title-label"));  // "Goals Selection"
+        goalSelectionPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][3], "substep-title-label"));  // "Goals Selection"
         //majorGoalsPane.setCenter(Step1TableHelper.getMajorGoalsTable(control.getProject()));
         goalSelectionPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
         goalSelectionPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Goal Wizard Summary Panel
-        gwSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][5], "substep-title-label"));  // "Goal Wizard Summary"
+        gwSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][4], "substep-title-label"));  // "Goal Wizard Summary"
         //gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
         gwSummaryPane.setCenter(control.getProject().getGoalNeedsMatrix().createSelectedGoalsNode());
         gwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Feasibility Questions Panel
-        feasibilityPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][6], "substep-title-label"));  // "Feasibility Wizard"
+        feasibilityPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][5], "substep-title-label"));  // "Feasibility Wizard"
         GridPane fwgp1 = new GridPane();
         fwgp1.add(Step1TableHelper.getFeasibilityWizard(control.getProject()), 0, 0);
         fwgp1.add(control.getProject().getFeasibilityMatrix().createSummaryPanel(), 0, 1);
@@ -259,17 +261,17 @@ public class Step1Panel extends BorderPane {
         //fwSummaryPane.setCenter(fwbp2);
         //fwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
         // Stakeholders Questions Panel
-        stakeholderPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][7], "substep-title-label")); // "Stakeholders"
+        stakeholderPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][6], "substep-title-label")); // "Stakeholders"
         stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject()));
         stakeholderPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Stakeholder Wizard panel
-        swSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][8], "substep-title-label"));  // "Stakeholder Wizard Summary"
+        swSummaryPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][7], "substep-title-label"));  // "Stakeholder Wizard Summary"
         swSummaryPane.setCenter(control.getProject().getStakeholderMatrix().createSummaryTable());
         swSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Team Members and Stakeholders Panel
-        teamMembersPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][6], "substep-title-label"));  // "Selected Core Team Members and Stakeholders"
+        teamMembersPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][8], "substep-title-label"));  // "Selected Core Team Members and Stakeholders"
         teamMembersPane.setCenter(control.getProject().getStakeholderMatrix().createSelectedMembersPanel());
         teamMembersPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
@@ -401,12 +403,21 @@ public class Step1Panel extends BorderPane {
             }
         });
 
-        control.activeSubStepProperty(stepIndex).addListener(new ChangeListener() {
+        control.activeSubStepProperty(stepIndex).addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue o, Object oldVal, Object newVal) {
+            public void changed(ObservableValue<? extends Number> o, Number oldVal, Number newVal) {
                 selectSubStep(getActiveSubStep());
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
+                if (oldVal.intValue() == Project.FEAS_WIZARD_SUMMARY_INDEX && control.getProject().getFeasibilityMatrix().getFeasibility() < 10) {
+                    Alert al = new Alert(Alert.AlertType.WARNING);
+                    al.initOwner(control.getWindow());
+                    al.setTitle("Feasibility Warning");
+                    al.setHeaderText("Low Project Feasibility Score");
+                    al.setContentText("The WZITS tool feasibility assessment has indicated that WZITS may not be feasible for your project.  The tool can continue to be used "
+                            + "but the low feasibility score will be indicated in the step and summary reports.");
+                    al.showAndWait();
+                }
                 switch (getActiveSubStep()) {
                     case Project.GOAL_SELECTION_INDEX:
                         goalSelectionPane.setCenter(control.getProject().getGoalNeedsMatrix().createSummaryTable());
@@ -485,7 +496,7 @@ public class Step1Panel extends BorderPane {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
                 if (control.getProject().getShoulderWidth() == 0) {
-                    control.getProject().getQGen().emergencyShoulderQIdx.setAnswerIsNo(true);
+                    control.getProject().getQGen().emergencyShoulderQ.setAnswerIsNo(true);
                     //control.getProject().getQGen().shoulderQIdx.setAnswerIsNo(true);
                 }
             }
@@ -494,10 +505,10 @@ public class Step1Panel extends BorderPane {
             @Override
             public void changed(ObservableValue<? extends Object> ov, Object oldVal, Object newVal) {
                 if (control.getProject().getShoulderClosure().equalsIgnoreCase("yes")) {
-                    control.getProject().getQGen().emergencyShoulderQIdx.setAnswerIsYes(true);
+                    control.getProject().getQGen().emergencyShoulderQ.setAnswerIsYes(true);
                     //control.getProject().getQGen().shoulderQIdx.setAnswerIsYes(true);
                 } else {
-                    control.getProject().getQGen().emergencyShoulderQIdx.setAnswerIsNo(true);
+                    control.getProject().getQGen().emergencyShoulderQ.setAnswerIsNo(true);
                     //control.getProject().getQGen().shoulderQIdx.setAnswerIsNo(true);
                 }
             }
@@ -538,6 +549,32 @@ public class Step1Panel extends BorderPane {
                     control.getProject().getQGen().biannualProcessReviewQ.setAnswerIsYes(true);
                 } else {
                     control.getProject().getQGen().biannualProcessReviewQ.setAnswerIsNo(true);
+                }
+            }
+        });
+
+        control.getProject().wzTypeProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                if (control.getProject().getWzType().equalsIgnoreCase(Project.MUTCD_LIST[0])) {
+                    control.getProject().getQGen().qFeasOptionList.get(QuestionGenerator.Q_FEAS_LONG_TERM_DURATION).setLocked(false);
+                    if (control.getProject().getQGen().qFeasOptionList.get(QuestionGenerator.Q_FEAS_LONG_TERM_DURATION).getAnswer() == 3) {
+                        //control.getProject().getQGen().qFeasOptionList.get(QuestionGenerator.Q_FEAS_LONG_TERM_DURATION).setAnswer("< 4 Months");
+                    }
+                } else {
+                    control.getProject().getQGen().qFeasOptionList.get(QuestionGenerator.Q_FEAS_LONG_TERM_DURATION).setAnswer(3);
+                    control.getProject().getQGen().qFeasOptionList.get(QuestionGenerator.Q_FEAS_LONG_TERM_DURATION).setLocked(true);
+                }
+            }
+        });
+
+        control.getProject().signalizedCorridorProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                if (control.getProject().getSignalizedCorridor().equalsIgnoreCase("yes")) {
+                    control.getProject().getQGen().qStakeholderYNList.get(control.getProject().getQGen().signalizedCorridorQIdx).setAnswerIsYes(true);
+                } else {
+                    control.getProject().getQGen().qStakeholderYNList.get(control.getProject().getQGen().signalizedCorridorQIdx).setAnswerIsNo(true);
                 }
             }
         });
@@ -939,6 +976,10 @@ public class Step1Panel extends BorderPane {
             this.genInfoPicLabel.setText("Upload from file...");
             this.genInfoPicLabel.setGraphic(null);
         }
+    }
+
+    public Node getSummaryNode() {
+        return ((TabPane) this.stepReportPane.getCenter()).getSelectionModel().getSelectedItem().getContent();
     }
 
 //    private void moveScreen(double toX, double toY, boolean animated) {

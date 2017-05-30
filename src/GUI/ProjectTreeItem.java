@@ -203,7 +203,7 @@ public class ProjectTreeItem extends TreeItem<Project> {
                         setTextFill(Color.GREY);
                     }
                     if (this.getItem().isStepComplete(pti.getStep())) {
-                        setGraphic(new ImageView(IconHelper.TREE_NODE_STEP_COMPLETE));
+                        //setGraphic(new ImageView(IconHelper.TREE_NODE_STEP_COMPLETE));
                     } else {
                         setGraphic(null);
                     }
@@ -214,7 +214,7 @@ public class ProjectTreeItem extends TreeItem<Project> {
                         setTextFill(Color.GRAY);
                     }
                     if (this.getItem().isSubStepFinished(pti.getStep(), pti.getSubStep())) {
-                        setGraphic(new ImageView(IconHelper.TREE_NODE_STEP_COMPLETE));
+                        //setGraphic(new ImageView(IconHelper.TREE_NODE_STEP_COMPLETE));
                     } else {
                         setGraphic(null);
                     }

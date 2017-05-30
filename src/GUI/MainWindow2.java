@@ -211,6 +211,7 @@ public class MainWindow2 extends BorderPane {
             public void handle(ActionEvent ae) {
                 LaunchPane lp = new LaunchPane(control, true);
                 Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.initOwner(mc.getWindow());
                 al.getDialogPane().getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
                 al.getDialogPane().setMaxHeight(500);
                 al.getDialogPane().setMaxWidth(700);

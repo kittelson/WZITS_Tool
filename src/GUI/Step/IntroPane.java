@@ -43,6 +43,7 @@ public class IntroPane extends BorderPane {
                 GridPane instrNode = new GridPane();
                 ImageView iv = new ImageView(IconHelper.NAV_HELPER);
                 instrNode.add(iv, 0, 0);
+                al.initOwner(mc.getWindow());
                 al.setTitle("Hint: WZITS Tool Navigation");
                 al.setHeaderText("WZITS Tool Navigation");
                 al.getDialogPane().setContent(instrNode);
