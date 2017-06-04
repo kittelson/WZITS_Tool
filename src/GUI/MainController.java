@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -253,20 +254,61 @@ public class MainController {
         }
     }
 
-    public void openProject() {
-        Project openedProj = IOHelper.openProject(this);
-        if (openedProj != null) {
-            this.proj.setFromProject(openedProj);
-            this.newProjectOpened();
+    public void newProject() {
+        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
+                "Save Current Project?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+        al.setTitle("WZITS Tool");
+        al.setHeaderText("WZITS Tool");
+        Optional<ButtonType> result = al.showAndWait();
+        if (result.isPresent()) {
+            if (result.get() != ButtonType.CANCEL) {
+                if (result.get() == ButtonType.YES) {
+                    int saveResult = saveProject();
+                    IOHelper.confirm(saveResult);
+                }
+                this.proj.setFromProject(new Project());
+                this.newProjectOpened();
+                MainController.updateProgramHeader(this.proj);
+            }
         }
     }
 
-    public void saveProject() {
-        IOHelper.saveProject(this, proj);
+    public void openProject() {
+        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
+                "Save Current Project?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+        al.setTitle("WZITS Tool");
+        al.setHeaderText("WZITS Tool");
+        Optional<ButtonType> result = al.showAndWait();
+        if (result.isPresent()) {
+            if (result.get() != ButtonType.CANCEL) {
+                if (result.get() == ButtonType.YES) {
+                    int saveResult = saveProject();
+                    IOHelper.confirm(saveResult);
+                }
+                Project openedProj = IOHelper.openProject(this);
+                if (openedProj != null) {
+                    this.proj.setFromProject(openedProj);
+                    this.newProjectOpened();
+                    MainController.updateProgramHeader(this.proj);
+                }
+            }
+        }
     }
 
-    public void saveAsProject() {
-        IOHelper.saveAsProject(this, proj);
+    public int saveProject() {
+        int res = IOHelper.saveProject(this, proj);
+        if (res == IOHelper.SAVE_COMPLETED) {
+            MainController.updateProgramHeader(this.proj);
+        }
+        return res;
+    }
+
+    public int saveAsProject() {
+        int res = IOHelper.saveAsProject(this, proj);
+        if (res == IOHelper.SAVE_COMPLETED) {
+            MainController.updateProgramHeader(this.proj);
+        }
+        return res;
     }
 
     public void exitProgram() {
@@ -287,6 +329,17 @@ public class MainController {
                 // Cancelled by user, do nothing
             }
         }
+    }
+
+    public static void updateProgramHeader(Project p) {
+        String titleString = "Work Zone Intelligent Transportations Systems Tool";
+        titleString = titleString + (p.getName() != null ? " - " + p.getName() : "");
+        titleString = titleString + (p.getSaveFile() != null ? " (" + p.getSaveFile().getAbsolutePath() + ")" : "");
+        stage.setTitle(titleString);
+    }
+
+    public Node goToFactSheet(int factSheetIdx) {
+        return mainWindow.goToFactSheet(factSheetIdx);
     }
 
     public static final int MAX_WIDTH = 999999;

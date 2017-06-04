@@ -344,4 +344,7 @@ public class Step3Panel extends BorderPane {
 //            allSubStepsPane.setTranslateX(-1 * toX);
 //        }
 //    }
+    public Node getFactSheet5Node() {
+        return this.stepReportPane.getCenter();
+    }
 }

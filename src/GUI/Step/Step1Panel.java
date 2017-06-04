@@ -5,7 +5,6 @@
  */
 package GUI.Step;
 
-import GUI.Helper.ColorHelper;
 import GUI.Helper.IOHelper;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
@@ -34,10 +33,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -48,7 +47,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
@@ -72,7 +70,7 @@ public class Step1Panel extends BorderPane {
 
     private final VBox pVBox = new VBox();
 
-    private final Pagination pagination;
+    private final TableView unTable;
 
     private final ProgressIndicatorBar pbGW;
 
@@ -201,18 +199,13 @@ public class Step1Panel extends BorderPane {
         pbGW = new ProgressIndicatorBar(goalWizProgress, 1.0, "%.0f%%", true);
         pbGW.getStyleClass().add("progress-bar");
         pbGW.setMaxWidth(MainController.MAX_WIDTH);
-        pagination = new Pagination(Step1TableHelper.getPageCount(control.getProject(), Step1TableHelper.GOAL_WIZARD));
-        pagination.setPageFactory(new Callback<Integer, Node>() {
-            @Override
-            public Node call(Integer pageIndex) {
-                return Step1TableHelper.createPageTable(control.getProject(), Step1TableHelper.GOAL_WIZARD, pageIndex, Step1TableHelper.QS_PER_PAGE);
-            }
-        });
-        pagination.getStyleClass().add(Pagination.STYLE_CLASS_BULLET);
-        pagination.setStyle(
-                "-fx-accent: " + ColorHelper.WZ_ORANGE + "; "
-                + "-fx-background-color: " + ColorHelper.WZ_LIGHT_GREY + "; "
-        );
+        //pagination = new Pagination(Step1TableHelper.getPageCount(control.getProject(), Step1TableHelper.GOAL_WIZARD));
+//        pagination.setPageFactory(new Callback<Integer, Node>() {
+//            @Override
+//            public Node call(Integer pageIndex) {
+//                return Step1TableHelper.createPageTable(control.getProject(), Step1TableHelper.GOAL_WIZARD, pageIndex, Step1TableHelper.QS_PER_PAGE);
+//            }
+//        });
         for (Question q : mc.getProject().getGoalWizardQs()) {
             q.responseIdxProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -221,7 +214,10 @@ public class Step1Panel extends BorderPane {
                 }
             });
         }
-        pVBox.getChildren().addAll(pagination, pbGW);
+        updateProgressBar();
+        unTable = Step1TableHelper.createUserNeeds(control.getProject());
+        pVBox.getChildren().addAll(unTable, pbGW);
+        VBox.setVgrow(unTable, Priority.ALWAYS);
         unPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][2], "substep-title-label"));  // "User Needs"
         unPane.setCenter(pVBox);
         unPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
@@ -322,9 +318,6 @@ public class Step1Panel extends BorderPane {
 //            tcc.setPercentWidth(100.0 / numPanes);
 //            allSubStepsPane.getColumnConstraints().add(tcc);
 //        }
-        pagination.setMaxHeight(Double.MAX_VALUE);
-        VBox.setVgrow(pagination, Priority.ALWAYS);
-
         GridPane.setVgrow(stepIntroGrid, Priority.ALWAYS);
         GridPane.setVgrow(projInfoGrid, Priority.ALWAYS);
         GridPane.setVgrow(unPane, Priority.ALWAYS);
@@ -451,6 +444,7 @@ public class Step1Panel extends BorderPane {
         genInfoTF4.textProperty().bindBidirectional(control.getProject().urlLinkProperty());
         genInfoTA1.textProperty().bindBidirectional(control.getProject().descriptionProperty());
         genInfoTA2.textProperty().bindBidirectional(control.getProject().limitsProperty());
+        photoUploaded();
 
         // Work zone metadata bindings
         control.getProject().aadtProperty().bindBidirectional(this.wzInputSpin1.getValueFactory().valueProperty());
@@ -623,6 +617,7 @@ public class Step1Panel extends BorderPane {
         genInfoPicLabel.setMaxWidth(MainController.MAX_WIDTH);
         genInfoPicGrid.getColumnConstraints().add(0, new ColumnConstraints(1, 125, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
         genInfoPicGrid.getColumnConstraints().add(1, new ColumnConstraints(75, 75, 75, Priority.NEVER, HPos.RIGHT, true));
+        genInfoPicGrid.setMaxHeight(maxProjImagePreviewHeight);
 
         GridPane grid = new GridPane();
 
@@ -837,37 +832,51 @@ public class Step1Panel extends BorderPane {
 //        });
         int rowIdx = 0;
         GridPane inputGrid = new GridPane();
-        inputGrid.add(wzTitleLabel1, 0, rowIdx++, 2, 1);
+        inputGrid.add(wzTitleLabel1, 0, rowIdx++, 3, 1);
         inputGrid.add(wzInputLabel1, 0, rowIdx);    // Functional Class
         inputGrid.add(wzInputChoice1, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Functional Class of Roadway", control.getProject().fcrCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel2, 0, rowIdx);    // Maintaining Agency
         inputGrid.add(wzInputChoice3, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Maintaining Agency", control.getProject().maCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel3, 0, rowIdx);    // Area Type
         inputGrid.add(wzInputChoice4, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Area Type", control.getProject().atCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel4, 0, rowIdx);    // AADT
         inputGrid.add(wzInputSpin1, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Average Annual Daily Traffic", control.getProject().aadtCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel5, 0, rowIdx);    // Number of Roadway Lanes
         inputGrid.add(wzInputSpin3, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Number of Roadway Lanes", control.getProject().nrlCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel6, 0, rowIdx);    // Shoulder Width
         inputGrid.add(wzInputSpin4, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Shoulder Width", control.getProject().swCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel7, 0, rowIdx);    // Posted Speed Limit
         inputGrid.add(wzInputSpin5, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Posted Speed Limit", control.getProject().pslCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel8, 0, rowIdx);    // Lane Width
         inputGrid.add(wzInputSpin6, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Lane Width", control.getProject().lwCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel9, 0, rowIdx);    // Part of a signalized corridor
         inputGrid.add(wzInputChoice5, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Part of a Signalized Corridor", control.getProject().scCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel10, 0, rowIdx);   // National highway system
         inputGrid.add(wzInputChoice6, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("National Highway System", control.getProject().nhsCommentProperty()), 2, (rowIdx - 1));
 
-        inputGrid.add(wzTitleLabel2, 0, rowIdx++, 2, 1);
+        inputGrid.add(wzTitleLabel2, 0, rowIdx++, 3, 1);
         inputGrid.add(wzInputLabel11, 0, rowIdx);    // Work Zone Length
         inputGrid.add(wzInputSpin2, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Length", control.getProject().wzlCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel12, 0, rowIdx);    // Work Zone Type
         inputGrid.add(wzInputChoice2, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Type", control.getProject().wztCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel13, 0, rowIdx);    // Work Zone Speed Limit
         inputGrid.add(wzInputSpin7, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Speed Limit", control.getProject().wzslCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel14, 0, rowIdx);    // Number of Lanes to be closed
         inputGrid.add(wzInputSpin8, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Number of Lanes to be Closed", control.getProject().nlcCommentProperty()), 2, (rowIdx - 1));
         //inputGrid.add(wzInputLabel15, 0, rowIdx);    // Daily Duration of Activity
         //inputGrid.add(wzInputSpin, 1, rowIdx++);
         //inputGrid.add(wzInputLabel16, 0, rowIdx);    // Work Zone Duration
@@ -876,19 +885,25 @@ public class Step1Panel extends BorderPane {
         //inputGrid.add(wzInputSpin4, 1, rowIdx++);
         inputGrid.add(wzInputLabel18, 0, rowIdx);    // Reduced Lane Width
         inputGrid.add(wzInputSpin9, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Lane Width", control.getProject().wzlwCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel19, 0, rowIdx);    // Shoulder Closure
         inputGrid.add(wzInputChoice7, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Shoulder Closure", control.getProject().shcCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel20, 0, rowIdx);    // Federal-Aid Project
         inputGrid.add(wzInputChoice8, 1, rowIdx++);
+        inputGrid.add(NodeFactory.createCommentLink("Federal-Aid Project", control.getProject().fapCommentProperty()), 2, (rowIdx - 1));
 
         //inputGrid.add(proceedButton, 1, 9);
         double leftColsplit = 65;
+        double rightColSplit = 10;
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setPercentWidth(leftColsplit);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(100 - leftColsplit);
+        col2.setPercentWidth(100 - leftColsplit - rightColSplit);
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setPercentWidth(rightColSplit);
 
-        inputGrid.getColumnConstraints().addAll(col1, col2);
+        inputGrid.getColumnConstraints().addAll(col1, col2, col3);
 
         GridPane.setHgrow(wzTitleLabel1, Priority.ALWAYS);
         GridPane.setHgrow(wzTitleLabel2, Priority.ALWAYS);
@@ -971,7 +986,9 @@ public class Step1Panel extends BorderPane {
     private void photoUploaded() {
         if (control.getProject().getProjPhoto() != null) {
             this.genInfoPicLabel.setText("");
-            this.genInfoPicLabel.setGraphic(new ImageView(control.getProject().getProjPhoto()));
+            ImageView projImageIV = new ImageView(control.getProject().getProjPhoto());
+            projImageIV.setFitHeight(maxProjImagePreviewHeight);
+            this.genInfoPicLabel.setGraphic(projImageIV);
         } else {
             this.genInfoPicLabel.setText("Upload from file...");
             this.genInfoPicLabel.setGraphic(null);
@@ -980,6 +997,14 @@ public class Step1Panel extends BorderPane {
 
     public Node getSummaryNode() {
         return ((TabPane) this.stepReportPane.getCenter()).getSelectionModel().getSelectedItem().getContent();
+    }
+
+    public Node getFactSheet1Node() {
+        return ((TabPane) this.stepReportPane.getCenter()).getTabs().get(0).getContent();
+    }
+
+    public Node getFactSheet2Node() {
+        return ((TabPane) this.stepReportPane.getCenter()).getTabs().get(1).getContent();
     }
 
 //    private void moveScreen(double toX, double toY, boolean animated) {
@@ -1029,6 +1054,7 @@ public class Step1Panel extends BorderPane {
     private final Label genInfoPicLabel = new Label("Select file...");
     private final Button genInfoButton1 = new Button("Browse");
     private final GridPane genInfoPicGrid = new GridPane();
+    private final int maxProjImagePreviewHeight = 180;
 
     // Facility Information and Base Conditions
     private final Label wzTitleLabel1 = new Label("Facility and Base Conditions");

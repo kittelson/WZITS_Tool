@@ -199,6 +199,18 @@
     -fx-text-fill: white;
 }
 
+.wz-comment-hyperlink {
+    -fx-font-size: 12;
+    -fx-text-fill: #ED7D31;
+    -fx-wrap-text: true;
+}
+
+.wz-comment-hyperlink:visited {
+    -fx-font-size: 12;
+    -fx-text-fill: #ED7D31;
+    -fx-wrap-text: true;
+}
+
 .wzits-choice-box {
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-insets: 0 0 -1 0, 0, 1, 2;

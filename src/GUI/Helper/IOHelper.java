@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -50,6 +51,12 @@ public class IOHelper {
         FileChooser fc = new FileChooser();
         fc.setTitle("Save WZITS Tool Project");
         fc.getExtensionFilters().add(new ExtensionFilter("WZITS Project File (.wzp)", "*.wzp"));
+        if (proj.getSaveFile() != null) {
+            File initDir = proj.getSaveFile().getParentFile();
+            if (initDir.isDirectory()) {
+                fc.setInitialDirectory(initDir);
+            }
+        }
         File saveFile = fc.showSaveDialog(mc.getWindow());  //mc.getMainWindow()
         if (saveFile != null) {
             try {
@@ -130,8 +137,22 @@ public class IOHelper {
         return null;
     }
 
+    public static void confirm(int saveResult) {
+        if (saveResult != SAVE_CANCELLED) {
+            boolean saveSuccess = saveResult == SAVE_COMPLETED;
+            String alTitle = "WZITS Tool";
+            String alHeader = saveSuccess ? "Project file saved successfully." : "Failed to save project file.";
+            Alert al = new Alert(saveSuccess ? Alert.AlertType.CONFIRMATION : Alert.AlertType.ERROR);
+            al.setTitle(alTitle);
+            al.setHeaderText(alHeader);
+            al.showAndWait();
+        }
+    }
+
     public static final int SAVE_COMPLETED = 1;
     public static final int SAVE_FAILED = 0;
     public static final int SAVE_CANCELLED = -1;
+
+    public static File lastSaveLocation = null;
 
 }

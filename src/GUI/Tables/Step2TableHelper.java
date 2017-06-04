@@ -5,6 +5,7 @@
  */
 package GUI.Tables;
 
+import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import core.Application;
@@ -18,12 +19,14 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -171,14 +174,14 @@ public class Step2TableHelper extends TableView {
         for (Application app : p.getApplicationMatrix().getAppList()) {
             aGrid.add(NodeFactory.createFormattedLabel(String.valueOf(rowIdx - 1), "fact-sheet-label-center"), 0, rowIdx, 1, 1);
             aGrid.add(NodeFactory.createFormattedLabel(app.getName(), "fact-sheet-label"), 1, rowIdx, 1, 1);
-            aGrid.add(NodeFactory.createFormattedLabel(app.isSelected() ? "Yes" : "No", "fact-sheet-label-center"), 2, rowIdx++, 1, 1);
-            aGrid.add(NodeFactory.createFormattedLabel(String.valueOf(app.getScore()), "fact-sheet-label-center"), 3, rowIdx++, 1, 1);
+            aGrid.add(NodeFactory.createFormattedLabel(String.valueOf(app.getScore()), "fact-sheet-label-center"), 2, rowIdx, 1, 1);
+            aGrid.add(NodeFactory.createFormattedLabel(app.isSelected() ? "Yes" : "No", "fact-sheet-label-center"), 3, rowIdx++, 1, 1);
         }
 
         aGrid.getColumnConstraints().add(new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true));
         aGrid.getColumnConstraints().add(new ColumnConstraints(1, 200, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
-        aGrid.getColumnConstraints().add(new ColumnConstraints(100, 100, 100, Priority.NEVER, HPos.CENTER, true));
         aGrid.getColumnConstraints().add(new ColumnConstraints(200, 200, 200, Priority.NEVER, HPos.CENTER, true));
+        aGrid.getColumnConstraints().add(new ColumnConstraints(100, 100, 100, Priority.NEVER, HPos.CENTER, true));
 
         GridPane arGrid = new GridPane();
         arGrid.add(NodeFactory.createFormattedLabel("Application Refinement", "fact-sheet-title-stake-grid"), 0, 0, 4, 1);
@@ -194,7 +197,6 @@ public class Step2TableHelper extends TableView {
         for (int bIdx = 0; bIdx < beneQ.getOptions().length; bIdx++) {
             arGrid.add(NodeFactory.createFormattedLabel(beneQ.getOption(bIdx), "fact-sheet-label"), 1, rowIdx);
             arGrid.add(NodeFactory.createFormattedLabel(beneQ.getOptionIncluded(bIdx) ? "Yes" : "No", "fact-sheet-label-center"), 2, rowIdx++);
-
         }
 
         ObservableList<QuestionYN> qList = p.getQGen().qJurisdictionalList;
@@ -281,8 +283,22 @@ public class Step2TableHelper extends TableView {
         ColumnConstraints igcc2 = new ColumnConstraints(1, 100, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true);
         infoGrid.getColumnConstraints().addAll(igcc1, igcc2);
 
+        ImageView conOpsImage = new ImageView(p.getConOpsDiagram() != null ? p.getConOpsDiagram() : IconHelper.PROJ_IMAGE);
+        conOpsImage.setPreserveRatio(true);
+
+        conOpsImage.getStyleClass().add("fact-sheet-pane");
+
+        conOpsImage.setFitHeight(750);
+        conOpsImage.setFitWidth(500);
+        //BorderPane projImageBorder = new BorderPane();
+        //projImageBorder.getChildren().addAll(projImage);
+        //projImageBorder.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM)));
+        //projImageBorder.maxHeightProperty().bind(projImage.fitHeightProperty());
+        //projImageBorder.maxWidthProperty().bind(projImage.fitWidthProperty());
+
         VBox factSheetVBox = new VBox();
-        factSheetVBox.getChildren().addAll(infoGrid);
+        factSheetVBox.getChildren().addAll(infoGrid, conOpsImage);
+        factSheetVBox.setAlignment(Pos.CENTER);
         ScrollPane sp = new ScrollPane();
 
         bPane.setCenter(factSheetVBox);

@@ -326,7 +326,7 @@ public class StakeholderMatrix implements Serializable {
         indexCol.setMinWidth(35);
         indexCol.getStyleClass().add("col-style-center-bold");
 
-        TableColumn recCol = new TableColumn("Stakeholder");
+        TableColumn recCol = new TableColumn("Name");
         recCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TableColumn scoreCol = new TableColumn("Score");

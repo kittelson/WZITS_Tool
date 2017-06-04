@@ -23,6 +23,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -196,12 +197,16 @@ public class Step2Panel extends BorderPane {
         uploadButton.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
         BorderPane.setAlignment(uploadButton, Pos.CENTER);
         final ImageView conOpsIV = new ImageView();
+        if (control.getProject().getConOpsDiagram() != null) {
+            conOpsIV.setImage(control.getProject().getConOpsDiagram());
+        }
         uploadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
                 Image conOpsImage = IOHelper.openImage(control);
                 if (conOpsImage != null) {
                     conOpsIV.setImage(conOpsImage);
+                    control.getProject().setConOpsDiagram(conOpsImage);
                 }
             }
         });
@@ -375,4 +380,11 @@ public class Step2Panel extends BorderPane {
 //            allSubStepsPane.setTranslateX(-1 * toX);
 //        }
 //    }
+    public Node getFactSheet3Node() {
+        return ((TabPane) this.stepReportPane.getCenter()).getTabs().get(0).getContent();
+    }
+
+    public Node getFactSheet4Node() {
+        return ((TabPane) this.stepReportPane.getCenter()).getTabs().get(1).getContent();
+    }
 }

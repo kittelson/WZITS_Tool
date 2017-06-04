@@ -51,6 +51,7 @@ public class Project implements Serializable {
     private SimpleStringProperty limits = new SimpleStringProperty();
     private SimpleStringProperty urlLink = new SimpleStringProperty();
     private ObjectProperty<Image> projPhoto = new SimpleObjectProperty<>();
+    private ObjectProperty<Image> conOpsDiagram = new SimpleObjectProperty();
 
     // Work Zone Metadata
     private StringProperty functionalClass = new SimpleStringProperty();
@@ -187,6 +188,18 @@ public class Project implements Serializable {
 
     public ObjectProperty projPhotoProperty() {
         return projPhoto;
+    }
+
+    public Image getConOpsDiagram() {
+        return conOpsDiagram.get();
+    }
+
+    public void setConOpsDiagram(Image value) {
+        conOpsDiagram.set(value);
+    }
+
+    public ObjectProperty conOpsDiagramProperty() {
+        return conOpsDiagram;
     }
 
     public String getFunctionalClass() {
@@ -530,8 +543,8 @@ public class Project implements Serializable {
     private IntegerProperty futureIntProp3 = new SimpleIntegerProperty();
     private IntegerProperty futureIntProp4 = new SimpleIntegerProperty();
     private IntegerProperty futureIntProp5 = new SimpleIntegerProperty();
-    private DoubleProperty laneWidthBase = new SimpleDoubleProperty(12);
-    private DoubleProperty laneWidthWZ = new SimpleDoubleProperty(12);
+    private DoubleProperty laneWidthBase = new SimpleDoubleProperty(12.0);
+    private DoubleProperty laneWidthWZ = new SimpleDoubleProperty(12.0);
     private DoubleProperty futureDoubleProp3 = new SimpleDoubleProperty();
     private DoubleProperty futureDoubleProp4 = new SimpleDoubleProperty();
     private DoubleProperty futureDoubleProp5 = new SimpleDoubleProperty();
@@ -570,6 +583,227 @@ public class Project implements Serializable {
 
     public DoubleProperty laneWidthWZProperty() {
         return laneWidthWZ;
+    }
+    private StringProperty fcrComment = new SimpleStringProperty();
+
+    public String getFcrComment() {
+        return fcrComment.get();
+    }
+
+    public void setFcrComment(String value) {
+        fcrComment.set(value);
+    }
+
+    public StringProperty fcrCommentProperty() {
+        return fcrComment;
+    }
+    private StringProperty maComment = new SimpleStringProperty();
+
+    public String getMaComment() {
+        return maComment.get();
+    }
+
+    public void setMaComment(String value) {
+        maComment.set(value);
+    }
+
+    public StringProperty maCommentProperty() {
+        return maComment;
+    }
+    private StringProperty atComment = new SimpleStringProperty();
+
+    public String getAtComment() {
+        return atComment.get();
+    }
+
+    public void setAtComment(String value) {
+        atComment.set(value);
+    }
+
+    public StringProperty atCommentProperty() {
+        return atComment;
+    }
+    private StringProperty aadtComment = new SimpleStringProperty();
+
+    public String getAadtComment() {
+        return aadtComment.get();
+    }
+
+    public void setAadtComment(String value) {
+        aadtComment.set(value);
+    }
+
+    public StringProperty aadtCommentProperty() {
+        return aadtComment;
+    }
+    private StringProperty nrlComment = new SimpleStringProperty();
+
+    public String getNrlComment() {
+        return nrlComment.get();
+    }
+
+    public void setNrlComment(String value) {
+        nrlComment.set(value);
+    }
+
+    public StringProperty nrlCommentProperty() {
+        return nrlComment;
+    }
+    private StringProperty swComment = new SimpleStringProperty();
+
+    public String getSwComment() {
+        return swComment.get();
+    }
+
+    public void setSwComment(String value) {
+        swComment.set(value);
+    }
+
+    public StringProperty swCommentProperty() {
+        return swComment;
+    }
+    private StringProperty pslComment = new SimpleStringProperty();
+
+    public String getPslComment() {
+        return pslComment.get();
+    }
+
+    public void setPslComment(String value) {
+        pslComment.set(value);
+    }
+
+    public StringProperty pslCommentProperty() {
+        return pslComment;
+    }
+    private StringProperty scComment = new SimpleStringProperty();
+
+    public String getScComment() {
+        return scComment.get();
+    }
+
+    public void setScComment(String value) {
+        scComment.set(value);
+    }
+
+    public StringProperty scCommentProperty() {
+        return scComment;
+    }
+    private StringProperty nhsComment = new SimpleStringProperty();
+
+    public String getNhsComment() {
+        return nhsComment.get();
+    }
+
+    public void setNhsComment(String value) {
+        nhsComment.set(value);
+    }
+
+    public StringProperty nhsCommentProperty() {
+        return nhsComment;
+    }
+    private StringProperty wzlComment = new SimpleStringProperty();
+
+    public String getWzlComment() {
+        return wzlComment.get();
+    }
+
+    public void setWzlComment(String value) {
+        wzlComment.set(value);
+    }
+
+    public StringProperty wzlCommentProperty() {
+        return wzlComment;
+    }
+    private StringProperty wztComment = new SimpleStringProperty();
+
+    public String getWztComment() {
+        return wztComment.get();
+    }
+
+    public void setWztComment(String value) {
+        wztComment.set(value);
+    }
+
+    public StringProperty wztCommentProperty() {
+        return wztComment;
+    }
+    private StringProperty wzslComment = new SimpleStringProperty();
+
+    public String getWzslComment() {
+        return wzslComment.get();
+    }
+
+    public void setWzslComment(String value) {
+        wzslComment.set(value);
+    }
+
+    public StringProperty wzslCommentProperty() {
+        return wzslComment;
+    }
+    private StringProperty nlcComment = new SimpleStringProperty();
+
+    public String getNlcComment() {
+        return nlcComment.get();
+    }
+
+    public void setNlcComment(String value) {
+        nlcComment.set(value);
+    }
+
+    public StringProperty nlcCommentProperty() {
+        return nlcComment;
+    }
+    private StringProperty wzlwComment = new SimpleStringProperty();
+
+    public String getWzlwComment() {
+        return wzlwComment.get();
+    }
+
+    public void setWzlwComment(String value) {
+        wzlwComment.set(value);
+    }
+
+    public StringProperty wzlwCommentProperty() {
+        return wzlwComment;
+    }
+    private StringProperty lwComment = new SimpleStringProperty();
+
+    public String getLwComment() {
+        return lwComment.get();
+    }
+
+    public void setLwComment(String value) {
+        lwComment.set(value);
+    }
+
+    public StringProperty lwCommentProperty() {
+        return lwComment;
+    }
+    private StringProperty shcComment = new SimpleStringProperty();
+
+    public String getShcComment() {
+        return shcComment.get();
+    }
+
+    public void setShcComment(String value) {
+        shcComment.set(value);
+    }
+
+    public StringProperty shcCommentProperty() {
+        return shcComment;
+    }
+    private StringProperty fapComment = new SimpleStringProperty();
+
+    public String getFapComment() {
+        return fapComment.get();
+    }
+
+    public void setFapComment(String value) {
+        fapComment.set(value);
+    }
+
+    public StringProperty fapCommentProperty() {
+        return fapComment;
     }
 
     private void writeObject(ObjectOutputStream s) throws IOException {
@@ -624,11 +858,35 @@ public class Project implements Serializable {
         s.writeObject(shoulderClosure.get());
         s.writeObject(federalAid.get());
 
+        s.writeObject(fcrComment.get());
+        s.writeObject(maComment.get());
+        s.writeObject(atComment.get());
+        s.writeObject(aadtComment.get());
+        s.writeObject(nrlComment.get());
+        s.writeObject(swComment.get());
+        s.writeObject(pslComment.get());
+        s.writeObject(lwComment.get());
+        s.writeObject(scComment.get());
+        s.writeObject(nhsComment.get());
+        s.writeObject(wzlComment.get());
+        s.writeObject(wztComment.get());
+        s.writeObject(wzslComment.get());
+        s.writeObject(nlcComment.get());
+        s.writeObject(wzlwComment.get());
+        s.writeObject(shcComment.get());
+        s.writeObject(fapComment.get());
+
         if (getProjPhoto() != null) {
             ImageIO.write(SwingFXUtils.fromFXImage(getProjPhoto(), null), "png", s);
         } else {
             s.writeObject(getProjPhoto());
         }
+        if (getConOpsDiagram() != null) {
+            ImageIO.write(SwingFXUtils.fromFXImage(getConOpsDiagram(), null), "png", s);
+        } else {
+            s.writeObject(getConOpsDiagram());
+        }
+        s.flush();
     }
 
     public void setFromProject(Project proj) {
@@ -662,8 +920,29 @@ public class Project implements Serializable {
         setShoulderClosure(proj.getShoulderClosure());
         setFederalAid(proj.getFederalAid());
 
+        this.setFcrComment(proj.getFcrComment());
+        this.setMaComment(proj.getMaComment());
+        this.setAtComment(proj.getAtComment());
+        this.setAadtComment(proj.getAadtComment());
+        this.setNrlComment(proj.getNrlComment());
+        this.setSwComment(proj.getSwComment());
+        this.setPslComment((proj.getPslComment()));
+        this.setLwComment(proj.getLwComment());
+        this.setScComment(proj.getScComment());
+        this.setNhsComment(proj.getNhsComment());
+
+        this.setWzlComment(proj.getWzlComment());
+        this.setWztComment(proj.getWztComment());
+        this.setWzslComment(proj.getWzslComment());
+        this.setNlcComment(proj.getNlcComment());
+        this.setWzlwComment(proj.getWzlwComment());
+        this.setShcComment(proj.getShcComment());
+        this.setFapComment(proj.getFapComment());
+
         setAutomatedEnforcementAllowed(proj.isAutomatedEnforcementAllowed());
         setCrashDataAvailable(proj.isCrashDataAvailable());
+
+        setConOpsDiagram(proj.getConOpsDiagram());
 
         steps = new Step[NUM_STEPS];
         for (int stepIdx = 0; stepIdx < NUM_STEPS; stepIdx++) {
@@ -736,11 +1015,104 @@ public class Project implements Serializable {
         shoulderClosure = new SimpleStringProperty((String) s.readObject());
         federalAid = new SimpleStringProperty((String) s.readObject());
 
+        try {
+            String ss = (String) s.readObject();
+            fcrComment = new SimpleStringProperty(ss);
+        } catch (IOException e) {
+            fcrComment = new SimpleStringProperty("");
+        }
+        try {
+            maComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            maComment = new SimpleStringProperty("");
+        }
+        try {
+            atComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            atComment = new SimpleStringProperty("");
+        }
+        try {
+            aadtComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            aadtComment = new SimpleStringProperty("");
+        }
+        try {
+            nrlComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            nrlComment = new SimpleStringProperty("");
+        }
+        try {
+            swComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            swComment = new SimpleStringProperty("");
+        }
+        try {
+            pslComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            pslComment = new SimpleStringProperty("");
+        }
+        try {
+            lwComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            lwComment = new SimpleStringProperty("");
+        }
+        try {
+            scComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            scComment = new SimpleStringProperty("");
+        }
+        try {
+            nhsComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            nhsComment = new SimpleStringProperty("");
+        }
+        try {
+            wzlComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            wzlComment = new SimpleStringProperty("");
+        }
+        try {
+            wztComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            wztComment = new SimpleStringProperty("");
+        }
+        try {
+            wzslComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            wzslComment = new SimpleStringProperty("");
+        }
+        try {
+            nlcComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            nlcComment = new SimpleStringProperty("");
+        }
+        try {
+            wzlwComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            wzlwComment = new SimpleStringProperty("");
+        }
+        try {
+            shcComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            shcComment = new SimpleStringProperty("");
+        }
+        try {
+            fapComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            fapComment = new SimpleStringProperty("");
+        }
+
         BufferedImage bimg = ImageIO.read(s);
         if (bimg != null) {
             projPhoto = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(bimg, null));
         } else {
             projPhoto = new SimpleObjectProperty<>();
+        }
+        BufferedImage conOpsImg = ImageIO.read(s);
+        if (conOpsImg != null) {
+            conOpsDiagram = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(conOpsImg, null));
+        } else {
+            conOpsDiagram = new SimpleObjectProperty<>();
         }
     }
 

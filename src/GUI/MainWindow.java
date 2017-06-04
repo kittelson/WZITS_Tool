@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import GUI.Helper.IOHelper;
 import GUI.Helper.NodeFactory;
 import GUI.Helper.PDFIOHelper;
 import GUI.Launch.LaunchPane;
@@ -26,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -60,16 +62,22 @@ public class MainWindow extends BorderPane {
         menuBar = new MenuBar();
         Menu menuFile = new Menu("File");
         Menu menuEdit = new Menu("Edit");
-        Menu menuResults = new Menu("Results");
+        Menu menuNavigation = new Menu("Results");
         Menu menuTemplate = new Menu("Templates");
         Menu menuHelp = new Menu("Help");
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuResults, menuTemplate, menuHelp);
+        menuBar.getMenus().addAll(menuFile, menuEdit, menuNavigation, menuTemplate, menuHelp);
         // Creating File Menu
         MenuItem newMenuItem = new MenuItem("New");
         MenuItem openMenuItem = new MenuItem("Open");
         MenuItem saveMenuItem = new MenuItem("Save");
         MenuItem saveAsMenuItem = new MenuItem("Save as");
         MenuItem exitMenuItem = new MenuItem("Exit");
+        newMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                control.newProject();
+            }
+        });
         openMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
@@ -79,13 +87,15 @@ public class MainWindow extends BorderPane {
         saveMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                control.saveProject();
+                int saveResult = control.saveProject();
+                IOHelper.confirm(saveResult);
             }
         });
         saveAsMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                control.saveAsProject();
+                int saveResult = control.saveAsProject();
+                IOHelper.confirm(saveResult);
             }
         });
         exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -114,9 +124,8 @@ public class MainWindow extends BorderPane {
         MenuItem feasibilityWizMenuItem = new MenuItem("Feasibility Wizard");
         MenuItem stakeholdersWizMenuItem = new MenuItem("Stakeholders Wizard");
         MenuItem step1SummaryMenuItem = new MenuItem("Step 1 Summary");
-        MenuItem exportStep1SummaryMenuItem = new MenuItem("Export Step 1 Summary");
         menuStep1Results.getItems().addAll(feasibilityWizMenuItem,
-                goalWizMenuItem, stakeholdersWizMenuItem, step1SummaryMenuItem, exportStep1SummaryMenuItem);
+                goalWizMenuItem, stakeholdersWizMenuItem, step1SummaryMenuItem);
 
         Menu menuStep2Results = new Menu("Step 2");
         MenuItem appWizMenuItem = new MenuItem("Application Wizard");
@@ -134,6 +143,65 @@ public class MainWindow extends BorderPane {
         Menu menuStep6Results = new Menu("Step 6");
         MenuItem step6SummaryMenuItem = new MenuItem("Step 6 Summary");
         menuStep6Results.getItems().addAll(step6SummaryMenuItem);
+        Menu menuExportResults = new Menu("Export to PDF");
+        MenuItem fs1MenuItem = new MenuItem("Fact Sheet 1");
+        fs1MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 1);
+            }
+        });
+        MenuItem fs2MenuItem = new MenuItem("Fact Sheet 2");
+        fs2MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 2);
+            }
+        });
+        MenuItem fs3MenuItem = new MenuItem("Fact Sheet 3");
+        fs3MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 3);
+            }
+        });
+        MenuItem fs4MenuItem = new MenuItem("Fact Sheet 4");
+        fs4MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 4);
+            }
+        });
+        MenuItem fs5MenuItem = new MenuItem("Fact Sheet 5");
+        fs5MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 5);
+            }
+        });
+        MenuItem fs6MenuItem = new MenuItem("Fact Sheet 6");
+        fs6MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 6);
+            }
+        });
+        MenuItem fs7MenuItem = new MenuItem("Fact Sheet 7");
+        fs7MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 7);
+            }
+        });
+        MenuItem fs8MenuItem = new MenuItem("Fact Sheet 8");
+        fs8MenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeStepSummary(control, 8);
+            }
+        });
+        menuExportResults.getItems().addAll(fs1MenuItem, fs2MenuItem, fs3MenuItem,
+                fs4MenuItem, fs5MenuItem, fs6MenuItem, fs7MenuItem, fs8MenuItem);
         goalWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
@@ -169,13 +237,13 @@ public class MainWindow extends BorderPane {
                 return control.getActiveStep() == 0 && control.getActiveSubStep(0) == Project.NUM_SUB_STEPS[0];
             }
         };
-        exportStep1SummaryMenuItem.disableProperty().bind(bb.not());
-        exportStep1SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStep1Summary(((Step1Panel) step1Pane).getSummaryNode());
-            }
-        });
+//        exportStep1SummaryMenuItem.disableProperty().bind(bb.not());
+//        exportStep1SummaryMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent ae) {
+//                PDFIOHelper.writeStep1Summary(((Step1Panel) step1Pane).getSummaryNode());
+//            }
+//        });
 
         appWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -213,9 +281,10 @@ public class MainWindow extends BorderPane {
                 control.selectStep(5, Project.NUM_SUB_STEPS[5]);
             }
         });
-        menuResults.getItems().addAll(menuStep1Results, menuStep2Results,
+        menuNavigation.getItems().addAll(menuStep1Results, menuStep2Results,
                 menuStep3Results, menuStep4Results, menuStep5Results,
                 menuStep6Results);
+        menuNavigation.getItems().add(menuExportResults);
         // Creating Templates Menu
         MenuItem loadTemplateMenuItem = new MenuItem("Load");
         MenuItem createTemplateMenuItem = new MenuItem("Create");
@@ -381,6 +450,9 @@ public class MainWindow extends BorderPane {
         control.activeStepProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> o, Number oldVal, Number newVal) {
+                if (control.getActiveStep() == Project.NUM_STEPS) {
+                    summaryPane.setCenter(SummaryPanel.createStepSummary(control));
+                }
                 selectStep(control.getActiveStep());
 
                 if (control.getActiveStep() >= 0) {
@@ -469,6 +541,45 @@ public class MainWindow extends BorderPane {
                     ft2.play();
                 }
             });
+        }
+    }
+
+    public Node goToFactSheet(int fsIdx) {
+        int stepIdx;
+        switch (fsIdx) {
+            default:
+            case 1:
+                stepIdx = 0;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step1Panel) step1Pane).getFactSheet1Node();
+            case 2:
+                stepIdx = 0;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step1Panel) step1Pane).getFactSheet2Node();
+            case 3:
+                stepIdx = 1;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step2Panel) step2Pane).getFactSheet3Node();
+            case 4:
+                stepIdx = 1;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step2Panel) step2Pane).getFactSheet4Node();
+            case 5:
+                stepIdx = 2;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step3Panel) step3Pane).getFactSheet5Node();
+            case 6:
+                stepIdx = 3;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step4Panel) step4Pane).getFactSheet6Node();
+            case 7:
+                stepIdx = 4;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step5Panel) step5Pane).getFactSheet7Node();
+            case 8:
+                stepIdx = 5;
+                control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
+                return ((Step6Panel) step6Pane).getFactSheet8Node();
         }
     }
 

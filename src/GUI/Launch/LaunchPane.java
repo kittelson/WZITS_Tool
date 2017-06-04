@@ -46,11 +46,16 @@ public class LaunchPane extends BorderPane {
         splash.setPreserveRatio(true);
         splash.setSmooth(true);
         splash.setFitHeight(600);
-        infoText = new TextArea("Tool Disclaimers: This tool is a prototype.");
+        infoText = new TextArea("Disclaimer: This tool is an interim product for an FHWA Office of Operations Project: DTFH61-12-D-00049 Task Order 5003 - Work Zone ITS Implementation Tool.  "
+                + "The tool should be used solely for the purpose of beta testing by FHWA and stakeholder states.  "
+                + "For any questions or comments related to this tool, please contact the project principle investigator, Dr. Bastian Schroeder with Kittelson and Associates, Inc. (bschroeder@kittelson.com), or the "
+                + "FHWA contract monitor, Mr. Todd Peterson (todd.peterson@dot.gov).");
         infoText.setWrapText(true);
         infoText.setEditable(false);
         infoText.setFont(Font.font("Calibri", 12));
         infoText.getStyleClass().add("launch-info-text");
+        infoText.setMinHeight(100);
+        infoText.setPrefRowCount(4);
         startButton.setStyle("-fx-font-size: 20px");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -73,7 +78,7 @@ public class LaunchPane extends BorderPane {
 
         startButton.setDefaultButton(true);
 
-        this.setMaxHeight(600);
+        this.setMaxHeight(650);
         this.setMaxWidth(800);
     }
 }

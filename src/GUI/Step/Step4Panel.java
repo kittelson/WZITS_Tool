@@ -301,4 +301,7 @@ public class Step4Panel extends BorderPane {
 //            allSubStepsPane.setTranslateX(-1 * toX);
 //        }
 //    }
+    public Node getFactSheet6Node() {
+        return this.stepReportPane.getCenter();
+    }
 }

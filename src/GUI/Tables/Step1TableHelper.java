@@ -257,6 +257,10 @@ public class Step1TableHelper {
         return table;
     }
 
+    public static TableView createUserNeeds(Project proj) {
+        return TableHelper.createQuestionYNTable(proj.getGoalWizardQs(), new TableHelper.Options(STEP1_TABLE_CSS));
+    }
+
     public static TableView createUserNeedsSupplemental(Project proj) {
         return TableHelper.createQuestionYNTable(proj.getUNSupportQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
@@ -362,7 +366,7 @@ public class Step1TableHelper {
 
         int col1Width = 25;
         int col3Width = 350;
-        int col4Width = 100;
+        int col4Width = 105;
         pane.getColumnConstraints().add(0, new ColumnConstraints(col1Width, col1Width, col1Width, Priority.NEVER, HPos.RIGHT, true));
         pane.getColumnConstraints().add(1, new ColumnConstraints(1, 125, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
         pane.getColumnConstraints().add(2, new ColumnConstraints(col3Width, col3Width, col3Width, Priority.NEVER, HPos.RIGHT, true));
@@ -498,6 +502,18 @@ public class Step1TableHelper {
         infoGrid.getColumnConstraints().addAll(igcc1, igcc2);
         infoGrid.setMaxWidth(500);
 
+        ImageView projImage = new ImageView(p.getProjPhoto() != null ? p.getProjPhoto() : IconHelper.PROJ_IMAGE);
+        projImage.setPreserveRatio(true);
+        projImage.setFitWidth(500);
+        projImage.setFitHeight(250);
+
+        final GridPane infoAndPicGrid = new GridPane();
+        infoAndPicGrid.getStyleClass().add("fact-sheet-pane");
+        infoAndPicGrid.add(infoGrid, 0, 0);
+        infoAndPicGrid.add(projImage, 1, 0); //projImageBorder
+        infoAndPicGrid.getColumnConstraints().add(new ColumnConstraints(500, 500, 500, Priority.NEVER, HPos.LEFT, true));
+        infoAndPicGrid.getColumnConstraints().add(new ColumnConstraints(1, 500, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.CENTER, true));
+
         final GridPane wzMetaGrid = new GridPane();
         //wzMetaGrid.add(NodeFactory.createFormattedLabel("", "fact-sheet-label"), 1, rowIdx);
         //wzMetaGrid.add(NodeFactory.createFormattedLabel(p, "fact-sheet-label-center"), 2, rowIdx++);
@@ -507,72 +523,69 @@ public class Step1TableHelper {
 
         // Facility and Base Conditions
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Average Annual Daily Traffic:", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getAadt()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getAadt()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getAadtComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Functional Class of Roadway:", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getFunctionalClass(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getFunctionalClass(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getFcrComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Maintaining Agency", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getMaintainingAgency(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getMaintainingAgency(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getMaComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Area Type", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getAreaType(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getAreaType(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getAtComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Number of Roadway Lanes (1 Direction)", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getNumRoadwayLanes()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getNumRoadwayLanes()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getNrlComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Shoulder Width (ft)", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getShoulderWidth()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getShoulderWidth()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getSwComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Posted Speed Limit (mph)", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getSpeedLimit()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getSpeedLimit()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getPslComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Lane Width", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getLaneWidthBase()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getLaneWidthBase()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getLwComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Signalized Corridor?", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getSignalizedCorridor(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getSignalizedCorridor(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getScComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("National Highway System?", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getNationalHighwaySystem(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getNationalHighwaySystem(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getNhsComment(), "fact-sheet-label"), 3, rowIdx++);
 
         // Work Zone Configuration
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Length of Work Zone (mi):", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getWzLength()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getWzLength()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getWzlComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Type of Work Zone (MUTCD):", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getWzType(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getWzType(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getWztComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Work Zone Speed Limit:", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getWzSpeedLimit()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getWzSpeedLimit()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getWzslComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Number of Lanes to be Closed:", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getNumLanesClosed()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getNumLanesClosed()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getNlcComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Work Zone Lane Width:", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getWzLength()), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getLaneWidthWZ()), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getWzlwComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Shoulder Closure:", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getShoulderClosure(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getShoulderClosure(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getShcComment(), "fact-sheet-label"), 3, rowIdx++);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Federal-Aid Project:", "fact-sheet-label"), 1, rowIdx);
-        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getFederalAid(), "fact-sheet-label-center"), 2, rowIdx++);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getFederalAid(), "fact-sheet-label-center"), 2, rowIdx);
+        wzMetaGrid.add(NodeFactory.createFormattedLabel(p.getFapComment(), "fact-sheet-label"), 3, rowIdx++);
 
         ColumnConstraints wzgcc1 = new ColumnConstraints(infoC1Width, infoC1Width, infoC1Width, Priority.NEVER, HPos.LEFT, true);
         ColumnConstraints wzgcc2 = new ColumnConstraints(275, 275, 275, Priority.ALWAYS, HPos.LEFT, true);
-        ColumnConstraints wzgcc3 = new ColumnConstraints(1, 100, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true);
-        wzMetaGrid.getColumnConstraints().addAll(wzgcc1, wzgcc2, wzgcc3);
-        wzMetaGrid.setMaxWidth(500);
-
-        ImageView projImage = new ImageView(p.getProjPhoto() != null ? p.getProjPhoto() : IconHelper.PROJ_IMAGE);
-        projImage.setPreserveRatio(true);
+        ColumnConstraints wzgcc3 = new ColumnConstraints(110, 110, 110, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints wzgcc4 = new ColumnConstraints(1, 500, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true);
+        wzMetaGrid.getColumnConstraints().addAll(wzgcc1, wzgcc2, wzgcc3, wzgcc4);
+        wzMetaGrid.setMaxWidth(1000);
+        wzMetaGrid.getStyleClass().add("fact-sheet-pane");
 
         final VBox infoMetaGrid = new VBox();
-        infoMetaGrid.getChildren().addAll(infoGrid, wzMetaGrid);
-        final GridPane infoAndPicGrid = new GridPane();
-        infoAndPicGrid.getStyleClass().add("fact-sheet-pane-info");
-
-        projImage.setFitHeight(750);
-        projImage.setFitWidth(500);
-        //BorderPane projImageBorder = new BorderPane();
-        //projImageBorder.getChildren().addAll(projImage);
-        //projImageBorder.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM)));
-        //projImageBorder.maxHeightProperty().bind(projImage.fitHeightProperty());
-        //projImageBorder.maxWidthProperty().bind(projImage.fitWidthProperty());
-
-        infoAndPicGrid.getStyleClass().add("fact-sheet-pane");
-        //infoMetaGrid.setStyle("-fx-background-color: green");
-        //infoAndPicGrid.setStyle("-fx-background-color: blue");
-        infoAndPicGrid.add(infoMetaGrid, 0, 0);
-        infoAndPicGrid.add(projImage, 1, 0); //projImageBorder
-        infoAndPicGrid.getColumnConstraints().add(new ColumnConstraints(500, 500, 500, Priority.NEVER, HPos.LEFT, true));
-        infoAndPicGrid.getColumnConstraints().add(new ColumnConstraints(1, 500, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.CENTER, true));
-        //VBox.setVgrow(infoAndPicGrid, Priority.NEVER);
+        infoMetaGrid.getChildren().addAll(infoAndPicGrid, wzMetaGrid);
 
         // Create recommended user goals
         GoalNeedsMatrix gnm = p.getGoalNeedsMatrix();
@@ -714,7 +727,7 @@ public class Step1TableHelper {
 //        stakeGrid.getColumnConstraints().add(new ColumnConstraints(250, 250, 250, Priority.NEVER, HPos.CENTER, true));
 //        stakeGrid.getColumnConstraints().add(new ColumnConstraints(150, 150, 150, Priority.NEVER, HPos.CENTER, true));
         VBox factSheetVBox = new VBox();
-        factSheetVBox.getChildren().addAll(infoAndPicGrid, goalsGrid, feasGrid); //stakeGrid
+        factSheetVBox.getChildren().addAll(infoMetaGrid, goalsGrid, feasGrid); //stakeGrid
         ScrollPane sp = new ScrollPane();
 
         bPane.setCenter(factSheetVBox);

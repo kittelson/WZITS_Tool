@@ -42,6 +42,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -120,20 +121,37 @@ public class TableHelper {
                         if (newVal.getItem() != null) {
                             final Question q = (Question) newVal.getItem();
 
-                            tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                            tfe.setTextFill(q.isVisible() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
                             //tfe.getStyleClass().add(q.visibleProperty().get() ? "question-visible" : "question-hidden");
                             q.visibleProperty().addListener(new ChangeListener<Boolean>() {
                                 @Override
                                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                                     tfe.setTextFill(newVal ? Color.BLACK : TableHelper.COLOR_HIDDEN);
-                                    //tfe.getStyleClass().add(newVal ? "question-visible" : "question-hidden");
                                 }
                             });
                             tfe.textFillProperty().addListener(new ChangeListener<Paint>() {
                                 @Override
                                 public void changed(ObservableValue<? extends Paint> ov, Paint oldVal, Paint newVal) {
-                                    tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
-                                    //tfe.getStyleClass().add(q.visibleProperty().get() ? "question-visible" : "question-hidden");
+                                    if (!tfe.isHover()) {
+                                        tfe.setTextFill(q.visibleProperty().get() ? Color.BLACK : TableHelper.COLOR_HIDDEN);
+                                    }
+                                }
+                            });
+                            tfe.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                                @Override
+                                public void handle(MouseEvent me) {
+                                    if (!q.isVisible()) {
+                                        tfe.setTextFill(Color.BLACK);
+                                        tfe.updateItem(tfe.getItem(), tfe.isEmpty());
+                                    }
+                                }
+                            });
+                            tfe.setOnMouseExited(new EventHandler<MouseEvent>() {
+                                @Override
+                                public void handle(MouseEvent me) {
+                                    if (!q.isVisible()) {
+                                        tfe.setTextFill(TableHelper.COLOR_HIDDEN);
+                                    }
                                 }
                             });
                             newVal.selectedProperty().addListener(new ChangeListener<Boolean>() {

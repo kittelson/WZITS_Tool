@@ -173,6 +173,32 @@ public class Stakeholder implements Serializable {
     public StringProperty phoneProperty() {
         return phone;
     }
+    private StringProperty contactName = new SimpleStringProperty();
+
+    public String getContactName() {
+        return contactName.get();
+    }
+
+    public void setContactName(String value) {
+        contactName.set(value);
+    }
+
+    public StringProperty contactNameProperty() {
+        return contactName;
+    }
+    private StringProperty comment = new SimpleStringProperty();
+
+    public String getComment() {
+        return comment.get();
+    }
+
+    public void setComment(String value) {
+        comment.set(value);
+    }
+
+    public StringProperty commentProperty() {
+        return comment;
+    }
 
     private void writeObject(ObjectOutputStream s) throws IOException {
         s.writeBoolean(coreTeamMember.get());
@@ -183,6 +209,8 @@ public class Stakeholder implements Serializable {
         s.writeObject(getPhone());
         s.writeInt(getScore());
         s.writeBoolean(stakeholder.get());
+        s.writeObject(getContactName());
+        s.writeObject(getComment());
     }
 
     private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
@@ -194,6 +222,16 @@ public class Stakeholder implements Serializable {
         phone = new SimpleStringProperty((String) s.readObject());
         score = new SimpleIntegerProperty(s.readInt());
         stakeholder = new SimpleBooleanProperty(s.readBoolean());
+        try {
+            contactName = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            contactName = new SimpleStringProperty("");
+        }
+        try {
+            comment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            comment = new SimpleStringProperty("");
+        }
     }
 
     public static void editInfo(Stakeholder sh) {
@@ -204,11 +242,21 @@ public class Stakeholder implements Serializable {
         Label l2 = new Label("Phone #: ");
         TextField phoneTF = new TextField(sh.getPhone());
         phoneTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l3 = new Label("Contact Name: ");
+        TextField contactNameTF = new TextField(sh.getContactName());
+        contactNameTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l4 = new Label("Comment: ");
+        TextField commentTF = new TextField(sh.getComment());
+        commentTF.setPadding(new Insets(0, 0, 0, 5));
         gp.add(new Label(sh.getName()), 0, 0, 2, 1);
         gp.add(l1, 0, 1);
         gp.add(emailTF, 1, 1);
         gp.add(l2, 0, 2);
         gp.add(phoneTF, 1, 2);
+        gp.add(l3, 0, 3);
+        gp.add(contactNameTF, 1, 3);
+        gp.add(l4, 0, 4);
+        gp.add(commentTF, 1, 4);
         Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
         al.initOwner(MainController.getWindow());
         al.setTitle("Enter/Edit Stakeholder Contact Information");
@@ -218,6 +266,8 @@ public class Stakeholder implements Serializable {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             sh.setEmail(emailTF.getText());
             sh.setPhone(phoneTF.getText());
+            sh.setContactName(contactNameTF.getText());
+            sh.setComment(commentTF.getText());
         }
     }
 

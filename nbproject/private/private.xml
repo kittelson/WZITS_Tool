@@ -3,15 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/StakeholderMatrix.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/Helper/IOHelper.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/CSS/globalStyle.css</file>
+            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/Project.java</file>
             <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/MainWindow.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/Step/Step2Panel.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/wzits_fx/WZITS_FX.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/Tables/Step2TableHelper.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/QuestionOptionMS.java</file>
-            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/core/Question.java</file>
+            <file>file:/C:/Users/ltrask/Documents/GitHub/WZITS_Tool/src/GUI/MainController.java</file>
         </group>
     </open-files>
 </project-private>

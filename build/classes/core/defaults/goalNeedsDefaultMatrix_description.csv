@@ -1,0 +1,19 @@
+,Questions related to user needs,Reduce daily peak period delays to XX minutes,Facilitate the movement of emergency and construction vehicles through the work zone,Reduce the number of single-vehicle trips through the work zone,Reduce variability of travel times,Reduce rear-end crashes,Reduce secondary incidents,Reduce Incident Clearance Times,Work toward zero work zone fatalities,Provide a safe environment for roadway users and worker safety,Minimize delays in construction vehicle access to the work zone,Provide an egress from work zone for haul vehicles,Monitor work zone operations and safety performance in real-time,Monitor alternative route operations and safety performance in real-time,Optimize contractor work periods,Provide roadway users real-time work zone information,Provide roadway users real-time alternate route information
+,,Mobility Goal,,,,Safety Goal,,,,,Productivity Goal,,,,,Traveler Information Goal,
+1,Do you expect congestion impacts to be noticable to roadway users? ,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,1
+2,Is driver diversion expected onto alternate routes?,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1
+3,Do you anticipate queuing as a result of this work zone?,1,1,1,1,1,1,1,1,1,0,0,1,1,0,1,1
+4,Will this work zone have reduced lane widths?,1,1,0,0,1,1,1,0,1,0,0,0,0,0,0,0
+5,Will this work zone have a reduced sight distances for roadway users?,1,1,0,0,1,1,1,0,1,0,0,0,0,0,0,0
+6,Wil transit vehicles need to travel through the work zone?,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0
+7,Will there be a high volume of construction vehicles requiring to access the work zone?,1,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+8,Does your agency have a work zone policy as required by the work zone safety and mobility rule?,1,0,1,1,1,1,1,1,1,0,0,1,0,1,0,0
+9,Does the agency have existing performance targets for work zone?,1,0,1,1,1,1,1,1,1,1,0,1,1,1,0,0
+10,Is there an expectation for public outreach and traveler information for this work zone?,0,0,0,1,0,0,0,0,0,0,0,1,1,0,1,1
+11,Is data needed before and during construction for work zone performance measures?,0,0,1,1,1,1,1,1,0,0,0,1,1,0,1,1
+12,Will the work zone result in the closure of emergency shoulders?,1,1,0,0,1,1,1,0,1,0,0,0,0,0,0,0
+13,Will speed limits in the work zone be lowered compared to base conditions?,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1,1
+14,Does state law allow use of automated speed enforcement in work zones?,0,1,0,1,1,1,0,1,1,0,0,1,1,0,0,0
+15,Will ramp geometry under work zone conditions constrain acceleration lanes?,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
+16,Will work zone activities disable ramp meters (if applicable)?,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+17,Will the work zone be included in the federally-mandated biannual process review?,0,0,0,0,1,1,1,1,1,0,0,1,1,1,0,0

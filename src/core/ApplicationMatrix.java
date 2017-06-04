@@ -161,6 +161,35 @@ public class ApplicationMatrix implements Serializable {
                 }
             }
         }
+        if (proj.getFunctionalClass() != null) {
+            if (!(proj.getFunctionalClass().equalsIgnoreCase(Project.FUNCTIONAL_CLASS_LIST[0])
+                    || proj.getFunctionalClass().equalsIgnoreCase(Project.FUNCTIONAL_CLASS_LIST[1]))) {
+                for (Application app : appList) {
+                    if (app.getName().equalsIgnoreCase(Application.QUEUE_WARNING)) {
+                        appList.remove(app);
+                        break;
+                    }
+                }
+                for (Application app : appList) {
+                    if (app.getName().equalsIgnoreCase(Application.VSL)) {
+                        appList.remove(app);
+                        break;
+                    }
+                }
+                for (Application app : appList) {
+                    if (app.getName().equalsIgnoreCase(Application.TEMP_RAMP_METER)) {
+                        appList.remove(app);
+                        break;
+                    }
+                }
+                for (Application app : appList) {
+                    if (app.getName().equalsIgnoreCase(Application.DYNAMIC_LANE_MERGE)) {
+                        appList.remove(app);
+                        break;
+                    }
+                }
+            }
+        }
 
         // Sorting the list into descending order
         sAppList = appList.sorted(new ApplicationComp());
