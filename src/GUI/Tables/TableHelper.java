@@ -291,7 +291,7 @@ public class TableHelper {
         MenuItem fillUrbanMenuItem = new MenuItem("Urban Template");
         MenuItem fillRuralMenuItem = new MenuItem("Rural Template");
         fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
-        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem, fillByTemplateMenu);
+        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem);  // fillByTemplateMenu
 
         table.setContextMenu(cMenu);
 
@@ -397,8 +397,7 @@ public class TableHelper {
         fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
         cMenu.getItems().addAll(fillByTemplateMenu);
 
-        table.setContextMenu(cMenu);
-
+        //table.setContextMenu(cMenu);
         for (TableColumn tc : table.getColumns()) {
             tc.setSortable(false);
         }

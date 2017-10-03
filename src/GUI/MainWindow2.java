@@ -63,7 +63,7 @@ public class MainWindow2 extends BorderPane {
         Menu menuResults = new Menu("Results");
         Menu menuTemplate = new Menu("Templates");
         Menu menuHelp = new Menu("Help");
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuResults, menuTemplate, menuHelp);
+        menuBar.getMenus().addAll(menuFile, menuEdit, menuResults, menuHelp); //menuTemplate
         // Creating File Menu
         MenuItem newMenuItem = new MenuItem("New");
         MenuItem openMenuItem = new MenuItem("Open");

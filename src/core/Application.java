@@ -5,6 +5,14 @@
  */
 package core;
 
+import static core.ApplicationMatrix.HIGH_CAT_LABEL;
+import static core.ApplicationMatrix.LOW_CAT_LABEL;
+import static core.ApplicationMatrix.LOW_CAT_MAX;
+import static core.ApplicationMatrix.LOW_CAT_MIN;
+import static core.ApplicationMatrix.MED_CAT_LABEL;
+import static core.ApplicationMatrix.MED_CAT_MAX;
+import static core.ApplicationMatrix.MED_CAT_MIN;
+import static core.ApplicationMatrix.ZERO_SCORE_TXT;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -90,6 +98,18 @@ public class Application implements Serializable {
         name = new SimpleStringProperty((String) s.readObject());
         score = new SimpleIntegerProperty(s.readInt());
         selected = new SimpleBooleanProperty(s.readBoolean());
+    }
+
+    public static String getScoreString(int score) {
+        if (score == 0) {
+            return ZERO_SCORE_TXT;
+        } else if (score >= LOW_CAT_MIN && score <= LOW_CAT_MAX) {
+            return LOW_CAT_LABEL;
+        } else if (score >= MED_CAT_MIN && score <= MED_CAT_MAX) {
+            return MED_CAT_LABEL;
+        } else {
+            return HIGH_CAT_LABEL;
+        }
     }
 
     public static final String QUEUE_WARNING = "Queue Warning";

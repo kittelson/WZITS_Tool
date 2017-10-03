@@ -9,6 +9,7 @@ import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import core.Application;
+import core.ApplicationMatrix;
 import core.Project;
 import core.QuestionOptionMS;
 import core.QuestionYN;
@@ -126,7 +127,7 @@ public class Step2TableHelper extends TableView {
         bPane.setMaxWidth(1000);
         bPane.setPrefWidth(1000);
         bPane.getStyleClass().add("fact-sheet-pane");
-        bPane.setTop(NodeFactory.createFormattedLabel("WZITS Applications and Refinement", "fact-sheet-title-large"));
+        bPane.setTop(NodeFactory.createFormattedLabel("Fact Sheet #3: WZITS Applications and Refinement", "fact-sheet-title-large"));
         final GridPane infoGrid = new GridPane();
         int infoC1Width = 115;
         int rowIdx = 0;
@@ -148,10 +149,12 @@ public class Step2TableHelper extends TableView {
         projHL.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                try {
-                    Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (p.getUrlLink() != null) {
+                    try {
+                        Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -168,19 +171,19 @@ public class Step2TableHelper extends TableView {
         rowIdx = 1;
         aGrid.add(NodeFactory.createFormattedLabel("#", "fact-sheet-title-core-team"), 0, rowIdx, 1, 1);
         aGrid.add(NodeFactory.createFormattedLabel("Application", "fact-sheet-title-core-team"), 1, rowIdx, 1, 1);
-        aGrid.add(NodeFactory.createFormattedLabel("Recommended", "fact-sheet-title-core-team"), 2, rowIdx, 1, 1);
+        aGrid.add(NodeFactory.createFormattedLabel(ApplicationMatrix.HIGH_CAT_LABEL, "fact-sheet-title-core-team"), 2, rowIdx, 1, 1);
         aGrid.add(NodeFactory.createFormattedLabel("Selected", "fact-sheet-title-core-team"), 3, rowIdx++, 1, 1);
 
         for (Application app : p.getApplicationMatrix().getAppList()) {
             aGrid.add(NodeFactory.createFormattedLabel(String.valueOf(rowIdx - 1), "fact-sheet-label-center"), 0, rowIdx, 1, 1);
             aGrid.add(NodeFactory.createFormattedLabel(app.getName(), "fact-sheet-label"), 1, rowIdx, 1, 1);
-            aGrid.add(NodeFactory.createFormattedLabel(String.valueOf(app.getScore()), "fact-sheet-label-center"), 2, rowIdx, 1, 1);
+            aGrid.add(NodeFactory.createFormattedLabel(Application.getScoreString(app.getScore()), "fact-sheet-label-center"), 2, rowIdx, 1, 1);
             aGrid.add(NodeFactory.createFormattedLabel(app.isSelected() ? "Yes" : "No", "fact-sheet-label-center"), 3, rowIdx++, 1, 1);
         }
 
         aGrid.getColumnConstraints().add(new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true));
         aGrid.getColumnConstraints().add(new ColumnConstraints(1, 200, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true));
-        aGrid.getColumnConstraints().add(new ColumnConstraints(200, 200, 200, Priority.NEVER, HPos.CENTER, true));
+        aGrid.getColumnConstraints().add(new ColumnConstraints(ApplicationMatrix.SCORE_COL_WIDTH, ApplicationMatrix.SCORE_COL_WIDTH, ApplicationMatrix.SCORE_COL_WIDTH, Priority.NEVER, HPos.CENTER, true));
         aGrid.getColumnConstraints().add(new ColumnConstraints(100, 100, 100, Priority.NEVER, HPos.CENTER, true));
 
         GridPane arGrid = new GridPane();
@@ -199,6 +202,13 @@ public class Step2TableHelper extends TableView {
             arGrid.add(NodeFactory.createFormattedLabel(beneQ.getOptionIncluded(bIdx) ? "Yes" : "No", "fact-sheet-label-center"), 2, rowIdx++);
         }
 
+//        ObservableList<QuestionYN> qList = p.getQGen().qCostList;
+//        arGrid.add(NodeFactory.createFormattedLabel("Institutional/ Jurisdictional", "fact-sheet-label-center"), 0, rowIdx, 1, qList.size());
+//        for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
+//            arGrid.add(NodeFactory.createFormattedLabel(qList.get(qIdx).getQuestionText(), "fact-sheet-label"), 1, rowIdx);
+//            arGrid.add(NodeFactory.createFormattedLabel(qList.get(qIdx).getAnswerString(), "fact-sheet-label-center"), 2, rowIdx);
+//            arGrid.add(NodeFactory.createFormattedLabel(qList.get(qIdx).getComment(), "fact-sheet-label"), 3, rowIdx++);
+//        }
         ObservableList<QuestionYN> qList = p.getQGen().qJurisdictionalList;
         arGrid.add(NodeFactory.createFormattedLabel("Institutional/ Jurisdictional", "fact-sheet-label-center"), 0, rowIdx, 1, qList.size());
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
@@ -216,7 +226,7 @@ public class Step2TableHelper extends TableView {
         }
 
         qList = p.getQGen().qStakeholderBuyInList;
-        arGrid.add(NodeFactory.createFormattedLabel("Institutional/ Jurisdictional", "fact-sheet-label-center"), 0, rowIdx, 1, qList.size());
+        arGrid.add(NodeFactory.createFormattedLabel("Stakeholder Buy-in", "fact-sheet-label-center"), 0, rowIdx, 1, qList.size());
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
             arGrid.add(NodeFactory.createFormattedLabel(qList.get(qIdx).getQuestionText(), "fact-sheet-label"), 1, rowIdx);
             arGrid.add(NodeFactory.createFormattedLabel(qList.get(qIdx).getAnswerString(), "fact-sheet-label-center"), 2, rowIdx);
@@ -246,7 +256,7 @@ public class Step2TableHelper extends TableView {
         bPane.setMaxWidth(1000);
         bPane.setPrefWidth(1000);
         bPane.getStyleClass().add("fact-sheet-pane");
-        bPane.setTop(NodeFactory.createFormattedLabel("WZITS Concept of Operations", "fact-sheet-title-large"));
+        bPane.setTop(NodeFactory.createFormattedLabel("Fact Sheet #4: WZITS Concept of Operations", "fact-sheet-title-large"));
         final GridPane infoGrid = new GridPane();
         int infoC1Width = 115;
         int rowIdx = 0;
@@ -268,10 +278,12 @@ public class Step2TableHelper extends TableView {
         projHL.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                try {
-                    Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (p.getUrlLink() != null) {
+                    try {
+                        Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -283,13 +295,13 @@ public class Step2TableHelper extends TableView {
         ColumnConstraints igcc2 = new ColumnConstraints(1, 100, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.LEFT, true);
         infoGrid.getColumnConstraints().addAll(igcc1, igcc2);
 
-        ImageView conOpsImage = new ImageView(p.getConOpsDiagram() != null ? p.getConOpsDiagram() : IconHelper.PROJ_IMAGE);
+        ImageView conOpsImage = new ImageView(p.getConOpsDiagram() != null ? p.getConOpsDiagram() : null);
         conOpsImage.setPreserveRatio(true);
 
         conOpsImage.getStyleClass().add("fact-sheet-pane");
 
-        conOpsImage.setFitHeight(750);
-        conOpsImage.setFitWidth(500);
+        conOpsImage.setFitHeight(1000);
+        conOpsImage.setFitWidth(1000);
         //BorderPane projImageBorder = new BorderPane();
         //projImageBorder.getChildren().addAll(projImage);
         //projImageBorder.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM)));

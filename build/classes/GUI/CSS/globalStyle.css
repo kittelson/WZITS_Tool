@@ -199,6 +199,16 @@
     -fx-text-fill: white;
 }
 
+.hyperlink-add-core {
+    -fx-font-size: 12;
+    -fx-text-fill: black;
+}
+
+.hyperlink-add-core:visited {
+    -fx-font-size: 12;
+    -fx-text-fill: black;
+}
+
 .wz-comment-hyperlink {
     -fx-font-size: 12;
     -fx-text-fill: #ED7D31;
@@ -536,6 +546,10 @@
     -fx-background-color: transparent;
 }
 
+.list-table-core-team .table-column .label {
+    -fx-content-display: right ;
+}
+
 .list-table-core-team .table-row-cell{
     -fx-background-color: -fx-table-cell-border-color, #bce5c9;  /* #c6e0b4 Green from User Needs Wizard */
     -fx-background-insets: 0, 0 0 1 0;
@@ -572,6 +586,11 @@
     -fx-background-color: transparent;
 }
 
+.list-table-stakeholder .table-column .label {
+    -fx-content-display: right ;
+}
+
+
 .list-table-stakeholder .table-row-cell{
     -fx-background-color: -fx-table-cell-border-color, #fcfbbd;  /* #c6e0b4 Green from User Needs Wizard */
     -fx-background-insets: 0, 0 0 1 0;
@@ -606,6 +625,10 @@
 
 .list-table-na .column-header {
     -fx-background-color: transparent;
+}
+
+.list-table-na .table-column .label {
+    -fx-content-display: right ;
 }
 
 .list-table-na .table-row-cell{

@@ -233,11 +233,11 @@ public class ApplicationMatrix implements Serializable {
         TableColumn catCol = new TableColumn("Recommended Application");
         catCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn scoreCol = new TableColumn("Score");
+        TableColumn scoreCol = new TableColumn(SCORE_COL_NAME);
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
-        scoreCol.setPrefWidth(200);
-        scoreCol.setMaxWidth(200);
-        scoreCol.setMinWidth(200);
+        scoreCol.setPrefWidth(SCORE_COL_WIDTH);
+        scoreCol.setMaxWidth(SCORE_COL_WIDTH);
+        scoreCol.setMinWidth(SCORE_COL_WIDTH);
         scoreCol.getStyleClass().add("col-style-center");
         scoreCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
             @Override
@@ -246,8 +246,13 @@ public class ApplicationMatrix implements Serializable {
                 tfe.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                        if (newVal != null && newVal.equalsIgnoreCase("0")) {
-                            tfe.setText(ZERO_SCORE_TXT);
+                        if (newVal != null) {
+                            try {
+                                int score = Integer.parseInt(newVal);
+                                tfe.setText(Application.getScoreString(score));
+                            } catch (NumberFormatException e) {
+
+                            }
                         }
                     }
                 });
@@ -351,5 +356,17 @@ public class ApplicationMatrix implements Serializable {
         appTypes = (ArrayList<Application>) s.readObject();
         matrix = (int[][]) s.readObject();
     }
+
+    public static final String SCORE_COL_NAME = "Priority";
+    public static final int SCORE_COL_WIDTH = 200;
+    public static final String ZERO_SCORE_TXT = "Not Recommended";
+    public static final String LOW_CAT_LABEL = "Low";
+    public static final String MED_CAT_LABEL = "Medium";
+    public static final String HIGH_CAT_LABEL = "High";
+    public static final int LOW_CAT_MIN = 1;
+    public static final int LOW_CAT_MAX = 4;
+    public static final int MED_CAT_MIN = 5;
+    public static final int MED_CAT_MAX = 8;
+    public static final int HIGH_CAT_MIN = 9;
 
 }

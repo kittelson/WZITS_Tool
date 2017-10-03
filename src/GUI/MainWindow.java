@@ -34,6 +34,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -65,7 +67,7 @@ public class MainWindow extends BorderPane {
         Menu menuNavigation = new Menu("Results");
         Menu menuTemplate = new Menu("Templates");
         Menu menuHelp = new Menu("Help");
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuNavigation, menuTemplate, menuHelp);
+        menuBar.getMenus().addAll(menuFile, menuEdit, menuNavigation, menuHelp); // menuTemplate
         // Creating File Menu
         MenuItem newMenuItem = new MenuItem("New");
         MenuItem openMenuItem = new MenuItem("Open");
@@ -144,6 +146,13 @@ public class MainWindow extends BorderPane {
         MenuItem step6SummaryMenuItem = new MenuItem("Step 6 Summary");
         menuStep6Results.getItems().addAll(step6SummaryMenuItem);
         Menu menuExportResults = new Menu("Export to PDF");
+        MenuItem fsAllMenuItem = new MenuItem("Full Summary Report");
+        fsAllMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeSummaryReport(control);
+            }
+        });
         MenuItem fs1MenuItem = new MenuItem("Fact Sheet 1");
         fs1MenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -200,7 +209,7 @@ public class MainWindow extends BorderPane {
                 PDFIOHelper.writeStepSummary(control, 8);
             }
         });
-        menuExportResults.getItems().addAll(fs1MenuItem, fs2MenuItem, fs3MenuItem,
+        menuExportResults.getItems().addAll(fsAllMenuItem, new SeparatorMenuItem(), fs1MenuItem, fs2MenuItem, fs3MenuItem,
                 fs4MenuItem, fs5MenuItem, fs6MenuItem, fs7MenuItem, fs8MenuItem);
         goalWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -435,15 +444,7 @@ public class MainWindow extends BorderPane {
         this.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-//                if (allStepsPane != null && allStepsPane.isVisible()) {
-//                    allStepsPane.setMinWidth((numSteps + 2) * (control.getAppWidth() - 220));
-//                    allStepsPane.setMaxWidth((numSteps + 2) * (control.getAppWidth() - 220));
-//                    toolBarBox.setMaxWidth(control.getAppWidth() - 20);
-//                    ((Step1Panel) step1Pane).setViewWidth(introPane.getWidth());
-//                    moveScreen((control.getActiveStep() + 1) * introPane.getWidth(), 0, false);
-//                }
-                //toolBarBox.setMaxWidth(control.getAppWidth() - 20);
-                //((Step1Panel) step1Pane).setViewWidth(introPane.getWidth());
+
             }
         });
 
@@ -508,19 +509,6 @@ public class MainWindow extends BorderPane {
         }
     }
 
-//    private void moveScreen(double toX, double toY) {
-//        moveScreen(toX, toY, true);
-//    }
-//    private void moveScreen(double toX, double toY, boolean animated) {
-//        if (animated) {
-//            TranslateTransition moveMe = new TranslateTransition(Duration.seconds(0.1), allStepsPane);
-//            moveMe.setToX(-1 * toX);
-//            moveMe.setToY(toY);
-//            moveMe.play();
-//        } else {
-//            allStepsPane.setTranslateX(-1 * toX);
-//        }
-//    }
     public void setTitleLabel(final String newTitleLabelText, boolean animated) {
         if (!animated) {
             titleLabel2.setText(newTitleLabelText);
@@ -581,6 +569,22 @@ public class MainWindow extends BorderPane {
                 control.selectStep(stepIdx, Project.NUM_SUB_STEPS[stepIdx]);
                 return ((Step6Panel) step6Pane).getFactSheet8Node();
         }
+    }
+
+    public Node goToSummaryFactSheet(int fsIdx, boolean applyPause) {
+        if (control.activeStepProperty().get() != Project.NUM_STEPS) {
+            control.selectStep(Project.NUM_STEPS);
+        }
+        ((TabPane) summaryPane.getCenter()).getSelectionModel().select(fsIdx - 1);
+        if (applyPause) {
+            // Lets the node render
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+
+            }
+        }
+        return ((TabPane) summaryPane.getCenter()).getTabs().get(fsIdx - 1).getContent();
     }
 
     /**

@@ -18,7 +18,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogEvent;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -33,7 +32,7 @@ public class WZITS_FX extends Application {
     /**
      * Version of the WZITS Tool
      */
-    public static String VERSION = "20170601";
+    public static String VERSION = "20170930";
 
     /**
      * Version of GUI and restrictions
@@ -49,7 +48,7 @@ public class WZITS_FX extends Application {
 
         Calendar cal = Calendar.getInstance();
         Date time = cal.getTime();
-        if (time.compareTo(EXPIRE) > 0) {
+        if (false) {  // time.compareTo(EXPIRE) > 0
             Alert al = new Alert(Alert.AlertType.ERROR);
             al.setTitle("WZITS Tool Testing Period Expired");
             al.setHeaderText("This version of the WZITS Tool has expired.");

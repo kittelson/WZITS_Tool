@@ -363,22 +363,14 @@ public class Step1Panel extends BorderPane {
     }
 
     public void setViewWidth(double viewWidth) {
-//        if (allSubStepsPane != null) {
-//            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-//        }
+
     }
 
     private void setupPropertyBindings() {
 //        this.widthProperty().addListener(new ChangeListener<Number>() {
 //            @Override
 //            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-//                //System.out.println("Step 1 Width Resized");
-//                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
-//                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+//
 //                }
 //            }
 //        });
@@ -988,6 +980,8 @@ public class Step1Panel extends BorderPane {
             this.genInfoPicLabel.setText("");
             ImageView projImageIV = new ImageView(control.getProject().getProjPhoto());
             projImageIV.setFitHeight(maxProjImagePreviewHeight);
+            projImageIV.setFitWidth(maxProjImagePreviewWidth);
+            projImageIV.setPreserveRatio(true);
             this.genInfoPicLabel.setGraphic(projImageIV);
         } else {
             this.genInfoPicLabel.setText("Upload from file...");
@@ -1055,6 +1049,7 @@ public class Step1Panel extends BorderPane {
     private final Button genInfoButton1 = new Button("Browse");
     private final GridPane genInfoPicGrid = new GridPane();
     private final int maxProjImagePreviewHeight = 180;
+    private final int maxProjImagePreviewWidth = 250;
 
     // Facility Information and Base Conditions
     private final Label wzTitleLabel1 = new Label("Facility and Base Conditions");

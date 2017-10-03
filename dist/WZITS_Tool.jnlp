@@ -2,13 +2,13 @@
 <jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="WZITS_Tool.jnlp">
   <information>
     <title>WZITS_Tool</title>
-    <vendor>jlake</vendor>
+    <vendor>KAI</vendor>
     <description>null</description>
     <offline-allowed/>
   </information>
   <resources>
     <j2se version="1.6+" java-vm-args="-Dprism.vsync=false "  href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="WZITS_Tool.jar" size="2905268" download="eager" />
+    <jar href="WZITS_Tool.jar" size="2786196" download="eager" />
     <jar href="lib\pdfbox-app-2.0.6.jar" size="8007899" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="WZITS_Tool" >

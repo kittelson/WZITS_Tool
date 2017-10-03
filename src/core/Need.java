@@ -5,6 +5,14 @@
  */
 package core;
 
+import static core.GoalNeedsMatrix.HIGH_CAT_LABEL;
+import static core.GoalNeedsMatrix.LOW_CAT_LABEL;
+import static core.GoalNeedsMatrix.LOW_CAT_MAX;
+import static core.GoalNeedsMatrix.LOW_CAT_MIN;
+import static core.GoalNeedsMatrix.MED_CAT_LABEL;
+import static core.GoalNeedsMatrix.MED_CAT_MAX;
+import static core.GoalNeedsMatrix.MED_CAT_MIN;
+import static core.GoalNeedsMatrix.ZERO_SCORE_TXT;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -245,5 +253,18 @@ public class Need implements Serializable {
             return !n.isPlaceholder;
         }
     };
+
+    public static String getScoreString(int score) {
+        //return String.valueOf(score);
+        if (score == 0) {
+            return ZERO_SCORE_TXT;
+        } else if (score >= LOW_CAT_MIN && score <= LOW_CAT_MAX) {
+            return LOW_CAT_LABEL;
+        } else if (score >= MED_CAT_MIN && score <= MED_CAT_MAX) {
+            return MED_CAT_LABEL;
+        } else {
+            return HIGH_CAT_LABEL;
+        }
+    }
 
 }

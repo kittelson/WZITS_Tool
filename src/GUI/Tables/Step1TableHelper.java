@@ -239,7 +239,7 @@ public class Step1TableHelper {
         MenuItem fillUrbanMenuItem = new MenuItem("Urban Template");
         MenuItem fillRuralMenuItem = new MenuItem("Rural Template");
         fillByTemplateMenu.getItems().addAll(fillUrbanMenuItem, fillRuralMenuItem);
-        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem, fillByTemplateMenu);
+        cMenu.getItems().addAll(fillAllYesMenuItem, fillAllNoMenuItem); //fillByTemplateMenu
 
         table.setContextMenu(cMenu);
 
@@ -464,7 +464,7 @@ public class Step1TableHelper {
         final Project p = mc.getProject();
         BorderPane bPane = new BorderPane();
         bPane.getStyleClass().add("fact-sheet-pane");
-        bPane.setTop(NodeFactory.createFormattedLabel("Project Info and WZ Metadata", "fact-sheet-title-large"));
+        bPane.setTop(NodeFactory.createFormattedLabel("Fact Sheet #1: Project Info and WZ Metadata", "fact-sheet-title-large"));
         final GridPane infoGrid = new GridPane();
         int infoC1Width = 115;
         int rowIdx = 0;
@@ -486,10 +486,12 @@ public class Step1TableHelper {
         projHL.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                try {
-                    Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (p.getUrlLink() != null) {
+                    try {
+                        Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -605,7 +607,7 @@ public class Step1TableHelper {
         goalsGrid.getStyleClass().add("fact-sheet-pane-goal");
         goalsGrid.add(NodeFactory.createFormattedLabel("Category", "fact-sheet-title-small"), 0, 0);
         goalsGrid.add(NodeFactory.createFormattedLabel("Selected Work Zone ITS Goals", "fact-sheet-title-small"), 1, 0);
-        goalsGrid.add(NodeFactory.createFormattedLabel("Score", "fact-sheet-title-small"), 2, 0);
+        goalsGrid.add(NodeFactory.createFormattedLabel(GoalNeedsMatrix.SCORE_COL_NAME, "fact-sheet-title-small"), 2, 0);
 
         rowIdx = 1;
         int overallNumSelected = 0;
@@ -616,7 +618,7 @@ public class Step1TableHelper {
             for (Need n : sl) {
                 if (!n.isPlaceholder && n.isSelected()) {
                     goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-                    goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
+                    goalsGrid.add(NodeFactory.createFormattedLabel(Need.getScoreString(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
                 }
             }
         }
@@ -628,7 +630,7 @@ public class Step1TableHelper {
             for (Need n : ml) {
                 if (!n.isPlaceholder && n.isSelected()) {
                     goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-                    goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
+                    goalsGrid.add(NodeFactory.createFormattedLabel(Need.getScoreString(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
                 }
             }
         }
@@ -640,7 +642,7 @@ public class Step1TableHelper {
             for (Need n : pl) {
                 if (!n.isPlaceholder && n.isSelected()) {
                     goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-                    goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
+                    goalsGrid.add(NodeFactory.createFormattedLabel(Need.getScoreString(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
                 }
             }
         }
@@ -652,7 +654,7 @@ public class Step1TableHelper {
             for (Need n : rl) {
                 if (!n.isPlaceholder && n.isSelected()) {
                     goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-                    goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
+                    goalsGrid.add(NodeFactory.createFormattedLabel(Need.getScoreString(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
                 }
             }
         }
@@ -663,10 +665,10 @@ public class Step1TableHelper {
             goalsGrid.add(NodeFactory.createFormattedLabel(Question.GOAL_TRAVELER_INFO, "fact-sheet-label-goal-bold-center"), 0, rowIdx, 1, numSelected);
             for (Need n : tl) {
                 //goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-                //goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
+                //goalsGrid.add(NodeFactory.createFormattedLabel(Need.getScoreString(n.getScore()), "fact-sheet-label-goal"), 2, rowIdx++);
                 if (!n.isPlaceholder && n.isSelected()) {
                     goalsGrid.add(NodeFactory.createFormattedLabel(n.getDescription(), "fact-sheet-label-goal"), 1, rowIdx);
-                    goalsGrid.add(NodeFactory.createFormattedLabel(String.valueOf(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
+                    goalsGrid.add(NodeFactory.createFormattedLabel(Need.getScoreString(n.getScore()), "fact-sheet-label-goal-center"), 2, rowIdx++);
                 }
             }
         }
@@ -679,7 +681,7 @@ public class Step1TableHelper {
 
         goalsGrid.getColumnConstraints().add(new ColumnConstraints(infoC1Width, infoC1Width, infoC1Width, Priority.NEVER, HPos.CENTER, true));
         goalsGrid.getColumnConstraints().add(new ColumnConstraints(1, infoC1Width, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.CENTER, true));
-        goalsGrid.getColumnConstraints().add(new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true));
+        goalsGrid.getColumnConstraints().add(new ColumnConstraints(GoalNeedsMatrix.SCORE_COL_WIDTH, GoalNeedsMatrix.SCORE_COL_WIDTH, GoalNeedsMatrix.SCORE_COL_WIDTH, Priority.NEVER, HPos.CENTER, true));
 
         // Feasibility
         GridPane feasGrid = p.getFeasibilityMatrix().createSummaryPanel();
@@ -744,7 +746,7 @@ public class Step1TableHelper {
         bPane.setMaxWidth(1000);
         bPane.setPrefWidth(1000);
         bPane.getStyleClass().add("fact-sheet-pane");
-        bPane.setTop(NodeFactory.createFormattedLabel("WZITS Stakeholders", "fact-sheet-title-large"));
+        bPane.setTop(NodeFactory.createFormattedLabel("Fact Sheet #2: WZITS Stakeholders", "fact-sheet-title-large"));
         final GridPane infoGrid = new GridPane();
         int infoC1Width = 115;
         int rowIdx = 0;
@@ -766,10 +768,12 @@ public class Step1TableHelper {
         projHL.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                try {
-                    Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (p.getUrlLink() != null) {
+                    try {
+                        Runtime.getRuntime().exec("cmd /c start " + p.getUrlLink());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

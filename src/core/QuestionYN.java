@@ -111,6 +111,9 @@ public class QuestionYN extends Question implements Serializable {
 
     @Override
     public String getAnswerString() {
+        if (this.commentQType == Question.COMMENT_QTYPE_NA) {
+            return "-";
+        }
         return answerIsYes.get() ? "Yes" : "No";
     }
 

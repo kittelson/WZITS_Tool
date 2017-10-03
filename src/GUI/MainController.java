@@ -76,6 +76,10 @@ public class MainController {
         return mainWindow;
     }
 
+    public static Stage getStage() {
+        return stage;
+    }
+
     public static Window getWindow() {
         //return stage.getOwner();
         return stage.getOwner();
@@ -338,8 +342,12 @@ public class MainController {
         stage.setTitle(titleString);
     }
 
-    public Node goToFactSheet(int factSheetIdx) {
-        return mainWindow.goToFactSheet(factSheetIdx);
+    public Node goToFactSheet(int factSheetIdx, boolean useSummary) {
+        if (!useSummary) {
+            return mainWindow.goToFactSheet(factSheetIdx);
+        } else {
+            return mainWindow.goToSummaryFactSheet(factSheetIdx, false);
+        }
     }
 
     public static final int MAX_WIDTH = 999999;

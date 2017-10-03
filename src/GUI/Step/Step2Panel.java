@@ -200,6 +200,36 @@ public class Step2Panel extends BorderPane {
         if (control.getProject().getConOpsDiagram() != null) {
             conOpsIV.setImage(control.getProject().getConOpsDiagram());
         }
+        DoubleBinding conOpsWidthBinding = new DoubleBinding() {
+            {
+                super.bind(conOpsPane.widthProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                //return Math.max(widthProperty().get() * 0.70, 700);
+                return (conOpsPane.widthProperty().get() * 0.75); // 0.9
+                //return (widthProperty().get()) * 0.2;
+            }
+        };
+
+        DoubleBinding conOpsHeightBinding = new DoubleBinding() {
+            {
+                super.bind(conOpsPane.heightProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                //return Math.max(heightProperty().get() * 0.35, 150);
+                return (conOpsPane.heightProperty().get() * 0.75); // 0.35
+            }
+        };
+
+        conOpsIV.fitWidthProperty().bind(conOpsWidthBinding);
+        conOpsIV.fitHeightProperty().bind(conOpsHeightBinding);
+        conOpsIV.setPreserveRatio(true);
+        conOpsIV.setSmooth(true);
+        conOpsIV.setCache(true);
         uploadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
