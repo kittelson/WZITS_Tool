@@ -14,7 +14,9 @@ import GUI.Tables.Step1TableHelper;
 import core.Project;
 import core.Question;
 import core.QuestionGenerator;
+
 import java.util.ArrayList;
+
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -51,7 +53,6 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 /**
- *
  * @author ltrask
  */
 public class Step1Panel extends BorderPane {
@@ -363,22 +364,14 @@ public class Step1Panel extends BorderPane {
     }
 
     public void setViewWidth(double viewWidth) {
-//        if (allSubStepsPane != null) {
-//            allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//            allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//            moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-//        }
+
     }
 
     private void setupPropertyBindings() {
 //        this.widthProperty().addListener(new ChangeListener<Number>() {
 //            @Override
 //            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-//                //System.out.println("Step 1 Width Resized");
-//                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
-//                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
+//
 //                }
 //            }
 //        });
@@ -670,8 +663,329 @@ public class Step1Panel extends BorderPane {
                 al.showAndWait();
             }
         });
+
+        Hyperlink mutchBtnWZL = new Hyperlink("(?)");
+        mutchBtnWZL.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchBtnWZL.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("Lorem ipsum dolor");
+                al.setHeaderText("sit amet, consectetur adipiscing");
+                al.setContentText("1) Long-term stationary - Work that occupies a location more than 3 days\n\n"
+                        + "2) elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et\n\n"
+                        + "4) Short duration - Work thLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore e\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchBtnWZSL = new Hyperlink("(?)");
+        mutchBtnWZSL.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchBtnWZSL.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("consectetur adipiscing elit");
+                al.setHeaderText("incididunt ut labore");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchBtnNumLane = new Hyperlink("(?)");
+        mutchBtnNumLane.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchBtnNumLane.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("consectetur adipiscing");
+                al.setHeaderText("sed do eiusmod tempor incididunt");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit\n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchWZLW = new Hyperlink("(?)");
+        mutchWZLW.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchWZLW.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("adipiscing elit");
+                al.setHeaderText("psum dolor sit amet");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchSC = new Hyperlink("(?)");
+        mutchSC.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchSC.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("dolor sit amet");
+                al.setHeaderText("dolor sit amet, consectetur");
+                al.setContentText("1) eiusmod tempor incididunt ut labore et dolore magna\n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchFAP = new Hyperlink("(?)");
+        mutchFAP.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchFAP.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchFCR = new Hyperlink("(?)");
+        mutchFCR.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchFCR.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchMA = new Hyperlink("(?)");
+        mutchMA.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchMA.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchAT = new Hyperlink("(?)");
+        mutchAT.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchAT.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchAADT = new Hyperlink("(?)");
+        mutchAADT.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchAADT.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchNRL = new Hyperlink("(?)");
+        mutchNRL.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchNRL.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchSW = new Hyperlink("(?)");
+        mutchSW.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchSW.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchPSL = new Hyperlink("(?)");
+        mutchPSL.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchPSL.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchLW = new Hyperlink("(?)");
+        mutchLW.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchLW.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchPSC = new Hyperlink("(?)");
+        mutchPSC.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchPSC.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        Hyperlink mutchNHS = new Hyperlink("(?)");
+        mutchNHS.getStyleClass().add("wz-input-hyperlink-small-superscript");
+        mutchNHS.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert al = new Alert(Alert.AlertType.INFORMATION);
+                al.setTitle("More Information");
+                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
+                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
+                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
+                al.setWidth(300);
+                al.showAndWait();
+            }
+        });
+
+        wzInputLabel11.setGraphic(mutchBtnWZL);
+        wzInputLabel11.setContentDisplay(ContentDisplay.RIGHT);
         wzInputLabel12.setGraphic(mutcdButton);
         wzInputLabel12.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel13.setGraphic(mutchBtnWZSL);
+        wzInputLabel13.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel14.setGraphic(mutchBtnNumLane);
+        wzInputLabel14.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel18.setGraphic(mutchWZLW);
+        wzInputLabel18.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel19.setGraphic(mutchSC);
+        wzInputLabel19.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel20.setGraphic(mutchFAP);
+        wzInputLabel20.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel1.setGraphic(mutchFCR);
+        wzInputLabel1.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel2.setGraphic(mutchMA);
+        wzInputLabel2.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel3.setGraphic(mutchAT);
+        wzInputLabel3.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel4.setGraphic(mutchAADT);
+        wzInputLabel4.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel5.setGraphic(mutchNRL);
+        wzInputLabel5.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel6.setGraphic(mutchSW);
+        wzInputLabel6.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel7.setGraphic(mutchPSL);
+        wzInputLabel7.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel8.setGraphic(mutchLW);
+        wzInputLabel8.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel9.setGraphic(mutchPSC);
+        wzInputLabel9.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel10.setGraphic(mutchNHS);
+        wzInputLabel10.setContentDisplay(ContentDisplay.RIGHT);
 
         wzTitleLabel1.setMaxWidth(MainController.MAX_WIDTH);
         wzTitleLabel2.setMaxWidth(MainController.MAX_WIDTH);
@@ -988,6 +1302,8 @@ public class Step1Panel extends BorderPane {
             this.genInfoPicLabel.setText("");
             ImageView projImageIV = new ImageView(control.getProject().getProjPhoto());
             projImageIV.setFitHeight(maxProjImagePreviewHeight);
+            projImageIV.setFitWidth(maxProjImagePreviewWidth);
+            projImageIV.setPreserveRatio(true);
             this.genInfoPicLabel.setGraphic(projImageIV);
         } else {
             this.genInfoPicLabel.setText("Upload from file...");
@@ -1017,6 +1333,7 @@ public class Step1Panel extends BorderPane {
 //            allSubStepsPane.setTranslateX(-1 * toX);
 //        }
 //    }
+
     /**
      * c&p from Spinner
      */
@@ -1055,6 +1372,7 @@ public class Step1Panel extends BorderPane {
     private final Button genInfoButton1 = new Button("Browse");
     private final GridPane genInfoPicGrid = new GridPane();
     private final int maxProjImagePreviewHeight = 180;
+    private final int maxProjImagePreviewWidth = 250;
 
     // Facility Information and Base Conditions
     private final Label wzTitleLabel1 = new Label("Facility and Base Conditions");

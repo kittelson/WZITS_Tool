@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Optional;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -235,6 +236,14 @@ public class Stakeholder implements Serializable {
     }
 
     public static void editInfo(Stakeholder sh) {
+        if (sh.getScore() >= 0) {
+            editExistingInfo(sh);
+        } else {
+            editCustomInfo(sh);
+        }
+    }
+
+    public static void editExistingInfo(Stakeholder sh) {
         GridPane gp = new GridPane();
         Label l1 = new Label("Email: ");
         TextField emailTF = new TextField(sh.getEmail());
@@ -271,8 +280,103 @@ public class Stakeholder implements Serializable {
         }
     }
 
+    public static void editCustomInfo(Stakeholder sh) {
+        GridPane gp = new GridPane();
+        Label l0 = new Label("Name: ");
+        TextField nameTF = new TextField(sh.getName());
+        Label l1 = new Label("Email: ");
+        TextField emailTF = new TextField(sh.getEmail());
+        emailTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l2 = new Label("Phone #: ");
+        TextField phoneTF = new TextField(sh.getPhone());
+        phoneTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l3 = new Label("Contact Name: ");
+        TextField contactNameTF = new TextField(sh.getContactName());
+        contactNameTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l4 = new Label("Comment: ");
+        TextField commentTF = new TextField(sh.getComment());
+        commentTF.setPadding(new Insets(0, 0, 0, 5));
+        gp.add(l0, 0, 0);
+        gp.add(nameTF, 1, 0);
+        gp.add(l1, 0, 1);
+        gp.add(emailTF, 1, 1);
+        gp.add(l2, 0, 2);
+        gp.add(phoneTF, 1, 2);
+        gp.add(l3, 0, 3);
+        gp.add(contactNameTF, 1, 3);
+        gp.add(l4, 0, 4);
+        gp.add(commentTF, 1, 4);
+        Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
+        al.initOwner(MainController.getWindow());
+        al.setTitle("Enter/Edit Stakeholder Contact Information");
+        al.setHeaderText("Enter/Edit Stakeholder Contact Information");
+        al.getDialogPane().setContent(gp);
+        Optional<ButtonType> result = al.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            sh.setName(nameTF.getText());
+            sh.setEmail(emailTF.getText());
+            sh.setPhone(phoneTF.getText());
+            sh.setContactName(contactNameTF.getText());
+            sh.setComment(commentTF.getText());
+        }
+    }
+
+    public static Stakeholder createNew(int idx, int type) {
+        GridPane gp = new GridPane();
+        Label l0 = new Label("Name: ");
+        TextField nameTF = new TextField("New Stakeholder");
+        Label l1 = new Label("Email: ");
+        TextField emailTF = new TextField("");
+        emailTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l2 = new Label("Phone #: ");
+        TextField phoneTF = new TextField("");
+        phoneTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l3 = new Label("Contact Name: ");
+        TextField contactNameTF = new TextField("");
+        contactNameTF.setPadding(new Insets(0, 0, 0, 5));
+        Label l4 = new Label("Comment: ");
+        TextField commentTF = new TextField("");
+        commentTF.setPadding(new Insets(0, 0, 0, 5));
+        gp.add(l0, 0, 0);
+        gp.add(nameTF, 1, 0);
+        gp.add(l1, 0, 1);
+        gp.add(emailTF, 1, 1);
+        gp.add(l2, 0, 2);
+        gp.add(phoneTF, 1, 2);
+        gp.add(l3, 0, 3);
+        gp.add(contactNameTF, 1, 3);
+        gp.add(l4, 0, 4);
+        gp.add(commentTF, 1, 4);
+        Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
+        al.initOwner(MainController.getWindow());
+        al.setTitle("Enter/Edit Stakeholder Contact Information");
+        al.setHeaderText("Enter/Edit Stakeholder Contact Information");
+        al.getDialogPane().setContent(gp);
+        Optional<ButtonType> result = al.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Stakeholder sh = new Stakeholder(idx, nameTF.getText(), -1);
+            sh.setEmail(emailTF.getText());
+            sh.setPhone(phoneTF.getText());
+            sh.setContactName(contactNameTF.getText());
+            sh.setComment(commentTF.getText());
+            switch (type) {
+                case CORE_TEAM:
+                    sh.setCoreTeamMember(true);
+                    break;
+                case STAKEHOLDER:
+                    sh.setStakeholder(true);
+                    break;
+                case NA:
+                    sh.setNotApplicable(true);
+                    break;
+            }
+            return sh;
+        } else {
+            return null;
+        }
+    }
+
     public static final int CORE_TEAM = 0;
     public static final int STAKEHOLDER = 1;
     public static final int NA = 2;
-
 }

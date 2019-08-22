@@ -1,8 +1,0 @@
-.button {
-    -fx-background-color: #ED7D31;
-    -fx-shape: 'M 0 0 L 125 0 L 125 100 L 0 100 L 25 50 z';
-    -fx-text-fill: white;
-    -fx-font-family: 'calibri';
-    -fx-font-size: 30px;
-}
-

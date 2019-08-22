@@ -5,6 +5,7 @@
  */
 package core;
 
+import GUI.MainController;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Predicate;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -27,6 +29,8 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -227,47 +231,49 @@ public class StakeholderMatrix implements Serializable {
         }
         int[] scores = new int[stakeholders.size()];
         for (int stakeIdx = 0; stakeIdx < stakeholders.size(); stakeIdx++) {
-            scores[stakeIdx] += funcIdx >= 0 ? optScoreMat[funcIdx][stakeIdx] : 0;
-            scores[stakeIdx] += mainIdx >= 3 ? optScoreMat[mainIdx][stakeIdx] : 0;
-            scores[stakeIdx] += patrolIdx >= 7 ? optScoreMat[patrolIdx][stakeIdx] : 0;
-            int ynIdx = 0;
-            scores[stakeIdx] += proj.getNumLanesClosed() > 0 ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.hasSchools.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.touristRoute.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.specialEventVenue.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.transitOnRoute.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.otherWorkZones.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.emergencyResponseCorridor.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.businessHourLnClosures.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.sideStreetRestrictions.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.freightCorridor.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.pedBikeImpacts.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.signalizedSystem.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.mobilityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.safetyGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.productivityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.regulatoryGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.travelerInfoGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            scores[stakeIdx] += this.unwantedLocalDiversion.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-            ynIdx++;
-            stakeholders.get(stakeIdx).setScore(scores[stakeIdx]);
+            if (stakeIdx < ynScoreMat[0].length) {
+                scores[stakeIdx] += funcIdx >= 0 ? optScoreMat[funcIdx][stakeIdx] : 0;
+                scores[stakeIdx] += mainIdx >= 3 ? optScoreMat[mainIdx][stakeIdx] : 0;
+                scores[stakeIdx] += patrolIdx >= 7 ? optScoreMat[patrolIdx][stakeIdx] : 0;
+                int ynIdx = 0;
+                scores[stakeIdx] += proj.getNumLanesClosed() > 0 ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.hasSchools.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.touristRoute.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.specialEventVenue.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.transitOnRoute.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.otherWorkZones.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.emergencyResponseCorridor.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.businessHourLnClosures.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.sideStreetRestrictions.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.freightCorridor.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.pedBikeImpacts.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.signalizedSystem.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.mobilityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.safetyGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.productivityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.regulatoryGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.travelerInfoGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                scores[stakeIdx] += this.unwantedLocalDiversion.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
+                stakeholders.get(stakeIdx).setScore(scores[stakeIdx]);
+            }
             if (false) {
                 if (scores[stakeIdx] > 2) {
                     stakeholders.get(stakeIdx).setCoreTeamMember(true);
@@ -329,12 +335,42 @@ public class StakeholderMatrix implements Serializable {
         TableColumn recCol = new TableColumn("Name");
         recCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn scoreCol = new TableColumn("Score");
+        TableColumn scoreCol = new TableColumn(SCORE_COL_NAME);
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
-        scoreCol.setPrefWidth(75);
-        scoreCol.setMaxWidth(75);
-        scoreCol.setMinWidth(75);
+        scoreCol.setPrefWidth(SCORE_COL_WIDTH);
+        scoreCol.setMaxWidth(SCORE_COL_WIDTH);
+        scoreCol.setMinWidth(SCORE_COL_WIDTH);
         scoreCol.getStyleClass().add("col-style-center");
+        scoreCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
+            @Override
+            public TableCell<Need, String> call(TableColumn<Need, String> tc) {
+                final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell();
+                tfe.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                        if (newVal != null) {
+                            try {
+                                int score = Integer.parseInt(newVal);
+                                if (score == 0) {
+                                    tfe.setText(ZERO_SCORE_TXT);
+                                } else if (score >= LOW_CAT_MIN && score <= LOW_CAT_MAX) {
+                                    tfe.setText(LOW_CAT_LABEL);
+                                } else if (score >= MED_CAT_MIN && score <= MED_CAT_MAX) {
+                                    tfe.setText(MED_CAT_LABEL);
+                                } else if (score < 0) {
+                                    tfe.setText(UNSCORED_LABEL);
+                                } else {
+                                    tfe.setText(HIGH_CAT_LABEL);
+                                }
+                            } catch (NumberFormatException e) {
+
+                            }
+                        }
+                    }
+                });
+                return tfe;
+            }
+        });
 
         TableColumn coreTeamCol = new TableColumn("Core Team");
         coreTeamCol.setCellValueFactory(new PropertyValueFactory<>("coreTeamMember"));
@@ -419,23 +455,6 @@ public class StakeholderMatrix implements Serializable {
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // Workaround to get tab/enter/escape key presses working (in progress)
-//        table.getSelectionModel().setCellSelectionEnabled(true);
-//        table.setOnKeyPressed(new EventHandler<KeyEvent>() {
-//            @Override
-//            public void handle(KeyEvent t) {
-//                switch (t.getCode()) {
-//                    case TAB:
-//                        t.consume();
-//                        if (t.isShiftDown()) {
-//                            table.getSelectionModel().selectPrevious();
-//                        } else {
-//                            table.getSelectionModel().selectNext();
-//                        }
-//                        break;
-//                }
-//            }
-//        });
         TableColumn indexCol = new TableColumn<>("#");
         indexCol.setEditable(false);
         indexCol.setCellValueFactory(new Callback<CellDataFeatures<Stakeholder, String>, ObservableValue<String>>() {
@@ -451,6 +470,19 @@ public class StakeholderMatrix implements Serializable {
 
         TableColumn nameCol = new TableColumn<>();
         nameCol.setEditable(false);
+        Hyperlink addAdditional = new Hyperlink("(Add Additional)");
+        addAdditional.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                Stakeholder newSH = Stakeholder.createNew(sList.size() + 1, listType);
+                if (newSH != null) {
+                    sList.add(newSH);
+                    stakeholders.add(newSH);
+                }
+            }
+        });
+        addAdditional.getStyleClass().add("hyperlink-add-core");
+        nameCol.setGraphic(addAdditional);
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameCol.setCellFactory(new Callback<TableColumn<QuestionYN, String>, TableCell<QuestionYN, String>>() {
             @Override
@@ -469,7 +501,31 @@ public class StakeholderMatrix implements Serializable {
                                 }
                             });
                             hl.getStyleClass().add("wz-input-hyperlink");
-                            setGraphic(hl);
+                            if (sList.get(getIndex()).getScore() >= 0) {
+                                setGraphic(hl);
+                            } else {
+                                Hyperlink hl2 = new Hyperlink("(remove)");
+                                hl2.getStyleClass().add("wz-input-hyperlink");
+                                hl2.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent ae) {
+                                        Alert al = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to remove the custom stakeholder?", ButtonType.OK, ButtonType.CANCEL);
+                                        al.initOwner(MainController.getWindow());
+                                        al.setTitle("Remove custom stakeholder?");
+                                        al.setHeaderText(item);
+                                        Optional<ButtonType> result = al.showAndWait();
+                                        if (result.isPresent() && result.get() == ButtonType.OK) {
+                                            Stakeholder deleted = sList.remove(getIndex());
+                                            stakeholders.remove(deleted);
+                                        }
+                                    }
+                                });
+                                GridPane gp = new GridPane();
+                                gp.add(hl, 0, 0);
+                                gp.add(hl2, 1, 0);
+                                setGraphic(gp);
+                            }
+
                             setContentDisplay(ContentDisplay.RIGHT);
                         }
                     }
@@ -898,5 +954,18 @@ public class StakeholderMatrix implements Serializable {
         stakeholders = FXCollections.observableArrayList((Stakeholder[]) s.readObject());
 
     }
+
+    public static final String SCORE_COL_NAME = "Priority";
+    public static final int SCORE_COL_WIDTH = 200;
+    public static final String ZERO_SCORE_TXT = "Not Recommended";
+    public static final String LOW_CAT_LABEL = "Low";
+    public static final String MED_CAT_LABEL = "Medium";
+    public static final String HIGH_CAT_LABEL = "High";
+    public static final String UNSCORED_LABEL = "Unscored";
+    public static final int LOW_CAT_MIN = 1;
+    public static final int LOW_CAT_MAX = 4;
+    public static final int MED_CAT_MIN = 5;
+    public static final int MED_CAT_MAX = 8;
+    public static final int HIGH_CAT_MIN = 9;
 
 }

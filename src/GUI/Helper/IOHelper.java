@@ -7,6 +7,7 @@ package GUI.Helper;
 
 import GUI.MainController;
 import core.Project;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,10 +17,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 
 /**
  *
@@ -39,8 +45,7 @@ public class IOHelper {
                 oos.close();
                 return SAVE_COMPLETED;
             } catch (IOException e) {
-                e.printStackTrace();
-                return SAVE_FAILED;
+                return saveAsProject(mc, proj);
             }
         } else {
             return saveAsProject(mc, proj);
@@ -102,17 +107,36 @@ public class IOHelper {
         FileChooser fc = new FileChooser();
         fc.setTitle("Select WZITS Project Image");
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Images", "*.*"),
+                //new FileChooser.ExtensionFilter("All Images", "*.*"),
                 new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png")
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("PDF", "*.pdf")
         );
-        File openFile = fc.showOpenDialog(mc.getWindow());  //mc.getMainWindow()
+        File openFile = fc.showOpenDialog(MainController.getWindow());  //mc.getMainWindow()
         if (openFile != null) {
-            try {
-                mc.getProject().setProjPhoto(new Image(new FileInputStream(openFile)));
-                return true;
-            } catch (FileNotFoundException e) {
+            if (fc.getSelectedExtensionFilter().getExtensions().get(0).equalsIgnoreCase("*.pdf")) {
+                try {
+                    PDDocument doc = PDDocument.load(openFile);
+                    PDFRenderer pdfRenderer = new PDFRenderer(doc);
+                    BufferedImage image = pdfRenderer.renderImage(0);
+                    //ImageIOUtil.writeImage(image, "C:\\Users\\ltrask\\Documents\\test_image.png", 300);
+                    Image convertedImage = SwingFXUtils.toFXImage(image, null);
+                    mc.getProject().setProjPhoto(convertedImage);
+                    doc.close();
+                    return true;
+                } catch (IOException e) {
+                    Alert al = new Alert(Alert.AlertType.ERROR);
+                    al.setTitle("WZITS Tool");
+                    al.setHeaderText("The selected PDF is password protected");
+                    al.showAndWait();
+                }
+            } else {
+                try {
+                    mc.getProject().setProjPhoto(new Image(new FileInputStream(openFile)));
+                    return true;
+                } catch (FileNotFoundException e) {
 
+                }
             }
         }
         return false;
@@ -122,16 +146,32 @@ public class IOHelper {
         FileChooser fc = new FileChooser();
         fc.setTitle("Select WZITS Project Image");
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Images", "*.*"),
                 new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png")
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("PDF", "*.pdf")
         );
         File openFile = fc.showOpenDialog(mc.getWindow());  //mc.getMainWindow()
         if (openFile != null) {
-            try {
-                return new Image(new FileInputStream(openFile));
-            } catch (FileNotFoundException e) {
+            if (fc.getSelectedExtensionFilter().getExtensions().get(0).equalsIgnoreCase("*.pdf")) {
+                try {
+                    PDDocument doc = PDDocument.load(openFile);
+                    PDFRenderer pdfRenderer = new PDFRenderer(doc);
+                    BufferedImage image = pdfRenderer.renderImage(0);
+                    Image convertedImage = SwingFXUtils.toFXImage(image, null);
+                    doc.close();
+                    return convertedImage;
+                } catch (IOException e) {
+                    Alert al = new Alert(Alert.AlertType.ERROR);
+                    al.setTitle("WZITS Tool");
+                    al.setHeaderText("The selected PDF is password protected");
+                    al.showAndWait();
+                }
+            } else {
+                try {
+                    return new Image(new FileInputStream(openFile));
+                } catch (FileNotFoundException e) {
 
+                }
             }
         }
         return null;

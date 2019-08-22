@@ -433,7 +433,10 @@ public class FlowBar extends BorderPane {
         if (stepIdx < 0) {
             setProjectStartLayout();
         } else if (stepIdx == Project.NUM_STEPS) {
-
+            // Reached summary steps
+            setProjectStartLayout();
+            this.introButton.setGraphic(null);
+            this.summaryButton.setGraphic(null);
         } else {
             double split = 10;
             // Compute collapsed button widths
@@ -675,8 +678,10 @@ public class FlowBar extends BorderPane {
                 step5Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 4 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
                         + ";-fx-text-fill: " + (control.getActiveStep() == 4 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_STEP_FONT));
                 step6Button.setStyle("-fx-background-color: " + (control.getActiveStep() == 5 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL : COLOR_STEP_HL) : COLOR_STEP)
-                        + ";-fx-text-fill: " + (control.getActiveStep() == 4 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_STEP_FONT));
-                summaryButton.setStyle("-fx-background-color: " + (control.getActiveStep() == 6 ? COLOR_STEP_HL : COLOR_STEP));
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 5 ? (control.getActiveSubStep(control.getActiveStep()) < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT) : COLOR_STEP_FONT));
+                summaryButton.setStyle("-fx-background-color: " + (control.getActiveStep() == 6 ? COLOR_SUB_STEP_HL : COLOR_STEP)
+                        + ";-fx-text-fill: " + (control.getActiveStep() == 6 ? COLOR_SUB_STEP_HL_FONT : COLOR_STEP_FONT));
+                //summaryButton.setStyle("-fx-background-color: " + (control.getActiveStep() == 6 ? COLOR_STEP_HL : COLOR_STEP));
 
                 prevButton.setDisable(control.getActiveStep() == 0 && control.getActiveSubStep(0) == -1);
                 nextButton.setDisable(
@@ -699,18 +704,7 @@ public class FlowBar extends BorderPane {
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
                 step1Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-//                step1Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-//                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-//                step1Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-//                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-//                step1Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-//                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-//                step1Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-//                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-//                step1Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-//                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-//                step1ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-//                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                // Iterating through substeps
                 for (int bIdx = 1; bIdx < step1List.size(); bIdx++) {
                     if (bIdx < Project.NUM_SUB_STEPS[0] && control.getProject().getStep(0).getSubStep(bIdx - 1).isWizardSummary()) {
                         step1List.get(bIdx).setStyle("-fx-background-color: " + ((int) newVal == (bIdx - 1) ? COLOR_WIZARD_HL : COLOR_WIZARD)
@@ -804,18 +798,20 @@ public class FlowBar extends BorderPane {
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
                 step4Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step4Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step4Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step4Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step4Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                //step4Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                //        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step4ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                for (int bIdx = 1; bIdx < step4List.size(); bIdx++) {
+                    step4List.get(bIdx).setStyle("-fx-background-color: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                            + ";-fx-text-fill: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                }
+//                step4Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step4Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step4Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step4Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step4ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step4Sub1Button.disableProperty().bind(control.getProject().getStep(3).getSubStep(0).stepStartedProperty().not());
@@ -829,18 +825,20 @@ public class FlowBar extends BorderPane {
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
                 step5Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step5Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step5Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step5Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step5Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                //step5Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                //        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step5ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                for (int bIdx = 1; bIdx < step5List.size(); bIdx++) {
+                    step5List.get(bIdx).setStyle("-fx-background-color: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                            + ";-fx-text-fill: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                }
+//                step5Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step5Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step5Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step5Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step5ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step5Sub1Button.disableProperty().bind(control.getProject().getStep(4).getSubStep(0).stepStartedProperty().not());
@@ -854,18 +852,22 @@ public class FlowBar extends BorderPane {
             public void changed(ObservableValue o, Object oldVal, Object newVal) {
                 step6Button.setStyle("-fx-background-color: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
                         + ";-fx-text-fill: " + ((int) newVal < 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step6Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step6Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step6Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step6Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step6Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
-                step6ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
-                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                for (int bIdx = 1; bIdx < step6List.size(); bIdx++) {
+                    step6List.get(bIdx).setStyle("-fx-background-color: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+                            + ";-fx-text-fill: " + ((int) newVal == (bIdx - 1) ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+                }
+//                step6Sub1Button.setStyle("-fx-background-color: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 0 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step6Sub2Button.setStyle("-fx-background-color: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 1 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step6Sub3Button.setStyle("-fx-background-color: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 2 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step6Sub4Button.setStyle("-fx-background-color: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 3 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step6Sub5Button.setStyle("-fx-background-color: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 4 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
+//                step6ReportButton.setStyle("-fx-background-color: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL : COLOR_SUB_STEP)
+//                        + ";-fx-text-fill: " + ((int) newVal == 5 ? COLOR_SUB_STEP_HL_FONT : COLOR_SUB_STEP_FONT));
             }
         });
         step6Sub1Button.disableProperty().bind(control.getProject().getStep(5).getSubStep(0).stepStartedProperty().not());

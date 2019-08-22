@@ -35,7 +35,7 @@ public abstract class Question implements Serializable {
     private StringProperty refText = new SimpleStringProperty();
     private StringProperty comment = new SimpleStringProperty();
     private String commentPrompt = "Additional comments...";
-    protected int commentQType = COMMENT_QTYPE_NA;
+    protected int commentQType = COMMENT_QTYPE_YN;
 
     public boolean hasMoreInfo = false;
 
