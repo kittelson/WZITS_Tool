@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -33,6 +34,8 @@ public class MainController {
     private MainWindow mainWindow;
 
     private static Stage stage;
+
+    private static StackPane rootStackPane;
 
     private Project proj;
 
@@ -83,6 +86,14 @@ public class MainController {
     public static Window getWindow() {
         //return stage.getOwner();
         return stage.getOwner();
+    }
+
+    public static void setRootStackPane(StackPane rootStackPane) {
+        MainController.rootStackPane = rootStackPane;
+    }
+
+    public static StackPane getRootStackPane() {
+        return MainController.rootStackPane;
     }
 
     public void setMainWindowTitleLabel(String newLabelText) {

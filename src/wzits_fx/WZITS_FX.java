@@ -20,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -66,7 +67,10 @@ public class WZITS_FX extends Application {
         // Creating Panes
         MainController control = new MainController(primaryStage);
         BorderPane mainPane = new MainWindow(control, true);
-        Scene scene = new Scene(mainPane);
+        StackPane rootStackPane = new StackPane();
+        control.setRootStackPane(rootStackPane);
+        rootStackPane.getChildren().add(mainPane);
+        Scene scene = new Scene(rootStackPane);
         scene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         primaryStage.setScene(scene);
         //primaryStage.setMaximized(true);

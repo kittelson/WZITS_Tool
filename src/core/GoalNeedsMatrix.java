@@ -66,10 +66,12 @@ public class GoalNeedsMatrix implements Serializable {
         this.qList = qList;
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
             qToRowMap.put(qList.get(qIdx), qIdx); //qList.get(qIdx).getIdx() - 1
+            //System.out.println("Question: " + qList.get(qIdx).getQuestionText() + ", Row: " + String.valueOf(qIdx));
         }
         this.needsList = needsList;
         for (int needIdx = 0; needIdx < needsList.size(); needIdx++) {
             needToColMap.put(needsList.get(needIdx), needIdx);
+            //System.out.println("Need: " + needsList.get(needIdx).getDescription() + ", Col: " + String.valueOf(needIdx));
         }
 
         hasGoalCat = new HashMap();
