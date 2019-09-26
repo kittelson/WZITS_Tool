@@ -70,9 +70,11 @@ public class ApplicationMatrix implements Serializable {
         appToColMap = new LinkedHashMap();
         for (int qIdx = 0; qIdx < inputQuestions.size(); qIdx++) {
             questionToRowMap.put(inputQuestions.get(qIdx), qIdx);
+            //System.out.println("Question: " + inputQuestions.get(qIdx).getQuestionText() + ", Row: " + String.valueOf(qIdx));
         }
         for (int appIdx = 0; appIdx < appTypes.size(); appIdx++) {
             appToColMap.put(appTypes.get(appIdx), appIdx);
+            //System.out.println("Application: " + appTypes.get(appIdx).getName() + ", Row: " + String.valueOf(appIdx));
         }
         matrix = new int[inputQuestions.size()][appTypes.size()];
         connectAppProperties();

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WZITS_Tool.iml" filepath="$PROJECT_DIR$/WZITS_Tool.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/WZITS_Tool.iml" filepath="$PROJECT_DIR$/.idea/WZITS_Tool.iml" />
     </modules>
   </component>
 </project>
