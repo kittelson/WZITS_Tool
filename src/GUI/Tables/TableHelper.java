@@ -7,6 +7,7 @@ package GUI.Tables;
 
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
+import com.jfoenix.controls.*;
 import core.Question;
 import core.QuestionOption;
 import core.QuestionOptionMS;
@@ -20,36 +21,22 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 /**
@@ -99,12 +86,20 @@ public class TableHelper {
                                 hl.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent ae) {
-                                        Alert al = new Alert(Alert.AlertType.INFORMATION);
-                                        al.initOwner(MainController.getWindow());
-                                        al.setTitle("More Information");
-                                        al.setHeaderText("Emergency Response Corridor");
-                                        al.setContentText(comm);
-                                        al.showAndWait();
+                                        JFXDialogLayout contentPane = new JFXDialogLayout();
+                                        JFXDialog dialogAlert = new JFXDialog(MainController.getRootStackPane(), contentPane, JFXDialog.DialogTransition.CENTER);
+                                        dialogAlert.show();
+                                        contentPane.setHeading(new Text("Emergency Response Corridor"));
+                                        contentPane.setBody(new Text(comm));
+                                        dialogAlert.setStyle("-fx-font-size: 14pt");
+
+//                                        contentPane.setBody();
+//                                        Alert al = new Alert(Alert.AlertType.INFORMATION);
+//                                        al.initOwner(MainController.getWindow());
+//                                        al.setTitle("More Information");
+//                                        al.setHeaderText("Emergency Response Corridor");
+//                                        al.setContentText(comm);
+//                                        al.showAndWait();
                                     }
                                 });
                                 this.setGraphic(hl);
@@ -422,7 +417,6 @@ public class TableHelper {
         // Adding column constraints, idx is fixed, question text fills remaining space
         ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
         ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
-
         subGrid.getColumnConstraints().addAll(cc1, cc2);
 
         switch (q.getCommentQType()) {
@@ -482,6 +476,120 @@ public class TableHelper {
         GridPane.setHgrow(commentPane, Priority.ALWAYS);
         return gPane;
     }
+    public static Pane createCommentQV2(int idx, Question q) {
+        GridPane gPane = new GridPane();
+        GridPane.setVgrow(gPane,Priority.ALWAYS);
+        gPane.getStyleClass().add("comment-q-pane");
+        Label idxLabel = NodeFactory.createFormattedLabel(String.valueOf(idx) + ":", "opt-pane-question-idx");
+
+        Label qText = NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question");
+        qText.setWrapText(true);
+        qText.setAlignment(Pos.TOP_LEFT);
+        // Ensuring Components will grow
+        GridPane.setVgrow(idxLabel, Priority.ALWAYS);
+        GridPane.setVgrow(qText, Priority.ALWAYS);
+        GridPane.setHgrow(idxLabel, Priority.ALWAYS);
+        GridPane.setHgrow(qText, Priority.ALWAYS);
+        JFXButton btnCloseDialog = new JFXButton("Cancel");
+        JFXButton btnPostComment = new JFXButton("Save Comments");
+        // Adding components to sub gridpane
+        GridPane subGrid = new GridPane();
+        subGrid.add(idxLabel, 0, 1);
+        subGrid.add(qText, 1, 1);
+        // Adding column constraints, idx is fixed, question text fills remaining space
+        ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
+
+        subGrid.getColumnConstraints().addAll(cc1, cc2);
+
+        switch (q.getCommentQType()) {
+            case Question.COMMENT_QTYPE_YN:
+                QuestionYN qyn = (QuestionYN) q;
+                JFXCheckBox yesCheck = new JFXCheckBox("Yes");
+                JFXButton btnComments = new JFXButton("Add Comments");
+                btnComments.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        JFXDialogLayout content = new JFXDialogLayout();
+                        JFXDialog modalComments = new JFXDialog(MainController.getRootStackPane(),content, JFXDialog.DialogTransition.CENTER);
+                        content.setHeading(NodeFactory.createFormattedLabel("Question " + String.valueOf(idx) + " Comments",""));
+                        JFXTextArea txtArea = new JFXTextArea();
+                        txtArea.setPromptText("Comments...");
+                        content.setBody(txtArea);
+                        modalComments.show();
+                        btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent actionEvent) {
+                                modalComments.close();
+                            }
+                        });
+                        btnPostComment.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent actionEvent) {
+                                modalComments.getContent();
+                            }
+                        });
+                        content.setActions(btnPostComment,btnCloseDialog);
+                    }
+                });
+                btnComments.getStyleClass().add("comment-pane-button");
+                btnPostComment.getStyleClass().add("comment-pane-button");
+                btnCloseDialog.getStyleClass().add("comment-pane-buttonClose");
+//                yesCheck.getStyleClass().add("comment-pane-checkbox");
+                yesCheck.selectedProperty().bindBidirectional(qyn.answerIsYesProperty());
+                JFXCheckBox noCheck = new JFXCheckBox("No");
+//                noCheck.getStyleClass().add("comment-pane-checkbox");
+                noCheck.selectedProperty().bindBidirectional(qyn.answerIsNoProperty());
+                GridPane.setVgrow(yesCheck, Priority.ALWAYS);
+                GridPane.setVgrow(noCheck, Priority.ALWAYS);
+                GridPane.setHgrow(yesCheck, Priority.ALWAYS);
+                GridPane.setHgrow(noCheck, Priority.ALWAYS);
+                subGrid.add(yesCheck, 2, 1);
+                subGrid.add(noCheck, 3, 1);
+                subGrid.add(btnComments, 4, 1);
+                ColumnConstraints ccY = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
+                ColumnConstraints ccN = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
+                ColumnConstraints ccBtn = new ColumnConstraints(100, 100, 100, Priority.NEVER, HPos.CENTER, true);
+                subGrid.getColumnConstraints().addAll(ccY, ccN, ccBtn);
+                break;
+            case Question.COMMENT_QTYPE_OPT:
+                QuestionOption qo = (QuestionOption) q;
+                ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(qo.getOptions()));
+                cb.setMaxWidth(MainController.MAX_WIDTH);
+                GridPane.setHgrow(cb, Priority.ALWAYS);
+                GridPane.setVgrow(cb, Priority.ALWAYS);
+                if (qo.getResponseIdx() >= 0) {
+                    cb.getSelectionModel().select(idx);
+                }
+                qo.responseIdxProperty().bind(cb.getSelectionModel().selectedIndexProperty());
+                subGrid.add(cb, 2, 0);
+                ColumnConstraints ccChoice = new ColumnConstraints(350, 350, 350, Priority.NEVER, HPos.CENTER, true);
+                subGrid.getColumnConstraints().add(ccChoice);
+                break;
+            case Question.COMMENT_QTYPE_NA:
+                // Do Nothing
+                break;
+        }
+
+//        TextArea commentPane = new TextArea();
+//        commentPane.setPromptText(q.getCommentPrompt());
+//        commentPane.textProperty().bindBidirectional(q.commentProperty());
+//        GridPane.setMargin(commentPane, new Insets(0, 10, 5, 10));
+//        commentPane.setMinHeight(20);
+        //commentPane.setPrefRowCount(5);
+//        commentPane.setMaxHeight(100);
+
+//        RowConstraints rc1 = new RowConstraints(40, 40, 40, Priority.NEVER, VPos.BASELINE, true);
+//        RowConstraints rc2 = new RowConstraints(1, 120, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.TOP, true);
+//        gPane.getRowConstraints().addAll(rc1, rc2);
+
+        gPane.add(subGrid, 0, 0);
+//        gPane.add(commentPane, 0, 1);
+        GridPane.setVgrow(subGrid, Priority.ALWAYS);
+        GridPane.setHgrow(subGrid, Priority.ALWAYS);
+//        GridPane.setHgrow(commentPane, Priority.ALWAYS);
+        return gPane;
+    }
 
     public static Node createCommentPage(ObservableList<Question> qList) {
         GridPane gPane = new GridPane();
@@ -517,6 +625,43 @@ public class TableHelper {
         bPane.setTop(NodeFactory.createFormattedLabel("Answer the following yes/no questions and enter any comments as necessary.", "opt-pane-title"));
         bPane.setCenter(gPane);
         return bPane;
+    }
+    public static Pane createCommentPageYNv2(ObservableList<QuestionYN> qList) {
+//        GridPane questionsGrid = new GridPane();
+        VBox questionsGrid = new VBox();
+        VBox questionsGridLeft = new VBox();
+        VBox questionsGridRight = new VBox();
+
+        questionsGridLeft.setAlignment(Pos.TOP_LEFT);
+        questionsGridRight.setAlignment(Pos.TOP_LEFT);
+
+//        questionsGridLeft.setSpacing(50);
+//        questionsGridRight.setSpacing(10);
+
+        questionsGrid.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20;");
+//        for (int qIdx = 0; qIdx < qList.size(); qIdx++ ) {
+//            if (qIdx <= Math.ceil(qList.size() / 2)) {
+//                Node n = createCommentQV2(qIdx + 1, qList.get(qIdx));
+//                questionsGridLeft.getChildren().add(n);
+//            } else {
+//                Node n = createCommentQV2(qIdx + 1, qList.get(qIdx));
+//                questionsGridRight.getChildren().add(n);
+//            }
+//        }
+//        questionsGrid.add(questionsGridLeft,0,0);
+//        questionsGrid.add(questionsGridRight,1,0);
+//        ColumnConstraints ccLeft = new ColumnConstraints();
+//        ColumnConstraints ccRight = new ColumnConstraints();
+//        ccLeft.setPercentWidth(50);
+//        ccRight.setPercentWidth(50);
+//        questionsGrid.getColumnConstraints().addAll(ccLeft,ccRight);
+        for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
+            Pane n = createCommentQV2(qIdx + 1, qList.get(qIdx));
+            n.maxWidthProperty().bind(questionsGrid.widthProperty().divide(2.0));
+            questionsGrid.getChildren().add(n);
+        }
+
+        return questionsGrid;
     }
 
     public static Node createMarkAllNode(QuestionOptionMS q) {

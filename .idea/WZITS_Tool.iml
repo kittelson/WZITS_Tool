@@ -22,5 +22,9 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="org.kordamp.ikonli:ikonli-fontawesome5-pack:11.0.2" level="project" />
+    <orderEntry type="library" name="org.kordamp.ikonli:ikonli-javafx:11.0.2" level="project" />
+    <orderEntry type="library" name="javafx-sdk-11.0" level="project" />
+    <orderEntry type="library" name="com.jfoenix:jfoenix:9.0.9" level="project" />
   </component>
 </module>

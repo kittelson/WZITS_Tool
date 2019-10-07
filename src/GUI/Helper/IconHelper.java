@@ -5,7 +5,19 @@
  */
 package GUI.Helper;
 
+import GUI.MainController;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  *
@@ -48,4 +60,11 @@ public class IconHelper {
     public static final Image FIG_FLOW_STEP_6 = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/step_6.png"));
 
     public static final Image PROJ_IMAGE = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/wz.jpg"));
+
+    public static FontIcon createIcon(Ikon iconId, Color iconColor, int size) {
+        FontIcon icon = new FontIcon(iconId);
+        icon.setIconColor(iconColor);
+        icon.setIconSize(size);
+        return icon;
+    }
 }

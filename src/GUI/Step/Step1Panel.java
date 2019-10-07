@@ -11,6 +11,9 @@ import GUI.Helper.NodeFactory;
 import GUI.Helper.ProgressIndicatorBar;
 import GUI.MainController;
 import GUI.Tables.Step1TableHelper;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import core.Project;
 import core.Question;
 import core.QuestionGenerator;
@@ -48,9 +51,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  * @author ltrask
@@ -396,13 +403,27 @@ public class Step1Panel extends BorderPane {
                 control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
                 control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
                 if (oldVal.intValue() == Project.FEAS_WIZARD_SUMMARY_INDEX && control.getProject().getFeasibilityMatrix().getFeasibility() < 10) {
-                    Alert al = new Alert(Alert.AlertType.WARNING);
-                    al.initOwner(control.getWindow());
-                    al.setTitle("Feasibility Warning");
-                    al.setHeaderText("Low Project Feasibility Score");
-                    al.setContentText("The WZITS tool feasibility assessment has indicated that WZITS may not be feasible for your project.  The tool can continue to be used "
-                            + "but the low feasibility score will be indicated in the step and summary reports.");
-                    al.showAndWait();
+                    JFXDialogLayout content = new JFXDialogLayout();
+                    JFXDialog dialogAlert = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+                    dialogAlert.show();
+                    content.setHeading(new Text("Low Project Feasibility Score"));
+                    content.setBody(new Text("The WZITS tool feasibility assessment has indicated that WZITS may not be feasible for your project.\n" +
+                            "The tool can continue to be used but the low feasibility score will be indicated in the step and summary reports."));
+                    content.setStyle("-fx-font-size: 16pt");
+                    btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            dialogAlert.close();
+                        }
+                    });
+                    content.setActions(btnCloseDialog);
+//                    Alert al = new Alert(Alert.AlertType.WARNING);
+//                    al.initOwner(control.getWindow());
+//                    al.setTitle("Feasibility Warning");
+//                    al.setHeaderText("Low Project Feasibility Score");
+//                    al.setContentText("The WZITS tool feasibility assessment has indicated that WZITS may not be feasible for your project.  The tool can continue to be used "
+//                            + "but the low feasibility score will be indicated in the step and summary reports.");
+//                    al.showAndWait();
                 }
                 switch (getActiveSubStep()) {
                     case Project.GOAL_SELECTION_INDEX:
@@ -587,6 +608,8 @@ public class Step1Panel extends BorderPane {
         genInfoLabel6.getStyleClass().add("gen-info-label-style");
         genInfoLabel7.getStyleClass().add("gen-info-label-style");
         genInfoLabel8.getStyleClass().add("gen-info-label-style");
+        genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:rgb(211,211,211);");
+        btnCloseDialog.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:rgb(204,85,0);");
 
         genInfoDateToday.setText(control.getProject().getDateString());
 
@@ -1369,7 +1392,10 @@ public class Step1Panel extends BorderPane {
     private final TextArea genInfoTA2 = new TextArea("");
     private final TextField genInfoTF4 = new TextField("");
     private final Label genInfoPicLabel = new Label("Select file...");
-    private final Button genInfoButton1 = new Button("Browse");
+//    private final Button genInfoButton1 = new Button("Browse");
+    private JFXButton genInfoButton1 = new JFXButton("Browse");
+    private JFXButton btnCloseDialog = new JFXButton("Close");
+
     private final GridPane genInfoPicGrid = new GridPane();
     private final int maxProjImagePreviewHeight = 180;
     private final int maxProjImagePreviewWidth = 250;

@@ -10,6 +10,7 @@ import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import GUI.Tables.Step2TableHelper;
+import com.jfoenix.controls.JFXButton;
 import core.Project;
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
@@ -19,6 +20,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -193,8 +195,15 @@ public class Step2Panel extends BorderPane {
         conOpsPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepTitleIndex++], "substep-title-label"));
         //conOpsPane.setCenter(Step2TableHelper.createConOpsNode(control.getProject()));
         BorderPane uploadPane = new BorderPane();
-        Button uploadButton = new Button("Upload Concept of Operations Figure");
-        uploadButton.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
+//        Button uploadButton = new Button("Upload Concept of Operations Figure");
+        JFXButton uploadButton = new JFXButton("Upload Concept of Operations Figure");
+        uploadButton.setStyle("-fx-font-size: 24; -fx-text-wrap: true; -fx-padding: 0.7em 0.57em;\n" +
+                "    -fx-font-size: 14px;\n" +
+                "    -jfx-button-type: RAISED;\n" +
+                "    -fx-background-color: rgb(77,102,204);\n" +
+                "    -fx-pref-width: 250;\n" +
+                "    -fx-text-fill: WHITE;");
+//        uploadButton.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
         BorderPane.setAlignment(uploadButton, Pos.CENTER);
         final ImageView conOpsIV = new ImageView();
         if (control.getProject().getConOpsDiagram() != null) {

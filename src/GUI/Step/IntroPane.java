@@ -7,6 +7,9 @@ package GUI.Step;
 
 import GUI.Helper.IconHelper;
 import GUI.MainController;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import javafx.beans.binding.DoubleBinding;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,6 +24,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -30,7 +34,9 @@ public class IntroPane extends BorderPane {
 
     private final MainController control;
 
-    private final Button startNewButton = new Button("Press to Begin New \nWork Zone ITS Assessment");
+//    private final Button startNewButton = new Button("Press to Begin New \nWork Zone ITS Assessment");
+    JFXButton startNewButton = new JFXButton("Press to Begin New \nWork Zone ITS Assessment");
+    JFXButton btnCloseDialog = new JFXButton("Close");
 
     //private final FillTransition beginFT;
     public IntroPane(MainController mc) {
@@ -39,16 +45,31 @@ public class IntroPane extends BorderPane {
         startNewButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                Alert al = new Alert(Alert.AlertType.INFORMATION);
-                GridPane instrNode = new GridPane();
+                JFXDialogLayout contentLayout = new JFXDialogLayout();
+                JFXDialog dialogAlert = new JFXDialog(MainController.getRootStackPane(), contentLayout, JFXDialog.DialogTransition.CENTER);
+                dialogAlert.show();
+                contentLayout.setHeading(new Text("WZIT Tool Navigation"));
                 ImageView iv = new ImageView(IconHelper.NAV_HELPER);
-                instrNode.add(iv, 0, 0);
-                al.initOwner(mc.getWindow());
-                al.setTitle("Hint: WZITS Tool Navigation");
-                al.setHeaderText("WZITS Tool Navigation");
-                al.getDialogPane().setContent(instrNode);
-                al.showAndWait();
+                contentLayout.setBody(iv);
+                contentLayout.setActions(btnCloseDialog);
+                btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        dialogAlert.close();
+                    }
+                });
+
                 control.selectStep(0);
+//                Alert al = new Alert(Alert.AlertType.INFORMATION);
+//                GridPane instrNode = new GridPane();
+//                ImageView iv = new ImageView(IconHelper.NAV_HELPER);
+//                instrNode.add(iv, 0, 0);
+//                al.initOwner(mc.getWindow());
+//                al.setTitle("Hint: WZITS Tool Navigation");
+//                al.setHeaderText("WZITS Tool Navigation");
+//                al.getDialogPane().setContent(instrNode);
+//                al.showAndWait();
+//                control.selectStep(0);
             }
         });
 
@@ -69,6 +90,7 @@ public class IntroPane extends BorderPane {
         startLabel.getStyleClass().add("launch-title-label-top");
         infoLabel.getStyleClass().add("launch-title-label-bottom");
         instructionLabel.getStyleClass().add("intro-instructions");
+        btnCloseDialog.getStyleClass().add("comment-pane-buttonClose");
 
         startNewButton.getStyleClass().add("intro-begin-button");
         startNewButton.setDefaultButton(true);

@@ -11,6 +11,7 @@ import GUI.MainController;
 import GUI.Tables.Step3TableHelper;
 import core.Project;
 import java.util.ArrayList;
+
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
@@ -18,17 +19,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 
 /**
@@ -41,7 +38,7 @@ public class Step3Panel extends BorderPane {
 
     private final int stepIndex = 2;
 
-    private final String stepTitle = "Detailed System Planning and Design";
+//    private final String stepTitle = "Detailed System Planning and Design";
 
     private final VBox mainVBox = new VBox();
 
@@ -60,31 +57,103 @@ public class Step3Panel extends BorderPane {
     private final BorderPane sysBCPane = new BorderPane();
     private final BorderPane stepReportPane = new BorderPane();
     private final ArrayList<Node> subStepPanesList = new ArrayList();
+    // all panes below this comment are new panes associated with the new step 3-6 redesign
+    BorderPane rootPane = new BorderPane();
+    GridPane topGridLabel = new GridPane();
+    GridPane bottomGridNav = new GridPane();
+    GridPane topGridMaster = new GridPane();
+    GridPane quesGrid = new GridPane();
+    GridPane questions = new GridPane();
+    // labels and inputs associated with new redesign
+//    Separator topSep = new Separator();
+    Label lblTitle = new Label("Step 3");
+    Label lblStepName = new Label("System Planning and Design");
+
+
+    //labels for questions
+    // Navigation bar captions / Hyperlinks
+    final static String[] captions = new String[]{
+            "Document Concepts of Operations", "Requirements", "Test Strategy", "Operations & Maintenance","Staff Training & Needs",
+            "System Security", "Evaluation", "Benefit / Cost"
+    };
+    final Hyperlink[] btnCaptions = new Hyperlink[captions.length];
 
     public Step3Panel(MainController control) {
 
         this.control = control;
+        for (int i = 0; i < captions.length; i++) {
+            final Hyperlink hpl = btnCaptions[i] = new Hyperlink(captions[i]);
+            hpl.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
 
-        mainVBox.setFillWidth(true);
-        Label startLabel = new Label("Step");
-        startLabel.setWrapText(true);
-        startLabel.setAlignment(Pos.BOTTOM_CENTER);
-        startLabel.setTextAlignment(TextAlignment.CENTER);
-        startLabel.setMaxHeight(MainController.MAX_HEIGHT);
-        startLabel.setMaxWidth(MainController.MAX_WIDTH);
-        Label infoLabel = new Label("3");
-        infoLabel.setMaxHeight(MainController.MAX_HEIGHT);
-        infoLabel.setMaxWidth(MainController.MAX_WIDTH);
-        infoLabel.setAlignment(Pos.TOP_CENTER);
-        Label instructionLabel = new Label(stepTitle);
-        instructionLabel.setWrapText(true);
-        instructionLabel.setTextAlignment(TextAlignment.CENTER);
-        instructionLabel.setMaxHeight(MainController.MAX_HEIGHT);
-        instructionLabel.setMaxWidth(MainController.MAX_WIDTH);
-        instructionLabel.setAlignment(Pos.CENTER);
-        startLabel.getStyleClass().add("launch-title-label-top");
-        infoLabel.getStyleClass().add("launch-title-label-bottom");
-        instructionLabel.getStyleClass().add("intro-instructions");
+                }
+            });
+        }
+        //spacing for panes
+//        GridPane.setHgrow(btnCaptions, Priority.ALWAYS);
+        bottomGridNav.setPadding(new Insets(10,0,10,0));
+        topGridMaster.setMaxWidth(1200);
+        topGridMaster.setPrefWidth(500);
+        topGridMaster.setMinWidth(450);
+        quesGrid.setMaxWidth(1200);
+//        topGridMaster.setGridLinesVisible(true);
+//        bottomGridNav.setGridLinesVisible(true);
+        //setup the grid labels and buttons
+        lblTitle.getStyleClass().add("comment-label-style");
+        lblStepName.getStyleClass().add("comment-sub-label");
+        topGridMaster.getStyleClass().add("comment-border-styles");
+        questions.getStyleClass().add("question-gridLeft-styles");
+        lblTitle.setMaxWidth(Integer.MAX_VALUE);
+        lblStepName.setMaxWidth(Integer.MAX_VALUE);
+        lblTitle.setAlignment(Pos.CENTER);
+        lblStepName.setAlignment(Pos.CENTER);
+        GridPane.setHgrow(lblStepName, Priority.ALWAYS);
+        GridPane.setHgrow(lblTitle, Priority.ALWAYS);
+        GridPane.setHalignment(lblTitle, HPos.RIGHT);
+        topGridLabel.add(lblTitle,0,0);
+        topGridLabel.add(lblStepName,0,1);
+
+        for (int i = 0; i < btnCaptions.length; i++) {
+            btnCaptions[i].setMaxWidth(Integer.MAX_VALUE);
+            GridPane.setHgrow(btnCaptions[i], Priority.ALWAYS);
+            bottomGridNav.add(btnCaptions[i],i,0);
+        }
+        GridPane.setHgrow(topGridLabel, Priority.ALWAYS);
+        GridPane.setHgrow(bottomGridNav, Priority.ALWAYS);
+        topGridMaster.add(topGridLabel,0,0);
+        topGridMaster.add(bottomGridNav,0,1);
+        GridPane.setHgrow(topGridMaster,Priority.ALWAYS);
+        rootPane.setTop(topGridMaster);
+        //questions grid pane
+//        questions.add(Step3TableHelper.createSysReqNode(control.getProject()),0,0);
+//        quesGrid.add(questions,0,0);
+        Pane tempNode = Step3TableHelper.createSysReqNode(control.getProject());
+        GridPane.setHgrow(tempNode, Priority.ALWAYS);
+        tempNode.setMaxHeight(500);
+        quesGrid.add(tempNode,0,0);
+        //adding questions to gridLeft
+//        quesGridRight.add(Step3TableHelper.createSysReqNode(control.getProject()),0,0);
+//        mainVBox.setFillWidth(true);
+//        Label startLabel = new Label("Step");
+//        startLabel.setWrapText(true);
+//        startLabel.setAlignment(Pos.BOTTOM_CENTER);
+//        startLabel.setTextAlignment(TextAlignment.CENTER);
+//        startLabel.setMaxHeight(MainController.MAX_HEIGHT);
+//        startLabel.setMaxWidth(MainController.MAX_WIDTH);
+//        Label infoLabel = new Label("3");
+//        infoLabel.setMaxHeight(MainController.MAX_HEIGHT);
+//        infoLabel.setMaxWidth(MainController.MAX_WIDTH);
+//        infoLabel.setAlignment(Pos.TOP_CENTER);
+//        Label instructionLabel = new Label(stepTitle);
+//        instructionLabel.setWrapText(true);
+//        instructionLabel.setTextAlignment(TextAlignment.CENTER);
+//        instructionLabel.setMaxHeight(MainController.MAX_HEIGHT);
+//        instructionLabel.setMaxWidth(MainController.MAX_WIDTH);
+//        instructionLabel.setAlignment(Pos.CENTER);
+//        startLabel.getStyleClass().add("launch-title-label-top");
+//        infoLabel.getStyleClass().add("launch-title-label-bottom");
+//        instructionLabel.getStyleClass().add("intro-instructions");
 
         DoubleBinding widthBinding = new DoubleBinding() {
             {
@@ -119,9 +188,9 @@ public class Step3Panel extends BorderPane {
         figStep.setSmooth(true);
         figStep.setCache(true);
 
-        stepIntroGrid.add(startLabel, 0, 0);
-        stepIntroGrid.add(infoLabel, 0, 1);
-        stepIntroGrid.add(instructionLabel, 1, 1);
+//        stepIntroGrid.add(startLabel, 0, 0);
+//        stepIntroGrid.add(infoLabel, 0, 1);
+//        stepIntroGrid.add(instructionLabel, 1, 1);
         stepIntroGrid.add(figStep, 1, 0);
         stepIntroGrid.setStyle("-fx-background-color: white");
 
@@ -135,7 +204,7 @@ public class Step3Panel extends BorderPane {
         ColumnConstraints colConst1 = new ColumnConstraints(150, 150, 150);
         ColumnConstraints colConst2 = new ColumnConstraints(1, 150, MainController.MAX_WIDTH, Priority.ALWAYS, HPos.CENTER, true);
         stepIntroGrid.getColumnConstraints().addAll(colConst1, colConst2);
-        GridPane.setHgrow(instructionLabel, Priority.ALWAYS);
+//        GridPane.setHgrow(instructionLabel, Priority.ALWAYS);
 
         int subStepIndex = 1;
         // Initial Applications Questions Panel
@@ -183,12 +252,12 @@ public class Step3Panel extends BorderPane {
         sysBCPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Step Report Pane
-        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
+//        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
         stepReportPane.setCenter(Step3TableHelper.createStepSummary(control));
         stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         int i = 0;
-        mainVBox.getChildren().addAll(centerPane); // allSubStepsPane
+//        mainVBox.getChildren().addAll(centerPane); // allSubStepsPane
 //        allSubStepsPane.add(stepIntroGrid, i++, 0);
 //        allSubStepsPane.add(conOpsPane, i++, 0);
 //        allSubStepsPane.add(sysReqPane, i++, 0);
@@ -200,18 +269,18 @@ public class Step3Panel extends BorderPane {
 //        allSubStepsPane.add(projEvalPane, i++, 0);
 //        allSubStepsPane.add(sysBCPane, i++, 0);
 //        allSubStepsPane.add(stepReportPane, i++, 0);
-        this.subStepPanesList.add(stepIntroGrid);
-        this.subStepPanesList.add(conOpsPane);
-        this.subStepPanesList.add(sysReqPane);
-        this.subStepPanesList.add(testingStratPane);
-        this.subStepPanesList.add(opsMaintPane);
-        this.subStepPanesList.add(staffTrainingPane);
-        this.subStepPanesList.add(sysSecurityPane);
-        this.subStepPanesList.add(projEvalPane);
-        this.subStepPanesList.add(sysBCPane);
-        this.subStepPanesList.add(stepReportPane);
-
-        centerPane.setCenter(stepIntroGrid);
+//        this.subStepPanesList.add(stepIntroGrid);
+//        this.subStepPanesList.add(conOpsPane);
+//        this.subStepPanesList.add(sysReqPane);
+//        this.subStepPanesList.add(testingStratPane);
+//        this.subStepPanesList.add(opsMaintPane);
+//        this.subStepPanesList.add(staffTrainingPane);
+//        this.subStepPanesList.add(sysSecurityPane);
+//        this.subStepPanesList.add(projEvalPane);
+//        this.subStepPanesList.add(sysBCPane);
+//        this.subStepPanesList.add(stepReportPane);
+//
+//        centerPane.setCenter(stepIntroGrid);
 
 //        int numPanes = getNumSubSteps() + 2;
 //        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
@@ -231,7 +300,11 @@ public class Step3Panel extends BorderPane {
         GridPane.setVgrow(sysBCPane, Priority.ALWAYS);
         GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
         VBox.setVgrow(centerPane, Priority.ALWAYS); //allSubStepsPane
-        this.setCenter(mainVBox);
+        this.setTop(topGridMaster);
+        this.setCenter(quesGrid);
+        BorderPane.setAlignment(topGridMaster, Pos.CENTER);
+        BorderPane.setAlignment(quesGrid, Pos.CENTER);
+        quesGrid.getStyleClass().add("question-grid-main");
 
         setupActionListeners();
         setupPropertyBindings();

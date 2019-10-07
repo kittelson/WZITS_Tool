@@ -8,6 +8,7 @@ package GUI.Launch;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
+import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -33,7 +34,8 @@ public class LaunchPane extends BorderPane {
 
     private final TextArea infoText;
 
-    private final Button startButton = new Button("Ok");
+//    private final Button startButton = new Button("Ok");
+    JFXButton startButton = new JFXButton("OK");
 
     public LaunchPane(final MainController controller) {
         this(controller, false);
@@ -56,7 +58,7 @@ public class LaunchPane extends BorderPane {
         infoText.getStyleClass().add("launch-info-text");
         infoText.setMinHeight(100);
         infoText.setPrefRowCount(4);
-        startButton.setStyle("-fx-font-size: 20px");
+        startButton.setStyle("-fx-font-size: 20px; -jfx-button-type: RAISED; -fx-background-color: rgb(41,171,226)");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {

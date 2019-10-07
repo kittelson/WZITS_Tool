@@ -40,6 +40,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  *
@@ -375,7 +378,14 @@ public class FlowBar extends BorderPane {
         hbp.setAlignment(Pos.CENTER);
         hbp.getChildren().add(lp);
         hbp.getChildren().add(prevSVG);
-        prevButton.setGraphic(hbp);
+//        prevButton.setGraphic(hbp);
+
+        FontIcon prevIcon = IconHelper.createIcon(FontAwesomeSolid.ARROW_LEFT,Color.BLACK,40);
+        prevButton.setGraphic(prevIcon);
+
+        FontIcon nextIcon = IconHelper.createIcon(FontAwesomeSolid.ARROW_RIGHT,Color.BLACK,40);
+        nextButton.setGraphic(nextIcon);
+
         Label ln = new Label("+");
         ln.setStyle("-fx-font-size: 60; -fx-alignment: center; -fx-text-alignment: center;");
         //ln.setRotate(270);
@@ -384,7 +394,7 @@ public class FlowBar extends BorderPane {
         hbn.setAlignment(Pos.CENTER);
         hbn.getChildren().add(nextSVG);
         hbn.getChildren().add(ln);
-        nextButton.setGraphic(hbn);
+//        nextButton.setGraphic(hbn);
 
         introButton.getStyleClass().add("sub-flow-step-start");
         step1Button.getStyleClass().add("sub-flow-step");

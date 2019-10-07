@@ -19,11 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 /**
  *
@@ -40,9 +36,9 @@ public class Step3TableHelper extends TableView {
         return TableHelper.createCommentPageYN(proj.getQGen().qConOpsList);
     }
 
-    public static Node createSysReqNode(Project proj) {
+    public static Pane createSysReqNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSysReqList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qSysReqList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qSysReqList);
     }
 
     public static Node createTestingStratNode(Project proj) {

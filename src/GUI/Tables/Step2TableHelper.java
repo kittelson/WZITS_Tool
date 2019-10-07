@@ -8,6 +8,7 @@ package GUI.Tables;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
+import com.jfoenix.controls.JFXTabPane;
 import core.Application;
 import core.ApplicationMatrix;
 import core.Project;
@@ -105,7 +106,20 @@ public class Step2TableHelper extends TableView {
     }
 
     public static Node createStepSummary(MainController mc) {
-        TabPane tp = new TabPane();
+//        TabPane tp = new TabPane();
+//        Tab fs1 = new Tab();
+//        fs1.setText("Fact Sheet 3");
+//        fs1.setContent(createStepSummary1(mc));
+//        Tab fs2 = new Tab();
+//        fs2.setText("Fact Sheet 4");
+//        fs2.setContent(createStepSummary2(mc));
+//        tp.getTabs().addAll(fs1, fs2);
+//
+//        tp.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+//
+//        return tp;
+
+        final JFXTabPane tp = new JFXTabPane();
         Tab fs1 = new Tab();
         fs1.setText("Fact Sheet 3");
         fs1.setContent(createStepSummary1(mc));
