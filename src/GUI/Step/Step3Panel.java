@@ -11,6 +11,7 @@ import GUI.MainController;
 import GUI.Tables.Step3TableHelper;
 import core.Project;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
@@ -61,6 +62,7 @@ public class Step3Panel extends BorderPane {
     BorderPane rootPane = new BorderPane();
     GridPane topGridLabel = new GridPane();
     GridPane bottomGridNav = new GridPane();
+    Pane activeQuesPane = null;
     GridPane topGridMaster = new GridPane();
     GridPane quesGrid = new GridPane();
     GridPane questions = new GridPane();
@@ -77,29 +79,52 @@ public class Step3Panel extends BorderPane {
             "System Security", "Evaluation", "Benefit / Cost"
     };
     final Hyperlink[] btnCaptions = new Hyperlink[captions.length];
+    //Hashmap to help map caption strings to specific pane
+    HashMap<Integer, Pane> hash_map = new HashMap<Integer, Pane>();
 
     public Step3Panel(MainController control) {
 
+        Pane docConOps = Step3TableHelper.createConOpsNode(control.getProject());
+        Pane sysReqNode = Step3TableHelper.createSysReqNode(control.getProject());
+        Pane testingStratNode = Step3TableHelper.createTestingStratNode(control.getProject());
+        Pane opsMaintNode = Step3TableHelper.createOpsMaintNode(control.getProject());
+        Pane staffTrainNode = Step3TableHelper.createStaffTrainingNode(control.getProject());
+        Pane sysSecurityNode = Step3TableHelper.createSysSecurityNode(control.getProject());
+        Pane projEvaluationNode = Step3TableHelper.createProjEvalNode(control.getProject());
+        Pane sysBcNode = Step3TableHelper.createSysBCNode(control.getProject());
+        //mapping Pane to Int keys
+        hash_map.put(0,docConOps);
+        hash_map.put(1,sysReqNode);
+        hash_map.put(2,testingStratNode);
+        hash_map.put(3,opsMaintNode);
+        hash_map.put(4, staffTrainNode);
+        hash_map.put(5,sysSecurityNode);
+        hash_map.put(6, projEvaluationNode);
+        hash_map.put(7, sysBcNode);
         this.control = control;
+
         for (int i = 0; i < captions.length; i++) {
-            final Hyperlink hpl = btnCaptions[i] = new Hyperlink(captions[i]);
-            hpl.setOnAction(new EventHandler<ActionEvent>() {
+            btnCaptions[i] = new Hyperlink(captions[i]);
+            int finalI = i;
+            btnCaptions[i].setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-
+                    if (activeQuesPane != null) {
+                        quesGrid.getChildren().remove(activeQuesPane);
+                    }
+                    quesGrid.add(hash_map.get(finalI),0,0);
+                    activeQuesPane = hash_map.get(finalI);
+                    quesGrid.setMaxWidth(1400);
                 }
             });
-        }
+            }
         //spacing for panes
-//        GridPane.setHgrow(btnCaptions, Priority.ALWAYS);
-        bottomGridNav.setPadding(new Insets(10,0,10,0));
-        topGridMaster.setMaxWidth(1200);
+        bottomGridNav.setPadding(new Insets(10,0,10,50));
+        topGridMaster.setMaxWidth(1400);
         topGridMaster.setPrefWidth(500);
         topGridMaster.setMinWidth(450);
-        quesGrid.setMaxWidth(1200);
-//        topGridMaster.setGridLinesVisible(true);
-//        bottomGridNav.setGridLinesVisible(true);
         //setup the grid labels and buttons
+        bottomGridNav.getStyleClass().add("label-styles");
         lblTitle.getStyleClass().add("comment-label-style");
         lblStepName.getStyleClass().add("comment-sub-label");
         topGridMaster.getStyleClass().add("comment-border-styles");
@@ -125,13 +150,20 @@ public class Step3Panel extends BorderPane {
         topGridMaster.add(bottomGridNav,0,1);
         GridPane.setHgrow(topGridMaster,Priority.ALWAYS);
         rootPane.setTop(topGridMaster);
-        //questions grid pane
-//        questions.add(Step3TableHelper.createSysReqNode(control.getProject()),0,0);
-//        quesGrid.add(questions,0,0);
-        Pane tempNode = Step3TableHelper.createSysReqNode(control.getProject());
-        GridPane.setHgrow(tempNode, Priority.ALWAYS);
-        tempNode.setMaxHeight(500);
-        quesGrid.add(tempNode,0,0);
+
+        GridPane.setHgrow(sysReqNode, Priority.ALWAYS);
+        GridPane.setHgrow(docConOps,Priority.ALWAYS);
+        GridPane.setHgrow(testingStratNode, Priority.ALWAYS);
+        GridPane.setHgrow(opsMaintNode,Priority.ALWAYS);
+        GridPane.setHgrow(staffTrainNode,Priority.ALWAYS);
+        sysReqNode.setMaxHeight(500);
+        docConOps.setMaxHeight(500);
+        testingStratNode.setMaxHeight(500);
+        opsMaintNode.setMaxHeight(500);
+        staffTrainNode.setMaxHeight(500);
+        sysSecurityNode.setMaxHeight(500);
+        projEvaluationNode.setMaxHeight(500);
+        sysBcNode.setMaxHeight(500);
         //adding questions to gridLeft
 //        quesGridRight.add(Step3TableHelper.createSysReqNode(control.getProject()),0,0);
 //        mainVBox.setFillWidth(true);

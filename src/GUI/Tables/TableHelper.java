@@ -19,10 +19,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -512,9 +509,8 @@ public class TableHelper {
                     public void handle(ActionEvent actionEvent) {
                         JFXDialogLayout content = new JFXDialogLayout();
                         JFXDialog modalComments = new JFXDialog(MainController.getRootStackPane(),content, JFXDialog.DialogTransition.CENTER);
-                        content.setHeading(NodeFactory.createFormattedLabel("Question " + String.valueOf(idx) + " Comments",""));
+                        content.setHeading(NodeFactory.createFormattedLabel("Question " + String.valueOf(idx) + " Comments","modal-title"));
                         JFXTextArea txtArea = new JFXTextArea();
-                        txtArea.setPromptText("Comments...");
                         content.setBody(txtArea);
                         modalComments.show();
                         btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
@@ -529,11 +525,11 @@ public class TableHelper {
                                 modalComments.getContent();
                             }
                         });
-                        content.setActions(btnPostComment,btnCloseDialog);
+                        content.setActions(btnCloseDialog, btnPostComment);
                     }
                 });
                 btnComments.getStyleClass().add("comment-pane-button");
-                btnPostComment.getStyleClass().add("comment-pane-button");
+                btnPostComment.getStyleClass().add("modal-pane-button");
                 btnCloseDialog.getStyleClass().add("comment-pane-buttonClose");
 //                yesCheck.getStyleClass().add("comment-pane-checkbox");
                 yesCheck.selectedProperty().bindBidirectional(qyn.answerIsYesProperty());
@@ -549,7 +545,7 @@ public class TableHelper {
                 subGrid.add(btnComments, 4, 1);
                 ColumnConstraints ccY = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
                 ColumnConstraints ccN = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
-                ColumnConstraints ccBtn = new ColumnConstraints(100, 100, 100, Priority.NEVER, HPos.CENTER, true);
+                ColumnConstraints ccBtn = new ColumnConstraints(150, 150, 150, Priority.NEVER, HPos.CENTER, true);
                 subGrid.getColumnConstraints().addAll(ccY, ccN, ccBtn);
                 break;
             case Question.COMMENT_QTYPE_OPT:
@@ -627,41 +623,16 @@ public class TableHelper {
         return bPane;
     }
     public static Pane createCommentPageYNv2(ObservableList<QuestionYN> qList) {
-//        GridPane questionsGrid = new GridPane();
-        VBox questionsGrid = new VBox();
-        VBox questionsGridLeft = new VBox();
-        VBox questionsGridRight = new VBox();
-
-        questionsGridLeft.setAlignment(Pos.TOP_LEFT);
-        questionsGridRight.setAlignment(Pos.TOP_LEFT);
-
-//        questionsGridLeft.setSpacing(50);
-//        questionsGridRight.setSpacing(10);
-
-        questionsGrid.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20;");
-//        for (int qIdx = 0; qIdx < qList.size(); qIdx++ ) {
-//            if (qIdx <= Math.ceil(qList.size() / 2)) {
-//                Node n = createCommentQV2(qIdx + 1, qList.get(qIdx));
-//                questionsGridLeft.getChildren().add(n);
-//            } else {
-//                Node n = createCommentQV2(qIdx + 1, qList.get(qIdx));
-//                questionsGridRight.getChildren().add(n);
-//            }
-//        }
-//        questionsGrid.add(questionsGridLeft,0,0);
-//        questionsGrid.add(questionsGridRight,1,0);
-//        ColumnConstraints ccLeft = new ColumnConstraints();
-//        ColumnConstraints ccRight = new ColumnConstraints();
-//        ccLeft.setPercentWidth(50);
-//        ccRight.setPercentWidth(50);
-//        questionsGrid.getColumnConstraints().addAll(ccLeft,ccRight);
+        TilePane questionsTilePane = new TilePane(Orientation.VERTICAL);
+        questionsTilePane.setMaxHeight(200);
+        questionsTilePane.setAlignment(Pos.TOP_CENTER);
+        questionsTilePane.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20;");
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
             Pane n = createCommentQV2(qIdx + 1, qList.get(qIdx));
-            n.maxWidthProperty().bind(questionsGrid.widthProperty().divide(2.0));
-            questionsGrid.getChildren().add(n);
+            n.maxWidthProperty().bind(questionsTilePane.widthProperty().divide(2.0));
+            questionsTilePane.getChildren().add(n);
         }
-
-        return questionsGrid;
+        return questionsTilePane;
     }
 
     public static Node createMarkAllNode(QuestionOptionMS q) {

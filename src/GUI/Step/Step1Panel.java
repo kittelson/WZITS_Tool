@@ -608,8 +608,8 @@ public class Step1Panel extends BorderPane {
         genInfoLabel6.getStyleClass().add("gen-info-label-style");
         genInfoLabel7.getStyleClass().add("gen-info-label-style");
         genInfoLabel8.getStyleClass().add("gen-info-label-style");
-        genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:rgb(211,211,211);");
-        btnCloseDialog.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:rgb(204,85,0);");
+        genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
+        btnCloseDialog.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:rgb(204,85,0); -fx-text-fill: white;");
 
         genInfoDateToday.setText(control.getProject().getDateString());
 

@@ -31,9 +31,9 @@ public class Step3TableHelper extends TableView {
 
     private static final String STEP3_TABLE_CSS = "step-one-table";
 
-    public static Node createConOpsNode(Project proj) {
+    public static Pane createConOpsNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qConOpsList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qConOpsList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qConOpsList);
     }
 
     public static Pane createSysReqNode(Project proj) {
@@ -41,34 +41,34 @@ public class Step3TableHelper extends TableView {
         return TableHelper.createCommentPageYNv2(proj.getQGen().qSysReqList);
     }
 
-    public static Node createTestingStratNode(Project proj) {
+    public static Pane createTestingStratNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qTestingStratList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qTestingStratList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qTestingStratList);
     }
 
-    public static Node createOpsMaintNode(Project proj) {
+    public static Pane createOpsMaintNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qOpsMaintList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qOpsMaintList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qOpsMaintList);
     }
 
-    public static Node createStaffTrainingNode(Project proj) {
+    public static Pane createStaffTrainingNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qStaffTrainingList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qStaffTrainingList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qStaffTrainingList);
     }
 
-    public static Node createSysSecurityNode(Project proj) {
+    public static Pane createSysSecurityNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSysSecurityList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qSysSecurityList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qSysSecurityList);
     }
 
-    public static Node createProjEvalNode(Project proj) {
+    public static Pane createProjEvalNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qProjectEvalList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qProjectEvalList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qProjectEvalList);
     }
 
-    public static Node createSysBCNode(Project proj) {
+    public static Pane createSysBCNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSysBCList, new TableHelper.Options(STEP3_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qSysBCList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qSysBCList);
     }
 
     public static Node createStepSummary(MainController mc) {

@@ -41,14 +41,16 @@ public class IntroPane extends BorderPane {
     //private final FillTransition beginFT;
     public IntroPane(MainController mc) {
         this.control = mc;
-
+        Label lblToolNav = new Label();
+        lblToolNav.setText("WZIT Tool Navigation");
+        lblToolNav.getStyleClass().add("modal-title");
         startNewButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
                 JFXDialogLayout contentLayout = new JFXDialogLayout();
                 JFXDialog dialogAlert = new JFXDialog(MainController.getRootStackPane(), contentLayout, JFXDialog.DialogTransition.CENTER);
                 dialogAlert.show();
-                contentLayout.setHeading(new Text("WZIT Tool Navigation"));
+                contentLayout.setHeading(lblToolNav);
                 ImageView iv = new ImageView(IconHelper.NAV_HELPER);
                 contentLayout.setBody(iv);
                 contentLayout.setActions(btnCloseDialog);
@@ -90,7 +92,7 @@ public class IntroPane extends BorderPane {
         startLabel.getStyleClass().add("launch-title-label-top");
         infoLabel.getStyleClass().add("launch-title-label-bottom");
         instructionLabel.getStyleClass().add("intro-instructions");
-        btnCloseDialog.getStyleClass().add("comment-pane-buttonClose");
+        btnCloseDialog.getStyleClass().add("comment-pane-button");
 
         startNewButton.getStyleClass().add("intro-begin-button");
         startNewButton.setDefaultButton(true);

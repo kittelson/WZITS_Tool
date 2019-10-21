@@ -5,6 +5,7 @@
  */
 package core;
 
+import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
+
+import com.jfoenix.controls.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -20,12 +23,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
@@ -237,47 +244,104 @@ public class Stakeholder implements Serializable {
 
     public static void editInfo(Stakeholder sh) {
         if (sh.getScore() >= 0) {
-            editExistingInfo(sh);
+            fireEditExistingInfo(sh);
         } else {
             editCustomInfo(sh);
         }
     }
 
-    public static void editExistingInfo(Stakeholder sh) {
-        GridPane gp = new GridPane();
+//    public static void editExistingInfo(Stakeholder sh) {
+//        GridPane gp = new GridPane();
+//        Label l1 = new Label("Email: ");
+//        TextField emailTF = new TextField(sh.getEmail());
+//        emailTF.setPadding(new Insets(0, 0, 0, 5));
+//        Label l2 = new Label("Phone #: ");
+//        TextField phoneTF = new TextField(sh.getPhone());
+//        phoneTF.setPadding(new Insets(0, 0, 0, 5));
+//        Label l3 = new Label("Contact Name: ");
+//        TextField contactNameTF = new TextField(sh.getContactName());
+//        contactNameTF.setPadding(new Insets(0, 0, 0, 5));
+//        Label l4 = new Label("Comment: ");
+//        TextField commentTF = new TextField(sh.getComment());
+//        commentTF.setPadding(new Insets(0, 0, 0, 5));
+//        gp.add(new Label(sh.getName()), 0, 0, 2, 1);
+//        gp.add(l1, 0, 1);
+//        gp.add(emailTF, 1, 1);
+//        gp.add(l2, 0, 2);
+//        gp.add(phoneTF, 1, 2);
+//        gp.add(l3, 0, 3);
+//        gp.add(contactNameTF, 1, 3);
+//        gp.add(l4, 0, 4);
+//        gp.add(commentTF, 1, 4);
+//        Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
+//        al.initOwner(MainController.getWindow());
+//        al.setTitle("Enter/Edit Stakeholder Contact Information");
+//        al.setHeaderText("Enter/Edit Stakeholder Contact Information");
+//        al.getDialogPane().setContent(gp);
+//        Optional<ButtonType> result = al.showAndWait();
+//        if (result.isPresent() && result.get() == ButtonType.OK) {
+//            sh.setEmail(emailTF.getText());
+//            sh.setPhone(phoneTF.getText());
+//            sh.setContactName(contactNameTF.getText());
+//            sh.setComment(commentTF.getText());
+//        }
+//    }
+    public static void fireEditExistingInfo(Stakeholder sh) {
+        GridPane contentGrid = new GridPane();
+        Label lblModalHeading = new Label();
+        JFXTextField txtEmailAddr = new JFXTextField(sh.getEmail());
+        JFXTextField phoneTF = new JFXTextField(sh.getPhone());
+        JFXTextField contactNameTF = new JFXTextField(sh.getContactName());
+        JFXTextField commentTF = new JFXTextField(sh.getComment());
+        JFXButton btnOk = new JFXButton("OK");
+        JFXButton btnCancel = new JFXButton("Cancel");
         Label l1 = new Label("Email: ");
-        TextField emailTF = new TextField(sh.getEmail());
-        emailTF.setPadding(new Insets(0, 0, 0, 5));
         Label l2 = new Label("Phone #: ");
-        TextField phoneTF = new TextField(sh.getPhone());
-        phoneTF.setPadding(new Insets(0, 0, 0, 5));
         Label l3 = new Label("Contact Name: ");
-        TextField contactNameTF = new TextField(sh.getContactName());
-        contactNameTF.setPadding(new Insets(0, 0, 0, 5));
         Label l4 = new Label("Comment: ");
-        TextField commentTF = new TextField(sh.getComment());
-        commentTF.setPadding(new Insets(0, 0, 0, 5));
-        gp.add(new Label(sh.getName()), 0, 0, 2, 1);
-        gp.add(l1, 0, 1);
-        gp.add(emailTF, 1, 1);
-        gp.add(l2, 0, 2);
-        gp.add(phoneTF, 1, 2);
-        gp.add(l3, 0, 3);
-        gp.add(contactNameTF, 1, 3);
-        gp.add(l4, 0, 4);
-        gp.add(commentTF, 1, 4);
-        Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
-        al.initOwner(MainController.getWindow());
-        al.setTitle("Enter/Edit Stakeholder Contact Information");
-        al.setHeaderText("Enter/Edit Stakeholder Contact Information");
-        al.getDialogPane().setContent(gp);
-        Optional<ButtonType> result = al.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            sh.setEmail(emailTF.getText());
-            sh.setPhone(phoneTF.getText());
-            sh.setContactName(contactNameTF.getText());
-            sh.setComment(commentTF.getText());
-        }
+
+        contentGrid.add(l3,0,0);
+        contentGrid.add(txtEmailAddr,1,0);
+        contentGrid.add(l2,0,1);
+        contentGrid.add(phoneTF,1,1);
+        contentGrid.add(l1,0,2);
+        contentGrid.add(contactNameTF,1,2);
+        contentGrid.add(l4,0,3);
+        contentGrid.add(commentTF,1,3);
+        contentGrid.setHgap(15);
+        contentGrid.setVgap(15);
+
+        lblModalHeading.setText("Enter/Edit Stakeholder Contact Information");
+        lblModalHeading.getStyleClass().add("stackholder-modal-title");
+        l1.getStyleClass().add("stackholder-modal-labels");
+        l2.getStyleClass().add("stackholder-modal-labels");
+        l3.getStyleClass().add("stackholder-modal-labels");
+        l4.getStyleClass().add("stackholder-modal-labels");
+        btnOk.getStyleClass().add("modal-pane-button");
+        btnCancel.getStyleClass().add("comment-pane-buttonClose");
+        StackPane rootStackPane = MainController.getRootStackPane();
+
+        JFXDialogLayout content = new JFXDialogLayout();
+        JFXDialog dialog = new JFXDialog(rootStackPane,content, JFXDialog.DialogTransition.CENTER);
+        btnOk.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                sh.setEmail(txtEmailAddr.getText());
+                sh.setPhone(phoneTF.getText());
+                sh.setContactName(contactNameTF.getText());
+                sh.setComment(commentTF.getText());
+            }
+        });
+        btnCancel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                dialog.close();
+            }
+        });
+        content.setHeading(lblModalHeading);
+        content.setBody(contentGrid);
+        content.setActions(btnCancel, btnOk);
+        dialog.show();
     }
 
     public static void editCustomInfo(Stakeholder sh) {

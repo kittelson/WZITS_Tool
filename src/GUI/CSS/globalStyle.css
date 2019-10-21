@@ -493,25 +493,56 @@
   -fx-background-color: white;
   -fx-font-family: "calibri";
   -fx-font-size: 18;
-  -fx-font-weight: bold;
   -fx-accent: #ed7d31;
+}
+.label-styles {
+  -fx-font-size: 12pt;
+  -fx-text-fill: #ed7d31;
+}
+.modal-title{
+  -fx-font-size: 13pt;
+  -fx-text-fill: #ed7d31;
+  -fx-font-weight: lighter;
+}
+.stackholder-modal-title{
+  -fx-font-size: 13pt;
+  -fx-text-fill: #ed7d31;
+  -fx-font-weight: lighter;
+}
+.stackholder-modal-labels{
+  -fx-font-size: 13pt;
+  -fx-text-fill: #4472c4;
+  -fx-font-weight: lighter;
 }
 .comment-pane-button {
    -jfx-button-type: FLAT;
    -fx-background-color: white;
    -fx-text-fill: #4472c4;
-   -fx-border-radius: 25pt;
+   -fx-border-radius: 2pt;
    -fx-border-color: #4472c4;
-   -fx-background-radius: 25pt;
-   
+   -fx-background-radius: 2pt;
+   -fx-font-weight: bold;
+   -fx-font-size: 10pt;
+}
+.modal-pane-button {
+  -jfx-button-type: FLAT;
+  -fx-background-color: #4472c4;
+  -fx-text-fill: white;
+  -fx-border-radius: 2pt;
+  -fx-border-color: #4472c4;
+  -fx-background-radius: 2pt;
+  
+  -fx-font-size: 12pt;
 }
 .comment-pane-buttonClose {
    -jfx-button-type: FLAT;
-   -fx-background-color: white;
-   -fx-text-fill: red;
-   -fx-border-radius: 25pt;
-   -fx-border-color: red;
-   -fx-background-radius: 25pt;
+   -fx-background-color: rgb(255, 255, 255);
+   -fx-text-fill: #A0A1AC;
+   -fx-border-radius: 2pt;
+   -fx-border-color: #A0A1AC;
+   -fx-background-radius: 2pt;
+   -fx-font-weight: bold;
+   -fx-font-size: 12pt;
 }
 .question-gridLeft-styles {
   -fx-border-radius: 20pt;
