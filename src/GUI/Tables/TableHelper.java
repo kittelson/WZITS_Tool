@@ -623,8 +623,9 @@ public class TableHelper {
         return bPane;
     }
     public static Pane createCommentPageYNv2(ObservableList<QuestionYN> qList) {
-        TilePane questionsTilePane = new TilePane(Orientation.VERTICAL);
-        questionsTilePane.setMaxHeight(200);
+//        TilePane questionsTilePane = new TilePane(Orientation.VERTICAL);
+        VBox questionsTilePane = new VBox(5);
+//        questionsTilePane.setMaxHeight(200);
         questionsTilePane.setAlignment(Pos.TOP_CENTER);
         questionsTilePane.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20;");
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {

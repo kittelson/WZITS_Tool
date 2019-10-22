@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="WZITS_Tool">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dist/WZITS_Tool.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
