@@ -7,15 +7,20 @@ package core;
 
 import GUI.Helper.NodeFactory;
 import java.io.Serializable;
+
+import GUI.MainController;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.JFXTextArea;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 
 /**
  *
@@ -48,13 +53,61 @@ public class FeasibilityMatrix implements Serializable {
 
     public GridPane createSummaryPanel() {
         computeFeasibility();
+        Label lblJustification = new Label();
+        Label lblSumPreview = new Label();
+        Label lblSumDesc = new Label();
+        lblSumDesc.setText("Justification:");
+        lblJustification.setText("Feasibility Score Justification");
+        JFXButton btnAddCtm = new JFXButton();
+        JFXButton btnCloseModal = new JFXButton("Cancel");
+        JFXButton btnSaveCmts = new JFXButton("Add Comments");
+        JFXTextArea txtArea = new JFXTextArea();
+        JFXDialogLayout summaryDialog = new JFXDialogLayout();
+        btnAddCtm.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                JFXDialog dialogModal = new JFXDialog(MainController.getRootStackPane(), summaryDialog, JFXDialog.DialogTransition.CENTER);
+                summaryDialog.setHeading(lblJustification);
+                summaryDialog.setBody(txtArea);
+                btnSaveCmts.setOnAction(e -> {
+                    lblSumPreview.setText(txtArea.getText());
+                    dialogModal.close();
+                });
+                btnCloseModal.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        dialogModal.close();
+                    }
+                });
+                dialogModal.show();
+                summaryDialog.setActions(btnCloseModal, btnSaveCmts);
+            }
+        });
+        btnSaveCmts.getStyleClass().add("modal-pane-button");
+        btnCloseModal.getStyleClass().add("comment-pane-buttonClose");
+        lblSumDesc.getStyleClass().add("feasibility-output-title-bold");
+        lblSumDesc.setMaxWidth(Integer.MAX_VALUE);
+        lblSumDesc.setMaxHeight(Integer.MAX_VALUE);
+        lblSumPreview.setMaxWidth(Integer.MAX_VALUE);
+        lblSumPreview.setWrapText(false);
         GridPane gPane = new GridPane();
         GridPane scoreGrid = new GridPane();
+        BorderPane summaryPane = new BorderPane();
+        summaryPane.setTop(lblSumDesc);
+        summaryPane.setRight(btnAddCtm);
+        summaryPane.setCenter(lblSumPreview);
+        btnAddCtm.setText("Add/Edit Justification");
+        btnAddCtm.getStyleClass().add("wz-comment-hyperlink");
+        lblSumDesc.getStyleClass().add("label-styles");
+        lblSumPreview.getStyleClass().add("feasibility-output-title");
+        lblJustification.getStyleClass().add("stackholder-modal-title");
         Label scoreTitleLabel = NodeFactory.createFormattedLabel("Feasibility Score:", "feasibility-output-title-bold");
         Label scoreLabel = NodeFactory.createFormattedLabel(String.valueOf(feasibility.get()), "feasibility-output-title");
         scoreLabel.textProperty().bind(feasibility.asString());
         scoreGrid.add(scoreTitleLabel, 0, 0);
-        scoreGrid.add(scoreLabel, 1, 0);
+        scoreGrid.add(scoreLabel, 0, 1);
+        scoreGrid.add(summaryPane,1,0);
+
         ColumnConstraints cc1 = new ColumnConstraints();
         cc1.setPercentWidth(50);
         ColumnConstraints cc2 = new ColumnConstraints();

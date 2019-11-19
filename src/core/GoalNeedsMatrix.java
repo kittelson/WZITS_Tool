@@ -329,7 +329,7 @@ public class GoalNeedsMatrix implements Serializable {
         catCol.setMinWidth(175);
         catCol.getStyleClass().add("col-style-center");
 
-        TableColumn recCol = new TableColumn("Recommended Goals");
+        TableColumn recCol = new TableColumn("Subcategory"); // heading changed in accordance to recommendations from tool updates spreadsheet 
         recCol.setEditable(false);
         recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         recCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
@@ -602,12 +602,12 @@ public class GoalNeedsMatrix implements Serializable {
         matrix = (int[][]) s.readObject();
     }
 
-    public static final String SCORE_COL_NAME = "Priority";
+    public static final String SCORE_COL_NAME = "Ranking";
     public static final int SCORE_COL_WIDTH = 200;
-    public static final String ZERO_SCORE_TXT = "Not Recommended";
-    public static final String LOW_CAT_LABEL = "Low";
-    public static final String MED_CAT_LABEL = "Medium";
-    public static final String HIGH_CAT_LABEL = "High";
+    public static final String ZERO_SCORE_TXT = "N/A";
+    public static final String LOW_CAT_LABEL = "1"; // formerly "Low" changed for comments from spreadsheet
+    public static final String MED_CAT_LABEL = "2"; // formerly "Medium" changed for comments from spreadsheet
+    public static final String HIGH_CAT_LABEL = "3"; // formerly "High" changed for comments from spreadsheet
     public static final int LOW_CAT_MIN = 1;
     public static final int LOW_CAT_MAX = 4;
     public static final int MED_CAT_MIN = 5;
