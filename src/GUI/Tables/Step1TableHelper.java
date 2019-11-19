@@ -482,6 +482,7 @@ public class Step1TableHelper {
         infoGrid.add(NodeFactory.createFormattedLabel("Project Limits:", "fact-sheet-label-bold"), 0, rowIdx);
         infoGrid.add(NodeFactory.createFormattedDescLabel(p.getLimits(), "fact-sheet-description", lfs, 4), 1, rowIdx++);
         infoGrid.add(NodeFactory.createFormattedLabel("Project Website:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedLabel("Signature Sign-Off:", "fact-sheet-label-bold"),0,rowIdx);
         Hyperlink projHL = new Hyperlink(p.getUrlLink());
         projHL.getStyleClass().add("fact-sheet-label-url");
         projHL.setOnAction(new EventHandler<ActionEvent>() {
@@ -523,7 +524,6 @@ public class Step1TableHelper {
         rowIdx = 0;
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Facility and Base Conditions", "fact-sheet-label-bold"), 0, rowIdx, 1, 10);
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Work Zone Configuration", "fact-sheet-label-bold"), 0, rowIdx + 10, 1, 7);
-
         // Facility and Base Conditions
         wzMetaGrid.add(NodeFactory.createFormattedLabel("Average Annual Daily Traffic:", "fact-sheet-label"), 1, rowIdx);
         wzMetaGrid.add(NodeFactory.createFormattedLabel(String.valueOf(p.getAadt()), "fact-sheet-label-center"), 2, rowIdx);
@@ -764,6 +764,7 @@ public class Step1TableHelper {
         infoGrid.add(NodeFactory.createFormattedLabel("Project Limits:", "fact-sheet-label-bold"), 0, rowIdx);
         infoGrid.add(NodeFactory.createFormattedDescLabel(p.getLimits(), "fact-sheet-description", lfs, 4), 1, rowIdx++);
         infoGrid.add(NodeFactory.createFormattedLabel("Project Website:", "fact-sheet-label-bold"), 0, rowIdx);
+        infoGrid.add(NodeFactory.createFormattedLabel("Signature Sign-Off:","fact-sheet-label-bold"), 0, rowIdx);
         Hyperlink projHL = new Hyperlink(p.getUrlLink());
         projHL.getStyleClass().add("fact-sheet-label-url");
         projHL.setOnAction(new EventHandler<ActionEvent>() {

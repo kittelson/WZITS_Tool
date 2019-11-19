@@ -465,6 +465,7 @@ public class Step1Panel extends BorderPane {
         control.getProject().wzLengthProperty().bindBidirectional(this.wzInputSpin2.getValueFactory().valueProperty());
         control.getProject().numRoadwayLanesProperty().bindBidirectional(this.wzInputSpin3.getValueFactory().valueProperty());
         control.getProject().shoulderWidthProperty().bindBidirectional(this.wzInputSpin4.getValueFactory().valueProperty());
+        control.getProject().shoulderWidthProperty().bindBidirectional(this.wzInputSpin10.getValueFactory().valueProperty());
         control.getProject().speedLimitProperty().bindBidirectional(this.wzInputSpin5.getValueFactory().valueProperty());
         control.getProject().laneWidthBaseProperty().bindBidirectional(this.wzInputSpin6.getValueFactory().valueProperty());
         control.getProject().wzSpeedLimitProperty().bindBidirectional(this.wzInputSpin7.getValueFactory().valueProperty());
@@ -1001,6 +1002,8 @@ public class Step1Panel extends BorderPane {
         wzInputLabel5.setContentDisplay(ContentDisplay.RIGHT);
         wzInputLabel6.setGraphic(mutchSW);
         wzInputLabel6.setContentDisplay(ContentDisplay.RIGHT);
+        wzInputLabel21.setGraphic(mutchSW);
+        wzInputLabel21.setContentDisplay(ContentDisplay.RIGHT);
         wzInputLabel7.setGraphic(mutchPSL);
         wzInputLabel7.setContentDisplay(ContentDisplay.RIGHT);
         wzInputLabel8.setGraphic(mutchLW);
@@ -1018,6 +1021,7 @@ public class Step1Panel extends BorderPane {
         wzInputLabel4.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel5.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel6.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputLabel21.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel7.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel8.setMaxWidth(MainController.MAX_WIDTH);
         wzInputLabel9.setMaxWidth(MainController.MAX_WIDTH);
@@ -1046,6 +1050,7 @@ public class Step1Panel extends BorderPane {
         wzInputSpin2.setMaxWidth(MainController.MAX_WIDTH);
         wzInputSpin3.setMaxWidth(MainController.MAX_WIDTH);
         wzInputSpin4.setMaxWidth(MainController.MAX_WIDTH);
+        wzInputSpin10.setMaxWidth(MainController.MAX_WIDTH);
         wzInputSpin5.setMaxWidth(MainController.MAX_WIDTH);
         wzInputSpin6.setMaxWidth(MainController.MAX_WIDTH);
         wzInputSpin7.setMaxWidth(MainController.MAX_WIDTH);
@@ -1060,6 +1065,7 @@ public class Step1Panel extends BorderPane {
         wzInputLabel4.getStyleClass().add("wz-input-label-style");
         wzInputLabel5.getStyleClass().add("wz-input-label-style");
         wzInputLabel6.getStyleClass().add("wz-input-label-style");
+        wzInputLabel21.getStyleClass().add("wz-input-label-style");
         wzInputLabel7.getStyleClass().add("wz-input-label-style");
         wzInputLabel8.getStyleClass().add("wz-input-label-style");
         wzInputLabel9.getStyleClass().add("wz-input-label-style");
@@ -1082,6 +1088,7 @@ public class Step1Panel extends BorderPane {
         wzInputSpin2.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 50, control.getProject().getWzLength(), 0.1));
         wzInputSpin3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 8, control.getProject().getNumRoadwayLanes(), 1));
         wzInputSpin4.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 25, control.getProject().getShoulderWidth(), 0.5));
+        wzInputSpin10.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 25, control.getProject().getShoulderWidth(), 0.5));
         wzInputSpin5.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 100, control.getProject().getSpeedLimit(), 5));
         wzInputSpin6.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(5, 25, control.getProject().getLaneWidthBase(), 0.5));
         wzInputSpin7.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 100, control.getProject().getWzSpeedLimit(), 5));
@@ -1115,6 +1122,13 @@ public class Step1Panel extends BorderPane {
                 return;
             }
             commitEditorText(wzInputSpin4);
+        });
+        wzInputSpin10.setEditable(true);
+        wzInputSpin10.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) {
+                return;
+            }
+            commitEditorText(wzInputSpin10);
         });
         wzInputSpin5.setEditable(true);
         wzInputSpin5.focusedProperty().addListener((s, ov, nv) -> {
@@ -1185,8 +1199,11 @@ public class Step1Panel extends BorderPane {
         inputGrid.add(wzInputLabel5, 0, rowIdx);    // Number of Roadway Lanes
         inputGrid.add(wzInputSpin3, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Number of Roadway Lanes", control.getProject().nrlCommentProperty()), 2, (rowIdx - 1));
-        inputGrid.add(wzInputLabel6, 0, rowIdx);    // Shoulder Width
+        inputGrid.add(wzInputLabel6, 0, rowIdx);    // left Shoulder Width
         inputGrid.add(wzInputSpin4, 1, rowIdx++);
+        inputGrid.add(wzInputLabel21, 0, rowIdx);   // right shoulder width
+        inputGrid.add(wzInputSpin10, 1, rowIdx++);
+
         inputGrid.add(NodeFactory.createCommentLink("Shoulder Width", control.getProject().swCommentProperty()), 2, (rowIdx - 1));
         inputGrid.add(wzInputLabel7, 0, rowIdx);    // Posted Speed Limit
         inputGrid.add(wzInputSpin5, 1, rowIdx++);
@@ -1407,7 +1424,8 @@ public class Step1Panel extends BorderPane {
     private final Label wzInputLabel3 = new Label("Area Type:");
     private final Label wzInputLabel4 = new Label("Annual Average Daily Traffic (Bidirectional AADT):");
     private final Label wzInputLabel5 = new Label("Number of Roadway Lanes (1 Direction):");
-    private final Label wzInputLabel6 = new Label("Shoulder Width (ft):");
+    private final Label wzInputLabel6 = new Label("Left Shoulder Width (ft):");
+    private final Label wzInputLabel21 = new Label("Right Shoulder Width (ft):");
     private final Label wzInputLabel7 = new Label("Posted Speed Limit (mph):");
     private final Label wzInputLabel8 = new Label("Lane Width:");
     private final Label wzInputLabel9 = new Label("Part of a Signalized Corridor?");
@@ -1441,9 +1459,13 @@ public class Step1Panel extends BorderPane {
      */
     private final Spinner wzInputSpin3 = new Spinner();
     /**
-     * Shoulder Width (ft) (Float) Input Spinner
+     * Left Shoulder Width (ft) (Float) Input Spinner
      */
     private final Spinner wzInputSpin4 = new Spinner();
+    /**
+     * Left Shoulder Width (ft) (Float) Input Spinner
+     */
+    private final Spinner wzInputSpin10 = new Spinner();
     /**
      * Posted Speed Limit (mph) (Integer) Input Spinner
      */
