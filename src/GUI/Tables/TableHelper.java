@@ -623,17 +623,18 @@ public class TableHelper {
         return bPane;
     }
     public static Pane createCommentPageYNv2(ObservableList<QuestionYN> qList) {
-//        TilePane questionsTilePane = new TilePane(Orientation.VERTICAL);
-        VBox questionsTilePane = new VBox(5);
-//        questionsTilePane.setMaxHeight(200);
-        questionsTilePane.setAlignment(Pos.TOP_CENTER);
-        questionsTilePane.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20;");
+//        TilePane questionsVBox = new TilePane(Orientation.VERTICAL);
+        VBox questionsVBox = new VBox(5);
+//        questionsVBox.setMaxHeight(200);
+        questionsVBox.setAlignment(Pos.TOP_CENTER);
+        questionsVBox.setStyle("-fx-background-color: white; -fx-background-radius: 20; -fx-border-radius: 20;");
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
             Pane n = createCommentQV2(qIdx + 1, qList.get(qIdx));
-            n.maxWidthProperty().bind(questionsTilePane.widthProperty().divide(2.0));
-            questionsTilePane.getChildren().add(n);
+//            n.maxWidthProperty().bind(questionsVBox.widthProperty().divide(2.0));
+            n.setMaxWidth(800);
+            questionsVBox.getChildren().add(n);
         }
-        return questionsTilePane;
+        return questionsVBox;
     }
 
     public static Node createMarkAllNode(QuestionOptionMS q) {
