@@ -19,11 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 /**
  *
@@ -37,29 +33,29 @@ public class Step6TableHelper extends TableView {
 
     private static final String STEP2_TABLE_CSS = "step-one-table";
 
-    public static Node createChangingConditionsNode(Project proj) {
+    public static Pane createChangingConditionsNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qChangingConditionsList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qChangingConditionsList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qChangingConditionsList);
     }
 
-    public static Node createSharingInfoNode(Project proj) {
+    public static Pane createSharingInfoNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qSharingInfoList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qSharingInfoList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qSharingInfoList);
     }
 
-    public static Node createStaffingNode(Project proj) {
+    public static Pane createStaffingNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qStaffingList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qStaffingList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qStaffingList);
     }
 
-    public static Node createPublicSupportNode(Project proj) {
+    public static Pane createPublicSupportNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qPublicSupportList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qPublicSupportList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qPublicSupportList);
     }
 
-    public static Node createMonitoringEvalNode(Project proj) {
+    public static Pane createMonitoringEvalNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qMonitoringEvalList, new TableHelper.Options(STEP2_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qMonitoringEvalList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qMonitoringEvalList);
     }
 
     public static Node createStepSummary(MainController mc) {

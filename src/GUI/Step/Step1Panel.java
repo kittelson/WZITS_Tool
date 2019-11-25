@@ -19,6 +19,7 @@ import core.Question;
 import core.QuestionGenerator;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
@@ -45,12 +46,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -675,16 +671,23 @@ public class Step1Panel extends BorderPane {
         mutcdButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                Alert al = new Alert(Alert.AlertType.INFORMATION);
-                al.setTitle("More Information");
-                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
-                al.setContentText("1) Long-term stationary - Work that occupies a location more than 3 days\n\n"
+                JFXDialogLayout content = new JFXDialogLayout();
+                JFXDialog dialogAlert = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+                dialogAlert.show();
+                content.setHeading(new Text("MUTCD Designations (MUTCD 6G.02"));
+                content.setBody(new Text("1) Long-term stationary - Work that occupies a location more than 3 days\n\n"
                         + "2) Intermediate-term stationary - Work that occupies a location more than one daylight period up to 3 days, or nightime work lasting more than 1 hour\n\n"
                         + "3) Short-term stationary - Daytime work lasting more than 1 hour within a single daylight period\n\n"
                         + "4) Short duration - Work that occupies a location up to 1 hour\n\n"
-                        + "5) Mobile - Work that moves intermittently or continuously\n\n");
-                al.setWidth(300);
-                al.showAndWait();
+                        + "5) Mobile - Work that moves intermittently or continuously\n\n"));
+                content.setStyle("-fx-font-size: 16pt");
+                btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        dialogAlert.close();
+                    }
+                });
+                content.setActions(btnCloseDialog);
             }
         });
 
@@ -729,16 +732,19 @@ public class Step1Panel extends BorderPane {
         mutchBtnNumLane.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Alert al = new Alert(Alert.AlertType.INFORMATION);
-                al.setTitle("consectetur adipiscing");
-                al.setHeaderText("sed do eiusmod tempor incididunt");
-                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit\n\n"
-                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
-                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
-                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
-                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
-                al.setWidth(300);
-                al.showAndWait();
+                JFXDialogLayout numLanesContent = new JFXDialogLayout();
+                numLanesContent.setStyle("-fx-font-size: 16pt");
+                JFXDialog numLanesDialog = new JFXDialog(MainController.getRootStackPane(), numLanesContent, JFXDialog.DialogTransition.CENTER);
+                numLanesContent.setHeading(new Text("Work Zone Configuration"));
+                numLanesContent.setBody(new Text("Maximum number of lanes to close during the duration of the project"));
+                numLanesDialog.show();
+                numLanesContent.setActions(btnCloseDialog);
+                btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        numLanesDialog.close();
+                    }
+                });;
             }
         });
 
@@ -813,22 +819,30 @@ public class Step1Panel extends BorderPane {
                 al.showAndWait();
             }
         });
+        Label modalHeader = new Label();
+        Label modalDesc = new Label();
 
         Hyperlink mutchMA = new Hyperlink("(?)");
+        modalHeader.setText("MUTCD Designations (MUTCH 6G.02)");
+        modalDesc.setText("Who owns the roadway?");
         mutchMA.getStyleClass().add("wz-input-hyperlink-small-superscript");
         mutchMA.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Alert al = new Alert(Alert.AlertType.INFORMATION);
-                al.setTitle("More Information");
-                al.setHeaderText("MUTCD Designations (MUTCD 6G.02)");
-                al.setContentText("1) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \n\n"
-                        + "2) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
-                        + "3) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
-                        + "4) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
-                        + "5) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n");
-                al.setWidth(300);
-                al.showAndWait();
+                StackPane modalStackPane = MainController.getRootStackPane();
+                JFXDialogLayout content = new JFXDialogLayout();
+                content.setStyle("-fx-font-size: 16pt");
+                JFXDialog modalDialog = new JFXDialog(modalStackPane,content, JFXDialog.DialogTransition.CENTER);
+                modalDialog.show();
+                content.setHeading(modalHeader);
+                content.setBody(modalDesc);
+                content.setActions(btnCloseDialog);
+                btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        modalDialog.close();
+                    }
+                });
             }
         });
 
@@ -976,42 +990,42 @@ public class Step1Panel extends BorderPane {
             }
         });
 
-        wzInputLabel11.setGraphic(mutchBtnWZL);
-        wzInputLabel11.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel11.setGraphic(mutchBtnWZL);
+//        wzInputLabel11.setContentDisplay(ContentDisplay.RIGHT);
         wzInputLabel12.setGraphic(mutcdButton);
         wzInputLabel12.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel13.setGraphic(mutchBtnWZSL);
-        wzInputLabel13.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel13.setGraphic(mutchBtnWZSL);
+//        wzInputLabel13.setContentDisplay(ContentDisplay.RIGHT);
         wzInputLabel14.setGraphic(mutchBtnNumLane);
         wzInputLabel14.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel18.setGraphic(mutchWZLW);
-        wzInputLabel18.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel19.setGraphic(mutchSC);
-        wzInputLabel19.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel20.setGraphic(mutchFAP);
-        wzInputLabel20.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel1.setGraphic(mutchFCR);
-        wzInputLabel1.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel18.setGraphic(mutchWZLW);
+//        wzInputLabel18.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel19.setGraphic(mutchSC);
+//        wzInputLabel19.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel20.setGraphic(mutchFAP);
+//        wzInputLabel20.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel1.setGraphic(mutchFCR);
+//        wzInputLabel1.setContentDisplay(ContentDisplay.RIGHT);
         wzInputLabel2.setGraphic(mutchMA);
         wzInputLabel2.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel3.setGraphic(mutchAT);
-        wzInputLabel3.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel4.setGraphic(mutchAADT);
-        wzInputLabel4.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel5.setGraphic(mutchNRL);
-        wzInputLabel5.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel6.setGraphic(mutchSW);
-        wzInputLabel6.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel21.setGraphic(mutchSW);
-        wzInputLabel21.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel7.setGraphic(mutchPSL);
-        wzInputLabel7.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel8.setGraphic(mutchLW);
-        wzInputLabel8.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel9.setGraphic(mutchPSC);
-        wzInputLabel9.setContentDisplay(ContentDisplay.RIGHT);
-        wzInputLabel10.setGraphic(mutchNHS);
-        wzInputLabel10.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel3.setGraphic(mutchAT);
+//        wzInputLabel3.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel4.setGraphic(mutchAADT);
+//        wzInputLabel4.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel5.setGraphic(mutchNRL);
+//        wzInputLabel5.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel6.setGraphic(mutchSW);
+//        wzInputLabel6.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel21.setGraphic(mutchSW);
+//        wzInputLabel21.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel7.setGraphic(mutchPSL);
+//        wzInputLabel7.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel8.setGraphic(mutchLW);
+//        wzInputLabel8.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel9.setGraphic(mutchPSC);
+//        wzInputLabel9.setContentDisplay(ContentDisplay.RIGHT);
+//        wzInputLabel10.setGraphic(mutchNHS);
+//        wzInputLabel10.setContentDisplay(ContentDisplay.RIGHT);
 
         wzTitleLabel1.setMaxWidth(MainController.MAX_WIDTH);
         wzTitleLabel2.setMaxWidth(MainController.MAX_WIDTH);

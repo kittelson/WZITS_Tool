@@ -58,7 +58,7 @@ public class LaunchPane extends BorderPane {
         infoText.getStyleClass().add("launch-info-text");
         infoText.setMinHeight(100);
         infoText.setPrefRowCount(4);
-        startButton.setStyle("-fx-font-size: 20px; -jfx-button-type: RAISED; -fx-background-color: rgb(41,171,226)");
+        startButton.setStyle("setStyle(-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {

@@ -19,11 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 /**
  *
@@ -35,24 +31,24 @@ public class Step4TableHelper extends TableView {
 
     private static final String STEP4_TABLE_CSS = "step-one-table";
 
-    public static Node createDirectIndirectNode(Project proj) {
+    public static Pane createDirectIndirectNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qDirectIndirectList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qDirectIndirectList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qDirectIndirectList);
     }
 
-    public static Node createMechanismNode(Project proj) {
+    public static Pane createMechanismNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qMechanismList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qMechanismList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qMechanismList);
     }
 
-    public static Node createRFPNode(Project proj) {
+    public static Pane createRFPNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qRFPList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qRFPList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qRFPList);
     }
 
-    public static Node createVendorNode(Project proj) {
+    public static Pane createVendorNode(Project proj) {
         //return TableHelper.createQuestionYNTable(proj.getQGen().qVendorSelectionList, new TableHelper.Options(STEP4_TABLE_CSS));
-        return TableHelper.createCommentPageYN(proj.getQGen().qVendorSelectionList);
+        return TableHelper.createCommentPageYNv2(proj.getQGen().qVendorSelectionList);
     }
 
     public static Node createStepSummary(MainController mc) {

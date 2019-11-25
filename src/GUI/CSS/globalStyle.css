@@ -385,11 +385,17 @@
 }
 
 .substep-title-label {
-  -fx-background-color: #595959; /* Dark Grey: #595959   Navy: #0E298C*/
-  -fx-text-fill: white;
-  -fx-font-size: 24;
+  -fx-background-color: white; /* Dark Grey: #595959   Navy: #0E298C*/
+  -fx-text-fill: #F3A100;          /* yellowish gold */
+  -fx-font-size: 20;
   -fx-font-family: "calibri";
-  -fx-alignment: center;
+  -fx-alignment: center-left;
+  -fx-border-radius: 10 10 0 0;
+  -fx-background-radius: 10 10 0 0;
+  -fx-padding: 0 0 0 250;
+  -fx-font-weight: lighter;
+  /* -fx-border-style: none none solid none;
+  -fx-border-color: #595959; */
 }
 
 .navigator {
@@ -1023,3 +1029,17 @@
   -fx-font-style: normal;
   -fx-text-fill: -fx-focus-color;
 }
+.animation-style-on{
+    -fx-text-fill: white;
+    -fx-background-color: orange;
+    -fx-border-radius: 10 10 0 0;
+    -fx-background-radius: 10 10 0 0;
+    -fx-stoke: solid;
+    -fx-border-color: orange;
+    -fx-border-width: 1px;
+}
+.animation-style-off{
+    -fx-background-color: white;
+    -fx-border-radius: 10 10 0 0;
+    -fx-background-radius: 10 10 0 0;
+   }

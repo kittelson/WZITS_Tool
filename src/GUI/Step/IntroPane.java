@@ -94,7 +94,7 @@ public class IntroPane extends BorderPane {
         instructionLabel.getStyleClass().add("intro-instructions");
         btnCloseDialog.getStyleClass().add("comment-pane-button");
 
-        startNewButton.getStyleClass().add("intro-begin-button");
+        startNewButton.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 32; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
         startNewButton.setDefaultButton(true);
         //startNewButton.setStyle("-fx-font-size: 36");
 
