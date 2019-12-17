@@ -6,7 +6,6 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -14,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -23,9 +24,11 @@ import javafx.scene.control.Label;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.regex.Pattern;
+
 public class wzits_VCwiz extends Application {
 
-    public class vcWizard extends VBox {
+    public class vcWizard extends BorderPane {
         GridPane inputsGrid = new GridPane();
         VBox root = new VBox();
     }
@@ -44,8 +47,52 @@ public class wzits_VCwiz extends Application {
         Label lblvehPerDay = new Label("veh/day");
         Label lbldirSplit = new Label(); //change to a binding that updates on slider changing
         Label lblTrucks = new Label("%");
-        Label lblvehLnHr = new Label("veh/ln/hr");
+        Label lblvehLnHr = new Label("pc/ln/hr");
         Label lblcompValue = new Label();
+        final char seperatorChar = ',';
+        JFXTextField txtAADT = new JFXTextField();
+
+        final Pattern numPattern = Pattern.compile("[0-9" + seperatorChar + "]*");
+        txtAADT.setTextFormatter(new TextFormatter<>(c -> {
+            if (!c.isContentChange()) {
+                return c;
+            }
+            String newText = c.getControlNewText();
+            if (newText.isEmpty()) {
+                return c;
+            }
+            if (!numPattern.matcher(newText).matches()) {
+                return null;
+            }
+            int suffixCount = c.getControlText().length() - c.getRangeEnd();
+            int digits = suffixCount - suffixCount / 4;
+            StringBuilder sb = new StringBuilder();
+
+            if (digits % 3 == 0 && digits > 0 && suffixCount % 4 != 0) {
+                sb.append(seperatorChar);
+            }
+            for (int i = c.getRangeStart() + c.getText().length() - 1; i >= 0; i--) {
+                char letter = newText.charAt(i);
+                if (Character.isDigit(letter)) {
+                    sb.append(letter);
+                    digits++;
+                    if (digits % 3 == 0) {
+                        sb.append(seperatorChar);
+                    }
+                }
+            }
+            if (digits % 3 == 0) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            sb.reverse();
+            int length = sb.length();
+            c.setRange(0, c.getRangeEnd());
+            c.setText(sb.toString());
+            c.setCaretPosition(length);
+            c.setAnchor(length);
+
+            return c;
+        }));
 
         lblAADT.getStyleClass().add("vc-label-styles");
 
@@ -56,7 +103,6 @@ public class wzits_VCwiz extends Application {
         FontIcon nextIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_RIGHT, Color.SEAGREEN, 20);
         btnPrev.setGraphic(nextIcon);
 
-        JFXTextField txtAADT = new JFXTextField();
         JFXTextField txtLaneCap = new JFXTextField();
         JFXTextField txtPercTrucks = new JFXTextField();
         txtPercTrucks.setPromptText("Percent Trucks");
@@ -69,27 +115,40 @@ public class wzits_VCwiz extends Application {
         txtLaneCap.getStyleClass().add("jf-txtbox");
         txtPercTrucks.getStyleClass().add("jf-txtbox");
 
-        slidNumLanes.setShowTickMarks(true);
         slidDirSplit.setShowTickMarks(true);
-        slidNumLanes.setShowTickLabels(true);
         slidDirSplit.setShowTickLabels(true);
-        slidDirSplit.setMajorTickUnit(.5);
+        slidDirSplit.setValue(0.5);
+        slidDirSplit.setMin(0.00);
+        slidDirSplit.setBlockIncrement(0.01);
+        slidDirSplit.setMajorTickUnit(.2);
+        slidDirSplit.setMinorTickCount(19);
+        slidDirSplit.setSnapToTicks(true);
+        slidDirSplit.setMax(1.0);
+        slidNumLanes.setShowTickMarks(true);
+        slidNumLanes.setShowTickLabels(true);
+        slidNumLanes.setValue(0.5);
+        slidNumLanes.setMin(0.00);
+        slidNumLanes.setBlockIncrement(0.01);
         slidNumLanes.setMajorTickUnit(1);
-        slidDirSplit.setMax(1);
+        slidNumLanes.setMinorTickCount(19);
+        slidNumLanes.setSnapToTicks(true);
         slidNumLanes.setMax(6);
-        slidNumLanes.getStyleClass().add("jfx-slider");
+//        slidNumLanes.getStyleClass().add("jfx-slider");
 
-//        slidDirSplit.valueProperty().addListener(new ChangeListener<Number>() {
-//            @Override
-//            public void changed(
-//                    ObservableValue<? extends Number> observableValue,
-//                    Number oldValue,
-//                    Number newValue) {
-//                lbldirSplit.textProperty().setValue(
-//                        String.valueOf(newValue.doubleValue())
-//                );
-//            }
-//        });
+        lblLaneCap.setTooltip(new Tooltip("Base Per lane capacity is defined in Passenger-cars per Lane per Hour," +
+                "and converted\n to vehicles per lane per hour (veh/ln/hr) using the specified truck percentage"));
+
+        txtAADT.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(
+                    ObservableValue<? extends String> observable,
+                    String oldValue,
+                    String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    txtAADT.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
 //        Double valueZero = Double.valueOf(lbldirSplit.getText());
 //        Integer valueOne = Integer.valueOf(txtAADT.getText());
 //        lblcompValue.textProperty().bind(
@@ -210,8 +269,9 @@ public class wzits_VCwiz extends Application {
 
         graphPane.setCenter(demandLine);
 
-
-        vcWizard.getChildren().addAll(inputGrids, navPane, graphPane);
+        vcWizard.setTop(inputGrids);
+        vcWizard.setCenter(navPane);
+        vcWizard.setBottom(graphPane);
         //set node in stage as custom panel 'new vc wizard panel' to launch panel
         vcWizard.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         primaryStage.setScene(new Scene(vcWizard, 1000, 400));
