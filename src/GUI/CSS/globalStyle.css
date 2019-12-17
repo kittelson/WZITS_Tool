@@ -1,7 +1,7 @@
 .root {
-  -fx-focus-color: #ed7d31;
+  -fx-focus-color: #ed7d31; /* burnt orangeish */
   -fx-faint-focus-color: #ed7d3122;
-  -fx-default-button: #ed7d31;
+  -fx-default-button: #ed7d31; /* burnt orangeish */
 
   -fx-cell-hover-color: #ed7d31;
 
@@ -110,7 +110,7 @@
 }
 
 .sub-flow-step {
-  -fx-background-color: #833c0c;
+  -fx-background-color: #833c0c; /* brownish */
   /*-fx-shape: 'M 0 0 L 100 0 L 125 25 L 100 50 L 0 50 L 25 25 z';*/
   -fx-shape: "M 0 0 L 400 0 L 425 25 L 400 50 L 0 50 L 25 25 z";
   -fx-text-fill: white;
@@ -159,7 +159,7 @@
 .wz-input-title-style {
   -fx-text-alignment: center;
   -fx-alignment: center;
-  -fx-background-color: #bac5cc;
+  -fx-background-color: #bac5cc; /* blueish gray */
   -fx-font-family: "calibri";
   -fx-wrap-text: true;
   -fx-font-size: 18;
@@ -480,7 +480,7 @@
   -fx-border-radius: 20;
 }
 .comment-label-style {
-    -fx-text-fill: #4472c4;
+    -fx-text-fill: #4472c4; /* blue */
     -fx-font-size: 18pt;
     -fx-background-color: white;
     -fx-background-radius: 20 20 0 0;
@@ -1043,3 +1043,73 @@
     -fx-border-radius: 10 10 0 0;
     -fx-background-radius: 10 10 0 0;
    }
+   /* the following section is Jfoenix styles for the VC wizard */
+.jfx-combo-style {
+  -jfx-focus-color: #ed7d31;
+  -jfx-unfocus-color: #595959;
+  -fx-prompt-text-fill: #595959;
+  -jfx-label-float: true;
+}
+.jfx-combo-style  .list-cell {
+  -fx-alignment: center;
+  -fx-font-size: 12pt;
+}
+
+.jfx-button-style {
+  -jfx-button-type: FLAT; 
+  -fx-border-color: #4472c4; 
+  -fx-background-color: #4472c4; 
+  -fx-text-fill: white; 
+  -fx-border-radius: 4px;
+  -fx-font-size: 15px;
+}
+ /* slider styles thumb = left, track = right */
+ .jfx-slider {
+  -jfx-default-thumb: #ff9a07;
+ }
+
+.jfx-slider > .thumb {
+  -fx-background-color: #595959;
+}
+.jfx-slider > .track {
+  -fx-background-color: #4472c4;
+}
+
+.jfx-slider > .animated-thumb {
+  -fx-background-color: #ff9a07;
+}
+
+.jfx-slider .slider-value {
+    -fx-fill: #4472c4;
+}
+/* textbox/labels styles */
+.jf-txtbox {
+  -jfx-focus-color: #ff9a07;
+  -jfx-unfocus-color: #595959;
+  -fx-alignment: center-left;
+}
+
+/* graph styles */
+.chart-series-line {
+  -fx-stroke-width: 2px;
+  -fx-effect: null;
+}
+
+.default-color0.chart-series-line {
+  -fx-stroke: black;
+  -fx-stroke-dash-array: 5 5 5 5;
+}
+
+.default-color0.chart-line-symbol {
+  -fx-background-color: black, white;
+}
+
+.default-color1.chart-series-line {
+  -fx-stroke: #ff9a07;
+}
+
+.default-color1.chart-line-symbol {
+  -fx-background-color: #ff9a07, #ff9a07;
+}
+
+

@@ -629,7 +629,8 @@ public class QuestionGenerator implements Serializable {
                 new String[]{"Standalone", "Customizable", "N/A"}));
         // Institutional/Jurisdictional
         this.qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has sufficient funding been provided in the construction contract for the work zone?"));
-        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is your agency relunctant to adopt smart work zone ITS?"));
+        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Will implementation of ITS for the work zone require coordination between internal stakeholders such as STMC, TMC and/or IT?" +
+                " If so, please list reasoning and contact information for applicable parties."));
         qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do your agency ITS experts interact with road design and construction experts in relation to work zones?"));
         qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Does your agency have staff with experience in smart work zone ITS?"));
         qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do long standing operational procedures (SOPs)  need to be adopted?"));
