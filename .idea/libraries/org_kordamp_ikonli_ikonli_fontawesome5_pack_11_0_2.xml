@@ -3,6 +3,7 @@
     <properties maven-id="org.kordamp.ikonli:ikonli-fontawesome5-pack:11.0.2" />
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/kordamp/ikonli/ikonli-fontawesome5-pack/11.0.2/ikonli-fontawesome5-pack-11.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/kordamp/ikonli/ikonli-core/11.0.2/ikonli-core-11.0.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -78,6 +78,7 @@ public class StakeholderMatrix implements Serializable {
             String[] headerTokens = br.readLine().split(",");
             numStakeholders = headerTokens.length - 1;
             for (int sIdx = 1; sIdx < headerTokens.length; sIdx++) {
+                if (headerTokens[sIdx].equalsIgnoreCase(""))
                 stakeholders.add(new Stakeholder(sIdx, headerTokens[sIdx], 0));
             }
         } catch (IOException e) {
@@ -334,6 +335,30 @@ public class StakeholderMatrix implements Serializable {
 
         TableColumn recCol = new TableColumn("Name");
         recCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        recCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
+            @Override
+            public TableCell<Need, String> call(TableColumn<Need, String> tc) {
+                final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell<Need, String>() {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (!empty && item != null) {
+                            setText(item);
+                            for (Stakeholder sh : stakeholders) {
+                                if (sh.getName().equalsIgnoreCase(item)) {
+                                    if (sh.hasHL) {
+                                        setGraphic(sh.hl);
+                                        this.setContentDisplay(ContentDisplay.RIGHT);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                };
+                return tfe;
+            }
+        });
 
         TableColumn scoreCol = new TableColumn(SCORE_COL_NAME);
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));

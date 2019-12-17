@@ -7,10 +7,8 @@ package core;
 
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+
+import java.io.*;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -26,10 +24,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -48,6 +44,9 @@ public class Stakeholder implements Serializable {
     private BooleanProperty coreTeamMember = new SimpleBooleanProperty();
     private BooleanProperty stakeholder = new SimpleBooleanProperty();
     private BooleanProperty notApplicable = new SimpleBooleanProperty();
+
+    public boolean hasHL = false;
+    public Node hl = new Hyperlink("?");
 
     public Stakeholder(int idx, String name, int score) {
         this.idx.set(idx);
@@ -82,6 +81,24 @@ public class Stakeholder implements Serializable {
                 }
             }
         });
+    }
+
+    public Stakeholder(int idx, String name, int score, Node hl) {
+        this(idx, name, score);
+        this.hl = hl;
+        hl.getStyleClass().add("wz-input-hyperlink");
+        ((Hyperlink) hl).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                TextInputDialog tid = new TextInputDialog(getName());
+                tid.setTitle("Stakeholder Name");
+                tid.setHeaderText("Specify new Stakeholder Name");
+                tid.showAndWait();
+                String newName = tid.getResult();
+                setName(newName);
+            }
+        });
+        this.hasHL = true;
     }
 
     public int getIdx() {
@@ -239,6 +256,24 @@ public class Stakeholder implements Serializable {
             comment = new SimpleStringProperty((String) s.readObject());
         } catch (IOException e) {
             comment = new SimpleStringProperty("");
+        }
+        try {
+            hasHL = s.readBoolean();
+            hl = new Hyperlink((String) s.readObject());
+            hl.getStyleClass().add("wz-input-hyperlink");
+            ((Hyperlink) hl).setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent ae) {
+                    TextInputDialog tid = new TextInputDialog(getName());
+                    tid.setTitle("Stakeholder Name");
+                    tid.setHeaderText("Specify new Stakeholder Name");
+                    tid.showAndWait();
+                    String newName = tid.getResult();
+                    setName(newName);
+                }
+            });
+        } catch (EOFException e) {
+            // Future
         }
     }
 
