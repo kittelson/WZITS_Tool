@@ -1112,4 +1112,10 @@
   -fx-background-color: #ff9a07, #ff9a07;
 }
 
+/* label styles */
+.vc-label-styles {
+  -fx-font-size: 15px;
+  -fx-text-fill: black;
+}
+
 
