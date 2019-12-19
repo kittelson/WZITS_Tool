@@ -83,11 +83,15 @@ public class vcWizard extends BorderPane {
             return c;
         }));
 
-//        lblAADT.getStyleClass().add("vc-label-styles");
-//        lblcompDir.getStyleClass().add("vc-label-styles");
-//        lblDirSplit.getStyleClass().add("vc-label-styles");
-//        lblvehPerDay.getStyleClass().add("vc-label-styles");
-//        lblcompDir.getStyleClass().add("vc-label-styles");
+        lblAADT.getStyleClass().add("vc-label-styles");
+        lblcompDir.getStyleClass().add("vc-label-styles");
+        lblDirSplit.getStyleClass().add("vc-label-styles");
+        lblvehPerDay.getStyleClass().add("vc-units");
+        lblLaneCap.getStyleClass().add("vc-label-styles");
+        lblNumLanes.getStyleClass().add("vc-label-styles");
+        lblTrucks.getStyleClass().add("vc-label-styles");
+        lblSegCap.getStyleClass().add("vc-label-styles");
+        lblvehLnHr.getStyleClass().add("vc-units");
 
 
         JFXButton btnPrev = new JFXButton();
@@ -195,8 +199,8 @@ public class vcWizard extends BorderPane {
         Label sliderLabel = new Label("(" + format_2f.format(slidDirSplit.getValue()) + ")");
         sliderLabel.setMaxWidth(Integer.MAX_VALUE);
         sliderLabel.setMaxHeight(Integer.MAX_VALUE);
-        sliderLabel.setAlignment(Pos.CENTER);
-        sliderLabel.setStyle("-fx-text-fill: #595959; -fx-font-weight: bold; -fx-padding: -20 0 0 15;");
+        sliderLabel.setAlignment(Pos.TOP_CENTER);
+        sliderLabel.setStyle("-fx-text-fill: Black; -fx-font-size: 14px; -fx-padding: 0 0 0 15; ");
         slidDirSplit.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) {

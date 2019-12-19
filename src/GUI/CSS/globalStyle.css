@@ -1065,14 +1065,14 @@
 }
  /* slider styles thumb = left, track = right */
  .jfx-slider {
-  -jfx-default-thumb: #ff9a07;
+  -jfx-default-thumb: #4472c4;
  }
 
 .jfx-slider > .thumb {
-  -fx-background-color: #595959;
+  -fx-background-color: #4472c4;
 }
 .jfx-slider > .track {
-  -fx-background-color: #4472c4;
+  /* -fx-background-color: #4472c4; */
 }
 
 .jfx-slider > .animated-thumb {
@@ -1111,11 +1111,33 @@
 .default-color1.chart-line-symbol {
   -fx-background-color: #ff9a07, #ff9a07;
 }
+.chart-legend {
+  -fx-background-color:  transparent;
+}
+.chart-legend-item-symbol{
+  /* -fx-background-radius: 20; */
+  -fx-stroke-dash-array: 5 5 5 5;
+}
 
 /* label styles */
 .vc-label-styles {
-  -fx-font-size: 15px;
+  -fx-font-size: 14px;
   -fx-text-fill: black;
 }
+.vc-units {
+  -fx-font-size: 12px;
+  -fx-text-fill: black;
+  -fx-font-style: italic;
 
+}
+.axis {
+  -fx-font-size: 14px;
+  -fx-font-family: Tahoma;
+  -fx-tick-label-font-size: 12px;
+}
+
+.axis-label {
+  -fx-font-size: 14px;
+  -fx-font-family: Tahoma;
+}
 
