@@ -169,11 +169,11 @@ public class VolumeToCapacityWizard extends BorderPane {
         directionalSplitSlider.setMax(1.0);
         slidNumLanes.setShowTickMarks(true);
         slidNumLanes.setShowTickLabels(true);
-        slidNumLanes.setValue(0.5);
-        slidNumLanes.setMin(0.00);
-        slidNumLanes.setBlockIncrement(0.01);
+        slidNumLanes.setValue(2);
+        slidNumLanes.setMin(1);
+        slidNumLanes.setBlockIncrement(1);
         slidNumLanes.setMajorTickUnit(1);
-        slidNumLanes.setMinorTickCount(19);
+        slidNumLanes.setMinorTickCount(0);
         slidNumLanes.setSnapToTicks(true);
         slidNumLanes.setMax(6);
 

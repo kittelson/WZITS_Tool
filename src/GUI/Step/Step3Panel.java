@@ -313,10 +313,10 @@ public class Step3Panel extends BorderPane {
                 Label selectedTitleLabel = (Label) ((BorderPane) hash_map.get(subStepIndex)).getTop();
                 final Animation animation = new Transition() {
 
-                    {
-                        setCycleDuration(Duration.millis(2000));
-                        setInterpolator(Interpolator.EASE_OUT);
-                    }
+                            {
+                                setCycleDuration(Duration.millis(2000));
+                                setInterpolator(Interpolator.EASE_OUT);
+                            }
 
                     @Override
                     protected void interpolate(double frac) {
@@ -329,8 +329,7 @@ public class Step3Panel extends BorderPane {
                         selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, CornerRadii.EMPTY, Insets.EMPTY)));
                     }
                 };
-//                animation.play();
-                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.web("#ed7d31"), CornerRadii.EMPTY, Insets.EMPTY)));
+                animation.play();
                 PauseTransition pt = new PauseTransition(Duration.millis(1000));
                 SequentialTransition st = new SequentialTransition();
                 st.getChildren().addAll(pt, animation);
