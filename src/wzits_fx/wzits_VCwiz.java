@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 public class wzits_VCwiz extends Application {
     @Override
     public void start(Stage primaryStage) {
-        vcWizard wizard = new vcWizard();
+        VolumeToCapacityWizard wizard = new VolumeToCapacityWizard();
 
         primaryStage.setScene(new Scene(wizard, 1000, 400));
         primaryStage.show();

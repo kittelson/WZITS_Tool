@@ -69,22 +69,22 @@ public class AADTDistributionHelper {
         String openFileName;
         switch (mainType) {
             case TYPE_DEFAULT_BIMODAL_AM:
-                openFileName = "/UI/helper/database/bimodal_am.db";
+                openFileName = "/core/VCWizard/database/bimodal_am.db";
                 break;
             case TYPE_DEFAULT_BIMODAL_PM:
-                openFileName = "/UI/helper/database/bimodal_pm.db";
+                openFileName = "/core/VCWizard/database/bimodal_pm.db";
                 break;
             default:
             case TYPE_DEFAULT_UNIMODAL:
-                openFileName = "/UI/helper/database/unimodal.db";
+                openFileName = "/core/VCWizard/database/unimodal.db";
                 break;
             case TYPE_DEFAULT_NATIONAL_WEEKDAY:
                 numSubType = 2;
-                openFileName = "//UI/helper/database/national_weekday.db";
+                openFileName = "/core/VCWizard/database/national_weekday.db";
                 break;
             case TYPE_DEFAULT_NATIONAL_WEEKEND:
                 numSubType = 2;
-                openFileName = "/UI/helper/database/national_weekend.db";
+                openFileName = "/core/VCWizard/database/national_weekend.db";
                 break;
 
         }
