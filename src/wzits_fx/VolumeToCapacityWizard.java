@@ -63,11 +63,15 @@ public class VolumeToCapacityWizard extends BorderPane {
     /**
      * Dropdown selection for the terrain type of the facility [Level, Rolling, Mountainous].
      */
-    JFXComboBox<String> inputTerrainType = new JFXComboBox<>();
+    JFXComboBox<TerrainTypeItem> inputTerrainType = new JFXComboBox<>();
     /**
      * Dropdown selection for the AADT distribution profile primary type.
      */
     JFXComboBox<String> inputAADTProfile = new JFXComboBox<>();
+    /**
+     * Dropdown selection for the AADT distribution profile subtype
+     */
+    JFXComboBox<ProfileSubTypeItem> inputAADTProfileSubType = new JFXComboBox<>();
     /**
      * XYChart Number series to display the demand profile.
      */
@@ -146,9 +150,9 @@ public class VolumeToCapacityWizard extends BorderPane {
 
         JFXButton btnPrev = new JFXButton();
 
-        FontIcon prevIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_LEFT, Color.rgb(68,96,114), 30);
+        FontIcon prevIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_LEFT, Color.rgb(68, 96, 114), 30);
         btnPrev.setGraphic(prevIcon);
-        FontIcon nextIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_RIGHT, Color.rgb(68,96,114), 30);
+        FontIcon nextIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_RIGHT, Color.rgb(68, 96, 114), 30);
         btnPrev.setGraphic(nextIcon);
 
         inputTruckPct.setPromptText("Percent Trucks");
@@ -160,7 +164,7 @@ public class VolumeToCapacityWizard extends BorderPane {
 
         directionalSplitSlider.setShowTickMarks(true);
         directionalSplitSlider.setShowTickLabels(true);
-        directionalSplitSlider.setValue(0.5);
+        //directionalSplitSlider.setValue(0.5); // COMMENT: Moved to different method, just an organization thing.
         directionalSplitSlider.setMin(0.00);
         directionalSplitSlider.setBlockIncrement(0.01);
         directionalSplitSlider.setMajorTickUnit(.2);
@@ -169,7 +173,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         directionalSplitSlider.setMax(1.0);
         slidNumLanes.setShowTickMarks(true);
         slidNumLanes.setShowTickLabels(true);
-        slidNumLanes.setValue(2);
+        //slidNumLanes.setValue(2); // COMMENT: Moved to different method, just an organization thing.
         slidNumLanes.setMin(1);
         slidNumLanes.setBlockIncrement(1);
         slidNumLanes.setMajorTickUnit(1);
@@ -177,8 +181,10 @@ public class VolumeToCapacityWizard extends BorderPane {
         slidNumLanes.setSnapToTicks(true);
         slidNumLanes.setMax(6);
 
-        lblLaneCap.setTooltip(new Tooltip("Base Per lane capacity is defined in Passenger-cars per Lane per Hour," +
-                "and converted\n to vehicles per lane per hour (veh/ln/hr) using the specified truck percentage"));
+        Tooltip baseCapacityTooltip = new Tooltip("Base Per lane capacity is defined in Passenger-cars per Lane per Hour," +
+                "and converted\n to vehicles per lane per hour (veh/ln/hr) using the specified truck percentage");
+        baseCapacityTooltip.setShowDuration(Duration.INDEFINITE);
+        lblLaneCap.setTooltip(baseCapacityTooltip);
 
         aadtInputTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -200,9 +206,6 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputAADTProfile.getStyleClass().add("jfx-combo-style");
         inputAADTProfile.getSelectionModel().select(1);
 
-        inputTerrainType.getItems().add("Level");
-        inputTerrainType.getItems().add("Rolling");
-        inputTerrainType.getItems().add("Mountainous");
         inputTerrainType.setMaxWidth(Integer.MAX_VALUE);
         inputTerrainType.setPromptText("Terrain Type");
         inputTerrainType.getStyleClass().add("jfx-combo-style");
@@ -324,8 +327,10 @@ public class VolumeToCapacityWizard extends BorderPane {
 
         this.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
 
+        setupComboBoxInputs();
         formatLabels();
         setupTooltips();
+        configureInitialDefaults();
     }
 
     private void formatLabels() {
@@ -333,8 +338,39 @@ public class VolumeToCapacityWizard extends BorderPane {
         computedSegmentCapacityLabel.setMaxWidth(Integer.MAX_VALUE);
     }
 
+    private void configureInitialDefaults() {
+        //aadtInputTextField.setText("50000"); // COMMENT: Possible default, unused for now, it's too important to have a default value
+        directionalSplitSlider.setValue(0.5); // COMMENT: Moved from constructor to here
+        inputAADTProfile.getSelectionModel().selectFirst();
+        inputTruckPct.setText("5");
+        inputTerrainType.getSelectionModel().selectFirst();
+        inputBaseLaneCapacity.setText("2400"); // HCM Default Capacity
+        slidNumLanes.setValue(2); // COMMENT: Moved from constructor to here
+    }
+
+    private void setupComboBoxInputs() {
+        inputAADTProfileSubType.getItems().addAll(
+                new ProfileSubTypeItem("Average", AADTDistributionHelper.TYPE_DEFAULT_SUB_AVG),
+                new ProfileSubTypeItem("Minimum", AADTDistributionHelper.TYPE_DEFAULT_SUB_MIN),
+                new ProfileSubTypeItem("25th Percentile", AADTDistributionHelper.TYPE_DEFAULT_SUB_25),
+                new ProfileSubTypeItem("Median", AADTDistributionHelper.TYPE_DEFAULT_SUB_MEDIAN),
+                new ProfileSubTypeItem("75th Percentile", AADTDistributionHelper.TYPE_DEFAULT_SUB_75),
+                new ProfileSubTypeItem("Maximum", AADTDistributionHelper.TYPE_DEFAULT_SUB_MAX)
+        );
+
+        inputTerrainType.getItems().addAll(
+                new TerrainTypeItem("Level", TERRAIN_TYPE_LEVEL),
+                new TerrainTypeItem("Rolling", TERRAIN_TYPE_ROLLING),
+                new TerrainTypeItem("Mountainous", TERRAIN_TYPE_MOUNTAIN)
+        );
+
+
+    }
+
     private void setupTooltips() {
+
         final Tooltip computedAADTTooltip = new Tooltip();
+        computedAADTTooltip.setShowDuration(Duration.INDEFINITE);
         computedAADTTooltip.setOnShown(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent windowEvent) {
@@ -405,7 +441,8 @@ public class VolumeToCapacityWizard extends BorderPane {
         } catch (NumberFormatException e) {
 
         }
-        float truckPCEquiv = this.inputTerrainType.getSelectionModel().getSelectedIndex() == 0 ? 2.0f : 2.5f;
+//        float truckPCEquiv = this.inputTerrainType.getSelectionModel().getSelectedIndex() == 0 ? 2.0f : 2.5f;
+        float truckPCEquiv = this.inputTerrainType.getValue().value;
         float fhv = (float) (1.0 / (1.0 + (truckPCT) * ((truckPCEquiv) - 1.0) / 100.0f));
         int basePerLaneCapacityVeh = Math.round(pc_to_veh(basePerLaneCapacityPC, fhv));
         int totalSegmentCapacityVeh = basePerLaneCapacityVeh * numLanes;
@@ -427,11 +464,65 @@ public class VolumeToCapacityWizard extends BorderPane {
      * Convert pc to veh
      *
      * @param value value to be converted
-     * @param coe coefficient
+     * @param coe   coefficient
      * @return value in veh
      */
     public static float pc_to_veh(float value, float coe) {
         return value * coe;
     }
 
+    private class ProfileSubTypeItem {
+        /**
+         * The string representation of the value that will be displayed in the list of combobox choices (using the overriden toString method)
+         */
+        public final String displayStr;
+        /**
+         * The actual value of the object (this doesn't have to be an integer, it can be anything!)
+         */
+        public final int value;
+
+        /**
+         * Constructor to create the object, where the display string and value are specified.
+         *
+         * @param displayStr
+         * @param value
+         */
+        public ProfileSubTypeItem(String displayStr, int value) {
+            // Immediately set the display string and value;
+            this.displayStr = displayStr;
+            this.value = value;
+        }
+
+        /**
+         * When displaying each object as a string in the ComboBox choice list, the underlying code automatically calls
+         * this method.  By overriding it, we can control what value is actually shown as opposed to the default
+         * representation.
+         *
+         * @return
+         */
+        @Override
+        public String toString() {
+            return this.displayStr;
+        }
+    }
+
+    private class TerrainTypeItem {
+        public final String displayStr;
+        public final float value;
+
+        public TerrainTypeItem(String displayStr, float value) {
+            this.displayStr = displayStr;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return this.displayStr;
+        }
+    }
+
+
+    private static final float TERRAIN_TYPE_LEVEL = 2.0f;
+    private static final float TERRAIN_TYPE_ROLLING = 2.5f;
+    private static final float TERRAIN_TYPE_MOUNTAIN = 3.0f;
 }
