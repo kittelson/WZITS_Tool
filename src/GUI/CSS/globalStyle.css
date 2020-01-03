@@ -1049,10 +1049,13 @@
   -jfx-unfocus-color: #595959;
   -fx-prompt-text-fill: #595959;
   -jfx-label-float: true;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
 }
 .jfx-combo-style  .list-cell {
-  -fx-alignment: center;
+  -fx-alignment: baseline-left;
   -fx-font-size: 12pt;
+  -fx-font-weight: normal;
 }
 
 .jfx-button-style {
@@ -1084,9 +1087,26 @@
 }
 /* textbox/labels styles */
 .jf-txtbox {
+  -fx-text-fill: black;
+  -jfx-focus-color: #ff9a07;
+  -jfx-unfocus-color: #595959;
+  -fx-alignment: baseline-left;
+  -fx-font-size: 20px;
+  -fx-background-color: #ededed;
+  -fx-opacity: 0.8;
+  -jfx-border-color: #4472c4;
+  -fx-background-radius: 5;
+
+}
+.jf-txtbox:hover {
   -jfx-focus-color: #ff9a07;
   -jfx-unfocus-color: #595959;
   -fx-alignment: center-left;
+  -fx-font-size: 20px;
+  -fx-background-color: #d4d4d4;
+  -fx-opacity: 0.5;
+  -fx-background-radius: 5;
+
 }
 
 /* graph styles */
@@ -1121,8 +1141,9 @@
 
 /* label styles */
 .vc-label-styles {
-  -fx-font-size: 14px;
+  -fx-font-size: 20px;
   -fx-text-fill: black;
+  -fx-font-style: italic;
 }
 .vc-units {
   -fx-font-size: 12px;

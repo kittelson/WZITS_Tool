@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.validation.RequiredFieldValidator;
 import core.VCWizard.AADTDistributionHelper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,6 +17,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
@@ -81,22 +83,233 @@ public class VolumeToCapacityWizard extends BorderPane {
      */
     XYChart.Series<Number, Number> capacitySeries = new XYChart.Series<>();
 
+    Label lblAADT = new Label("Bidirectional AADT:");
+    Label lblDirSplit = new Label("Directional Split:");
+    Label lblcompDir = new Label("Computed Directional AADT:");
+    Label lblLaneCap = new Label("Base Per Lane Capacity:");
+    Label lblNumLanes = new Label("Number of Lanes:");
+    Label lblSegCap = new Label("Total Segment Capacity:");
+    Label lblvehPerDay = new Label("veh/day");
+    Label lblTrucks = new Label("%");
+    Label lblvehLnHr = new Label("pc/ln/hr");
+    Label lblPercentTrucks = new Label("Percent Trucks:");
+    Label lblDemandProfile = new Label("Demand Profile:");
+    Label lblTerrainType = new Label("Terrain Type:");
+    Label lblAADTsubType = new Label("AADT Subtype:");
+    JFXButton btnUpdAnalysis = new JFXButton("Update Analysis");
+    RequiredFieldValidator validator = new RequiredFieldValidator();
 
     public VolumeToCapacityWizard() {
 
-        Label lblAADT = new Label("Bidirectional AADT");
-        Label lblDirSplit = new Label("Directional Split");
-        Label lblcompDir = new Label("Computed Directional AADT");
-        Label lblLaneCap = new Label("Base Per Lane Capacity");
-        Label lblNumLanes = new Label("Number of Lanes");
-        Label lblSegCap = new Label("Total Segment Capacity");
-        Label lblvehPerDay = new Label("veh/day");
-        Label lblTrucks = new Label("%");
-        Label lblvehLnHr = new Label("pc/ln/hr");
+        JFXButton btnPrev = new JFXButton();
+
+        FontIcon prevIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_LEFT, Color.rgb(68, 96, 114), 30);
+        btnPrev.setGraphic(prevIcon);
+        FontIcon nextIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_RIGHT, Color.rgb(68, 96, 114), 30);
+        btnPrev.setGraphic(nextIcon);
+
+        directionalSplitSlider.setShowTickMarks(true);
+        directionalSplitSlider.setShowTickLabels(true);
+        //directionalSplitSlider.setValue(0.5); // COMMENT: Moved to different method, just an organization thing.
+        directionalSplitSlider.setMin(0.00);
+        directionalSplitSlider.setBlockIncrement(0.01);
+        directionalSplitSlider.setMajorTickUnit(.2);
+        directionalSplitSlider.setMinorTickCount(19);
+        directionalSplitSlider.setSnapToTicks(true);
+        directionalSplitSlider.setMax(1.0);
+        slidNumLanes.setShowTickMarks(true);
+        slidNumLanes.setShowTickLabels(true);
+        //slidNumLanes.setValue(2); // COMMENT: Moved to different method, just an organization thing.
+        slidNumLanes.setMin(1);
+        slidNumLanes.setBlockIncrement(1);
+        slidNumLanes.setMajorTickUnit(1);
+        slidNumLanes.setMinorTickCount(0);
+        slidNumLanes.setSnapToTicks(true);
+        slidNumLanes.setMax(6);
+
+        Tooltip baseCapacityTooltip = new Tooltip("Base Per lane capacity is defined in Passenger-cars per Lane per Hour," +
+                "and converted\n to vehicles per lane per hour (veh/ln/hr) using the specified truck percentage");
+        baseCapacityTooltip.setShowDuration(Duration.INDEFINITE);
+        lblLaneCap.setTooltip(baseCapacityTooltip);
+
+        aadtInputTextField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(
+                    ObservableValue<? extends String> observable,
+                    String oldValue,
+                    String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    aadtInputTextField.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
+        inputBaseLaneCapacity.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(
+                    ObservableValue<? extends String> observableValue,
+                    String oldValue,
+                    String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    inputBaseLaneCapacity.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
+        inputAADTProfile.getItems().add("Rural/Weekend");
+        inputAADTProfile.getItems().add("AM Peak");
+        inputAADTProfile.getItems().add("PM Peak");
+        inputAADTProfile.setMaxWidth(Integer.MAX_VALUE);
+        inputAADTProfile.getSelectionModel().select(1);
+
+        inputTerrainType.setMaxWidth(Integer.MAX_VALUE);
+        inputAADTProfileSubType.setMaxWidth(Integer.MAX_VALUE);
+
+        btnUpdAnalysis.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                inputParametersUpdated();
+            }
+        });
+        FontIcon update = IconHelper.createIcon(FontAwesomeSolid.SYNC_ALT, Color.WHITE, 20);
+        btnUpdAnalysis.setGraphic(update);
+
+        GridPane inputGrids = new GridPane();
+        BorderPane navPane = new BorderPane();
+        BorderPane graphPane = new BorderPane();
+        BorderPane aadtBP = new BorderPane();
+        BorderPane dirSplitBP = new BorderPane();
+        BorderPane trucksBP = new BorderPane();
+        BorderPane laneCapBP = new BorderPane();
+        BorderPane topPane = new BorderPane();
+        GridPane.setHgrow(aadtInputTextField, Priority.ALWAYS);
+
+        /*
+        formats the label next to the directional split slider to be 2 decimal places
+         */
+        DecimalFormat format_2f = new DecimalFormat("#0.00");
+        directionalSplitSlider.setLabelFormatter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double aDouble) {
+                return format_2f.format(aDouble);
+            }
+
+            @Override
+            public Double fromString(String s) {
+                try {
+                    return (double) format_2f.parse(s);
+                } catch (ParseException e) {
+                    return 0.0;
+                }
+            }
+        });
+        Label sliderLabel = new Label("(" + format_2f.format(directionalSplitSlider.getValue()) + ")");
+        sliderLabel.setMaxWidth(Integer.MAX_VALUE);
+        sliderLabel.setMaxHeight(Integer.MAX_VALUE);
+        sliderLabel.setAlignment(Pos.TOP_CENTER);
+        sliderLabel.setStyle("-fx-text-fill: Black; -fx-font-size: 14px; -fx-padding: 0 0 0 15; ");
+        directionalSplitSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) {
+                if (!oldVal.equals(newVal) && !directionalSplitSlider.isValueChanging()) {
+                    sliderLabel.setText("(" + format_2f.format(newVal) + ")");
+                }
+            }
+        });
+
+        aadtBP.setLeft(aadtInputTextField);
+        aadtBP.setRight(lblvehPerDay);
+
+        dirSplitBP.setCenter(directionalSplitSlider);
+        dirSplitBP.setRight(sliderLabel);
+
+        trucksBP.setLeft(inputTruckPct);
+        trucksBP.setRight(lblTrucks);
+
+        laneCapBP.setLeft(inputBaseLaneCapacity);
+        laneCapBP.setRight(lblvehLnHr);
+
+        navPane.setCenter(btnUpdAnalysis);
+        navPane.setLeft(prevIcon);
+        navPane.setRight(nextIcon);
+        navPane.setPadding(new Insets(7, 20, 7, 20));
+
+        //columns, rows
+        inputGrids.add(lblAADT, 0, 0);
+        inputGrids.add(lblDirSplit, 0, 1);
+        inputGrids.add(lblAADTsubType,0,2);
+        inputGrids.add(lblcompDir, 4, 2);
+        inputGrids.add(aadtBP, 1, 0);
+        inputGrids.add(dirSplitBP, 1, 1);
+        inputGrids.add(inputAADTProfileSubType,1,2);
+        inputGrids.add(lblDemandProfile, 2, 0);
+        inputGrids.add(lblPercentTrucks,2,1);
+        inputGrids.add(lblTerrainType, 2,2);
+        inputGrids.add(computedAADTLabel, 1, 3);
+        inputGrids.add(inputAADTProfile, 3, 0);
+        inputGrids.add(trucksBP, 3, 1);
+        inputGrids.add(inputTerrainType, 3, 2);
+        inputGrids.add(lblLaneCap, 4, 0);
+        inputGrids.add(lblNumLanes, 4, 1);
+        inputGrids.add(lblSegCap, 0,3);
+        inputGrids.add(laneCapBP, 5, 0);
+        inputGrids.add(slidNumLanes, 5, 1);
+        inputGrids.add(computedSegmentCapacityLabel, 5, 2);
+        inputGrids.setHgap(20);
+        inputGrids.setVgap(30);
+        inputGrids.setPadding(new Insets(15, 0, 10, 0));
+
+        //creates a line chart
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("Time of Day");
+        yAxis.setLabel("Demand (veh/hr)");
+        final LineChart<Number, Number> demandToCapacityChart = new LineChart<Number, Number>(xAxis, yAxis);
+        demandToCapacityChart.setTitle("24-Hour Demand vs Project Capacities");
+        demandToCapacityChart.setCreateSymbols(false);
+        //defines a series
+        demandSeries.setName("Demand Data");
+        capacitySeries.setName("Work Zone Capacity");
+        //populates series with initial data
+        for (int per = 0; per < 96; per++) {
+            demandSeries.getData().add(new XYChart.Data<>(per, 0));
+            capacitySeries.getData().add(new XYChart.Data<>(per, 0));
+        }
+
+        demandToCapacityChart.getData().add(capacitySeries);
+        demandToCapacityChart.getData().add(demandSeries);
+
+        graphPane.setCenter(demandToCapacityChart);
+        topPane.setCenter(inputGrids);
+        topPane.setBottom(navPane);
+        inputGrids.setAlignment(Pos.CENTER);
+        this.setTop(topPane);
+        this.setCenter(graphPane);
+
+        this.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
+
+        setupComboBoxInputs();
+        formatLabels();
+        setupTooltips();
+        configureInitialDefaults();
+        setLabelStyles();
+        formnatTextfields(aadtInputTextField);
+        formnatTextfields(inputBaseLaneCapacity);
+        validateUserInput(validator, aadtInputTextField);
+    }
+
+    private void formatLabels() {
+        computedAADTLabel.setMaxWidth(Integer.MAX_VALUE);
+        computedSegmentCapacityLabel.setMaxWidth(Integer.MAX_VALUE);
+    }
+    /*
+       method for inputs to format textfields to add a "," seperator ever 3 decimal places
+     */
+    private void formnatTextfields(JFXTextField textFieldInput) {
         final char seperatorChar = ',';
 
         final Pattern numPattern = Pattern.compile("[0-9" + seperatorChar + "]*");
-        aadtInputTextField.setTextFormatter(new TextFormatter<>(c -> {
+        textFieldInput.setTextFormatter(new TextFormatter<>(c -> {
             if (!c.isContentChange()) {
                 return c;
             }
@@ -136,206 +349,31 @@ public class VolumeToCapacityWizard extends BorderPane {
 
             return c;
         }));
+    }
 
+    private void setLabelStyles() {
         lblAADT.getStyleClass().add("vc-label-styles");
         lblcompDir.getStyleClass().add("vc-label-styles");
         lblDirSplit.getStyleClass().add("vc-label-styles");
+        lblAADTsubType.getStyleClass().add("vc-label-styles");
+        lblTerrainType.getStyleClass().add("vc-label-styles");
+        lblPercentTrucks.getStyleClass().add("vc-label-styles");
+        lblDemandProfile.getStyleClass().add("vc-label-styles");
         lblvehPerDay.getStyleClass().add("vc-units");
         lblLaneCap.getStyleClass().add("vc-label-styles");
         lblNumLanes.getStyleClass().add("vc-label-styles");
         lblTrucks.getStyleClass().add("vc-label-styles");
         lblSegCap.getStyleClass().add("vc-label-styles");
         lblvehLnHr.getStyleClass().add("vc-units");
-
-
-        JFXButton btnPrev = new JFXButton();
-
-        FontIcon prevIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_LEFT, Color.rgb(68, 96, 114), 30);
-        btnPrev.setGraphic(prevIcon);
-        FontIcon nextIcon = IconHelper.createIcon(FontAwesomeSolid.CHEVRON_RIGHT, Color.rgb(68, 96, 114), 30);
-        btnPrev.setGraphic(nextIcon);
-
-        inputTruckPct.setPromptText("Percent Trucks");
-        inputTruckPct.setLabelFloat(true);
-
+        computedAADTLabel.getStyleClass().add("vc-label-styles");
         aadtInputTextField.getStyleClass().add("jf-txtbox");
         inputBaseLaneCapacity.getStyleClass().add("jf-txtbox");
         inputTruckPct.getStyleClass().add("jf-txtbox");
-
-        directionalSplitSlider.setShowTickMarks(true);
-        directionalSplitSlider.setShowTickLabels(true);
-        //directionalSplitSlider.setValue(0.5); // COMMENT: Moved to different method, just an organization thing.
-        directionalSplitSlider.setMin(0.00);
-        directionalSplitSlider.setBlockIncrement(0.01);
-        directionalSplitSlider.setMajorTickUnit(.2);
-        directionalSplitSlider.setMinorTickCount(19);
-        directionalSplitSlider.setSnapToTicks(true);
-        directionalSplitSlider.setMax(1.0);
-        slidNumLanes.setShowTickMarks(true);
-        slidNumLanes.setShowTickLabels(true);
-        //slidNumLanes.setValue(2); // COMMENT: Moved to different method, just an organization thing.
-        slidNumLanes.setMin(1);
-        slidNumLanes.setBlockIncrement(1);
-        slidNumLanes.setMajorTickUnit(1);
-        slidNumLanes.setMinorTickCount(0);
-        slidNumLanes.setSnapToTicks(true);
-        slidNumLanes.setMax(6);
-
-        Tooltip baseCapacityTooltip = new Tooltip("Base Per lane capacity is defined in Passenger-cars per Lane per Hour," +
-                "and converted\n to vehicles per lane per hour (veh/ln/hr) using the specified truck percentage");
-        baseCapacityTooltip.setShowDuration(Duration.INDEFINITE);
-        lblLaneCap.setTooltip(baseCapacityTooltip);
-
-        aadtInputTextField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(
-                    ObservableValue<? extends String> observable,
-                    String oldValue,
-                    String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    aadtInputTextField.setText(newValue.replaceAll("[^\\d]", ""));
-                }
-            }
-        });
-
-        inputAADTProfile.getItems().add("Rural/Weekend");
-        inputAADTProfile.getItems().add("AM Peak");
-        inputAADTProfile.getItems().add("PM Peak");
-        inputAADTProfile.setMaxWidth(Integer.MAX_VALUE);
-        inputAADTProfile.setPromptText("Demand Profile");
         inputAADTProfile.getStyleClass().add("jfx-combo-style");
-        inputAADTProfile.getSelectionModel().select(1);
-
-        inputTerrainType.setMaxWidth(Integer.MAX_VALUE);
-        inputTerrainType.setPromptText("Terrain Type");
-        inputTerrainType.getStyleClass().add("jfx-combo-style");
-
-        JFXButton btnUpdAnalysis = new JFXButton("Update Analysis");
-        btnUpdAnalysis.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                inputParametersUpdated();
-            }
-        });
-        FontIcon update = IconHelper.createIcon(FontAwesomeSolid.SYNC_ALT, Color.WHITE, 20);
-        btnUpdAnalysis.setGraphic(update);
         btnUpdAnalysis.getStyleClass().add("jfx-button-style");
-
-        GridPane inputGrids = new GridPane();
-        BorderPane navPane = new BorderPane();
-        BorderPane graphPane = new BorderPane();
-        BorderPane aadtBP = new BorderPane();
-        BorderPane dirSplitBP = new BorderPane();
-        BorderPane trucksBP = new BorderPane();
-        BorderPane laneCapBP = new BorderPane();
-        BorderPane topPane = new BorderPane();
-        GridPane.setHgrow(aadtInputTextField, Priority.ALWAYS);
-
-        DecimalFormat format_2f = new DecimalFormat("#0.00");
-        directionalSplitSlider.setLabelFormatter(new StringConverter<Double>() {
-            @Override
-            public String toString(Double aDouble) {
-                return format_2f.format(aDouble);
-            }
-
-            @Override
-            public Double fromString(String s) {
-                try {
-                    return (double) format_2f.parse(s);
-                } catch (ParseException e) {
-                    return 0.0;
-                }
-            }
-        });
-        Label sliderLabel = new Label("(" + format_2f.format(directionalSplitSlider.getValue()) + ")");
-        sliderLabel.setMaxWidth(Integer.MAX_VALUE);
-        sliderLabel.setMaxHeight(Integer.MAX_VALUE);
-        sliderLabel.setAlignment(Pos.TOP_CENTER);
-        sliderLabel.setStyle("-fx-text-fill: Black; -fx-font-size: 14px; -fx-padding: 0 0 0 15; ");
-        directionalSplitSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) {
-                if (!oldVal.equals(newVal) && !directionalSplitSlider.isValueChanging()) {
-                    sliderLabel.setText("(" + format_2f.format(newVal) + ")");
-                }
-            }
-        });
-
-        aadtBP.setLeft(aadtInputTextField);
-        aadtBP.setRight(lblvehPerDay);
-
-        dirSplitBP.setLeft(directionalSplitSlider);
-        dirSplitBP.setRight(sliderLabel);
-
-        trucksBP.setLeft(inputTruckPct);
-        trucksBP.setRight(lblTrucks);
-
-        laneCapBP.setLeft(inputBaseLaneCapacity);
-        laneCapBP.setRight(lblvehLnHr);
-
-        navPane.setCenter(btnUpdAnalysis);
-        navPane.setLeft(prevIcon);
-        navPane.setRight(nextIcon);
-        navPane.setPadding(new Insets(7, 20, 7, 20));
-
-        //columns, rows
-        inputGrids.add(lblAADT, 0, 0);
-        inputGrids.add(lblDirSplit, 0, 1);
-        inputGrids.add(lblcompDir, 0, 2);
-        inputGrids.add(aadtBP, 1, 0);
-        inputGrids.add(dirSplitBP, 1, 1);
-        inputGrids.add(computedAADTLabel, 1, 2);
-        inputGrids.add(inputAADTProfile, 3, 0);
-        inputGrids.add(trucksBP, 3, 1);
-        inputGrids.add(inputTerrainType, 3, 2);
-        inputGrids.add(lblLaneCap, 4, 0);
-        inputGrids.add(lblNumLanes, 4, 1);
-        inputGrids.add(lblSegCap, 4, 2);
-        inputGrids.add(laneCapBP, 5, 0);
-        inputGrids.add(slidNumLanes, 5, 1);
-        inputGrids.add(computedSegmentCapacityLabel, 5, 2);
-        inputGrids.setHgap(20);
-        inputGrids.setVgap(12);
-        inputGrids.setPadding(new Insets(15, 0, 10, 0));
-
-        //creates a line chart
-        final NumberAxis xAxis = new NumberAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Time of Day");
-        yAxis.setLabel("Demand (veh/hr)");
-        final LineChart<Number, Number> demandToCapacityChart = new LineChart<Number, Number>(xAxis, yAxis);
-        demandToCapacityChart.setTitle("24-Hour Demand vs Project Capacities");
-        demandToCapacityChart.setCreateSymbols(false);
-        //defines a series
-        demandSeries.setName("Demand Data");
-        capacitySeries.setName("Work Zone Capacity");
-        //populates series with initial data
-        for (int per = 0; per < 96; per++) {
-            demandSeries.getData().add(new XYChart.Data<>(per, 0));
-            capacitySeries.getData().add(new XYChart.Data<>(per, 0));
-        }
-
-        demandToCapacityChart.getData().add(capacitySeries);
-        demandToCapacityChart.getData().add(demandSeries);
-
-        graphPane.setCenter(demandToCapacityChart);
-        topPane.setCenter(inputGrids);
-        topPane.setBottom(navPane);
-        inputGrids.setAlignment(Pos.CENTER);
-        this.setTop(topPane);
-        this.setCenter(graphPane);
-
-        this.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
-
-        setupComboBoxInputs();
-        formatLabels();
-        setupTooltips();
-        configureInitialDefaults();
-    }
-
-    private void formatLabels() {
-        computedAADTLabel.setMaxWidth(Integer.MAX_VALUE);
-        computedSegmentCapacityLabel.setMaxWidth(Integer.MAX_VALUE);
+        inputTerrainType.getStyleClass().add("jfx-combo-style");
+        computedSegmentCapacityLabel.getStyleClass().add("vc-label-styles");
+        inputAADTProfileSubType.getStyleClass().add("jfx-combo-style");
     }
 
     private void configureInitialDefaults() {
@@ -346,6 +384,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputTerrainType.getSelectionModel().selectFirst();
         inputBaseLaneCapacity.setText("2400"); // HCM Default Capacity
         slidNumLanes.setValue(2); // COMMENT: Moved from constructor to here
+        inputAADTProfileSubType.getSelectionModel().selectFirst();
     }
 
     private void setupComboBoxInputs() {
@@ -363,8 +402,6 @@ public class VolumeToCapacityWizard extends BorderPane {
                 new TerrainTypeItem("Rolling", TERRAIN_TYPE_ROLLING),
                 new TerrainTypeItem("Mountainous", TERRAIN_TYPE_MOUNTAIN)
         );
-
-
     }
 
     private void setupTooltips() {
@@ -411,6 +448,21 @@ public class VolumeToCapacityWizard extends BorderPane {
 //        });
 //        computedCapacityTooltip.setShowDelay(Duration.ZERO);
 //        Tooltip.install(computedSegmentCapacityLabel, computedCapacityTooltip);
+    }
+    /*
+    Gives user an error message if they fail to enter a value in a textfield, currently only used
+    in the aadtInput textfield
+     */
+    private void validateUserInput(RequiredFieldValidator textValidator, JFXTextField textInput) {
+        textValidator.setMessage("Input Required");
+        FontIcon warnIcon = new FontIcon(FontAwesomeSolid.EXCLAMATION_TRIANGLE);
+        textValidator.setIcon(warnIcon);
+        textInput.getValidators().add(textValidator);
+        textInput.focusedProperty().addListener((o, oldVal, newVal) -> {
+            if (!newVal) {
+                textInput.validate();
+            }
+        });
     }
 
     private void inputParametersUpdated() {
