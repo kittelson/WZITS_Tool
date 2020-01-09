@@ -88,7 +88,7 @@ command. If this command returns an error or the output does not say “java ver
 can be any number), then the JRE will need to be installed or updated.
 
 ### Installation and Running
-To install the WZITS Implementation Tool, download or copy the WZITS_Tool.zip file to the desired
+To install the WZITS Implementation Tool, [download the latest release](https://github.com/kittelson/WZITS_Tool/releases) and copy the **WZITS_Tool_Vx.x.zip** file to the desired
 location on the computer. Next, extract the contents of the zip archive. **This is a key step
 because the tool cannot be run while in an archived state.** Some computers will extract the files
 from the archive automatically if the .zip file is double-clicked, but on many Windows computers
