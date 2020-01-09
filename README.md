@@ -2,19 +2,24 @@
 
 *Companion tool for the [FHWA Work Zone Intelligent Transportation Systems Implementation Guide](https://ops.fhwa.dot.gov/publications/fhwahop14008/fhwahop14008.pdf)*
 
+Quick Links:
+* [Java Requirements](#java-requirements)
+* [Installation and Running the Tool](#installation-and-running)
+* [Download Latest Jar Release](https://github.com/kittelson/WZITS_Tool/releases)
+
 ## Introduction
 
-The WZITS Implementation Tool implements the logic and methodology described in the 
-[FHWA Work Zone Intelligent Transportation Systems Implementation Guide](https://ops.fhwa.dot.gov/publications/fhwahop14008/fhwahop14008.pdf)
-users should refer to the guide for information about the underlying methods incorporated into the tool. The tool creates
+The **WZITS Implementation Tool** implements the logic and methodology described in the 
+[FHWA Work Zone Intelligent Transportation Systems Implementation Guide](https://ops.fhwa.dot.gov/publications/fhwahop14008/fhwahop14008.pdf). 
+Users should refer to the guide for information about the underlying methods incorporated into the tool. The tool creates
 and manages a project file that provides users with (a) guidance during the WZITS decision making
 process, and (b) a place to document the decisions made, along with relevant supporting 
-information. The [user guide] includes four case studies that illustrate the use of the tool.
+information. The [user guide](WZITS%20User%20Guide%20V1_0.pdf) includes four case studies that illustrate the use of the tool.
 
 ### Overview
 
 ITS is the use of a broad range of communications-based information and electronics
-technologies to enhance transportation (1). Work zone ITS is the use of ITS to improve safety and
+technologies to enhance transportation. Work zone ITS is the use of ITS to improve safety and
 mobility in and around work zones. Information provided by work zone ITS may be in the form of
 real-time traffic conditions, such as travel delays through a work zone, or recommended
 diversion routes. This information can be used by motorists to alter their travel behavior, and by
@@ -52,8 +57,8 @@ The WZITS Implementation Tool has been developed using the Java programming lang
 and version 8 or newer of the Java SE Runtime Environment (JRE) is required to run the tool. Any
 version of Java 8 will be sufficient, but it is generally preferable to have the most up-to-date
 version whenever possible. There are a number of ways to check if the installed version of Java is
-sufficient or up-to-date, as described in the following section. For Release Version 1.0, a version
-of Java 8 should be installed.
+sufficient or up-to-date, as described in the following section. For Release Version 1.0, the recommended
+version of java is 8u191 (sometimes displayed as 1.8u191), which can be downloaded from [here](https://www.oracle.com/technetwork/java/javase/downloads/java-archive-javase8-2177648.html).
 
 #### Checking the Java Version - Windows
 
@@ -62,14 +67,14 @@ computer. To find the Java Control Panel in Windows 7 and earlier, open the Wind
 Panel and enter “java” in the search bar. In Windows 10, type “java” in the search bar located
 with the taskbar at the bottom of the window and select the “Configure Java” desktop app.
 Once the Java Control Panel is open, click the “About…” button in the “General” tab to display
-a window displaying the version number, as shown in Figure 1.
+a window displaying the version number, as shown in the following image.
+
+![About Java Dialog - Windows](img/AboutJavaWindows.png)
 
 If the search does not return any results, it is likely that the JRE is not installed on the computer. An
 alternative way to check is to open a Command Prompt window and type the command
 “java-version”. If this command returns an error or the output does not say “java version 1.8.0_xx”
 (xx can be any number), then the JRE will need to be installed or updated.
-
-![About Java Dialog - Windows](img/AboutJavaWindows.png)
 
 #### Mac OS and Linux Users
 
