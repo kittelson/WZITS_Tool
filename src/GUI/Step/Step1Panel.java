@@ -33,18 +33,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -54,6 +43,7 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import wzits_fx.VolumeToCapacityWizard;
 
 /**
  * @author ltrask
@@ -1195,6 +1185,26 @@ public class Step1Panel extends BorderPane {
 //                control.getProject().getStep(1).setStepStarted(true);
 //            }
 //        });
+
+        JFXButton launchVCWizardButton = new JFXButton("Launch V/C Wizard");
+        launchVCWizardButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                DialogPane dlgPane = new DialogPane();
+                dlgPane.setContent(new VolumeToCapacityWizard());
+                dlgPane.getButtonTypes().addAll(ButtonType.CLOSE);
+                Dialog dlg = new Dialog();
+                dlg.setDialogPane(dlgPane);
+                dlg.setResizable(true);
+                dlg.showAndWait()
+                        .filter(response -> response == ButtonType.FINISH)
+                        .ifPresent(response -> dlg.close());
+            }
+        });
+        launchVCWizardButton.setMaxWidth(Integer.MAX_VALUE);
+        launchVCWizardButton.getStyleClass().add("default-text-button");
+        launchVCWizardButton.setGraphic(new FontIcon(FontAwesomeSolid.CHART_LINE));
+
         int rowIdx = 0;
         GridPane inputGrid = new GridPane();
         inputGrid.add(wzTitleLabel1, 0, rowIdx++, 3, 1);
@@ -1210,6 +1220,8 @@ public class Step1Panel extends BorderPane {
         inputGrid.add(wzInputLabel4, 0, rowIdx);    // AADT
         inputGrid.add(wzInputSpin1, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Average Annual Daily Traffic", control.getProject().aadtCommentProperty()), 2, (rowIdx - 1));
+        inputGrid.add(new Label(""), 0, rowIdx);
+        inputGrid.add(launchVCWizardButton, 1, rowIdx++);
         inputGrid.add(wzInputLabel5, 0, rowIdx);    // Number of Roadway Lanes
         inputGrid.add(wzInputSpin3, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Number of Roadway Lanes", control.getProject().nrlCommentProperty()), 2, (rowIdx - 1));

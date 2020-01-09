@@ -199,7 +199,7 @@ public class Step3Panel extends BorderPane {
         this.setTop(topGridMaster);
         for (int i = 0; i < captions.length; i++) {
             BorderPane subsectionPane = new BorderPane();
-            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-title-label");// TODO set real style
+            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-title-label-v2");// TODO set real style
             subsectionPane.setTop(subsectionTitle);
             subsectionPane.setCenter(hash_map.get(i));
             hash_map.replace(i, subsectionPane);

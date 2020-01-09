@@ -159,6 +159,8 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputAADTProfile.getItems().add("Rural/Weekend");
         inputAADTProfile.getItems().add("AM Peak");
         inputAADTProfile.getItems().add("PM Peak");
+        inputAADTProfile.getItems().add("National Weekday");
+        inputAADTProfile.getItems().add("National Weekend");
         inputAADTProfile.setMaxWidth(Integer.MAX_VALUE);
         inputAADTProfile.getSelectionModel().select(1);
 
@@ -230,31 +232,39 @@ public class VolumeToCapacityWizard extends BorderPane {
         laneCapBP.setRight(lblvehLnHr);
 
         navPane.setCenter(btnUpdAnalysis);
-        navPane.setLeft(prevIcon);
-        navPane.setRight(nextIcon);
+//        navPane.setLeft(prevIcon);
+//        navPane.setRight(nextIcon);
         navPane.setPadding(new Insets(7, 20, 7, 20));
 
         //columns, rows
         inputGrids.add(lblAADT, 0, 0);
         inputGrids.add(lblDirSplit, 0, 1);
-        inputGrids.add(lblAADTsubType,0,2);
-        inputGrids.add(lblcompDir, 4, 2);
+        inputGrids.add(lblPercentTrucks,0,2);
+        inputGrids.add(lblcompDir, 0,3);
+
         inputGrids.add(aadtBP, 1, 0);
         inputGrids.add(dirSplitBP, 1, 1);
-        inputGrids.add(inputAADTProfileSubType,1,2);
-        inputGrids.add(lblDemandProfile, 2, 0);
-        inputGrids.add(lblPercentTrucks,2,1);
-        inputGrids.add(lblTerrainType, 2,2);
+        inputGrids.add(trucksBP,1,2);
         inputGrids.add(computedAADTLabel, 1, 3);
+
+        inputGrids.add(lblDemandProfile, 2, 0);
+        inputGrids.add(lblAADTsubType,2,1);
+        inputGrids.add(lblTerrainType, 2,2);
+
         inputGrids.add(inputAADTProfile, 3, 0);
-        inputGrids.add(trucksBP, 3, 1);
+        inputGrids.add(inputAADTProfileSubType, 3, 1);
         inputGrids.add(inputTerrainType, 3, 2);
+
         inputGrids.add(lblLaneCap, 4, 0);
         inputGrids.add(lblNumLanes, 4, 1);
-        inputGrids.add(lblSegCap, 0,3);
+        // Column 4, row 2 intentionally left blank
+        inputGrids.add(lblSegCap, 4, 3);
+
         inputGrids.add(laneCapBP, 5, 0);
         inputGrids.add(slidNumLanes, 5, 1);
-        inputGrids.add(computedSegmentCapacityLabel, 5, 2);
+        // Column 5, row 2 intentionally left blank
+        inputGrids.add(computedSegmentCapacityLabel, 5, 3);
+
         inputGrids.setHgap(20);
         inputGrids.setVgap(30);
         inputGrids.setPadding(new Insets(15, 0, 10, 0));
@@ -267,6 +277,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         final LineChart<Number, Number> demandToCapacityChart = new LineChart<Number, Number>(xAxis, yAxis);
         demandToCapacityChart.setTitle("24-Hour Demand vs Project Capacities");
         demandToCapacityChart.setCreateSymbols(false);
+        demandToCapacityChart.setAnimated(true);
         //defines a series
         demandSeries.setName("Demand Data");
         capacitySeries.setName("Work Zone Capacity");
@@ -500,7 +511,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         int totalSegmentCapacityVeh = basePerLaneCapacityVeh * numLanes;
         computedSegmentCapacityLabel.setText(String.format("%,d", totalSegmentCapacityVeh) + " veh/hr"); // baseCapacityVeh * numLanes
         int profileType = inputAADTProfile.getSelectionModel().getSelectedIndex();
-        int profileSubType = AADTDistributionHelper.TYPE_DEFAULT_SUB_AVG;
+        int profileSubType = inputAADTProfileSubType.getValue().value;
         float[] pctProfile = AADTDistributionHelper.getDefaultProfileInHourlyPct(profileType, profileSubType);
         float directionalAADT = (float) (aadt * dirSplit);
         int[] demandArray = AADTDistributionHelper.get24HourMainlineDemand(pctProfile, directionalAADT);
