@@ -17,7 +17,6 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
@@ -75,17 +74,40 @@ public class VolumeToCapacityWizard extends BorderPane {
      */
     JFXComboBox<ProfileSubTypeItem> inputAADTProfileSubType = new JFXComboBox<>();
     /**
-     * XYChart Number series to display the demand profile.
+     *  Dropdown selection for volume scaling item
      */
+    JFXComboBox<VolumeScalingItem> inputVolumeScaling = new JFXComboBox<>();
+    /**
+     * XYChart Number series to display the Intersection type.
+     */
+    JFXComboBox<IntxTypeInput> inputIntxType = new JFXComboBox<>();
+    /**
+     * drop down to select the workzone type
+     */
+    JFXComboBox<WorkzoneTypeItem> inputWorkzoneType = new JFXComboBox<>();
+    /**
+     * text input for work zone lake capacity
+     */
+    JFXTextField txtWorkzoneCap = new JFXTextField();
+    /**
+     * combobox for user to select how many lanes are closed in the workzone
+     */
+    JFXComboBox<WZnumLanesClosedInput> inputWZnumLanesClosed = new JFXComboBox<>();
+    /**
+     * XYChart Number series to display the Intersection type.
+     */
+    JFXComboBox<VolumeProfileItem>inputVolumeProfile = new JFXComboBox<>();
     XYChart.Series<Number, Number> demandSeries = new XYChart.Series<>();
     /**
      * XYChart Number series to display the capacity line
      */
     XYChart.Series<Number, Number> capacitySeries = new XYChart.Series<>();
 
+    Label lblTitle = new Label("Volume-to-Capacity Wizard");
     Label lblAADT = new Label("Bidirectional AADT:");
     Label lblDirSplit = new Label("Directional Split:");
     Label lblcompDir = new Label("Computed Directional AADT:");
+    Label lblIntxTyp = new Label("Intersection Type");
     Label lblLaneCap = new Label("Base Per Lane Capacity:");
     Label lblNumLanes = new Label("Number of Lanes:");
     Label lblSegCap = new Label("Total Segment Capacity:");
@@ -96,8 +118,29 @@ public class VolumeToCapacityWizard extends BorderPane {
     Label lblDemandProfile = new Label("Demand Profile:");
     Label lblTerrainType = new Label("Terrain Type:");
     Label lblAADTsubType = new Label("AADT Subtype:");
+    Label lblInputVolScaling = new Label("Volume Scaling:");
+    Label lblWrkZoneTyp = new Label("Work zone Type:");
+    Label lblWZLaneCap = new Label("Work zone Lane Capacity:");
+    Label lblNumWZlaneClosed = new Label("Work zone number of lanes closed:");
+    Label lblMaxVCratio = new Label("Max V/C ratio:");
+    Label lblHrsAbovCap = new Label("Total Hours Above Capacity:");
+    Label lblTimeAboveCap = new Label("Longest Time Above Capacity:");
+    Label lblLvlofCongest = new Label("Level of Congestion:");
+    Label lblEstQueLength = new Label("Estimated Queue Length:");
+    Label lblMaxVCratioComputed = new Label("Placeholder text will be an output value");
+    Label lblHrsAbovCapOutputComputed = new Label("Placeholder text will be an output value");
+    Label lblTimeAboveCapOutputComputed = new Label("Placeholder text will be an output value");
+    Label lblLvlofCongestOutputComputed = new Label("Placeholder text will be an output value");
+    Label lblEstQueLengthOutputComputed = new Label("Placeholder text will be an output value");
+
     JFXButton btnUpdAnalysis = new JFXButton("Update Analysis");
     RequiredFieldValidator validator = new RequiredFieldValidator();
+
+    //labels for the existingInputs gridpane
+    Label lblFunctionalClass = new Label("Functional Class");
+    Label lblExistingNumLanes = new Label("Number of Lanes");
+    Label lblAreaType = new Label("Area Type");
+
 
     public VolumeToCapacityWizard() {
 
@@ -164,6 +207,11 @@ public class VolumeToCapacityWizard extends BorderPane {
 
         inputTerrainType.setMaxWidth(Integer.MAX_VALUE);
         inputAADTProfileSubType.setMaxWidth(Integer.MAX_VALUE);
+        inputVolumeScaling.setMaxWidth(Integer.MAX_VALUE);
+        inputIntxType.setMaxWidth(Integer.MAX_VALUE);
+        inputWorkzoneType.setMaxWidth(Integer.MAX_VALUE);
+        inputWZnumLanesClosed.setMaxWidth(Integer.MAX_VALUE);
+        inputVolumeProfile.setMaxWidth(Integer.MAX_VALUE);
 
         btnUpdAnalysis.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -175,6 +223,8 @@ public class VolumeToCapacityWizard extends BorderPane {
         btnUpdAnalysis.setGraphic(update);
 
         GridPane inputGrids = new GridPane();
+        GridPane outputPane = new GridPane(); // this gridpane holds the the results to the right of the graph
+        GridPane existingInputs = new GridPane(); //this gridpane will display labels and the associated values that the user has already entered into the tool
         BorderPane navPane = new BorderPane();
         BorderPane graphPane = new BorderPane();
         BorderPane aadtBP = new BorderPane();
@@ -216,7 +266,6 @@ public class VolumeToCapacityWizard extends BorderPane {
                 }
             }
         });
-
         aadtBP.setLeft(aadtInputTextField);
         aadtBP.setRight(lblvehPerDay);
 
@@ -238,10 +287,12 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputGrids.add(lblAADT, 0, 0);
         inputGrids.add(lblDirSplit, 0, 1);
         inputGrids.add(lblAADTsubType,0,2);
+        inputGrids.add(lblInputVolScaling,0,4);
         inputGrids.add(lblcompDir, 4, 2);
         inputGrids.add(aadtBP, 1, 0);
         inputGrids.add(dirSplitBP, 1, 1);
         inputGrids.add(inputAADTProfileSubType,1,2);
+        inputGrids.add(inputVolumeScaling,1,4);
         inputGrids.add(lblDemandProfile, 2, 0);
         inputGrids.add(lblPercentTrucks,2,1);
         inputGrids.add(lblTerrainType, 2,2);
@@ -255,14 +306,43 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputGrids.add(laneCapBP, 5, 0);
         inputGrids.add(slidNumLanes, 5, 1);
         inputGrids.add(computedSegmentCapacityLabel, 5, 2);
+        inputGrids.add(lblIntxTyp, 6,0);
+        inputGrids.add(lblWrkZoneTyp,6,1);
+        inputGrids.add(lblWZLaneCap, 6, 2);
+        inputGrids.add(txtWorkzoneCap, 7, 2);
+        inputGrids.add(lblNumWZlaneClosed,6,3);
+        inputGrids.add(inputWZnumLanesClosed, 7,3);
+        inputGrids.add(inputIntxType, 7,0);
+        inputGrids.add(inputWorkzoneType, 7, 1);
         inputGrids.setHgap(20);
         inputGrids.setVgap(30);
         inputGrids.setPadding(new Insets(15, 0, 10, 0));
 
+        outputPane.add(lblMaxVCratio,0,0);
+        outputPane.add(lblHrsAbovCap,0,1);
+        outputPane.add(lblTimeAboveCap,0,2);
+        outputPane.add(lblLvlofCongest,0,3);
+        outputPane.add(lblEstQueLength,0,4);
+        outputPane.add(lblMaxVCratioComputed,1,0);
+        outputPane.add(lblHrsAbovCapOutputComputed,1,1);
+        outputPane.add(lblTimeAboveCapOutputComputed,1,2);
+        outputPane.add(lblLvlofCongestOutputComputed,1,3);
+        outputPane.add(lblEstQueLengthOutputComputed,1,4);
+
+        outputPane.setHgap(20);
+        outputPane.setVgap(30);
+        outputPane.setPadding(new Insets(15, 0, 10, 0));
+        outputPane.setPrefWidth(650);
+        outputPane.setMinWidth(500);
+
+        // Lables for 'top left' inputs
+        existingInputs.add(lblFunctionalClass, 0,0);
+        existingInputs.add(lblExistingNumLanes,0,2);
+        existingInputs.add(lblAreaType,0,3);
+
         //creates a line chart
-        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis xAxis = new NumberAxis("Time of Day",0,24,1);
         final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Time of Day");
         yAxis.setLabel("Demand (veh/hr)");
         final LineChart<Number, Number> demandToCapacityChart = new LineChart<Number, Number>(xAxis, yAxis);
         demandToCapacityChart.setTitle("24-Hour Demand vs Project Capacities");
@@ -280,11 +360,14 @@ public class VolumeToCapacityWizard extends BorderPane {
         demandToCapacityChart.getData().add(demandSeries);
 
         graphPane.setCenter(demandToCapacityChart);
+        topPane.setTop(lblTitle);
+        lblTitle.setAlignment(Pos.CENTER);
         topPane.setCenter(inputGrids);
         topPane.setBottom(navPane);
         inputGrids.setAlignment(Pos.CENTER);
         this.setTop(topPane);
         this.setCenter(graphPane);
+        this.setRight(outputPane);
 
         this.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
 
@@ -299,8 +382,10 @@ public class VolumeToCapacityWizard extends BorderPane {
     }
 
     private void formatLabels() {
+        lblTitle.setMaxWidth(Integer.MAX_VALUE);
         computedAADTLabel.setMaxWidth(Integer.MAX_VALUE);
         computedSegmentCapacityLabel.setMaxWidth(Integer.MAX_VALUE);
+        lblMaxVCratioComputed.setMaxWidth(Integer.MAX_VALUE);
     }
     /*
        method for inputs to format textfields to add a "," seperator ever 3 decimal places
@@ -352,6 +437,7 @@ public class VolumeToCapacityWizard extends BorderPane {
     }
 
     private void setLabelStyles() {
+        lblTitle.getStyleClass().add("vc-title");
         lblAADT.getStyleClass().add("vc-label-styles");
         lblcompDir.getStyleClass().add("vc-label-styles");
         lblDirSplit.getStyleClass().add("vc-label-styles");
@@ -374,6 +460,21 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputTerrainType.getStyleClass().add("jfx-combo-style");
         computedSegmentCapacityLabel.getStyleClass().add("vc-label-styles");
         inputAADTProfileSubType.getStyleClass().add("jfx-combo-style");
+        lblInputVolScaling.getStyleClass().add("vc-label-styles");
+        lblWrkZoneTyp.getStyleClass().add("vc-label-styles");
+        lblWZLaneCap.getStyleClass().add("vc-label-styles");
+        lblNumWZlaneClosed.getStyleClass().add("vc-label-styles");
+        lblMaxVCratio.getStyleClass().add("vc-label-styles");
+        lblHrsAbovCap.getStyleClass().add("vc-label-styles");
+        lblTimeAboveCap.getStyleClass().add("vc-label-styles");
+        lblLvlofCongest.getStyleClass().add("vc-label-styles");
+        lblEstQueLength.getStyleClass().add("vc-label-styles");
+        lblMaxVCratioComputed.getStyleClass().add("vc-label-styles");
+        lblHrsAbovCapOutputComputed.getStyleClass().add("vc-label-styles");
+        lblTimeAboveCapOutputComputed.getStyleClass().add("vc-label-styles");
+        lblIntxTyp.getStyleClass().add("vc-label-styles");
+        lblLvlofCongestOutputComputed.getStyleClass().add("vc-label-styles");
+        lblEstQueLengthOutputComputed.getStyleClass().add("vc-label-styles");
     }
 
     private void configureInitialDefaults() {
@@ -401,6 +502,41 @@ public class VolumeToCapacityWizard extends BorderPane {
                 new TerrainTypeItem("Level", TERRAIN_TYPE_LEVEL),
                 new TerrainTypeItem("Rolling", TERRAIN_TYPE_ROLLING),
                 new TerrainTypeItem("Mountainous", TERRAIN_TYPE_MOUNTAIN)
+        );
+        inputVolumeScaling.getItems().addAll(
+                //todo get correct string values rather then high, medium, low and their associated values
+                new VolumeScalingItem("Very High", 3),
+                new VolumeScalingItem("High", 2),
+                new VolumeScalingItem("Average", 3),
+                new VolumeScalingItem("Moderate", 2),
+                new VolumeScalingItem("Peaking", 1)
+        );
+        inputIntxType.getItems().addAll(
+                //todo updates these strings and values
+                new IntxTypeInput("None", 1),
+                new IntxTypeInput("Roundabout", .50),
+                new IntxTypeInput("Two-Way Stop", 1),
+                new IntxTypeInput("All Way Stop", 0.30),
+                new IntxTypeInput("Two-Phase Signal", 0.60),
+                new IntxTypeInput("Three Phase Signal", 0.45),
+                new IntxTypeInput("Four Phase Signal", 0.35),
+                new IntxTypeInput("Custom", 0.0)
+        );
+        inputWorkzoneType.getItems().addAll(
+                //todo update strings and values
+                new WorkzoneTypeItem("1-Lane Closure", 4),
+                new WorkzoneTypeItem("Shoulder Closure", 3),
+                new WorkzoneTypeItem("None", 2),
+                new WorkzoneTypeItem("Crossover", 5),
+                new WorkzoneTypeItem("Custom", 6)
+                );
+        inputWZnumLanesClosed.getItems().addAll(
+                new WZnumLanesClosedInput("One", 1),
+                new WZnumLanesClosedInput("Two", 2)
+        );
+        inputVolumeProfile.getItems().addAll(
+                new VolumeProfileItem("Rural", 2),
+                new VolumeProfileItem("Urban", 1)
         );
     }
 
@@ -557,6 +693,80 @@ public class VolumeToCapacityWizard extends BorderPane {
             return this.displayStr;
         }
     }
+    private class IntxTypeInput {
+        public final String displayStr;
+        public final double value;
+
+        public IntxTypeInput(String displayStr, double value) {
+            this.displayStr = displayStr;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {return this.displayStr;}
+    }
+
+    private class WZnumLanesClosedInput {
+        public final String displayStr;
+        public final int value;
+
+        public WZnumLanesClosedInput(String displayStr, int value) {
+            this.displayStr = displayStr;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {return this.displayStr;}
+    }
+
+    private class VolumeProfileItem {
+        public final String displayStr;
+        public final double value;
+
+        public VolumeProfileItem(String displayStr, double value) {
+            this.displayStr = displayStr;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {return this.displayStr;}
+    }
+
+    private class VolumeScalingItem {
+        /**
+         * string representation of value that will be displayed in the combobox
+         */
+        public final String displayStr;
+        /**
+         * actual value of the object (not necessarily an int, can be anything
+         */
+        public final int value;
+        /**
+         * constructior that will create hte object, location that display string and value are specified
+         *@param displayStr;
+         *@param value;
+        */
+        public VolumeScalingItem(String displayStr, int value) {
+            // set the display string and value
+            this.displayStr = displayStr;
+            this.value = value;
+        }
+        @Override
+        public String toString() {return this.displayStr;}
+    }
+    private class WorkzoneTypeItem {
+        public final String displayStr;
+        public final int value;
+
+        public WorkzoneTypeItem(String displayStr, int value) {
+            this.displayStr = displayStr;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {return this.displayStr;}
+    }
+
 
     private class TerrainTypeItem {
         public final String displayStr;

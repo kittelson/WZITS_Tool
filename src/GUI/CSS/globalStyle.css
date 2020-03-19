@@ -1145,6 +1145,10 @@
   -fx-text-fill: black;
   -fx-font-style: italic;
 }
+.vc-title {
+    -fx-font-size: 26px;
+    -fx-text-fill: black;
+}
 .vc-units {
   -fx-font-size: 12px;
   -fx-text-fill: black;
