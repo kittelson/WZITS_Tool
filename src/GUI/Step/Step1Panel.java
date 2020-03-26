@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -33,18 +34,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -54,6 +44,7 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import wzits_fx.VolumeToCapacityWizard;
 
 /**
  * @author ltrask
@@ -255,6 +246,14 @@ public class Step1Panel extends BorderPane {
         feasibilityPane.setCenter(fwgp1);
         feasibilityPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
+        //todo move this button to the correct location and have button disabled unless properties are set
+        btnLaunchVCwiz.setText("V/C Wizard");
+        booleanBind = wzInputChoice1.valueProperty().isNull();
+        wzInputChoice1.setTooltip(new Tooltip("Select the Roadway Functional Class to launch the V/C Wizard"));
+        btnLaunchVCwiz.disableProperty().bind(booleanBind);
+        //btnLaunchVCwiz.setStyle("-fx-background-color: red");
+        VolumeToCapacityWizard vcWiz = new VolumeToCapacityWizard(mc);
+        btnLaunchVCwiz.setOnAction(e -> centerPane.setCenter(vcWiz) );
         // Feasibility Wizard panel
         //fwSummaryPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard Summary", "substep-title-label"));
         //BorderPane fwbp2 = new BorderPane();
@@ -605,7 +604,10 @@ public class Step1Panel extends BorderPane {
         genInfoLabel6.getStyleClass().add("gen-info-label-style");
         genInfoLabel7.getStyleClass().add("gen-info-label-style");
         genInfoLabel8.getStyleClass().add("gen-info-label-style");
-        genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
+        btnLaunchVCwiz.getStyleClass().add("jfx-button-style");
+        //genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
+        //genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
+        genInfoButton1.getStyleClass().add("jfx-button-style");
         btnCloseDialog.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:rgb(204,85,0); -fx-text-fill: white;");
 
         genInfoDateToday.setText(control.getProject().getDateString());
@@ -1260,6 +1262,7 @@ public class Step1Panel extends BorderPane {
         inputGrid.add(wzInputLabel20, 0, rowIdx);    // Federal-Aid Project
         inputGrid.add(wzInputChoice8, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Federal-Aid Project", control.getProject().fapCommentProperty()), 2, (rowIdx - 1));
+        inputGrid.add(btnLaunchVCwiz,1,rowIdx++);
 
         //inputGrid.add(proceedButton, 1, 9);
         double leftColsplit = 65;
@@ -1540,4 +1543,13 @@ public class Step1Panel extends BorderPane {
      * Federal-aid project
      */
     private final ChoiceBox wzInputChoice8 = new ChoiceBox(FXCollections.observableArrayList("Yes", "No"));
+
+    /**
+     * Button to open the vc wizard from step1panel
+     */
+    Button btnLaunchVCwiz = new Button();
+    /*
+    * Used for disabling the vc wizard button unless the 'Functional Class' has been set by user
+     */
+    BooleanBinding booleanBind;
 }

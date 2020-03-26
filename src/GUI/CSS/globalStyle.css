@@ -1045,7 +1045,7 @@
    }
    /* the following section is Jfoenix styles for the VC wizard */
 .jfx-combo-style {
-  -jfx-focus-color: #ed7d31;
+  -jfx-focus-color: #4472c4;
   -jfx-unfocus-color: #595959;
   -fx-prompt-text-fill: #595959;
   -jfx-label-float: true;
@@ -1087,8 +1087,8 @@
 }
 /* textbox/labels styles */
 .jf-txtbox {
-  -fx-text-fill: black;
-  -jfx-focus-color: #ff9a07;
+  -fx-text-fill: #ed7d31;
+  -jfx-focus-color: #4472c4;
   -jfx-unfocus-color: #595959;
   -fx-alignment: baseline-left;
   -fx-font-size: 20px;
@@ -1145,13 +1145,17 @@
   -fx-text-fill: black;
   -fx-font-style: italic;
 }
+.vc-label-input {
+  -fx-font-size: 20px;
+  -fx-text-fill: #ed7d31;
+}
 .vc-title {
     -fx-font-size: 26px;
     -fx-text-fill: black;
 }
 .vc-units {
   -fx-font-size: 12px;
-  -fx-text-fill: black;
+  -fx-text-fill: #ed7d31;
   -fx-font-style: italic;
 
 }

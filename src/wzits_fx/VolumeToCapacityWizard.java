@@ -1,24 +1,28 @@
 package wzits_fx;
 
 import GUI.Helper.IconHelper;
+import GUI.Helper.NodeFactory;
+import GUI.MainController;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
+import core.Project;
 import core.VCWizard.AADTDistributionHelper;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.WindowEvent;
@@ -32,11 +36,12 @@ import java.text.ParseException;
 import java.util.regex.Pattern;
 
 public class VolumeToCapacityWizard extends BorderPane {
+    private final MainController control;
 
     /**
      * Input text field for AADT.
      */
-    JFXTextField aadtInputTextField = new JFXTextField();
+    Label lblAadtInput = new Label();
     /**
      * Label that displays the computed AADT Value.
      */
@@ -68,6 +73,10 @@ public class VolumeToCapacityWizard extends BorderPane {
     /**
      * Dropdown selection for the AADT distribution profile primary type.
      */
+    /***
+     * dropdown selction for volume profile
+     */
+    JFXComboBox<VolumeProfileItem> inputVolumeProfile = new JFXComboBox<>();
     JFXComboBox<String> inputAADTProfile = new JFXComboBox<>();
     /**
      * Dropdown selection for the AADT distribution profile subtype
@@ -96,12 +105,27 @@ public class VolumeToCapacityWizard extends BorderPane {
     /**
      * XYChart Number series to display the Intersection type.
      */
-    JFXComboBox<VolumeProfileItem>inputVolumeProfile = new JFXComboBox<>();
     XYChart.Series<Number, Number> demandSeries = new XYChart.Series<>();
     /**
      * XYChart Number series to display the capacity line
      */
     XYChart.Series<Number, Number> capacitySeries = new XYChart.Series<>();
+    /**
+     * tabpane that will hold various user inputs
+     */
+    TabPane vcInputPanes = new TabPane();
+    /**
+     * tabs for tabpane
+     */
+    Tab tabGeneral = new Tab();
+    Tab tabWZconfig = new Tab();
+    BorderPane testPane = new BorderPane();
+    BorderPane topPane = new BorderPane();
+    GridPane inputGrids = new GridPane();
+    GridPane gridWZconfig = new GridPane();
+
+
+    Project proj = new Project();
 
     Label lblTitle = new Label("Volume-to-Capacity Wizard");
     Label lblAADT = new Label("Bidirectional AADT:");
@@ -110,6 +134,7 @@ public class VolumeToCapacityWizard extends BorderPane {
     Label lblIntxTyp = new Label("Intersection Type");
     Label lblLaneCap = new Label("Base Per Lane Capacity:");
     Label lblNumLanes = new Label("Number of Lanes:");
+    Label lblNumberofLanesInput = new Label();
     Label lblSegCap = new Label("Total Segment Capacity:");
     Label lblvehPerDay = new Label("veh/day");
     Label lblTrucks = new Label("%");
@@ -132,17 +157,16 @@ public class VolumeToCapacityWizard extends BorderPane {
     Label lblTimeAboveCapOutputComputed = new Label("Placeholder text will be an output value");
     Label lblLvlofCongestOutputComputed = new Label("Placeholder text will be an output value");
     Label lblEstQueLengthOutputComputed = new Label("Placeholder text will be an output value");
-
+    Label lblVolumeProfile = new Label("Volume Profile");
+    Label lblAreaTypeInput = new Label();
+    Label lblFunctionalClass = new Label("Functional Class of Roadway:");
+    Label lblFunctionalClassInput = new Label();
+    Label lblAreaType = new Label("Area Type:");
     JFXButton btnUpdAnalysis = new JFXButton("Update Analysis");
-    RequiredFieldValidator validator = new RequiredFieldValidator();
-
-    //labels for the existingInputs gridpane
-    Label lblFunctionalClass = new Label("Functional Class");
-    Label lblExistingNumLanes = new Label("Number of Lanes");
-    Label lblAreaType = new Label("Area Type");
 
 
-    public VolumeToCapacityWizard() {
+    public VolumeToCapacityWizard(MainController mc) {
+        this.control = mc;
 
         JFXButton btnPrev = new JFXButton();
 
@@ -174,15 +198,15 @@ public class VolumeToCapacityWizard extends BorderPane {
                 "and converted\n to vehicles per lane per hour (veh/ln/hr) using the specified truck percentage");
         baseCapacityTooltip.setShowDuration(Duration.INDEFINITE);
         lblLaneCap.setTooltip(baseCapacityTooltip);
-
-        aadtInputTextField.textProperty().addListener(new ChangeListener<String>() {
+        lblAadtInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(
                     ObservableValue<? extends String> observable,
                     String oldValue,
                     String newValue) {
                 if (!newValue.matches("\\d*")) {
-                    aadtInputTextField.setText(newValue.replaceAll("[^\\d]", ""));
+                    lblAadtInput.setText(newValue.replaceAll("[^\\d]", ""));
+                    System.out.println(lblAadtInput);
                 }
             }
         });
@@ -196,6 +220,30 @@ public class VolumeToCapacityWizard extends BorderPane {
                 if (!newValue.matches("\\d*")) {
                     inputBaseLaneCapacity.setText(newValue.replaceAll("[^\\d]", ""));
                 }
+            }
+        });
+        control.getProject().functionalClassProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String old_val, String new_val) {
+                lblFunctionalClassInput.setText(new_val);
+            }
+        });
+        control.getProject().areaTypeProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String old_val, String new_val) {
+                lblAreaTypeInput.setText(new_val);
+            }
+        });
+        control.getProject().aadtProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number old_val, Number new_val) {
+                lblAadtInput.setText(String.valueOf(new_val));
+            }
+        });
+        control.getProject().numRoadwayLanesProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number old_val, Number new_val) {
+                lblNumberofLanesInput.setText(String.valueOf(new_val));
             }
         });
 
@@ -212,6 +260,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputWorkzoneType.setMaxWidth(Integer.MAX_VALUE);
         inputWZnumLanesClosed.setMaxWidth(Integer.MAX_VALUE);
         inputVolumeProfile.setMaxWidth(Integer.MAX_VALUE);
+        inputVolumeProfile.setMaxWidth(Integer.MAX_VALUE);
 
         btnUpdAnalysis.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -222,17 +271,14 @@ public class VolumeToCapacityWizard extends BorderPane {
         FontIcon update = IconHelper.createIcon(FontAwesomeSolid.SYNC_ALT, Color.WHITE, 20);
         btnUpdAnalysis.setGraphic(update);
 
-        GridPane inputGrids = new GridPane();
         GridPane outputPane = new GridPane(); // this gridpane holds the the results to the right of the graph
-        GridPane existingInputs = new GridPane(); //this gridpane will display labels and the associated values that the user has already entered into the tool
         BorderPane navPane = new BorderPane();
         BorderPane graphPane = new BorderPane();
         BorderPane aadtBP = new BorderPane();
         BorderPane dirSplitBP = new BorderPane();
         BorderPane trucksBP = new BorderPane();
         BorderPane laneCapBP = new BorderPane();
-        BorderPane topPane = new BorderPane();
-        GridPane.setHgrow(aadtInputTextField, Priority.ALWAYS);
+        GridPane.setHgrow(lblAadtInput, Priority.ALWAYS);
 
         /*
         formats the label next to the directional split slider to be 2 decimal places
@@ -266,10 +312,10 @@ public class VolumeToCapacityWizard extends BorderPane {
                 }
             }
         });
-        aadtBP.setLeft(aadtInputTextField);
+        aadtBP.setLeft(lblAadtInput);
         aadtBP.setRight(lblvehPerDay);
 
-        dirSplitBP.setCenter(directionalSplitSlider);
+        dirSplitBP.setBottom(directionalSplitSlider);
         dirSplitBP.setRight(sliderLabel);
 
         trucksBP.setLeft(inputTruckPct);
@@ -282,41 +328,46 @@ public class VolumeToCapacityWizard extends BorderPane {
         navPane.setLeft(prevIcon);
         navPane.setRight(nextIcon);
         navPane.setPadding(new Insets(7, 20, 7, 20));
-
+        
         //columns, rows
-        inputGrids.add(lblAADT, 0, 0);
-        inputGrids.add(lblDirSplit, 0, 1);
-        inputGrids.add(lblAADTsubType,0,2);
-        inputGrids.add(lblInputVolScaling,0,4);
-        inputGrids.add(lblcompDir, 4, 2);
-        inputGrids.add(aadtBP, 1, 0);
-        inputGrids.add(dirSplitBP, 1, 1);
-        inputGrids.add(inputAADTProfileSubType,1,2);
-        inputGrids.add(inputVolumeScaling,1,4);
-        inputGrids.add(lblDemandProfile, 2, 0);
-        inputGrids.add(lblPercentTrucks,2,1);
+        inputGrids.add(lblFunctionalClass,0,0);
+        inputGrids.add(lblAADT,0,1);
+        inputGrids.add(lblNumLanes, 0, 2);
+        inputGrids.add(lblAreaType,0,3);
+
+        inputGrids.add(lblVolumeProfile,2,3);
+        inputGrids.add(lblInputVolScaling,2,4);
+        inputGrids.add(lblFunctionalClassInput, 1,0);
+        inputGrids.add(aadtBP, 1, 1);
+        inputGrids.add(lblNumberofLanesInput,1,2);
+        inputGrids.add(lblAreaTypeInput,1,3);
+        inputGrids.add(inputVolumeScaling,3,4);
+        inputGrids.add(lblPercentTrucks,2,0);
         inputGrids.add(lblTerrainType, 2,2);
-        inputGrids.add(computedAADTLabel, 1, 3);
-        inputGrids.add(inputAADTProfile, 3, 0);
-        inputGrids.add(trucksBP, 3, 1);
+        inputGrids.add(lblDirSplit,2,1);
+        inputGrids.add(directionalSplitSlider,3,1);
+        inputGrids.add(trucksBP, 3, 0);
         inputGrids.add(inputTerrainType, 3, 2);
-        inputGrids.add(lblLaneCap, 4, 0);
-        inputGrids.add(lblNumLanes, 4, 1);
-        inputGrids.add(lblSegCap, 0,3);
-        inputGrids.add(laneCapBP, 5, 0);
-        inputGrids.add(slidNumLanes, 5, 1);
-        inputGrids.add(computedSegmentCapacityLabel, 5, 2);
-        inputGrids.add(lblIntxTyp, 6,0);
-        inputGrids.add(lblWrkZoneTyp,6,1);
-        inputGrids.add(lblWZLaneCap, 6, 2);
-        inputGrids.add(txtWorkzoneCap, 7, 2);
-        inputGrids.add(lblNumWZlaneClosed,6,3);
-        inputGrids.add(inputWZnumLanesClosed, 7,3);
-        inputGrids.add(inputIntxType, 7,0);
-        inputGrids.add(inputWorkzoneType, 7, 1);
-        inputGrids.setHgap(20);
-        inputGrids.setVgap(30);
-        inputGrids.setPadding(new Insets(15, 0, 10, 0));
+        inputGrids.add(inputVolumeProfile,3,3);
+
+        gridWZconfig.add(lblLaneCap, 0, 0);
+        gridWZconfig.add(lblIntxTyp, 0,1);
+        gridWZconfig.add(lblWrkZoneTyp,0,2);
+        gridWZconfig.add(lblWZLaneCap, 0, 3);
+        gridWZconfig.add(lblNumWZlaneClosed,0,4);
+
+        gridWZconfig.add(laneCapBP, 1, 0);
+        gridWZconfig.add(inputIntxType, 1,1);
+        gridWZconfig.add(inputWorkzoneType, 1, 2);
+        gridWZconfig.add(txtWorkzoneCap, 1, 3);
+        gridWZconfig.add(inputWZnumLanesClosed, 1,4);
+
+
+        //gridWZconfig.add(slidNumLanes, 5, 1);
+        gridWZconfig.add(computedSegmentCapacityLabel, 5, 2);
+        gridWZconfig.setHgap(20);
+        gridWZconfig.setVgap(30);
+        gridWZconfig.setPadding(new Insets(15, 0, 10, 0));
 
         outputPane.add(lblMaxVCratio,0,0);
         outputPane.add(lblHrsAbovCap,0,1);
@@ -335,10 +386,17 @@ public class VolumeToCapacityWizard extends BorderPane {
         outputPane.setPrefWidth(650);
         outputPane.setMinWidth(500);
 
-        // Lables for 'top left' inputs
-        existingInputs.add(lblFunctionalClass, 0,0);
-        existingInputs.add(lblExistingNumLanes,0,2);
-        existingInputs.add(lblAreaType,0,3);
+        testPane.setStyle("-fx-background-color: Red");
+        //BorderPane.setAlignment(testPane, Pos.BASELINE_RIGHT);
+        //testPane.setCenter(gridWZconfig);
+        //adding tabs to tabpane
+        tabGeneral.setText("General");
+        tabGeneral.setContent(inputGrids);
+        tabWZconfig.setContent(gridWZconfig);
+
+        tabWZconfig.setText("Work zone Configuration");
+        vcInputPanes.getTabs().addAll(tabGeneral,tabWZconfig);
+        vcInputPanes.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         //creates a line chart
         final NumberAxis xAxis = new NumberAxis("Time of Day",0,24,1);
@@ -364,7 +422,11 @@ public class VolumeToCapacityWizard extends BorderPane {
         lblTitle.setAlignment(Pos.CENTER);
         topPane.setCenter(inputGrids);
         topPane.setBottom(navPane);
+        topPane.setTop(vcInputPanes);
         inputGrids.setAlignment(Pos.CENTER);
+        gridWZconfig.setAlignment(Pos.CENTER);
+        inputGrids.setVgap(35);
+        inputGrids.setHgap(20);
         this.setTop(topPane);
         this.setCenter(graphPane);
         this.setRight(outputPane);
@@ -376,9 +438,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         setupTooltips();
         configureInitialDefaults();
         setLabelStyles();
-        formnatTextfields(aadtInputTextField);
         formnatTextfields(inputBaseLaneCapacity);
-        validateUserInput(validator, aadtInputTextField);
     }
 
     private void formatLabels() {
@@ -452,7 +512,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         lblSegCap.getStyleClass().add("vc-label-styles");
         lblvehLnHr.getStyleClass().add("vc-units");
         computedAADTLabel.getStyleClass().add("vc-label-styles");
-        aadtInputTextField.getStyleClass().add("jf-txtbox");
+        lblAadtInput.getStyleClass().add("vc-label-input");
         inputBaseLaneCapacity.getStyleClass().add("jf-txtbox");
         inputTruckPct.getStyleClass().add("jf-txtbox");
         inputAADTProfile.getStyleClass().add("jfx-combo-style");
@@ -469,23 +529,35 @@ public class VolumeToCapacityWizard extends BorderPane {
         lblTimeAboveCap.getStyleClass().add("vc-label-styles");
         lblLvlofCongest.getStyleClass().add("vc-label-styles");
         lblEstQueLength.getStyleClass().add("vc-label-styles");
-        lblMaxVCratioComputed.getStyleClass().add("vc-label-styles");
-        lblHrsAbovCapOutputComputed.getStyleClass().add("vc-label-styles");
-        lblTimeAboveCapOutputComputed.getStyleClass().add("vc-label-styles");
+        lblMaxVCratioComputed.getStyleClass().add("vc-label-input");
+        lblHrsAbovCapOutputComputed.getStyleClass().add("vc-label-input");
+        lblTimeAboveCapOutputComputed.getStyleClass().add("vc-label-input");
         lblIntxTyp.getStyleClass().add("vc-label-styles");
-        lblLvlofCongestOutputComputed.getStyleClass().add("vc-label-styles");
-        lblEstQueLengthOutputComputed.getStyleClass().add("vc-label-styles");
+        lblLvlofCongestOutputComputed.getStyleClass().add("vc-label-input");
+        lblEstQueLengthOutputComputed.getStyleClass().add("vc-label-input");
+        lblFunctionalClassInput.getStyleClass().add("vc-label-input");
+        lblFunctionalClass.getStyleClass().add("vc-label-styles");
+        lblAreaType.getStyleClass().add("vc-label-styles");
+        lblAreaTypeInput.getStyleClass().add("vc-label-input");
+        lblNumberofLanesInput.getStyleClass().add("vc-label-input");
+        lblVolumeProfile.getStyleClass().add("vc-label-styles");
+        inputVolumeProfile.getStyleClass().add("jfx-combo-style");
+        inputVolumeScaling.getStyleClass().add("jfx-combo-style");
     }
 
     private void configureInitialDefaults() {
-        //aadtInputTextField.setText("50000"); // COMMENT: Possible default, unused for now, it's too important to have a default value
-        directionalSplitSlider.setValue(0.5); // COMMENT: Moved from constructor to here
+
+        lblFunctionalClassInput.textProperty().bindBidirectional(new SimpleStringProperty(proj.getFunctionalClass()));
+        lblAreaTypeInput.textProperty().bindBidirectional(new SimpleStringProperty(proj.getAreaType()));
+        directionalSplitSlider.setValue(0.5);
         inputAADTProfile.getSelectionModel().selectFirst();
         inputTruckPct.setText("5");
         inputTerrainType.getSelectionModel().selectFirst();
         inputBaseLaneCapacity.setText("2400"); // HCM Default Capacity
         slidNumLanes.setValue(2); // COMMENT: Moved from constructor to here
         inputAADTProfileSubType.getSelectionModel().selectFirst();
+        inputVolumeScaling.getSelectionModel().select(2);
+
     }
 
     private void setupComboBoxInputs() {
@@ -531,6 +603,7 @@ public class VolumeToCapacityWizard extends BorderPane {
                 new WorkzoneTypeItem("Custom", 6)
                 );
         inputWZnumLanesClosed.getItems().addAll(
+                new WZnumLanesClosedInput("Zero", 0),
                 new WZnumLanesClosedInput("One", 1),
                 new WZnumLanesClosedInput("Two", 2)
         );
@@ -549,7 +622,7 @@ public class VolumeToCapacityWizard extends BorderPane {
             public void handle(WindowEvent windowEvent) {
                 int aadt = 0;
                 try {
-                    aadt = Integer.parseInt(aadtInputTextField.getText().replace(",", ""));
+                    aadt = Integer.parseInt(lblAadtInput.getText().replace(",", ""));
                 } catch (NumberFormatException e) {
                     // do nothing
                 }
@@ -606,7 +679,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         // compute aadt
         int aadt = 0;
         try {
-            aadt = Integer.parseInt(aadtInputTextField.getText().replace(",", ""));
+            aadt = Integer.parseInt(lblAadtInput.getText().replace(",", ""));
         } catch (NumberFormatException e) {
             // do nothing
         }
