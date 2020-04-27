@@ -8,6 +8,9 @@ package GUI;
 import GUI.Helper.ColorHelper;
 import GUI.Helper.IOHelper;
 import core.Project;
+
+import java.io.File;
+import java.util.HashMap;
 import java.util.Optional;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -52,6 +55,12 @@ public class MainController {
      * Index of the sub step currently active.
      */
     private final SimpleIntegerProperty[] activeSubStep = new SimpleIntegerProperty[Project.NUM_STEPS];
+
+    /**
+     * Mapping to store the last utilized save location for file types
+     */
+    public static final HashMap<String, Object> lastSaveLocations = new HashMap<>();
+
 
     public MainController(Stage stage) {
         this.stage = stage;
@@ -361,6 +370,32 @@ public class MainController {
         }
     }
 
+    public static void setLastSaveLocation(String fileType, String directory) {
+        MainController.lastSaveLocations.put(fileType, directory);
+    }
+
+    public static String getLastSaveLocation(String fileType) {
+        Object lastDir = MainController.lastSaveLocations.getOrDefault(fileType, null);
+        if (lastDir != null) {
+            return lastDir.toString();
+        }
+        return null;
+    }
+
+    public static String getResFolderLocation() {
+        String location = MainController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        location = location.replaceAll("%20", " ");
+        if (location.contains("/build/classes")) {
+            location = location.substring(0, location.lastIndexOf("/build")) + "/"; // + "resources" + "/";
+        }
+        location = location.substring(0, location.lastIndexOf("/")) + "/" + "pdfres";
+        File pdfresFolder = new File(location);
+        if (!pdfresFolder.exists()) {
+            //pdfresFolder.mkdirs();
+        }
+        return location + "/";
+    }
+
     public static final int MAX_WIDTH = 999999;
     public static final int MAX_HEIGHT = 999999;
 
@@ -391,5 +426,7 @@ public class MainController {
     public static final String SUMMARY_TITLE = "Project Summary";
 
     public static final int FADE_TIME = 50;
+
+    public static final String VERSION = "2.0.0";
 
 }

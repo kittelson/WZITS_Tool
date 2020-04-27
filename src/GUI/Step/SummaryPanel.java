@@ -90,11 +90,11 @@ public class SummaryPanel {
         inputTabPanel.getTabs().addAll(fs1, fs2, fs3, fs4, fs5, fs6, fs7, fs8);
         inputTabPanel.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
-        BorderPane inputLabel = new BorderPane();
-        inputLabel.getStylesheets().add("GUI/CSS/globalStyle.css");
-        inputLabel.setCenter(inputTabPanel);
-        inputLabel.setMinHeight(225);
+        BorderPane wrapperPane = new BorderPane();
+        wrapperPane.getStylesheets().add("GUI/CSS/globalStyle.css");
+        wrapperPane.setCenter(inputTabPanel);
+        wrapperPane.setMinHeight(225);
 
-        return inputLabel;
+        return wrapperPane;
     }
 }

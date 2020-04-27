@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><pdf-data version="0.0.1">
+    <header>
+        <title1>WZITS Tool Fact Sheet #1</title1>
+        <freevalVersion>FREEVAL PA 2.0.0</freevalVersion>
+        <freevalLogo>url('/C:/Users/ltrask/IdeaProjects/WZITS_Tool/out/production/WZITS_Tool/pdfres//wzits_icon_64.png')</freevalLogo>
+        <ncdotLogo>url('/C:/Users/ltrask/IdeaProjects/WZITS_Tool/out/production/WZITS_Tool/pdfres//us_dot_logo.png')</ncdotLogo>
+        <seedFileName>[Unsaved Project File]</seedFileName>
+        <title2>Project Info and Metadata</title2>
+    </header>
+    <body/>
+</pdf-data>

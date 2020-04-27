@@ -17,6 +17,7 @@ import GUI.Step.Step4Panel;
 import GUI.Step.Step5Panel;
 import GUI.Step.Step6Panel;
 import GUI.Step.SummaryPanel;
+import com.jfoenix.controls.JFXTabPane;
 import core.Project;
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
@@ -209,8 +210,66 @@ public class MainWindow extends BorderPane {
                 PDFIOHelper.writeStepSummary(control, 8);
             }
         });
+        MenuItem fs1MenuItemV2 = new MenuItem("Fact Sheet 1 (V2)");
+        fs1MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 1);
+            }
+        });
+        MenuItem fs2MenuItemV2 = new MenuItem("Fact Sheet 2 (V2)");
+        fs2MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 2);
+            }
+        });
+        MenuItem fs3MenuItemV2 = new MenuItem("Fact Sheet 3 (V2)");
+        fs3MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 3);
+            }
+        });
+        MenuItem fs4MenuItemV2 = new MenuItem("Fact Sheet 4 (V2)");
+        fs4MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 4);
+            }
+        });
+        MenuItem fs5MenuItemV2 = new MenuItem("Fact Sheet 5 (V2)");
+        fs5MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 5);
+            }
+        });
+        MenuItem fs6MenuItemV2 = new MenuItem("Fact Sheet 6 (V2)");
+        fs6MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 6);
+            }
+        });
+        MenuItem fs7MenuItemV2 = new MenuItem("Fact Sheet 7 (V2)");
+        fs7MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 7);
+            }
+        });
+        MenuItem fs8MenuItemV2 = new MenuItem("Fact Sheet 8 (V2)");
+        fs8MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+                PDFIOHelper.writeFactSheetPDF(control, 8);
+            }
+        });
         menuExportResults.getItems().addAll(fsAllMenuItem, new SeparatorMenuItem(), fs1MenuItem, fs2MenuItem, fs3MenuItem,
-                fs4MenuItem, fs5MenuItem, fs6MenuItem, fs7MenuItem, fs8MenuItem);
+                fs4MenuItem, fs5MenuItem, fs6MenuItem, fs7MenuItem, fs8MenuItem,
+                new SeparatorMenuItem(),
+                fs1MenuItemV2, fs2MenuItemV2, fs3MenuItemV2, fs4MenuItemV2, fs5MenuItemV2, fs6MenuItemV2, fs7MenuItemV2, fs8MenuItemV2);
         goalWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
@@ -575,7 +634,7 @@ public class MainWindow extends BorderPane {
         if (control.activeStepProperty().get() != Project.NUM_STEPS) {
             control.selectStep(Project.NUM_STEPS);
         }
-        ((TabPane) summaryPane.getCenter()).getSelectionModel().select(fsIdx - 1);
+        ((JFXTabPane) ((BorderPane) summaryPane.getCenter()).getCenter()).getSelectionModel().select(fsIdx - 1);
         if (applyPause) {
             // Lets the node render
             try {
@@ -584,7 +643,7 @@ public class MainWindow extends BorderPane {
 
             }
         }
-        return ((TabPane) summaryPane.getCenter()).getTabs().get(fsIdx - 1).getContent();
+        return ((JFXTabPane) ((BorderPane) summaryPane.getCenter()).getCenter()).getTabs().get(fsIdx - 1).getContent();
     }
 
     /**

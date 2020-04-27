@@ -6,6 +6,7 @@
 package GUI.Helper;
 
 import GUI.MainController;
+import GUI.PDFReports.PDFReportHelper;
 import core.Project;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -116,6 +117,11 @@ public class PDFIOHelper {
                 }
             });
         }
+    }
+
+    public static void writeFactSheetPDF(MainController controller, int factSheetIdx) {
+        PDFReportHelper pdfReportHelper = new PDFReportHelper(null, factSheetIdx);
+        pdfReportHelper.createFactSheet(controller, factSheetIdx);
     }
 
     public static void writeStepSummary(MainController mc, int factSheetIdx) {

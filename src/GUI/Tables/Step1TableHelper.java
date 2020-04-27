@@ -955,7 +955,7 @@ public class Step1TableHelper {
         return TableHelper.createQuestionYNTable(proj.getStakeWizardYNQs(), tOpts);
     }
 
-    private static int countSelected(ObservableList<Need> nl) {
+    public static int countSelected(ObservableList<Need> nl) {
         int numSelected = 0;
         numSelected = nl.stream().filter((n) -> (n.isSelected())).map((_item) -> 1).reduce(numSelected, Integer::sum);
         return numSelected;
