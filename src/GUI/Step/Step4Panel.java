@@ -147,7 +147,7 @@ public class Step4Panel extends BorderPane {
 
         for (int i = 0; i < captions.length; i++) {
             BorderPane subsectionPane = new BorderPane();
-            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-title-label");
+            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-title-label-v2");
             subsectionPane.setTop(subsectionTitle);
             subsectionPane.setCenter(hash_map.get(i));
             hash_map.replace(i, subsectionPane);
