@@ -5,6 +5,7 @@ import GUI.MainController;
 import GUI.PDFReports.XML.XMLGenerator;
 import GUI.Tables.Step1TableHelper;
 import core.*;
+import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
@@ -101,7 +102,6 @@ public class FactSheetReportCreator {
         tableData[1][1] = project.getDescription() != null ? project.getDescription() : "";
         return tableData;
     }
-
     public String[][] getProjectDescriptionTable(Project project) {
         String[][] tableData = new String[2][2];
         tableData[0][0] = "Project Description";
@@ -166,6 +166,524 @@ public class FactSheetReportCreator {
         return tableData;
     }
 
+    /*
+    Creates the table for PDF 3, WZITS Selected Applications and Refinement
+    in the "WZITS Selected Applications section"
+     */
+    public String[][] getWZITSselectedApp(Project project) {
+        ObservableList<Application> qList = project.getApplicationMatrix().getAppList();
+        String[][] tableData = new String[qList.size() + 1][3]; // [row][col]
+        int ri = 0;
+        tableData[ri][0] = "Application"; // sets col 0 heading
+        tableData[ri][1] = "High";       // sets col 1 heading
+        tableData[ri][2] = "Selected";    // sets col 2 heading
+        ri++; // row 1 beginning application questions
+        for (Application app : project.getApplicationMatrix().getAppList()) {
+            tableData[ri][0] = app.getName(); //Application
+            tableData[ri][1] = Application.getScoreString(app.getScore());
+            tableData[ri][2] = app.isSelected() ? "Yes" : "No"; // Selected
+            ri++;  // next row
+        }
+        return tableData;
+    }
+    /*
+   Creates the table for PDF 3, WZITS Selected Applications and Refinement
+   in the Application Refinement section
+    */
+    public String[][] getBenefitRefinement(Project project) {
+        QuestionOptionMS beneQ = project.getQGen().qBenefitList.get(0);
+        String[][] tableData = new String[beneQ.getOptions().length + 1][3];
+
+        int ri = 0; // row for heading
+        tableData[ri][0] = "Application Refinement"; //heading at row 0 col 0
+        tableData[ri][1] = "Response"; // heading at row 0 col 1
+        tableData[ri][2] = "Comment"; // heading at row 0 col 2
+        ri++; // now on row 1 to begin populating questions
+        System.out.println("The size of benefitlist is " + beneQ.getOptions().length);
+        for (int bIdx = 0; bIdx < beneQ.getOptions().length; bIdx++) {
+            tableData[ri][0] = beneQ.getOption(bIdx); // gets the question text of beneQ at position of bIdx
+            tableData[ri][1] = beneQ.getOptionIncluded(bIdx) ? "Yes" : "No"; // gets the comment of beneQ at position of bIdx
+            tableData[ri][2] = beneQ.getComment() != null ? beneQ.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+   Creates the table for PDF 3, WZITS Selected Applications and Refinement
+   in the institutuional/jurisdictional section
+    */
+    public String[][] getInstitutionalJurisdictional(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qJurisdictionalList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Application Refinement";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //Application
+            tableData[ri][1] = question.getAnswerString(); // High
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // Selected
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+   Creates the table for PDF 3, WZITS Selected Applications and Refinement
+   in the Legal/policy
+    */
+    public String[][] getLegalPolicy(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qLegalList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Application Refinement";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //Application
+            tableData[ri][1] = question.getAnswerString(); // High
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // Selected
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+   Creates the table for PDF 3, WZITS Selected Applications and Refinement
+   in the Stakeholder buy-in section
+    */
+    public String[][] getStakeholderBuyin(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qStakeholderBuyInList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Application Refinement";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //Application
+            tableData[ri][1] = question.getAnswerString(); // High
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // Selected
+            ri++;
+        }
+        return tableData;
+    }
+    //todo PDF 4
+    /*
+    Creates the table for PDF 5, Document Concept of Operations
+    in the System Planning and Design section
+     */
+    public String[][] getDocumentConsOperations(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qConOpsList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 5, Requirements
+    in the System Planning and Design section
+     */
+    public String[][] getSysPlanDesgnRequirements(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qSysReqList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+
+    ;
+
+    /*
+    Creates the table for PDF 5, Testing strategy
+    in the System Planning and Design section
+     */
+    public String[][] getTestStrategy(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qTestingStratList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+        }
+        return tableData;
+    }
+
+    ;
+
+    /*
+    Creates the table for PDF 5, Operations & Maintenance
+    in the System Planning and Design section
+     */
+    public String[][] getOpsandMaitenance(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qOpsMaintList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+
+    ;
+
+    /*
+    Creates the table for PDF 5, Staff Training Needs
+    in the System Planning and Design section
+     */
+    public String[][] getStaffTrainingNeeds(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qStaffTrainingList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+
+    ;
+
+    /*
+    Creates the table for PDF 5, System Security
+    in the System Planning and Design section
+     */
+    public String[][] getSysSecurity(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qSysSecurityList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 5, Evaluation
+    in the System Planning and Design section
+     */
+    public String[][] getEvaluation(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qProjectEvalList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 5, Benefit/Cost
+    in the System Planning and Design section
+     */
+    public String[][] getBenefitCost(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qSysBCList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 6, direct/indirect
+    in the System Planning and Design section
+     */
+    public String[][] getDirectOrIndirect(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qDirectIndirectList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;  // row 0 for headings
+        tableData[ri][0] = "Question"; // heading
+        tableData[ri][1] = "Response"; // heading
+        tableData[ri][2] = "Comment"; // heading
+        ri++; // new for to begin questions
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText();
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 6, Award Mechanism
+    in the System Planning and Design section
+     */
+    public String[][] getAwardMechanism(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qMechanismList;
+
+        String[][] tableData = new String[qList.size() + 1][3]; //row, col, sets the size of the array to the size of the question list
+        System.out.println("The size of stepList is " + project.getQGen().qDirectIndirectList);
+        int ri = 0; // "zero" row to hold the column headings
+        tableData[ri][0] = "Question"; // assigns header rows
+        tableData[ri][1] = "Response"; // assigns header rows
+        tableData[ri][2] = "Comment"; // assigns header rows
+        ri++; // change row index to 1 to begin adding question,answer, comments to the table
+
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); // gets question text
+            tableData[ri][1] = question.getAnswerString(); // gets question answer
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+   Creates the table for PDF 6, Award Mechanism
+   in the System Planning and Design section
+    */
+    public String[][] getRFPrequirements(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qRFPList; // accesses rfp questions
+        String[][] tableData = new String[qList.size() + 1][3]; // sets the two-dim array to the size of the number of questions and the cols to 3.. + 1 to account for the headings
+        int ri = 0; // row 0 for headings
+        tableData[ri][0] = "Question"; // sets col 0 heading
+        tableData[ri][1] = "Response"; // sets col 1 heading
+        tableData[ri][2] = "Comment"; // sets col 2 heading
+        ri++; // updates row to begin populating questions
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); // gets question text
+            tableData[ri][1] = question.getAnswerString(); // gets question answer
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // gets the user commment
+            ri++; // updates the row, accessing the next question, answer, comment in qList
+        }
+        return tableData;
+    }
+    /*
+   Creates the table for PDF 6, Selected Vendor
+   in the System Planning and Design section
+    */
+    public String[][] getSelectedVendor(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qVendorSelectionList; // accesses vendor related questions
+
+        String[][] tableData = new String[qList.size() + 1][3]; // rows, columns
+        int ri = 0; // row 0 for headings
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText();
+            tableData[ri][1] = question.getAnswerString();
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : "";
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 7, implementing system plans
+    in the System Planning and Design section
+    */
+    public String[][] getimplementSysPlans(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qSysPlansList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN questionYN : qList) {
+            tableData[ri][0] = questionYN.getQuestionText(); //question
+            tableData[ri][1] = questionYN.getAnswerString(); // response
+            tableData[ri][2] = questionYN.getComment() != null ? questionYN.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 7, implementing system plans
+    in the System Planning and Design section
+    */
+    public String[][] getScheduleDecisions(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qAcceptanceTrainingList;
+        String[][] tableData = new String[qList.size() + 1][3]; // 5 rows, 3 columns
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 7, Handling Deployment Issues
+    in the System Planning and Design section
+    */
+    public String[][] getHandleDeployIssues(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qDeploymentIssuesList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+   Creates the table for PDF 8, Changing Work Zone
+   in the System Operation, Maintenance & Evaluation section
+   */
+    public String[][] getChangingWorkZone(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qChangingConditionsList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+  Creates the table for PDF 8, Using/Sharing ITS Info
+  in the System Operation, Maintenance & Evaluation section
+  */
+    public String[][] getUsingSharingITSinfo(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qSharingInfoList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    };
+    /*
+    Creates the table for PDF 8, maintaining adequate staff
+    in the System  Operation, Maintenance & Evaluation section
+    */
+    public String[][] getMaintainAdequateStaff(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qStaffingList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 8, Leveraging Public support
+    in the System Operation, Maintenance & Evaluation section
+    */
+    public String[][] getLeverageSupport(Project project) {
+        ObservableList<QuestionYN>qList = project.getQGen().qPublicSupportList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+    /*
+    Creates the table for PDF 8, System Monitoring Evaluation
+    in the System Operation, Maintenance & Evaluation section
+    */
+    public String[][] getSysMonitoringEvaluation(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qMonitoringEvalList; // accesses vendor related questions
+
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN question : qList) {
+            tableData[ri][0] = question.getQuestionText(); //question
+            tableData[ri][1] = question.getAnswerString(); // response
+            tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
     public String[][] getWorkZoneConfiguration(Project project) {
         String[][] tableData = new String[8][3];
         int ri = 0;
@@ -396,31 +914,31 @@ public class FactSheetReportCreator {
         tableData[ri][2] = "Response";
         tableData[ri][3] = "Comment";
         ri++;
-        QuestionYN currQ = project.getQGen().qITSResourcesList.get(ri-1);
+        QuestionYN currQ = project.getQGen().qITSResourcesList.get(ri - 1);
         tableData[ri][0] = String.valueOf(ri);
         tableData[ri][1] = "Weather Monitoring Stations";
         tableData[ri][2] = currQ.getAnswerString();
         tableData[ri][3] = currQ.getComment() != null ? currQ.getComment() : "";
         ri++;
-        currQ = project.getQGen().qITSResourcesList.get(ri-1);
+        currQ = project.getQGen().qITSResourcesList.get(ri - 1);
         tableData[ri][0] = String.valueOf(ri);
         tableData[ri][1] = "TMC Monitoring Roadway";
         tableData[ri][2] = currQ.getAnswerString();
         tableData[ri][3] = currQ.getComment() != null ? currQ.getComment() : "";
         ri++;
-        currQ = project.getQGen().qITSResourcesList.get(ri-1);
+        currQ = project.getQGen().qITSResourcesList.get(ri - 1);
         tableData[ri][0] = String.valueOf(ri);
         tableData[ri][1] = "Website/Traveler Information System";
         tableData[ri][2] = currQ.getAnswerString();
         tableData[ri][3] = currQ.getComment() != null ? currQ.getComment() : "";
         ri++;
-        currQ = project.getQGen().qITSResourcesList.get(ri-1);
+        currQ = project.getQGen().qITSResourcesList.get(ri - 1);
         tableData[ri][0] = String.valueOf(ri);
         tableData[ri][1] = "ITS On-Call Contract(s) Available";
         tableData[ri][2] = currQ.getAnswerString();
         tableData[ri][3] = currQ.getComment() != null ? currQ.getComment() : "";
         ri++;
-        currQ = project.getQGen().qITSResourcesList.get(ri-1);
+        currQ = project.getQGen().qITSResourcesList.get(ri - 1);
         tableData[ri][0] = String.valueOf(ri);
         tableData[ri][1] = "Access to Leased Devices";
         tableData[ri][2] = currQ.getAnswerString();
@@ -474,12 +992,12 @@ public class FactSheetReportCreator {
         String in = Integer.toHexString((int) Math.round(val * 255));
         return in.length() == 1 ? "0" + in : in;
     }
+
     // https://stackoverflow.com/a/56733608
     private String toHexString(Color value) {
         return "#" + (hexFormat(value.getRed()) + hexFormat(value.getGreen()) + hexFormat(value.getBlue()) + hexFormat(value.getOpacity()))
                 .toUpperCase();
     }
-
 
 
     public void createReport(MainController controller, int factSheetIdx) {
@@ -550,7 +1068,7 @@ public class FactSheetReportCreator {
                     "Project Limits and Additional Information",
                     "",
                     100,
-                    new float[] {15, 85},
+                    new float[]{15, 85},
                     null
             );
             String imgResourcePath = PDFReportHelper.getResFolderLocation();
@@ -566,7 +1084,7 @@ public class FactSheetReportCreator {
                     "Facility and Base Conditions",
                     "",
                     100,
-                    new float[] {23, 12, 65},
+                    new float[]{23, 12, 65},
                     new String[]{"left", "center", "left"}
             );
             xmlGenerator.generateTable(
@@ -578,7 +1096,7 @@ public class FactSheetReportCreator {
                     "Facility and Base Conditions",
                     "",
                     100,
-                    new float[] {25, 10, 65},
+                    new float[]{25, 10, 65},
                     new String[]{"left", "center", "left"}
             );
             // getITSGoalsTable
@@ -591,7 +1109,7 @@ public class FactSheetReportCreator {
                     "ITS Goals Summary",
                     "",
                     100,
-                    new float[] {20, 70, 10},
+                    new float[]{20, 70, 10},
                     new String[]{"center", "left", "center"}
             );
             xmlGenerator.generateTable(
@@ -603,8 +1121,8 @@ public class FactSheetReportCreator {
                     "Feasibility Assessment",
                     "",
                     100,
-                    new float[] {50,50},
-                    new String[] {"center", "left"}
+                    new float[]{50, 50},
+                    new String[]{"center", "left"}
             );
 //            if (this.includeScenarioCompTable) {
 //                float rowNameColWidth = 25.0f;
@@ -719,7 +1237,7 @@ public class FactSheetReportCreator {
                     "Project Limits and Additional Information",
                     "",
                     100,
-                    new float[] {15, 85},
+                    new float[]{15, 85},
                     null
             );
             xmlGenerator.generateTable(
@@ -731,7 +1249,7 @@ public class FactSheetReportCreator {
                     "Selected Core Team and Stakeholders",
                     "",
                     100,
-                    new float[] {5, 55, 25, 15},
+                    new float[]{5, 55, 25, 15},
                     new String[]{"center", "left", "center", "center"}
             );
             xmlGenerator.generateTable(
@@ -743,7 +1261,7 @@ public class FactSheetReportCreator {
                     "",
                     "",
                     100,
-                    new float[] {5, 55, 25, 15},
+                    new float[]{5, 55, 25, 15},
                     new String[]{"center", "left", "center", "center"}
             );
 
@@ -756,8 +1274,8 @@ public class FactSheetReportCreator {
                     "ITS Resources",
                     "",
                     100,
-                    new float[] {5, 30, 10, 55},
-                    new String[] {"center", "left", "center", "left"}
+                    new float[]{5, 30, 10, 55},
+                    new String[]{"center", "left", "center", "left"}
             );
 
             xmlGenerator.generate();
@@ -770,7 +1288,103 @@ public class FactSheetReportCreator {
     public void createFactSheet3(MainController controller) {
         String xmlFilePath = PDFReportHelper.getResFolderLocation() + "fact-sheet-pdf-resources.xml";
         try {
-
+            String projectFileName = "[Unsaved Project File]";
+            File projectFile = controller.getProject().getSaveFile();
+            if (projectFile != null) {
+                projectFileName = projectFile.getAbsolutePath();
+            }
+            XMLGenerator xmlGenerator = new XMLGenerator(projectFileName,
+                    xmlFilePath,
+                    "Work Zone ITS Tool",
+                    "Fact Sheet #3" // TODO always update this index
+            );
+            final String reportTitle = getFactSheetName(3);
+            xmlGenerator.generateTitle(reportTitle, Pos.CENTER);
+            xmlGenerator.generateTable(
+                    getProjectInformationTable(controller.getProject()),
+                    "projectInformation",
+                    false,
+                    false,
+                    false,
+                    "Project Information",
+                    "",
+                    50,
+                    null,
+                    null
+            );
+            xmlGenerator.generateTable(
+                    getProjectLimitsAndDescriptionTable(controller.getProject()),
+                    "projectDescription",
+                    false,
+                    false,
+                    false,
+                    "Project Limits and Additional Information",
+                    "",
+                    100,
+                    new float[]{15, 85},
+                    null
+            );
+            xmlGenerator.generateTable(
+                    getWZITSselectedApp(controller.getProject()),
+                    "wzitsSelctApplications",
+                    false,
+                    true,
+                    false,
+                    "WZITS Selected Applications",
+                    "",
+                    100,
+                    new float[]{33,33,33},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getBenefitRefinement(controller.getProject()),
+                    "applicationRefinementBenefits",
+                    false,
+                    true,
+                    false,
+                    "Benefits",
+                    "",
+                    100,
+                    new float[]{40,10,50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getInstitutionalJurisdictional(controller.getProject()),
+                    "institutionalJusdictional",
+                    false,
+                    true,
+                    false,
+                    "Institutional/Jurisdictional",
+                    "",
+                    100,
+                    new float[]{40,10,50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getLegalPolicy(controller.getProject()),
+                    "legalPolicy",
+                    false,
+                    true,
+                    false,
+                    "Legal/Policy",
+                    "",
+                    100,
+                    new float[]{40,10,50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getStakeholderBuyin(controller.getProject()),
+                    "StakeholderBuyin",
+                    false,
+                    true,
+                    false,
+                    "Stakeholder Buy-in",
+                    "",
+                    100,
+                    new float[]{40,10,50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
@@ -779,7 +1393,18 @@ public class FactSheetReportCreator {
     public void createFactSheet4(MainController controller) {
         String xmlFilePath = PDFReportHelper.getResFolderLocation() + "fact-sheet-pdf-resources.xml";
         try {
+            String projectFileName = "[Unsaved Project File]";
+            File projectFile = controller.getProject().getSaveFile();
+            if (projectFile != null) {
+                projectFileName = projectFile.getAbsolutePath();
+            }
+            XMLGenerator xmlGenerator = new XMLGenerator(projectFileName,
+                    xmlFilePath,
+                    "Work Zone ITS Tool",
+                    "Fact Sheet #4"
+            );
 
+            xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {  // "Error related to exceptions will disappear when you've added the "xmlGenerator.generate();" line
             e.printStackTrace();
         }
@@ -796,9 +1421,130 @@ public class FactSheetReportCreator {
             XMLGenerator xmlGenerator = new XMLGenerator(projectFileName,
                     xmlFilePath,
                     "Work Zone ITS Tool",
-                    "Fact Sheet #5" // TODO always update this index
+                    "Fact Sheet #5"
             );
-
+            final String reportTitle = getFactSheetName(5);
+            xmlGenerator.generateTitle(reportTitle, Pos.CENTER);
+            xmlGenerator.generateTable(
+                    getProjectInformationTable(controller.getProject()),
+                    "projectInformation",
+                    false,
+                    false,
+                    false,
+                    "Project Information",
+                    "",
+                    50,
+                    null,
+                    null
+            );
+            xmlGenerator.generateTable(
+                    getProjectLimitsAndDescriptionTable(controller.getProject()),
+                    "projectDescription",
+                    false,
+                    false,
+                    false,
+                    "Project Limits and Additional Information",
+                    "",
+                    100,
+                    new float[]{15, 85},
+                    null
+            );
+            xmlGenerator.generateTable(
+                    getDocumentConsOperations(controller.getProject()),
+                    "docConOps",
+                    false,
+                    true,
+                    false,
+                    "Document Concept of Operations",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getSysPlanDesgnRequirements(controller.getProject()),
+                    "requirements",
+                    false,
+                    true,
+                    false,
+                    "Requirements",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getTestStrategy(controller.getProject()),
+                    "testStrategy",
+                    false,
+                    true,
+                    false,
+                    "Testing Strategy",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getOpsandMaitenance(controller.getProject()),
+                    "opsAndMaintenance",
+                    false,
+                    true,
+                    false,
+                    "Operations & Maintenance",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getStaffTrainingNeeds(controller.getProject()),
+                    "staffTrainNeeds",
+                    false,
+                    true,
+                    false,
+                    "Staff Training Needs",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getSysSecurity(controller.getProject()),
+                    "systemSecurity",
+                    false,
+                    true,
+                    false,
+                    "System Security",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getEvaluation(controller.getProject()),
+                    "evaluation",
+                    false,
+                    true,
+                    false,
+                    "Evaluation",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getBenefitCost(controller.getProject()),
+                    "benefitCost",
+                    false,
+                    true,
+                    false,
+                    "Benefit/Cost",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
             xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
@@ -808,16 +1554,156 @@ public class FactSheetReportCreator {
     public void createFactSheet6(MainController controller) {
         String xmlFilePath = PDFReportHelper.getResFolderLocation() + "fact-sheet-pdf-resources.xml";
         try {
+            String projectFileName = "[Unsaved Project File]";
+            File projectFile = controller.getProject().getSaveFile();
+            if (projectFile != null) {
+                projectFileName = projectFile.getAbsolutePath();
+            }
+            XMLGenerator xmlGenerator = new XMLGenerator(projectFileName,
+                    xmlFilePath,
+                    "Work Zone ITS Tool",
+                    "Fact Sheet #6"
+            );
+            xmlGenerator.generateTable(
+                    getProjectInformationTable(controller.getProject()),
+                    "projectInformation",
+                    false,
+                    false,
+                    false,
+                    "Project Information",
+                    "",
+                    50,
+                    null,
+                    null
+            );
+            xmlGenerator.generateTable(
+                    getDirectOrIndirect(controller.getProject()),
+                    "directOrIndirect",
+                    false,
+                    true,
+                    false,
+                    "Direct/Indirect",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getAwardMechanism(controller.getProject()),
+                    "awardMechanism",
+                    false,
+                    true,
+                    false,
+                    "Award Mechanism",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getRFPrequirements(controller.getProject()),
+                    "rfpRequirements",
+                    false,
+                    true,
+                    false,
+                    "RFP Requirements",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getSelectedVendor(controller.getProject()),
+                    "selectedVendor",
+                    false,
+                    true,
+                    false,
+                    "Selected Vendor",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generate();
 
         } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
     }
-
     public void createFactSheet7(MainController controller) {
         String xmlFilePath = PDFReportHelper.getResFolderLocation() + "fact-sheet-pdf-resources.xml";
         try {
-
+            String projectFileName = "[Unsaved Project File]";
+            File projectFile = controller.getProject().getSaveFile();
+            if (projectFile != null) {
+                projectFileName = projectFile.getAbsolutePath();
+            }
+            XMLGenerator xmlGenerator = new XMLGenerator(projectFileName,
+                    xmlFilePath,
+                    "Work Zone ITS Tool",
+                    "Fact Sheet #7"
+            );
+            xmlGenerator.generateTable(
+                    getProjectInformationTable(controller.getProject()),
+                    "projectInformation",
+                    false,
+                    false,
+                    false,
+                    "Project Information",
+                    "",
+                    50,
+                    null,
+                    null
+            );
+            xmlGenerator.generateTable(
+                    getimplementSysPlans(controller.getProject()),
+                    "implementSysPlans",
+                    false,
+                    true,
+                    false,
+                    "Implementing System Plans",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getScheduleDecisions(controller.getProject()),
+                    "schedulingDecisions",
+                    false,
+                    true,
+                    false,
+                    "Scheduling Decisions",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getimplementSysPlans(controller.getProject()),
+                    "systemAcceptanceTesting",
+                    false,
+                    true,
+                    false,
+                    "System Acceptance Testing",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getHandleDeployIssues(controller.getProject()),
+                    "handlingDeployIssues",
+                    false,
+                    true,
+                    false,
+                    "Handling Deployment Issues",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
@@ -826,7 +1712,89 @@ public class FactSheetReportCreator {
     public void createFactSheet8(MainController controller) {
         String xmlFilePath = PDFReportHelper.getResFolderLocation() + "fact-sheet-pdf-resources.xml";
         try {
-
+            String projectFileName = "[Unsaved Project File]";
+            File projectFile = controller.getProject().getSaveFile();
+            if (projectFile != null) {
+                projectFileName = projectFile.getAbsolutePath();
+            }
+            XMLGenerator xmlGenerator = new XMLGenerator(projectFileName,
+                    xmlFilePath,
+                    "Work Zone ITS Tool",
+                    "Fact Sheet #8"
+            );
+            xmlGenerator.generateTable(
+                    getProjectInformationTable(controller.getProject()),
+                    "projectInformation",
+                    false,
+                    false,
+                    false,
+                    "Project Information",
+                    "",
+                    50,
+                    null,
+                    null
+            );
+            xmlGenerator.generateTable(
+                    getChangingWorkZone(controller.getProject()),
+                    "changeWorkZone",
+                    false,
+                    true,
+                    false,
+                    "Changing Work Zone",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getUsingSharingITSinfo(controller.getProject()),
+                    "usingSharingITSinfo",
+                    false,
+                    true,
+                    false,
+                    "Using/Sharing ITS Info",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getMaintainAdequateStaff(controller.getProject()),
+                    "maintaingAdequteStaff",
+                    false,
+                    true,
+                    false,
+                    "Maintaining Adequate Staff",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getLeverageSupport(controller.getProject()),
+                    "leveraginPublicSupport",
+                    false,
+                    true,
+                    false,
+                    "Leveraging Public Support",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getSysMonitoringEvaluation(controller.getProject()),
+                    "systemMonitoringEvaluation",
+                    false,
+                    true,
+                    false,
+                    "System Monitoring/Evaluation",
+                    "",
+                    100,
+                    new float[]{40, 10, 50},
+                    new String[] {"left", "center", "center"}
+            );
+            xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
