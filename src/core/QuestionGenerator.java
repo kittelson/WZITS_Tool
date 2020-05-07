@@ -633,7 +633,7 @@ public class QuestionGenerator implements Serializable {
                 " If so, please list reasoning and contact information for applicable parties."));
         qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do your agency ITS experts interact with road design and construction experts in relation to work zones?"));
         qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Does your agency have staff with experience in smart work zone ITS?"));
-        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do long standing operational procedures (SOPs)  need to be adopted?"));
+        qJurisdictionalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Do long standard operational procedures (SOPs) need to be adopted?"));
         // Legal/Policy
         this.qLegalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is the type of system being implemented permitted under the current laws and regulations?"));
         qLegalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any liability issues for placing ITS equipment in a work zone?"));
@@ -641,7 +641,7 @@ public class QuestionGenerator implements Serializable {
         qLegalList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are there any liability issues regarding the posting of warning messages?"));
         // Stakeholder buy-in
         this.qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have inter-agency relationships been established between stakeholders?"));
-        qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are regular meetings held with stakeholders to keep them appraised of the project?"));
+        qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Are regular meetings held with stakeholders to keep them apprised of the project?"));
         qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a champion for the project?"));
         qStakeholderBuyInList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Have the estimated benefits of the project been documented?"));
         // Concept of operations (End Step 2/Start Step 3)
@@ -710,7 +710,7 @@ public class QuestionGenerator implements Serializable {
         // Acceptance Testing
         this.qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has system acceptance testing been conducted using the test plan?"));
         qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is the smart work zone ITS system flexible enough to incorporate construction design changes and delays?"));
-        qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the system been verified from a drivers' expectation?"));
+        qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the system been verified from a driver's expectation?"));
         qAcceptanceTrainingList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Has the system deployment been field verified by agency personnel?"));
         // PDeploymjent Issues (End Step 5)
         this.qDeploymentIssuesList.add(new QuestionYN(qIdx++, Question.GOAL_DOCUMENTATION, "Is there a contingency plan for addressing communication issues with the equipment?"));

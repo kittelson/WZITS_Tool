@@ -69,16 +69,16 @@ public class FactSheetReportCreator {
         Date date = new Date();
         String[][] projectInfo = new String[6][2];
         int ri = 0;
-        projectInfo[ri][0] = "State Agency:";
+        projectInfo[ri][0] = "State Agency";
         projectInfo[ri][1] = project.getAgency() != null ? project.getAgency() : "";
         ri++;
-        projectInfo[ri][0] = "Analyst:";
+        projectInfo[ri][0] = "Analyst";
         projectInfo[ri][1] = project.getAnalyst() != null ? project.getAnalyst() : "";
         ri++;
-        projectInfo[ri][0] = "Date:";
+        projectInfo[ri][0] = "Date";
         projectInfo[ri][1] = project.getDateString();
         ri++;
-        projectInfo[ri][0] = "Project Name:";
+        projectInfo[ri][0] = "Project Name";
         projectInfo[ri][1] = project.getName() != null ? project.getName() : "";
 //        ri++;
 //        projectInfo[ri][0] = "Project Description:";
@@ -97,22 +97,22 @@ public class FactSheetReportCreator {
 
     public String[][] getProjectLimitsAndDescriptionTable(Project project) {
         String[][] tableData = new String[2][2];
-        tableData[0][0] = "Project Limits";
+        tableData[0][0] = "Project Limits:";
         tableData[0][1] = project.getLimits() != null ? project.getLimits() : "None specified";
-        tableData[1][0] = "Project Description";
+        tableData[1][0] = "Project Description:";
         tableData[1][1] = project.getDescription() != null ? project.getDescription() : "";
         return tableData;
     }
     public String[][] getProjectDescriptionTable(Project project) {
         String[][] tableData = new String[2][2];
-        tableData[0][0] = "Project Description";
+        tableData[0][0] = "Project Description:";
         tableData[0][1] = project.getDescription() != null ? project.getDescription() : "";
         return tableData;
     }
 
     public String[][] getProjectLimitsTable(Project project) {
         String[][] tableData = new String[1][2];
-        tableData[0][0] = "Project Limits";
+        tableData[0][0] = "Project Limits:";
         tableData[0][1] = project.getLimits() != null ? project.getLimits() : "";
         return tableData;
     }
@@ -124,43 +124,43 @@ public class FactSheetReportCreator {
         tableData[ri][1] = "Value";
         tableData[ri][2] = "Comment";
         ri++;
-        tableData[ri][0] = "Average Annual Daily Traffic (AADT)";
+        tableData[ri][0] = "Average Annual Daily Traffic (AADT):";
         tableData[ri][1] = String.format("%,d", project.getAadt());
         tableData[ri][2] = project.getAadtComment() != null ? project.getAadtComment() : "";
         ri++;
-        tableData[ri][0] = "Functional Class of Roadway";
+        tableData[ri][0] = "Functional Class of Roadway:";
         tableData[ri][1] = project.getFunctionalClass() != null ? project.getFunctionalClass() : "";
         tableData[ri][2] = project.getFcrComment() != null ? project.getFcrComment() : "";
         ri++;
-        tableData[ri][0] = "Maintaining Agency";
+        tableData[ri][0] = "Maintaining Agency:";
         tableData[ri][1] = project.getMaintainingAgency() != null ? project.getMaintainingAgency() : "";
         tableData[ri][2] = project.getMaComment() != null ? project.getMaComment() : "";
         ri++;
-        tableData[ri][0] = "Area Type";
+        tableData[ri][0] = "Area Type:";
         tableData[ri][1] = project.getAreaType() != null ? project.getAreaType() : "";
         tableData[ri][2] = project.getAtComment() != null ? project.getAtComment() : "";
         ri++;
-        tableData[ri][0] = "Number of Roadway Lanes (1 Direction)";
+        tableData[ri][0] = "Number of Roadway Lanes (1 Direction):";
         tableData[ri][1] = String.valueOf(project.getNumRoadwayLanes());
         tableData[ri][2] = project.getNrlComment() != null ? project.getNrlComment() : "";
         ri++;
-        tableData[ri][0] = "Shoulder Width (ft)";
+        tableData[ri][0] = "Shoulder Width (ft):";
         tableData[ri][1] = String.valueOf(project.getShoulderWidth());
         tableData[ri][2] = project.getSwComment() != null ? project.getSwComment() : "";
         ri++;
-        tableData[ri][0] = "Posted Speed Limit (mph)";
+        tableData[ri][0] = "Posted Speed Limit (mph):";
         tableData[ri][1] = String.valueOf(project.getSpeedLimit());
         tableData[ri][2] = project.getPslComment() != null ? project.getPslComment() : "";
         ri++;
-        tableData[ri][0] = "Lane Width";
+        tableData[ri][0] = "Lane Width:";
         tableData[ri][1] = String.valueOf(project.getLaneWidthBase());
         tableData[ri][2] = project.getLwComment() != null ? project.getLwComment() : "";
         ri++;
-        tableData[ri][0] = "Signalized Corridor";
+        tableData[ri][0] = "Signalized Corridor:";
         tableData[ri][1] = project.getSignalizedCorridor() != null ? project.getSignalizedCorridor() : "";
         tableData[ri][2] = project.getScComment() != null ? project.getScComment() : "";
         ri++;
-        tableData[ri][0] = "National Highway System";
+        tableData[ri][0] = "National Highway System:";
         tableData[ri][1] = project.getNationalHighwaySystem() != null ? project.getNationalHighwaySystem() : "";
         tableData[ri][2] = project.getNhsComment() != null ? project.getNhsComment() : "";
 
@@ -200,7 +200,6 @@ public class FactSheetReportCreator {
         tableData[ri][1] = "Response"; // heading at row 0 col 1
 //        tableData[ri][2] = "Comment"; // heading at row 0 col 2
         ri++; // now on row 1 to begin populating questions
-        System.out.println("The size of benefitlist is " + beneQ.getOptions().length);
         for (int bIdx = 0; bIdx < beneQ.getOptions().length; bIdx++) {
             tableData[ri][0] = beneQ.getOption(bIdx); // gets the question text of beneQ at position of bIdx
             tableData[ri][1] = beneQ.getOptionIncluded(bIdx) ? "Yes" : "No"; // gets the comment of beneQ at position of bIdx
@@ -720,31 +719,31 @@ public class FactSheetReportCreator {
         tableData[ri][1] = "Value";
         tableData[ri][2] = "Comment";
         ri++;
-        tableData[ri][0] = "Length of Work Zone (mi)";
+        tableData[ri][0] = "Length of Work Zone (mi):";
         tableData[ri][1] = String.format("%.1f", (project.getWzLength()));
         tableData[ri][2] = project.getWzlComment() != null ? project.getWzlComment() : "";
         ri++;
-        tableData[ri][0] = "Type of Work Zone (MUTCD)";
+        tableData[ri][0] = "Type of Work Zone (MUTCD):";
         tableData[ri][1] = project.getWzType() != null ? project.getWzType() : "";
         tableData[ri][2] = project.getWztComment() != null ? project.getWztComment() : "";
         ri++;
-        tableData[ri][0] = "Work Zone Speed Limit";
+        tableData[ri][0] = "Work Zone Speed Limit:";
         tableData[ri][1] = String.valueOf(project.getWzSpeedLimit());
         tableData[ri][2] = project.getWzslComment() != null ? project.getWzslComment() : "";
         ri++;
-        tableData[ri][0] = "Number of Lanes to be Closed";
+        tableData[ri][0] = "Number of Lanes to be Closed:";
         tableData[ri][1] = String.valueOf(project.getNumLanesClosed());
         tableData[ri][2] = project.getNlcComment() != null ? project.getNlcComment() : "";
         ri++;
-        tableData[ri][0] = "Work Zone Lane Width";
+        tableData[ri][0] = "Work Zone Lane Width:";
         tableData[ri][1] = String.format("%.1f", project.getLaneWidthWZ());
         tableData[ri][2] = project.getWzlwComment() != null ? project.getWzlwComment() : "";
         ri++;
-        tableData[ri][0] = "Shoulder Closure";
+        tableData[ri][0] = "Shoulder Closure:";
         tableData[ri][1] = project.getShoulderClosure() != null ? project.getShoulderClosure() : "";
         tableData[ri][2] = project.getShcComment() != null ? project.getShcComment() : "";
         ri++;
-        tableData[ri][0] = "Federal-Aid Project";
+        tableData[ri][0] = "Federal-Aid Project:";
         tableData[ri][1] = project.getFederalAid() != null ? project.getFederalAid() : "";
         tableData[ri][2] = project.getFapComment() != null ? project.getFapComment() : "";
         return tableData;
@@ -1084,7 +1083,7 @@ public class FactSheetReportCreator {
                     false,
                     false,
                     false,
-                    "Project Information:",
+                    "Project Information",
                     "",
                     100,
                     null,
