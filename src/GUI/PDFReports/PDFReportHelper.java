@@ -124,5 +124,6 @@ public class PDFReportHelper {
 
 //    public static final String FILE_CHART_HSDTT = "hourly-system-delay.png";
     public static final String FILE_FS1_WZIMAGE = "fact_sheet1_wz.jpg";
+    public static final String FILE_FS1_WZIMAGE_TEMP = "contextPlan.jpg";
 
 }

@@ -1,24 +1,22 @@
 package GUI.PDFReports;
 
-import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import GUI.PDFReports.XML.XMLGenerator;
 import GUI.Tables.Step1TableHelper;
 import core.*;
-import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
 public class FactSheetReportCreator {
@@ -69,7 +67,7 @@ public class FactSheetReportCreator {
     private String[][] getProjectInformationTable(Project project) {
         DateFormat dateformat = new SimpleDateFormat("MM" + dateSeparator + "dd" + dateSeparator + "yyy");
         Date date = new Date();
-        String[][] projectInfo = new String[5][2];
+        String[][] projectInfo = new String[6][2];
         int ri = 0;
         projectInfo[ri][0] = "State Agency:";
         projectInfo[ri][1] = project.getAgency() != null ? project.getAgency() : "";
@@ -88,6 +86,9 @@ public class FactSheetReportCreator {
 //        ri++;
 //        projectInfo[ri][0] = "Project Limits:";
 //        projectInfo[ri][1] = project.getLimits() != null ? project.getLimits() : "";
+        ri++;
+        projectInfo[ri][0] = "Project Website:";
+        projectInfo[ri][1] = project.getUrlLink() != null ? project.getUrlLink() : "";
         ri++;
         projectInfo[ri][0] = "Signature Sign-Off:";
         projectInfo[ri][1] = "";
@@ -192,20 +193,27 @@ public class FactSheetReportCreator {
     */
     public String[][] getBenefitRefinement(Project project) {
         QuestionOptionMS beneQ = project.getQGen().qBenefitList.get(0);
-        String[][] tableData = new String[beneQ.getOptions().length + 1][3];
+        String[][] tableData = new String[beneQ.getOptions().length + 1][2];
 
         int ri = 0; // row for heading
         tableData[ri][0] = "Application Refinement"; //heading at row 0 col 0
         tableData[ri][1] = "Response"; // heading at row 0 col 1
-        tableData[ri][2] = "Comment"; // heading at row 0 col 2
+//        tableData[ri][2] = "Comment"; // heading at row 0 col 2
         ri++; // now on row 1 to begin populating questions
         System.out.println("The size of benefitlist is " + beneQ.getOptions().length);
         for (int bIdx = 0; bIdx < beneQ.getOptions().length; bIdx++) {
             tableData[ri][0] = beneQ.getOption(bIdx); // gets the question text of beneQ at position of bIdx
             tableData[ri][1] = beneQ.getOptionIncluded(bIdx) ? "Yes" : "No"; // gets the comment of beneQ at position of bIdx
-            tableData[ri][2] = beneQ.getComment() != null ? beneQ.getComment() : "";
+//            tableData[ri][2] = beneQ.getComment() != null ? beneQ.getComment() : "";
             ri++;
         }
+        return tableData;
+    }
+
+    public String[][] getBenefitRefinementComment(Project project) {
+        String[][] tableData = new String[2][1];
+        tableData[0][0] = "Benefits Comment";
+        tableData[1][0] = project.getQGen().qBenefitList.get(0).getComment();
         return tableData;
     }
     /*
@@ -528,7 +536,7 @@ public class FactSheetReportCreator {
     Creates the table for PDF 7, implementing system plans
     in the System Planning and Design section
     */
-    public String[][] getimplementSysPlans(Project project) {
+    public String[][] getImplementSysPlans(Project project) {
         ObservableList<QuestionYN> qList = project.getQGen().qSysPlansList;
         String[][] tableData = new String[qList.size() + 1][3];
         int ri = 0;
@@ -545,8 +553,8 @@ public class FactSheetReportCreator {
         return tableData;
     }
     /*
-    Creates the table for PDF 7, implementing system plans
-    in the System Planning and Design section
+    Creates the table for PDF 7, scheduling decisions
+    in the scheduling decisions section
     */
     public String[][] getScheduleDecisions(Project project) {
         ObservableList<QuestionYN>qList = project.getQGen().qAcceptanceTrainingList;
@@ -560,6 +568,27 @@ public class FactSheetReportCreator {
             tableData[ri][0] = question.getQuestionText(); //question
             tableData[ri][1] = question.getAnswerString(); // response
             tableData[ri][2] = question.getComment() != null ? question.getComment() : ""; // comment
+            ri++;
+        }
+        return tableData;
+    }
+
+    /*
+    Creates the table for PDF 7, system acceptance testing
+    in the System Planning and Design section
+    */
+    public String[][] getSystemAcceptance(Project project) {
+        ObservableList<QuestionYN> qList = project.getQGen().qAcceptanceTrainingList;
+        String[][] tableData = new String[qList.size() + 1][3];
+        int ri = 0;
+        tableData[ri][0] = "Question";
+        tableData[ri][1] = "Response";
+        tableData[ri][2] = "Comment";
+        ri++;
+        for (QuestionYN questionYN : qList) {
+            tableData[ri][0] = questionYN.getQuestionText(); //question
+            tableData[ri][1] = questionYN.getAnswerString(); // response
+            tableData[ri][2] = questionYN.getComment() != null ? questionYN.getComment() : ""; // comment
             ri++;
         }
         return tableData;
@@ -863,9 +892,10 @@ public class FactSheetReportCreator {
             int rowIdx = 1;
             for (Stakeholder sh : coreTeam) {
                 tableData[rowIdx][0] = String.valueOf(rowIdx);
-                tableData[rowIdx][1] = sh.getName();
-                tableData[rowIdx][2] = sh.getEmail();
-                tableData[rowIdx][3] = sh.getPhone();
+                tableData[rowIdx][1] = sh.getName() != null ? sh.getName() : "";
+                tableData[rowIdx][2] = sh.getEmail() != null ? sh.getEmail() : "";
+                tableData[rowIdx][3] = sh.getPhone() != null ? sh.getPhone() : "";
+                rowIdx++;
             }
         }
         return tableData;
@@ -897,9 +927,10 @@ public class FactSheetReportCreator {
             int rowIdx = 1;
             for (Stakeholder sh : stakeholders) {
                 tableData[rowIdx][0] = String.valueOf(rowIdx);
-                tableData[rowIdx][1] = sh.getName();
-                tableData[rowIdx][2] = sh.getEmail();
-                tableData[rowIdx][3] = sh.getPhone();
+                tableData[rowIdx][1] = sh.getName() != null ? sh.getName() : "";
+                tableData[rowIdx][2] = sh.getEmail() != null ? sh.getEmail() : "";
+                tableData[rowIdx][3] = sh.getPhone() != null ? sh.getPhone() : "";
+                rowIdx++;
             }
         }
 
@@ -1055,7 +1086,7 @@ public class FactSheetReportCreator {
                     false,
                     "Project Information:",
                     "",
-                    50,
+                    100,
                     null,
                     null
             );
@@ -1071,9 +1102,15 @@ public class FactSheetReportCreator {
                     new float[]{15, 85},
                     null
             );
+            double imgWidth = 5.21;
+            double imgHeight = 3.91;
+            Image projectImage = controller.getProject().getProjPhoto();
             String imgResourcePath = PDFReportHelper.getResFolderLocation();
-            xmlGenerator.generateImage(imgResourcePath + PDFReportHelper.FILE_FS1_WZIMAGE, //src/Toolbox/XML/output/hourly-system-delay.png
-                    7.8, 3.25,
+            xmlGenerator.generateImage(imgResourcePath + PDFReportHelper.FILE_FS1_WZIMAGE_TEMP, //src/Toolbox/XML/output/hourly-system-delay.png
+                    imgWidth,
+                    imgHeight,
+//                    projectImage.getWidth(),
+//                    projectImage.getHeight(),
                     "Work Zone Image", "");
             xmlGenerator.generateTable(
                     getFacilityAndBaseConditions(controller.getProject()),
@@ -1224,7 +1261,7 @@ public class FactSheetReportCreator {
                     false,
                     "Project Information:",
                     "",
-                    50,
+                    100,
                     null,
                     null
             );
@@ -1249,7 +1286,7 @@ public class FactSheetReportCreator {
                     "Selected Core Team and Stakeholders",
                     "",
                     100,
-                    new float[]{5, 55, 25, 15},
+                    new float[]{5, 45, 35, 15},
                     new String[]{"center", "left", "center", "center"}
             );
             xmlGenerator.generateTable(
@@ -1261,7 +1298,7 @@ public class FactSheetReportCreator {
                     "",
                     "",
                     100,
-                    new float[]{5, 55, 25, 15},
+                    new float[]{5, 45, 35, 15},
                     new String[]{"center", "left", "center", "center"}
             );
 
@@ -1308,7 +1345,7 @@ public class FactSheetReportCreator {
                     false,
                     "Project Information",
                     "",
-                    50,
+                    100,
                     null,
                     null
             );
@@ -1336,6 +1373,18 @@ public class FactSheetReportCreator {
                     new float[]{33,33,33},
                     new String[] {"left", "center", "center"}
             );
+//            xmlGenerator.generateTable(
+//                    getBenefitRefinement(controller.getProject()),
+//                    "applicationRefinementBenefits",
+//                    false,
+//                    true,
+//                    false,
+//                    "Benefits",
+//                    "",
+//                    100,
+//                    new float[]{40,10,50},
+//                    new String[] {"left", "center", "left"}
+//            );
             xmlGenerator.generateTable(
                     getBenefitRefinement(controller.getProject()),
                     "applicationRefinementBenefits",
@@ -1344,9 +1393,21 @@ public class FactSheetReportCreator {
                     false,
                     "Benefits",
                     "",
+                    50,
+                    new float[]{80,20},
+                    new String[] {"left", "center"}
+            );
+            xmlGenerator.generateTable(
+                    getBenefitRefinementComment(controller.getProject()),
+                    "applicationRefinementBenefitsComment",
+                    false,
+                    true,
+                    false,
+                    "",
+                    "",
                     100,
-                    new float[]{40,10,50},
-                    new String[] {"left", "center", "center"}
+                    new float[]{100},
+                    new String[] {"left"}
             );
             xmlGenerator.generateTable(
                     getInstitutionalJurisdictional(controller.getProject()),
@@ -1358,7 +1419,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40,10,50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getLegalPolicy(controller.getProject()),
@@ -1370,7 +1431,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40,10,50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getStakeholderBuyin(controller.getProject()),
@@ -1382,7 +1443,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40,10,50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {
@@ -1403,7 +1464,20 @@ public class FactSheetReportCreator {
                     "Work Zone ITS Tool",
                     "Fact Sheet #4"
             );
-
+            final String reportTitle = getFactSheetName(4);
+            xmlGenerator.generateTitle(reportTitle, Pos.CENTER);
+            xmlGenerator.generateTable(
+                    getProjectInformationTable(controller.getProject()),
+                    "projectInformation",
+                    false,
+                    false,
+                    false,
+                    "Project Information:",
+                    "",
+                    100,
+                    null,
+                    null
+            );
             xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {  // "Error related to exceptions will disappear when you've added the "xmlGenerator.generate();" line
             e.printStackTrace();
@@ -1433,7 +1507,7 @@ public class FactSheetReportCreator {
                     false,
                     "Project Information",
                     "",
-                    50,
+                    100,
                     null,
                     null
             );
@@ -1459,7 +1533,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getSysPlanDesgnRequirements(controller.getProject()),
@@ -1471,7 +1545,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getTestStrategy(controller.getProject()),
@@ -1483,7 +1557,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getOpsandMaitenance(controller.getProject()),
@@ -1495,7 +1569,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getStaffTrainingNeeds(controller.getProject()),
@@ -1507,7 +1581,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getSysSecurity(controller.getProject()),
@@ -1519,7 +1593,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getEvaluation(controller.getProject()),
@@ -1531,7 +1605,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getBenefitCost(controller.getProject()),
@@ -1543,7 +1617,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {
@@ -1572,7 +1646,7 @@ public class FactSheetReportCreator {
                     false,
                     "Project Information",
                     "",
-                    50,
+                    100,
                     null,
                     null
             );
@@ -1586,7 +1660,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getAwardMechanism(controller.getProject()),
@@ -1598,7 +1672,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getRFPrequirements(controller.getProject()),
@@ -1610,7 +1684,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getSelectedVendor(controller.getProject()),
@@ -1622,7 +1696,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generate();
 
@@ -1651,12 +1725,12 @@ public class FactSheetReportCreator {
                     false,
                     "Project Information",
                     "",
-                    50,
+                    100,
                     null,
                     null
             );
             xmlGenerator.generateTable(
-                    getimplementSysPlans(controller.getProject()),
+                    getImplementSysPlans(controller.getProject()),
                     "implementSysPlans",
                     false,
                     true,
@@ -1665,7 +1739,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getScheduleDecisions(controller.getProject()),
@@ -1677,10 +1751,10 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
-                    getimplementSysPlans(controller.getProject()),
+                    getSystemAcceptance(controller.getProject()),
                     "systemAcceptanceTesting",
                     false,
                     true,
@@ -1689,7 +1763,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getHandleDeployIssues(controller.getProject()),
@@ -1701,7 +1775,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {
@@ -1730,7 +1804,7 @@ public class FactSheetReportCreator {
                     false,
                     "Project Information",
                     "",
-                    50,
+                    100,
                     null,
                     null
             );
@@ -1744,7 +1818,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getUsingSharingITSinfo(controller.getProject()),
@@ -1756,7 +1830,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getMaintainAdequateStaff(controller.getProject()),
@@ -1768,7 +1842,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getLeverageSupport(controller.getProject()),
@@ -1780,7 +1854,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generateTable(
                     getSysMonitoringEvaluation(controller.getProject()),
@@ -1792,7 +1866,7 @@ public class FactSheetReportCreator {
                     "",
                     100,
                     new float[]{40, 10, 50},
-                    new String[] {"left", "center", "center"}
+                    new String[] {"left", "center", "left"}
             );
             xmlGenerator.generate();
         } catch (ParserConfigurationException | TransformerException e) {

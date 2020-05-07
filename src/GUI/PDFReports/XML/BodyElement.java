@@ -31,8 +31,10 @@ public class BodyElement extends ElementGenerator {
         Element attributes = generateElement("attributes");
         attributes.appendChild(generateAndPopulateStringElement("content-height", "scale-to-fit"));
         attributes.appendChild(generateAndPopulateStringElement("height", String.valueOf(height) + "in"));
+//        attributes.appendChild(generateAndPopulateStringElement("height", String.valueOf(height) + "px"));
         attributes.appendChild(generateAndPopulateStringElement("scaling", "non-uniform"));
         attributes.appendChild(generateAndPopulateStringElement("content-width", String.valueOf(width) + "in"));
+//        attributes.appendChild(generateAndPopulateStringElement("content-width", String.valueOf(width) + "px"));
 
         imageElement.appendChild(attributes);
         imageElement.appendChild(generateAndPopulateStringElement("footer", footer));
