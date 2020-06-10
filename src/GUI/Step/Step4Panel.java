@@ -147,7 +147,7 @@ public class Step4Panel extends BorderPane {
 
         for (int i = 0; i < captions.length; i++) {
             BorderPane subsectionPane = new BorderPane();
-            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-title-label");
+            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-list-title-label");
             subsectionPane.setTop(subsectionTitle);
             subsectionPane.setCenter(hash_map.get(i));
             hash_map.replace(i, subsectionPane);
@@ -393,27 +393,34 @@ public class Step4Panel extends BorderPane {
                 final Animation animation = new Transition() {
 
                     {
-                        setCycleDuration(Duration.millis(2000));
+                        setCycleDuration(Duration.millis(500));
                         setInterpolator(Interpolator.EASE_OUT);
                     }
 
                     @Override
                     protected void interpolate(double frac) {
-                        double r = 237 - (237 - 89) * frac;
-                        double g = 125 - (125 - 89) * frac;
-                        double b = 49 + (89 - 49) * frac;
-                        Color vColor = new Color(r / 256.0, g / 256.0, b / 256.0, 1.0);
-                        selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, CornerRadii.EMPTY, Insets.EMPTY)));
-//                        selectedTitleLabel.getStyleClass().add("animation-style-on");
-//                        selectedTitleLabel.getStyleClass().remove("animation-style-on");
-//                        selectedBodyLabel.getStyleClass().add("animation-style-on");
-//                        selectedBodyLabel.setBorder(new Border(new BorderStroke(Color.ORANGE, BorderStrokeStyle.SOLID, new CornerRadii(0,0,10,10, false), new BorderWidths(1))));
-//                        selectedBodyLabel.getStyleClass().add("animation-style-on");
+                        // Grey RGB(89, 89, 89)
+                        // Orange RGB(237, 125, 49)
+                        // Uncomment for interpolate to grey
+//                        double r = 237 - (237 - 89) *  frac;
+//                        double g = 125 - (125 - 89) *frac;
+//                        double b = 49 + (89 - 49) * frac;
+//                        Color vColor = new Color(r/256.0, g/256.0, b/256.0, 1.0);
+//                        selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, CornerRadii.EMPTY, Insets.EMPTY)));
+                        // Uncomment for interpolate to white
+                        double r = 89 + ((255 - 89) *  frac);
+                        double g = 89 + ((255 - 89) * frac);
+                        double b = 89 + ((255 - 89) * frac);
+                        Color vColor = new Color(r/256.0, g/256.0, b/256.0, 1.0);
+                        selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY))); // radii, etc. from css
                     }
                 };
-//                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.web("#ed7d31"), new CornerRadii(0,0,10,10, false), Insets.EMPTY)));
-//                selectedBodyLabel.getStyleClass().add("animation-style-on");
-                PauseTransition pt = new PauseTransition(Duration.millis(1000));
+//                animation.play();
+                // Uncomment for interpolate to grey
+//                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.web("#ed7d31"), CornerRadii.EMPTY, Insets.EMPTY)));
+                // Uncomment for interpolate to white
+                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY)));
+                PauseTransition pt = new PauseTransition(Duration.millis(2000));
                 SequentialTransition st = new SequentialTransition();
                 st.getChildren().addAll(pt, animation);
                 st.play();

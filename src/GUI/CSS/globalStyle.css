@@ -385,6 +385,14 @@
 }
 
 .substep-title-label {
+  -fx-background-color: #595959 ; /* Dark Grey: #595959   Navy: #0E298C*/
+  -fx-text-fill: white;          /* yellowish gold */
+  -fx-font-size: 24;
+  -fx-font-family: "calibri";
+  -fx-alignment: center;
+}
+
+.substep-list-title-label {
   -fx-background-color: white; /* Dark Grey: #595959   Navy: #0E298C*/
   -fx-text-fill: #F3A100;          /* yellowish gold */
   -fx-font-size: 20;
