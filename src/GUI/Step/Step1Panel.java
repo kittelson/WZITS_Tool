@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -42,6 +43,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 import wzits_fx.VolumeToCapacityWizard;
@@ -246,14 +248,8 @@ public class Step1Panel extends BorderPane {
         feasibilityPane.setCenter(fwgp1);
         feasibilityPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
-        //todo move this button to the correct location and have button disabled unless properties are set
-        btnLaunchVCwiz.setText("V/C Wizard");
-        booleanBind = wzInputChoice1.valueProperty().isNull();
         wzInputChoice1.setTooltip(new Tooltip("Select the Roadway Functional Class to launch the V/C Wizard"));
-        btnLaunchVCwiz.disableProperty().bind(booleanBind);
-        //btnLaunchVCwiz.setStyle("-fx-background-color: red");
-        VolumeToCapacityWizard vcWiz = new VolumeToCapacityWizard(mc);
-        btnLaunchVCwiz.setOnAction(e -> centerPane.setCenter(vcWiz) );
+
         // Feasibility Wizard panel
         //fwSummaryPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard Summary", "substep-title-label"));
         //BorderPane fwbp2 = new BorderPane();
@@ -1198,25 +1194,45 @@ public class Step1Panel extends BorderPane {
 //            }
 //        });
 
-        JFXButton launchVCWizardButton = new JFXButton("Launch V/C Wizard");
-        launchVCWizardButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                DialogPane dlgPane = new DialogPane();
-                dlgPane.setContent(new VolumeToCapacityWizard(control));
-                dlgPane.getButtonTypes().addAll(ButtonType.CLOSE);
-                Dialog dlg = new Dialog();
-                dlg.setDialogPane(dlgPane);
-                dlg.setResizable(true);
-                dlg.showAndWait()
-                        .filter(response -> response == ButtonType.FINISH)
-                        .ifPresent(response -> dlg.close());
+        FontIcon vcWizardLaunchIcon = new FontIcon(FontAwesomeSolid.CHART_LINE);
+        vcWizardLaunchIcon.setIconColor(Color.WHITE);
+        btnLaunchVCwiz.setGraphic(vcWizardLaunchIcon);
+        btnLaunchVCwiz.disableProperty().bind(
+                wzInputChoice1.getSelectionModel().selectedIndexProperty().lessThan(0).or(
+                wzInputChoice2.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice3.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice4.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice5.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice6.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice7.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice8.getSelectionModel().selectedIndexProperty().lessThan(0))
+        );
+        BorderPane vcWizardIconWrapper = new BorderPane();
+        FontIcon vcWizardCheckIcon = new FontIcon(FontAwesomeRegular.CHECK_CIRCLE);
+        vcWizardCheckIcon.setIconColor(Color.FORESTGREEN);
+        Tooltip tt1 = new Tooltip("All above inputs must be specified in order to launch the V/C wizard");
+        Tooltip.install(vcWizardCheckIcon, tt1);
+        FontIcon vcWizardXIcon = new FontIcon(FontAwesomeRegular.TIMES_CIRCLE);
+        vcWizardXIcon.setIconColor(Color.FIREBRICK);
+        Tooltip tt2 = new Tooltip("All inputs above must be specified in order to launch the V/C wizard");
+        Tooltip.install(vcWizardXIcon, tt2);
+        btnLaunchVCwiz.disableProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue) {
+                vcWizardIconWrapper.setCenter(vcWizardXIcon);
+            } else {
+                vcWizardIconWrapper.setCenter(vcWizardCheckIcon);
             }
         });
-        launchVCWizardButton.setMaxWidth(Integer.MAX_VALUE);
-        launchVCWizardButton.getStyleClass().add("default-text-button");
-        launchVCWizardButton.setGraphic(new FontIcon(FontAwesomeSolid.CHART_LINE));
+        if (btnLaunchVCwiz.isDisable()) {
+            vcWizardIconWrapper.setCenter(vcWizardXIcon);
+        } else {
+            vcWizardIconWrapper.setCenter(vcWizardCheckIcon);
+        }
 
+//        VolumeToCapacityWizard vcWiz = new VolumeToCapacityWizard(this.control);
+        btnLaunchVCwiz.setOnAction(e -> centerPane.setCenter(new VolumeToCapacityWizard(this.control)));
+        BorderPane btnLaunchVCWizWrapper = new BorderPane();
+        btnLaunchVCWizWrapper.setCenter(btnLaunchVCwiz);
         int rowIdx = 0;
         GridPane inputGrid = new GridPane();
         inputGrid.add(wzTitleLabel1, 0, rowIdx++, 3, 1);
@@ -1232,8 +1248,6 @@ public class Step1Panel extends BorderPane {
         inputGrid.add(wzInputLabel4, 0, rowIdx);    // AADT
         inputGrid.add(wzInputSpin1, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Average Annual Daily Traffic", control.getProject().aadtCommentProperty()), 2, (rowIdx - 1));
-        inputGrid.add(new Label(""), 0, rowIdx);
-        inputGrid.add(launchVCWizardButton, 1, rowIdx++);
         inputGrid.add(wzInputLabel5, 0, rowIdx);    // Number of Roadway Lanes
         inputGrid.add(wzInputSpin3, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Number of Roadway Lanes", control.getProject().nrlCommentProperty()), 2, (rowIdx - 1));
@@ -1284,7 +1298,8 @@ public class Step1Panel extends BorderPane {
         inputGrid.add(wzInputLabel20, 0, rowIdx);    // Federal-Aid Project
         inputGrid.add(wzInputChoice8, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Federal-Aid Project", control.getProject().fapCommentProperty()), 2, (rowIdx - 1));
-        inputGrid.add(btnLaunchVCwiz,1,rowIdx++);
+        inputGrid.add(btnLaunchVCWizWrapper,1,rowIdx);
+        inputGrid.add(vcWizardIconWrapper, 2, rowIdx++);
 
         //inputGrid.add(proceedButton, 1, 9);
         double leftColsplit = 65;
@@ -1569,9 +1584,5 @@ public class Step1Panel extends BorderPane {
     /**
      * Button to open the vc wizard from step1panel
      */
-    Button btnLaunchVCwiz = new Button();
-    /*
-    * Used for disabling the vc wizard button unless the 'Functional Class' has been set by user
-     */
-    BooleanBinding booleanBind;
+    JFXButton btnLaunchVCwiz = new JFXButton("V/C Wizard");
 }

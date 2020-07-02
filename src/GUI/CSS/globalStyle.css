@@ -1,3 +1,10 @@
+* {
+  -fx-background-dark: #2f2f31;
+  -fx-tab-color-selected: #ed7d31; /* #0078d4 */
+  -fx-tab-color-hover: #ed7d31; /* #0078d4 */
+  -fx-tab-header-background-color: -fx-background-dark;
+}
+
 .root {
   -fx-focus-color: #ed7d31; /* burnt orangeish */
   -fx-faint-focus-color: #ed7d3122;
@@ -1052,19 +1059,6 @@
     -fx-background-radius: 10 10 0 0;
    }
    /* the following section is Jfoenix styles for the VC wizard */
-.jfx-combo-style {
-  -jfx-focus-color: #4472c4;
-  -jfx-unfocus-color: #595959;
-  -fx-prompt-text-fill: #595959;
-  -jfx-label-float: true;
-  -fx-font-size: 20px;
-  -fx-font-weight: bold;
-}
-.jfx-combo-style  .list-cell {
-  -fx-alignment: baseline-left;
-  -fx-font-size: 12pt;
-  -fx-font-weight: normal;
-}
 
 .jfx-button-style {
   -jfx-button-type: FLAT; 
@@ -1073,78 +1067,6 @@
   -fx-text-fill: white; 
   -fx-border-radius: 4px;
   -fx-font-size: 15px;
-}
- /* slider styles thumb = left, track = right */
- .jfx-slider {
-  -jfx-default-thumb: #4472c4;
- }
-
-.jfx-slider > .thumb {
-  -fx-background-color: #4472c4;
-}
-.jfx-slider > .track {
-  /* -fx-background-color: #4472c4; */
-}
-
-.jfx-slider > .animated-thumb {
-  -fx-background-color: #ff9a07;
-}
-
-.jfx-slider .slider-value {
-    -fx-fill: #4472c4;
-}
-/* textbox/labels styles */
-.jf-txtbox {
-  -fx-text-fill: #ed7d31;
-  -jfx-focus-color: #4472c4;
-  -jfx-unfocus-color: #595959;
-  -fx-alignment: baseline-left;
-  -fx-font-size: 20px;
-  -fx-background-color: #ededed;
-  -fx-opacity: 0.8;
-  -jfx-border-color: #4472c4;
-  -fx-background-radius: 5;
-
-}
-.jf-txtbox:hover {
-  -jfx-focus-color: #ff9a07;
-  -jfx-unfocus-color: #595959;
-  -fx-alignment: center-left;
-  -fx-font-size: 20px;
-  -fx-background-color: #d4d4d4;
-  -fx-opacity: 0.5;
-  -fx-background-radius: 5;
-
-}
-
-/* graph styles */
-.chart-series-line {
-  -fx-stroke-width: 2px;
-  -fx-effect: null;
-}
-
-.default-color0.chart-series-line {
-  -fx-stroke: black;
-  -fx-stroke-dash-array: 5 5 5 5;
-}
-
-.default-color0.chart-line-symbol {
-  -fx-background-color: black, white;
-}
-
-.default-color1.chart-series-line {
-  -fx-stroke: #ff9a07;
-}
-
-.default-color1.chart-line-symbol {
-  -fx-background-color: #ff9a07, #ff9a07;
-}
-.chart-legend {
-  -fx-background-color:  transparent;
-}
-.chart-legend-item-symbol{
-  /* -fx-background-radius: 20; */
-  -fx-stroke-dash-array: 5 5 5 5;
 }
 
 .default-text-button {
@@ -1156,35 +1078,3 @@
   -fx-underline: true;
   -fx-background-color: rgba(0, 0, 0, 0.25);
 }
-
-/* label styles */
-.vc-label-styles {
-  -fx-font-size: 20px;
-  -fx-text-fill: black;
-  -fx-font-style: italic;
-}
-.vc-label-input {
-  -fx-font-size: 20px;
-  -fx-text-fill: #ed7d31;
-}
-.vc-title {
-    -fx-font-size: 26px;
-    -fx-text-fill: black;
-}
-.vc-units {
-  -fx-font-size: 12px;
-  -fx-text-fill: #ed7d31;
-  -fx-font-style: italic;
-
-}
-.axis {
-  -fx-font-size: 14px;
-  -fx-font-family: Tahoma;
-  -fx-tick-label-font-size: 12px;
-}
-
-.axis-label {
-  -fx-font-size: 14px;
-  -fx-font-family: Tahoma;
-}
-

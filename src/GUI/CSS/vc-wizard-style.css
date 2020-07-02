@@ -1,0 +1,254 @@
+* {
+  -fx-wzits-orange: #ed7d31;
+  -fx-wzits-darkgrey: #595959;
+  -fx-wzits-navy: #0E298C;
+  -fx-background-dark: #2f2f31;
+}
+.root {
+ -fx-font-size: 12pt;
+}
+
+.tooltip {
+  -fx-font-size: 12pt;
+}
+
+.label .text {
+  -fx-font-size: 12pt;
+}
+
+.label {
+    -fx-font-size: 12pt;
+}
+
+.label-italic {
+  -fx-font-style: italic;
+}
+
+.label-input-echo {
+  -fx-text-fill: -fx-wzits-orange;
+  -fx-alignment: center;
+  -fx-font-weight: bold;
+}
+
+.label-output-intermediate {
+  -fx-text-fill: -fx-wzits-navy;
+  -fx-alignment: center;
+  -fx-font-weight: bold;
+}
+
+.label-output-final {
+  -fx-text-fill: -fx-wzits-navy;
+  -fx-alignment: center;
+  -fx-font-weight: bold;
+}
+
+.label-title {
+    -fx-font-size: 20pt;
+    -fx-alignment: center;
+}
+
+.label-units {
+  -fx-font-size: 9pt;
+  -fx-font-style: italic;
+}
+
+.text-button-default {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-wzits-orange;
+}
+
+.jfx-combo-box {
+  -jfx-focus-color: -fx-wzits-orange;
+  -jfx-unfocus-color: -fx-wzits-darkgrey;
+  -fx-prompt-text-fill: -fx-wzits-darkgrey;
+  -jfx-label-float: true;
+  -fx-font-size: 12pt;
+  -fx-alignment: center;
+  -fx-background-color: #ededed;
+  -fx-background-radius: 5 5 0 0;
+}
+
+.jfx-combo-box:hover {
+  -fx-background-color: #d4d4d4;
+  -fx-background-radius: 5 5 0 0;
+}
+
+.jfx-combo-box  .list-cell {
+  -fx-alignment: center;
+  -fx-font-size: 12pt;
+}
+
+.jfx-slider {
+    -jfx-default-thumb: -fx-wzits-navy;
+}
+
+.jfx-slider > .thumb {
+  -fx-background-color: -fx-wzits-navy;
+}
+
+.jfx-slider > .animated-thumb {
+  -fx-background-color: -fx-wzits-orange;
+}
+
+.jfx-slider .slider-value {
+    -fx-fill: -fx-wzits-navy;
+}
+
+.jfx-text-field {
+  -jfx-focus-color: -fx-wzits-orange;
+  -jfx-unfocus-color: #595959;
+  -fx-alignment: center;
+  -fx-font-size: 12pt;
+  -fx-background-color: #ededed;
+  -jfx-border-color: #4472c4;
+  -fx-background-radius: 5 5 0 0;
+
+}
+.jfx-text-field:hover {
+  -jfx-focus-color: -fx-wzits-orange;
+  -jfx-unfocus-color: #595959;
+  -fx-font-size: 12pt;
+  -fx-background-color: #d4d4d4;
+  -fx-background-radius: 5 5 0 0;
+}
+
+.jfx-radio-button {
+    -jfx-selected-color: -fx-wzits-orange;
+    -fx-font-size: 12pt;
+}
+
+.custom-tab-pane {
+  -fx-tab-min-height: 3em;
+  /* 24 */
+
+  -fx-tab-max-height: 3em;
+  /* 24 */
+}
+.custom-tab-pane .tab .tab-label {
+  -fx-background-color: transparent;
+  -fx-alignment: CENTER;
+  -fx-text-fill: darkgrey;
+  -fx-font-size: 12pt;
+}
+.custom-tab-pane .tab {
+  -fx-background-insets: 0.0;
+  -fx-background-radius: 0.0;
+  -fx-background-color: -fx-tab-header-background-color;
+  -fx-border-width: 1px;
+  -fx-border-color: transparent transparent darkgrey transparent;
+}
+.custom-tab-pane .tab:selected {
+  -fx-background-color: #f4f4f4;
+  -fx-border-color: darkgrey darkgrey transparent darkgrey;
+  -fx-border-width: 1px;
+}
+
+.custom-tab-pane .tab:selected .tab-label {
+  -fx-text-fill: -fx-tab-color-selected;
+}
+
+.custom-tab-pane .tab:hover .tab-label {
+  -fx-text-fill: -fx-tab-color-hover;
+}
+
+.custom-tab-pane .tab:focused {
+  -fx-focus-color: transparent;
+}
+.custom-tab-pane .tab {
+  -fx-padding: 0 30 0 30;
+  /* -fx-border-color: darkgrey; */
+  /* -fx-border-width: 1px; */
+}
+.custom-tab-pane *.tab-header-background {
+  -fx-background-color: -fx-tab-header-background-color;
+  -fx-border-color: darkgrey;
+  -fx-border-width: 0 0 1px 0;
+}
+.custom-tab-pane:top *.tab-header-area { /*.tab-pane:top*/
+  -fx-background-insets: 0, 0 0 1 0;
+  -fx-padding: 0.416667em 0.166667em 0.0em 0.166667em;
+}
+.custom-tab-pane .tab:selected .focus-indicator {
+  -fx-focus-color: transparent;
+  -fx-border-color: transparent;
+}
+.demand-vs-capacity-chart .chart-plot-background {
+
+}
+.demand-vs-capacity-chart .chart-series-line {
+    -fx-stroke-width: 4px;
+    -fx-effect: null;
+}
+
+.demand-vs-capacity-chart .chart-series-line:hover {
+    -fx-stroke-width: 8px;
+    -fx-stroke: pink;
+}
+
+.demand-vs-capacity-chart .default-color0.chart-series-line {
+    -fx-stroke: -fx-background-dark;
+    -fx-stroke-dash-array: 10 10 10 10;
+}
+
+.demand-vs-capacity-chart .default-color0.chart-series-line:hover {
+    -fx-stroke-dash-array: 20 20 20 20;
+}
+
+.demand-vs-capacity-chart .default-color0.chart-line-symbol {
+    -fx-background-color: -fx-background-dark, white;
+}
+
+.demand-vs-capacity-chart .default-color1.chart-series-line {
+    -fx-stroke: -fx-wzits-orange;
+    -fx-stroke-dash-array: 10 10 10 10;
+}
+
+.demand-vs-capacity-chart .default-color1.chart-series-line:hover {
+    -fx-stroke-dash-array: 20 20 20 20;
+}
+
+.demand-vs-capacity-chart .default-color1.chart-line-symbol {
+    -fx-background-color: -fx-wzits-orange, white;
+}
+
+.demand-vs-capacity-chart .default-color2.chart-series-line {
+    -fx-stroke: -fx-wzits-navy;
+}
+
+.demand-vs-capacity-chart .default-color2.chart-line-symbol {
+    -fx-background-color: -fx-wzits-navy, -fx-wzits-navy;
+}
+
+.demand-vs-capacity-chart .chart-legend {
+    -fx-background-color:  transparent;
+}
+
+.demand-vs-capacity-chart .axis {
+  -fx-tick-label-font-size: 10pt;
+}
+
+.demand-vs-capacity-chart .axis-label {
+  -fx-font-size: 12pt;
+}
+
+.queue-length-chart .default-color0.chart-series-area-line { -fx-stroke: -fx-wzits-orange; }
+.queue-length-chart .default-color0.chart-series-area-fill { -fx-fill: rgba(237,125,49,.5); } /*rgba(237,125,49,.5)*/
+
+.queue-length-chart .default-color1.chart-series-area-line { -fx-stroke: -fx-background-dark; }
+.queue-length-chart .default-color1.chart-series-area-fill { -fx-fill: rgba(47,47,47,.5); } /**/
+
+.queue-length-chart .axis { -fx-tick-label-font-size: 10pt; }
+.queue-length-chart .axis-label { -fx-font-size: 12pt; }
+
+.vc-ratio-chart .chart-series-line {
+  -fx-stroke-width: 4px;
+  -fx-effect: null;
+}
+.vc-ratio-chart .default-color0.chart-series-line {-fx-stroke: -fx-background-dark;}
+.vc-ratio-chart .default-color1.chart-series-line {
+  -fx-stroke: -fx-wzits-orange;
+  -fx-stroke-dash-array: 10 10 10 10;
+}
+
+.vc-ratio-chart .axis { -fx-tick-label-font-size: 10pt; }
+.vc-ratio-chart .axis-label { -fx-font-size: 12pt; }
