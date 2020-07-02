@@ -1230,7 +1230,7 @@ public class Step1Panel extends BorderPane {
         }
 
 //        VolumeToCapacityWizard vcWiz = new VolumeToCapacityWizard(this.control);
-        btnLaunchVCwiz.setOnAction(e -> centerPane.setCenter(new VolumeToCapacityWizard(this.control)));
+        btnLaunchVCwiz.setOnAction(e -> centerPane.setCenter(new VolumeToCapacityWizard(this.control, centerPane.getCenter())));
         BorderPane btnLaunchVCWizWrapper = new BorderPane();
         btnLaunchVCWizWrapper.setCenter(btnLaunchVCwiz);
         int rowIdx = 0;

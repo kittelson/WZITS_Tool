@@ -6,7 +6,6 @@ import com.jfoenix.controls.*;
 import core.VCWizard.AADTDistributionHelper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -17,8 +16,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
@@ -191,10 +188,20 @@ public class VolumeToCapacityWizard extends BorderPane {
 
     private final boolean isFreeway;
 
+    private final Node replacedStepNode;
 
     public VolumeToCapacityWizard(MainController mc) {
+        this(mc, null);
+    }
 
+    /**
+     *
+      * @param mc
+     * @param replacedStepNode Node that was replaced by the VC wizard, allows for the back button to work
+     */
+    public VolumeToCapacityWizard(MainController mc, Node replacedStepNode) {
         this.control = mc;
+        this.replacedStepNode = replacedStepNode;
         String projectFuncClass = control.getProject().getFunctionalClass();
         isFreeway = projectFuncClass.equalsIgnoreCase("Interstate") || projectFuncClass.equalsIgnoreCase("Other Freeway");
         this.getStylesheets().add(getClass().getResource("/GUI/CSS/vc-wizard-style.css").toExternalForm());
@@ -466,22 +473,40 @@ public class VolumeToCapacityWizard extends BorderPane {
         BorderPane.setMargin(capacityInputsWrapper, new Insets(10, 0, 10, 0));
         tabWZconfig.setContent(wzInputsWrapper);
         // Creating tab pane and adding tabs
-        TabPane vcInputPanes = new TabPane();
-        vcInputPanes.getTabs().addAll(tabGeneralDemand, tabGeneralCapacity, tabWZconfig);
-        vcInputPanes.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        vcInputPanes.getStyleClass().add("custom-tab-pane");
+        TabPane vcInputTabPane = new TabPane();
+        vcInputTabPane.getTabs().addAll(tabGeneralDemand, tabGeneralCapacity, tabWZconfig);
+        vcInputTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        vcInputTabPane.getStyleClass().add("custom-subtitle-tab-pane");
+        BorderPane tabNavigationButtonBar = new BorderPane();
+        JFXButton buttonTabPrevious = new JFXButton();
+        buttonTabPrevious.getStyleClass().add("text-button-default");
+        buttonTabPrevious.setGraphic(NodeFactory.createIcon(FontAwesomeSolid.ARROW_LEFT, Color.web(ColorHelper.WZ_ORANGE), 20));
+        buttonTabPrevious.disableProperty().bind(vcInputTabPane.getSelectionModel().selectedIndexProperty().isEqualTo(0));
+        buttonTabPrevious.setOnAction(actionEvent -> {
+            vcInputTabPane.getSelectionModel().selectPrevious();
+        });
+        JFXButton buttonTabNext = new JFXButton();
+        buttonTabNext.getStyleClass().add("text-button-default");
+        buttonTabNext.setGraphic(NodeFactory.createIcon(FontAwesomeSolid.ARROW_RIGHT, Color.web(ColorHelper.WZ_ORANGE), 20));
+        buttonTabNext.disableProperty().bind(vcInputTabPane.getSelectionModel().selectedIndexProperty().lessThan(vcInputTabPane.getTabs().size() - 1).not());
+        buttonTabNext.setOnAction(actionEvent -> {
+            vcInputTabPane.getSelectionModel().selectNext();
+        });
+        tabNavigationButtonBar.setLeft(buttonTabPrevious);
+        tabNavigationButtonBar.setRight(buttonTabNext);
+
+        BorderPane vcInputPanes = new BorderPane();
+        vcInputPanes.setCenter(vcInputTabPane);
+        vcInputPanes.setBottom(tabNavigationButtonBar);
 
 
-        JFXButton backButton = new JFXButton("Back");final NumberAxis xAxis = new NumberAxis("Time of Day", 0, 96, 1);
-        xAxis.setLabel("Time of Day");
-        xAxis.setTickLabelFormatter(new PeriodFormatter(xAxis));
-        xAxis.setMinorTickCount(0);
-        xAxis.setTickUnit(4.0);
-        final NumberAxis yAxis = new NumberAxis();
-        backButton.getStyleClass().add("text-button-default");
-        backButton.setGraphic(NodeFactory.createIcon(FontAwesomeRegular.CARET_SQUARE_LEFT, Color.web(ColorHelper.WZ_ORANGE)));
+
+        JFXButton backButton = new JFXButton("Back to Project General Information");
+        backButton.getStyleClass().add("contained-button-default");
+        backButton.setGraphic(NodeFactory.createIcon(FontAwesomeRegular.CARET_SQUARE_LEFT, Color.WHITE)); //Color.web(ColorHelper.WZ_ORANGE)
         backButton.setOnAction(actionEvent -> {
             mc.setActiveSubStep(0, 0);
+            ((BorderPane) getParent()).setCenter(replacedStepNode);
         });
 
         //creates a line chart
@@ -514,19 +539,14 @@ public class VolumeToCapacityWizard extends BorderPane {
                 vcChartRadioButton, qLenChartRatioButton, dcRatioChartRatioButton);
         chartPane.setTop(chartButtonPanel);
         BorderPane.setMargin(chartButtonPanel, new Insets(10, 10, 10, 10));
-//        TabPane graphTabPane = new TabPane();
-//        graphTabPane.getStyleClass().add("custom-tab-pane");
-//        graphTabPane.getTabs().addAll(vcChartTab, qLengthChartTab);
 
 
         BorderPane titlePane = new BorderPane();
-        titlePane.setCenter(NodeFactory.createFormattedLabel("Volume-to-Capacity Wizard", "label-title"));
-        titlePane.setLeft(backButton);
+        titlePane.setCenter(NodeFactory.createFormattedLabel("Volume-to-Capacity Wizard", "substep-title-label"));
         BorderPane topPane = new BorderPane();
         topPane.setTop(titlePane);
-//        topPane.setCenter(inputGrids);
-        topPane.setBottom(linePane);
         topPane.setCenter(vcInputPanes);
+        topPane.setBottom(linePane);
         BorderPane.setMargin(vcInputPanes, new Insets(0, 0, 10, 0));
         BorderPane.setMargin(demandInputGrid, new Insets(10, 0, 10, 0));
         BorderPane.setMargin(capacityInputGrid, new Insets(10, 0, 10, 0));;
@@ -538,9 +558,14 @@ public class VolumeToCapacityWizard extends BorderPane {
         demandInputGrid.setHgap(20);
         capacityInputGrid.setVgap(15);
         capacityInputGrid.setHgap(20);
+        HBox backButtonBox = new HBox();
+        backButtonBox.setAlignment(Pos.CENTER);
+        backButtonBox.getChildren().addAll(backButton);
+        BorderPane.setMargin(backButtonBox, new Insets(10, 0, 10, 0));
         this.setTop(topPane);
         this.setCenter(chartPane);
         this.setRight(outputPane);
+        this.setBottom(backButtonBox);
 //        topPane.setStyle("-fx-background-color: white");
 //        graphPane.setStyle("-fx-background-color: white");
 //        outputPane.setStyle("-fx-background-color: white");
@@ -791,7 +816,11 @@ public class VolumeToCapacityWizard extends BorderPane {
         inputWorkZoneLaneCapacity.disableProperty().bind(inputWorkZoneType.valueProperty().asString().isNotEqualTo("Custom"));
         inputWorkZoneLaneSatFlow.disableProperty().bind(inputWorkZoneType.valueProperty().asString().isNotEqualTo("Custom"));
         inputWorkZoneNumLanesClosed.getSelectionModel().selectFirst();
-        inputWorkZoneNumLanesClosed.disableProperty().bind(inputWorkZoneType.valueProperty().asString().isEqualTo("Shoulder Closure"));
+        inputWorkZoneNumLanesClosed.disableProperty().bind(
+                Bindings.or(
+                        inputWorkZoneType.valueProperty().asString().isEqualTo("Shoulder Closure"),
+                        inputWorkZoneType.valueProperty().asString().isEqualTo("None")
+                        ));
 
         // ---- Apply Input Validators
         NodeFactory.setTextFieldIntegerInputOnly(inputWorkZoneLaneCapacity);
@@ -979,7 +1008,7 @@ public class VolumeToCapacityWizard extends BorderPane {
             tooltipStr +=  " * ";
             tooltipStr += String.format("%.2f", fhv);
             tooltipStr += "\n\n";
-            tooltipStr += "*See the Computed Total Base Capacity Value for the\nheavy vehicle adjustment computation.";
+            tooltipStr += "*See the Computed Total Base Capacity Value (Step 2) for the\nheavy vehicle adjustment computation.";
             computedWorkZoneLaneCapacityTooltip.setText(tooltipStr);
         });
         computedWorkZoneLaneCapacityTooltip.setShowDelay(Duration.ZERO);
@@ -999,11 +1028,11 @@ public class VolumeToCapacityWizard extends BorderPane {
             tooltipStr += "\n\n";
             tooltipStr += workZoneComputedLaneSatFlowVehLabel.getText();
             tooltipStr +=  " = ";
-            tooltipStr += inputWorkZoneLaneCapacity.getText();
+            tooltipStr += inputWorkZoneLaneSatFlow.getText();
             tooltipStr +=  " * ";
             tooltipStr += String.format("%.2f", fhv);
             tooltipStr += "\n\n";
-            tooltipStr += "*See the Computed Total Base Capacity Value for the\nheavy vehicle adjustment computation.";
+            tooltipStr += "*See the Computed Adjusted Base Sat Flow Rate (Step 2) for the\nheavy vehicle adjustment computation.";
             computedWorkZoneLaneSatFlowTooltip.setText(tooltipStr);
         });
         computedWorkZoneLaneSatFlowTooltip.setShowDelay(Duration.ZERO);
