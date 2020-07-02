@@ -1,0 +1,28 @@
+Code,ATR Site #,Route #,Location,County 
+a1,A1001,I-240, West of NC 191 (Brevard Rd),Buncombe
+a2,A1003,I-40, East of SR 1200 (Wiggins Rd),Buncombe
+a3,A1101,I-40, West of SR 1734 (Carolina St),Burke
+a4,A2502,I-95, North of I-295/US 13,Cumberland
+a5,A4012 ,I-40 Bus,West of I-40 & I-40 Bus Split,Guilford
+a6,A4013,I-40,East of NC 66,Forsyth
+a7,A5001,I-40,West of NC 242,Johnston
+a8,A5903,I-277,South of US 29 (Graham St),Mecklenburg
+a9,A6303,I-95,South of NC 33,Nash
+a10,A9108,I-440,West of US 70 (Glenwood Ave.),Wake
+a11,W8501,I-77,South of NC 89 (West Pine St),Surry
+a12,W7001,I-40,West of NC 210,Pender
+a13,W7501,I-73/ I-74,North of New Hope Church Rd,Randolph
+b1,A0001,I-40/ I-85, West of SR 1928 (Jimmie Kerr Rd),Alamance
+b2,A2901,I-40,East of SR 1410 (Farmington Rd),Davie
+b3,A5901,I-85,West of US 29 ,Mecklenburg
+b4,A5910,I-485,East of I-77,Mecklenburg
+b5,A6407,I-40,West of NC 132 (College Rd),New Hanover
+b6,A6501,I-95,North of NC 48,Northampton
+b7,A9201,I-85,North of US 1,Warren
+s1,284.5,I-40,0.22 Mile West of Aviation Pkwy (284.5),Wake
+s2,274.8,I-40,0.85 Mile West of Fayetteville Rd (274.8),Durham
+s3,6.0,I-540,0.68 Mile West of Leesville Rd (6.0),Wake
+s4,9.8,I-440,0.29 Mile East of Wake Forest Rd (9.8),Wake
+s5,2.1,I-440,0.33 Mile West of Western Blvd (2.1),Wake
+s6,304.1,I-40,0.76 Mile West of E Garner Rd (304.1),Wake
+s7,297.3,I-40/440,0.72 Mile North of US-70,Wake

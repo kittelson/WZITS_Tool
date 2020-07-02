@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -33,18 +35,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -52,8 +43,10 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import wzits_fx.VolumeToCapacityWizard;
 
 /**
  * @author ltrask
@@ -254,6 +247,8 @@ public class Step1Panel extends BorderPane {
         fwgp1.getRowConstraints().addAll(rc1, rc2);
         feasibilityPane.setCenter(fwgp1);
         feasibilityPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
+
+        wzInputChoice1.setTooltip(new Tooltip("Select the Roadway Functional Class to launch the V/C Wizard"));
 
         // Feasibility Wizard panel
         //fwSummaryPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard Summary", "substep-title-label"));
@@ -605,7 +600,10 @@ public class Step1Panel extends BorderPane {
         genInfoLabel6.getStyleClass().add("gen-info-label-style");
         genInfoLabel7.getStyleClass().add("gen-info-label-style");
         genInfoLabel8.getStyleClass().add("gen-info-label-style");
-        genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
+        btnLaunchVCwiz.getStyleClass().add("jfx-button-style");
+        //genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
+        //genInfoButton1.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:#4472c4; -fx-text-fill: white;");
+        genInfoButton1.getStyleClass().add("jfx-button-style");
         btnCloseDialog.setStyle("-fx-padding: 0.7em 0.57em 0.57em 0.57em; -fx-font-size: 12pt; -jfx-button-type: RAISED; -fx-background-color:rgb(204,85,0); -fx-text-fill: white;");
 
         genInfoDateToday.setText(control.getProject().getDateString());
@@ -1195,6 +1193,46 @@ public class Step1Panel extends BorderPane {
 //                control.getProject().getStep(1).setStepStarted(true);
 //            }
 //        });
+
+        FontIcon vcWizardLaunchIcon = new FontIcon(FontAwesomeSolid.CHART_LINE);
+        vcWizardLaunchIcon.setIconColor(Color.WHITE);
+        btnLaunchVCwiz.setGraphic(vcWizardLaunchIcon);
+        btnLaunchVCwiz.disableProperty().bind(
+                wzInputChoice1.getSelectionModel().selectedIndexProperty().lessThan(0).or(
+                wzInputChoice2.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice3.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice4.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice5.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice6.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice7.getSelectionModel().selectedIndexProperty().lessThan(0)).or(
+                wzInputChoice8.getSelectionModel().selectedIndexProperty().lessThan(0))
+        );
+        BorderPane vcWizardIconWrapper = new BorderPane();
+        FontIcon vcWizardCheckIcon = new FontIcon(FontAwesomeRegular.CHECK_CIRCLE);
+        vcWizardCheckIcon.setIconColor(Color.FORESTGREEN);
+        Tooltip tt1 = new Tooltip("All above inputs must be specified in order to launch the V/C wizard");
+        Tooltip.install(vcWizardCheckIcon, tt1);
+        FontIcon vcWizardXIcon = new FontIcon(FontAwesomeRegular.TIMES_CIRCLE);
+        vcWizardXIcon.setIconColor(Color.FIREBRICK);
+        Tooltip tt2 = new Tooltip("All inputs above must be specified in order to launch the V/C wizard");
+        Tooltip.install(vcWizardXIcon, tt2);
+        btnLaunchVCwiz.disableProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue) {
+                vcWizardIconWrapper.setCenter(vcWizardXIcon);
+            } else {
+                vcWizardIconWrapper.setCenter(vcWizardCheckIcon);
+            }
+        });
+        if (btnLaunchVCwiz.isDisable()) {
+            vcWizardIconWrapper.setCenter(vcWizardXIcon);
+        } else {
+            vcWizardIconWrapper.setCenter(vcWizardCheckIcon);
+        }
+
+//        VolumeToCapacityWizard vcWiz = new VolumeToCapacityWizard(this.control);
+        btnLaunchVCwiz.setOnAction(e -> centerPane.setCenter(new VolumeToCapacityWizard(this.control, centerPane.getCenter())));
+        BorderPane btnLaunchVCWizWrapper = new BorderPane();
+        btnLaunchVCWizWrapper.setCenter(btnLaunchVCwiz);
         int rowIdx = 0;
         GridPane inputGrid = new GridPane();
         inputGrid.add(wzTitleLabel1, 0, rowIdx++, 3, 1);
@@ -1260,6 +1298,8 @@ public class Step1Panel extends BorderPane {
         inputGrid.add(wzInputLabel20, 0, rowIdx);    // Federal-Aid Project
         inputGrid.add(wzInputChoice8, 1, rowIdx++);
         inputGrid.add(NodeFactory.createCommentLink("Federal-Aid Project", control.getProject().fapCommentProperty()), 2, (rowIdx - 1));
+        inputGrid.add(btnLaunchVCWizWrapper,1,rowIdx);
+        inputGrid.add(vcWizardIconWrapper, 2, rowIdx++);
 
         //inputGrid.add(proceedButton, 1, 9);
         double leftColsplit = 65;
@@ -1540,4 +1580,9 @@ public class Step1Panel extends BorderPane {
      * Federal-aid project
      */
     private final ChoiceBox wzInputChoice8 = new ChoiceBox(FXCollections.observableArrayList("Yes", "No"));
+
+    /**
+     * Button to open the vc wizard from step1panel
+     */
+    JFXButton btnLaunchVCwiz = new JFXButton("V/C Wizard");
 }
