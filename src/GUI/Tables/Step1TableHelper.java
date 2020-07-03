@@ -8,7 +8,6 @@ package GUI.Tables;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
-import com.jfoenix.controls.JFXTabPane;
 import core.GoalNeedsMatrix;
 import core.Need;
 import core.Project;
@@ -446,18 +445,17 @@ public class Step1TableHelper {
     }
 
     public static Node createStepSummary(MainController mc) {
-        JFXTabPane tp = new JFXTabPane();
         Tab fs1 = new Tab();
         fs1.setText("Fact Sheet 1");
         fs1.setContent(createStepSummary1(mc));
         Tab fs2 = new Tab();
         fs2.setText("Fact Sheet 2");
         fs2.setContent(createStepSummary2(mc));
-        tp.getTabs().addAll(fs1, fs2);
-
-        tp.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-
-        return tp;
+        TabPane summaryTabPane = new TabPane();
+        summaryTabPane.getStyleClass().add("custom-subtitle-tab-pane");
+        summaryTabPane.getTabs().addAll(fs1, fs2);
+        summaryTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        return summaryTabPane;
     }
 
     public static Node createStepSummary1(MainController mc) {

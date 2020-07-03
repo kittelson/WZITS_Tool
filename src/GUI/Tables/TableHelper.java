@@ -656,8 +656,7 @@ public class TableHelper {
     public static Pane createCommentPageYNv2(ObservableList<QuestionYN> qList) {
         VBox questionsVBox = new VBox(5);
         questionsVBox.setAlignment(Pos.TOP_CENTER);
-        questionsVBox.getStyleClass().add("question-vBox-style");
-        questionsVBox.setStyle("-fx-background-color: white; -fx-background-radius: 0 0 20 20; -fx-border-radius: 0 0 20 20; -fx-padding: 5pt");
+        questionsVBox.getStyleClass().add("question-card");
 //        questionsVBox.setPadding(new Insets(15,15,15,15));
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
             Pane n = createCommentQV2(qIdx + 1, qList.get(qIdx));

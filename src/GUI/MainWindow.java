@@ -17,7 +17,6 @@ import GUI.Step.Step4Panel;
 import GUI.Step.Step5Panel;
 import GUI.Step.Step6Panel;
 import GUI.Step.SummaryPanel;
-import com.jfoenix.controls.JFXTabPane;
 import core.Project;
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
@@ -634,7 +633,7 @@ public class MainWindow extends BorderPane {
         if (control.activeStepProperty().get() != Project.NUM_STEPS) {
             control.selectStep(Project.NUM_STEPS);
         }
-        ((JFXTabPane) ((BorderPane) summaryPane.getCenter()).getCenter()).getSelectionModel().select(fsIdx - 1);
+        ((TabPane) ((BorderPane) summaryPane.getCenter()).getCenter()).getSelectionModel().select(fsIdx - 1);
         if (applyPause) {
             // Lets the node render
             try {
@@ -643,7 +642,7 @@ public class MainWindow extends BorderPane {
 
             }
         }
-        return ((JFXTabPane) ((BorderPane) summaryPane.getCenter()).getCenter()).getTabs().get(fsIdx - 1).getContent();
+        return ((TabPane) ((BorderPane) summaryPane.getCenter()).getCenter()).getTabs().get(fsIdx - 1).getContent();
     }
 
     /**

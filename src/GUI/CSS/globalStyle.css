@@ -239,6 +239,15 @@
   -fx-content-display: LEFT;
 }
 
+.question-card {
+  -fx-background-color: white;
+  -fx-background-radius: 0 0 10 10;
+  -fx-border-radius: 0 0 10 10;
+  -fx-padding: 5pt;
+  -fx-border-color: lightgrey;
+  -fx-border-width: 0 1 1 1;
+}
+
 .question-visible {
   -fx-background-color: -fx-table-cell-border-color, white;
   -fx-background-insets: 0, 0 0 1 0;
@@ -401,7 +410,7 @@
 
 .substep-list-title-label {
   -fx-background-color: white; /* Dark Grey: #595959   Navy: #0E298C*/
-  -fx-text-fill: #F3A100;          /* yellowish gold */
+  -fx-text-fill: #ed7d31;          /* yellowish gold */
   -fx-font-size: 20;
   -fx-font-family: "calibri";
   -fx-alignment: center-left;
@@ -409,8 +418,23 @@
   -fx-background-radius: 10 10 0 0;
   -fx-padding: 0 0 0 250;
   -fx-font-weight: lighter;
-  /* -fx-border-style: none none solid none;
-  -fx-border-color: #595959; */
+  -fx-border-color: lightgrey;
+  -fx-border-width: 1 1 0 1;
+}
+
+.substep-list-title-label-selected {
+  -fx-background-color: #ed7d31; /* Dark Grey: #595959   Navy: #0E298C*/
+  -fx-text-fill: white;          /* yellowish gold */
+  -fx-font-size: 20;
+  -fx-font-family: "calibri";
+  -fx-alignment: center-left;
+  -fx-border-radius: 10 10 0 0;
+  -fx-background-radius: 10 10 0 0;
+  -fx-padding: 0 0 0 250;
+  -fx-font-weight: bold;
+  -fx-underline: true;
+  -fx-border-color: lightgrey;
+  -fx-border-width: 1 1 0 1;
 }
 
 .navigator {
@@ -492,14 +516,14 @@
 }
 .comment-border-styles {
   -fx-border-color: lightgrey;
-  -fx-border-radius: 20;
+  -fx-border-radius: 10;
 }
 .comment-label-style {
     -fx-text-fill: #4472c4; /* blue */
     -fx-font-size: 18pt;
     -fx-background-color: white;
-    -fx-background-radius: 20 20 0 0;
-    -fx-border-radius: 20 20 0 0;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-radius: 10 10 0 0;
 }
 .comment-sub-label {
   -fx-text-fill: #4472c4;
@@ -773,10 +797,10 @@
 }
 
 .fact-sheet-title-large {
-  -fx-background-color: #bac5cc;
-  -fx-text-fill: black;
+  -fx-background-color: #595959; /* #bac5cc */
+  -fx-text-fill: white; /* black */
   -fx-alignment: center;
-  -fx-font-size: 24;
+  -fx-font-size: 24pt;
   -fx-font-weight: bold;
   -fx-font-family: "calibri";
   -fx-border-color: black;
@@ -1078,6 +1102,62 @@
   -fx-underline: true;
   -fx-background-color: rgba(0, 0, 0, 0.25);
 }
+.custom-tab-pane {
+  -fx-tab-min-height: 3em;
+  /* 24 */
+
+  -fx-tab-max-height: 3em;
+  /* 24 */
+}
+
+.custom-tab-pane .tab .tab-label {
+  -fx-background-color: transparent;
+  -fx-alignment: CENTER;
+  -fx-text-fill: darkgrey;
+  -fx-font-size: 12pt;
+}
+.custom-tab-pane .tab {
+  -fx-background-insets: 0.0;
+  -fx-background-radius: 0.0;
+  -fx-background-color: -fx-tab-header-background-color;
+  -fx-border-width: 1px;
+  -fx-border-color: transparent transparent darkgrey transparent;
+}
+.custom-tab-pane .tab:selected {
+  -fx-background-color: #f4f4f4;
+  -fx-border-color: darkgrey darkgrey transparent darkgrey;
+  -fx-border-width: 1px;
+}
+
+.custom-tab-pane .tab:selected .tab-label {
+  -fx-text-fill: -fx-tab-color-selected;
+}
+
+.custom-tab-pane .tab:hover .tab-label {
+  -fx-text-fill: -fx-tab-color-hover;
+}
+
+.custom-tab-pane .tab:focused {
+  -fx-focus-color: transparent;
+}
+.custom-tab-pane .tab {
+  -fx-padding: 0 30 0 30;
+  /* -fx-border-color: darkgrey; */
+  /* -fx-border-width: 1px; */
+}
+.custom-tab-pane *.tab-header-background {
+  -fx-background-color: -fx-tab-header-background-color;
+  -fx-border-color: darkgrey;
+  -fx-border-width: 0 0 1px 0;
+}
+.custom-tab-pane:top *.tab-header-area { /*.tab-pane:top*/
+  -fx-background-insets: 0, 0 0 1 0;
+  -fx-padding: 0.416667em 0.166667em 0.0em 0.166667em;
+}
+.custom-tab-pane .tab:selected .focus-indicator {
+  -fx-focus-color: transparent;
+  -fx-border-color: transparent;
+}
 
 .custom-subtitle-tab-pane {
   -fx-tab-min-height: 3em;
@@ -1133,4 +1213,111 @@
 .custom-subtitle-tab-pane .tab:selected .focus-indicator {
   -fx-focus-color: transparent;
   -fx-border-color: transparent;
+}
+
+.scroll-pane {
+  -fx-background-color: transparent;
+}
+
+.scroll-pane:focused {
+  -fx-background-color: -fx-box-border, -fx-control-inner-background;
+  -fx-background-insets: 0, 1;
+  /* -fx-padding: 1; */
+  -fx-background-color: transparent;
+}
+
+.scroll-bar {
+  -fx-background-color: transparent;
+  -fx-background-radius: 1em;
+}
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent;
+  -fx-background-radius: 1em;
+}
+.scroll-bar:vertical .track-background,
+.scroll-bar:horizontal .track-background {
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+  -fx-background-radius: 1em;
+}
+.scroll-bar:horizontal .thumb {
+  -fx-background-color: rgb(194, 199, 202);
+  -fx-background-insets: 4 0 4 0;
+  -fx-background-radius: 1em;
+}
+.scroll-bar:vertical .thumb {
+  -fx-background-color: rgb(194, 199, 202);
+  -fx-background-insets: 0 4 0 4;
+  -fx-background-radius: 1em;
+}
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+  -fx-background-color: rgb(168, 168, 168);
+}
+.scroll-bar:horizontal .thumb:pressed,
+.scroll-bar:vertical .thumb:pressed {
+  -fx-background-color: rgb(120, 120, 120);
+}
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+  -fx-background-color: transparent;
+  -fx-background-radius: 1em;
+  -fx-padding: 5;
+}
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button {
+  -fx-background-color: transparent;
+  -fx-background-radius: 1em;
+  -fx-padding: 5;
+}
+.scroll-bar:horizontal .increment-arrow {
+  -fx-shape: "M 0 0 L 4 8 L 8 0 Z";
+  -fx-background-color: rgb(168, 168, 168);
+  -fx-padding: 0.25em;
+  -fx-rotate: -90;
+}
+.scroll-bar:horizontal .increment-arrow:hover,
+.scroll-bar:horizontal .decrement-arrow:hover,
+.scroll-bar:vertical .increment-arrow:hover,
+.scroll-bar:vertical .decrement-arrow:hover {
+  -fx-background-color: rgb(120, 120, 120);
+}
+.scroll-bar:horizontal .increment-arrow:pressed,
+.scroll-bar:horizontal .decrement-arrow:pressed,
+.scroll-bar:vertical .increment-arrow:pressed,
+.scroll-bar:vertical .decrement-arrow:pressed {
+  -fx-background-color: rgb(80, 80, 80);
+}
+
+.scroll-bar:vertical .increment-arrow {
+  -fx-background-color: rgb(168, 168, 168);
+  -fx-shape: "M 0 0 L 4 8 L 8 0 Z";
+  -fx-padding: 0.25em;
+  -fx-rotate: 0;
+}
+.scroll-bar:horizontal .decrement-arrow {
+  -fx-background-color: rgb(168, 168, 168);
+  -fx-shape: "M 0 0 L 4 8 L 8 0 Z";
+  -fx-padding: 0.25em;
+  -fx-rotate: 90;
+}
+.scroll-bar:vertical .decrement-arrow {
+  -fx-background-color: rgb(168, 168, 168);
+  -fx-shape: "M 0 0 L 4 8 L 8 0 Z";
+  -fx-padding: 0.25em;
+  -fx-rotate: -180;
+}
+.scroll-bar:vertical:focused,
+.scroll-bar:horizontal:focused {
+  -fx-background-color: transparent, rgb(96, 96, 96), rgb(96, 96, 96);
+}
+
+.hyperlink:visited {
+    -fx-underline: false;
+}
+
+.hyperlink:visited:hover {
+    -fx-underline: false;
 }

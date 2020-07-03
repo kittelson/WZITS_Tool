@@ -10,10 +10,11 @@ import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import GUI.Tables.Step3TableHelper;
 import core.Project;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.animation.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,7 +29,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
@@ -43,16 +43,12 @@ public class Step3Panel extends BorderPane {
 
     private final ScrollPane centerScroll = new ScrollPane();
     private final VBox quesPane = new VBox(10);
-    private final VBox centerPane = new VBox();
+    private final BorderPane centerPane = new BorderPane();
+    private final VBox questionPanelBox = new VBox();
 
     private final GridPane stepIntroGrid = new GridPane();
     private final BorderPane stepReportPane = new BorderPane();
 
-    // all panes below this comment are new panes associated with the new step 3-6 redesign
-    private final BorderPane rootPane = new BorderPane();
-    private final GridPane topGridLabel = new GridPane();
-    private final GridPane bottomGridNav = new GridPane();
-    private final GridPane topGridMaster = new GridPane();
     // labels and inputs associated with new redesign
     private final Label lblTitle = new Label("Step 3");
     private final Label lblStepName = new Label("System Planning and Design");
@@ -63,7 +59,7 @@ public class Step3Panel extends BorderPane {
             "Document Concepts of Operations", "Requirements", "Test Strategy", "Operations & Maintenance","Staff Training & Needs",
             "System Security", "Evaluation", "Benefit / Cost"
     };
-    final Hyperlink[] btnCaptions = new Hyperlink[captions.length];
+    final Hyperlink[] btnCaptions = new Hyperlink[captions.length + 1];
 
     // Hashmap to help map caption strings to specific pane
     HashMap<Integer, Pane> hash_map = new HashMap<Integer, Pane>();
@@ -81,12 +77,12 @@ public class Step3Panel extends BorderPane {
         Pane projEvaluationNode = Step3TableHelper.createProjEvalNode(control.getProject());
         Pane sysBcNode = Step3TableHelper.createSysBCNode(control.getProject());
         //mapping Pane to Int keys
-        hash_map.put(0,docConOps);
-        hash_map.put(1,sysReqNode);
-        hash_map.put(2,testingStratNode);
-        hash_map.put(3,opsMaintNode);
+        hash_map.put(0, docConOps);
+        hash_map.put(1, sysReqNode);
+        hash_map.put(2, testingStratNode);
+        hash_map.put(3, opsMaintNode);
         hash_map.put(4, staffTrainNode);
-        hash_map.put(5,sysSecurityNode);
+        hash_map.put(5, sysSecurityNode);
         hash_map.put(6, projEvaluationNode);
         hash_map.put(7, sysBcNode);
 
@@ -102,16 +98,23 @@ public class Step3Panel extends BorderPane {
 
         for (int i = 0; i < captions.length; i++) {
             btnCaptions[i] = new Hyperlink(captions[i]);
+            btnCaptions[i].setStyle("-fx-border-color: transparent; -fx-padding: 4 0 4 0;");
 //            int finalI = i;
-//            final Pane displayPane = hash_map.get(i);
             final int finalI = i;
-            btnCaptions[i].setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    selectSubStep(finalI);
-                }
+            btnCaptions[i].setOnAction(actionEvent -> {
+//                    selectSubStep(finalI);
+                control.setActiveSubStep(stepIndex, finalI);
             });
         }
+        btnCaptions[btnCaptions.length - 1] = new Hyperlink("Step 3 Report");
+        btnCaptions[btnCaptions.length - 1].setStyle("-fx-border-color: transparent; -fx-padding: 4 0 4 0;");
+        btnCaptions[btnCaptions.length - 1].setOnAction(actionEvent -> {
+            control.setActiveSubStep(stepIndex, Project.NUM_SUB_STEPS[stepIndex]);
+        });
+        // all panes below this comment are new panes associated with the new step 3-6 redesign
+        final GridPane topGridLabel = new GridPane();
+        final GridPane bottomGridNav = new GridPane();
+        final GridPane topGridMaster = new GridPane();
         //spacing for panes
         bottomGridNav.setPadding(new Insets(10,0,10,50));
         topGridMaster.setMaxWidth(1400);
@@ -144,7 +147,6 @@ public class Step3Panel extends BorderPane {
 
         topGridMaster.add(topGridLabel,0,0);
         topGridMaster.add(bottomGridNav,0,1);
-        rootPane.setTop(topGridMaster);
 
         // Width and height bindings to inform the figure title image resize behavior
         DoubleBinding widthBinding = new DoubleBinding() {
@@ -199,7 +201,7 @@ public class Step3Panel extends BorderPane {
         this.setTop(topGridMaster);
         for (int i = 0; i < captions.length; i++) {
             BorderPane subsectionPane = new BorderPane();
-            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-list-title-label");// TODO set real style
+            Label subsectionTitle = NodeFactory.createFormattedLabel(captions[i], "substep-list-title-label");
             subsectionPane.setTop(subsectionTitle);
             subsectionPane.setCenter(hash_map.get(i));
             hash_map.replace(i, subsectionPane);
@@ -210,18 +212,21 @@ public class Step3Panel extends BorderPane {
         BorderPane fillerPane = new BorderPane();
         fillerPane.setMinHeight(500);
         fillerPane.setMaxHeight(500);
-        centerPane.getChildren().addAll(quesPane, fillerPane);
-        centerPane.setAlignment(Pos.CENTER);
-        centerPane.setMaxWidth(1400);
+        questionPanelBox.getChildren().addAll(quesPane, fillerPane);
+        questionPanelBox.setAlignment(Pos.CENTER);
+        questionPanelBox.setMaxWidth(1400);
         BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(centerPane);
-        BorderPane.setAlignment(centerPane, Pos.TOP_CENTER);
+        borderPane.setCenter(questionPanelBox);
+        BorderPane.setAlignment(questionPanelBox, Pos.TOP_CENTER);
         borderPane.setStyle("-fx-border-radius: 5px; -fx-padding: 15;");
+        topGridMaster.maxWidthProperty().bind(borderPane.widthProperty());
+        topGridMaster.setAlignment(Pos.TOP_LEFT);
         centerScroll.setFitToWidth(true);
         centerScroll.setContent(borderPane);
-        this.setCenter(centerScroll);
+        centerPane.setCenter(centerScroll);
+        this.setCenter(centerPane);
         BorderPane.setAlignment(topGridMaster, Pos.CENTER);
-        BorderPane.setAlignment(centerPane, Pos.TOP_CENTER);
+        BorderPane.setAlignment(questionPanelBox, Pos.TOP_CENTER);
 
         setupActionListeners();
         setupPropertyBindings();
@@ -230,6 +235,10 @@ public class Step3Panel extends BorderPane {
     private void setupActionListeners() {
 
     }
+
+    private HashMap<Integer, Double> pings;
+    private boolean bypassAutoScroll = false;
+    private boolean bypassScrollUpdateCheck = false;
 
     private void setupPropertyBindings() {
 
@@ -249,13 +258,62 @@ public class Step3Panel extends BorderPane {
         control.activeSubStepProperty(stepIndex).addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> o, Number oldVal, Number newVal) {
-                //selectSubStep(getActiveSubStep());
-                //control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
-                //control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
-                //if (getActiveSubStep() == Project.NUM_SUB_STEPS[stepIndex]) {
-                //    stepReportPane.setCenter(Step3TableHelper.createStepSummary(control));
-                //}
-                //control.checkProceed();
+                selectSubStep(getActiveSubStep());
+                control.getProject().setSubStepStarted(stepIndex, getActiveSubStep(), true);
+                control.getProject().setSubStepComplete(stepIndex, getActiveSubStep() - 1, true);
+
+                if (getActiveSubStep() == Project.NUM_SUB_STEPS[stepIndex]) {
+                    stepReportPane.setCenter(Step3TableHelper.createStepSummary(control));
+                }
+
+                control.checkProceed();
+            }
+        });
+
+        centerScroll.vvalueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                if (pings == null) {
+                    pings = new HashMap<>();
+                    pings.put(-1, -999.0);
+                    for (int subStepIndex = 0; subStepIndex < Project.NUM_SUB_STEPS[stepIndex]; subStepIndex++) {
+                        int i = 0;
+                        double locVal = 0.0;
+                        double rootHeight = questionPanelBox.getHeight();
+                        double scrollHeight = centerScroll.getHeight();
+                        double overflow = rootHeight - scrollHeight;
+                        while (i < subStepIndex) {
+                            double componentHeight = hash_map.get(i).getHeight();
+                            locVal += componentHeight / overflow;
+                            i++;
+                        }
+                        pings.put(subStepIndex, Math.min(locVal, 1.0));
+                    }
+                }
+                if (bypassScrollUpdateCheck) {
+                    return;
+                }
+                if (getActiveSubStep() < (Project.NUM_SUB_STEPS[stepIndex] - 1) && centerScroll.getVvalue() > pings.get(getActiveSubStep() + 1) - 0.05) {
+                    bypassAutoScroll = true;
+                    try {
+                        control.setActiveSubStep(stepIndex, getActiveSubStep() + 1);
+                    } catch (Exception e) {
+                        System.out.println("Exception at Step " + (stepIndex + 1) + " while updating substep via scrolling");
+                        e.printStackTrace();
+                    } finally {
+                        bypassAutoScroll = false;
+                    }
+                } else if (centerScroll.getVvalue() <= pings.get(getActiveSubStep() - 1) && getActiveSubStep() > 0) {
+                    bypassAutoScroll = true;
+                    try {
+                        control.setActiveSubStep(stepIndex, getActiveSubStep() - 1);
+                    } catch (Exception e) {
+                        System.out.println("Exception at Step " + (stepIndex + 1) + " while updating substep via scrolling");
+                        e.printStackTrace();
+                    } finally {
+                        bypassAutoScroll = false;
+                    }
+                }
             }
         });
     }
@@ -291,61 +349,135 @@ public class Step3Panel extends BorderPane {
         }
         if (subStepIndex > -2) {
             if (!animated) {
-
-            } else {
-                int i = 0;
-                double locVal = 0.0;
-                double rootHeight = centerPane.getHeight();
-                double scrollHeight = centerScroll.getHeight();
-                double overflow = rootHeight - scrollHeight;
-
-                while (i < subStepIndex) {
-//                    double componentHeight = hash_map.get(i).getBoundsInLocal().getHeight();
-                    double componentHeight = hash_map.get(i).getHeight();
-                    locVal += componentHeight / overflow;
-                    i++;
+                if (subStepIndex == Project.NUM_SUB_STEPS[stepIndex]) {
+                    if (centerPane.getCenter() != stepReportPane) {
+                        centerPane.setCenter(stepReportPane);
+                    }
+                } else {
+                    if (centerPane.getCenter() != centerScroll) {
+                        centerPane.setCenter(centerScroll);
+                    }
+                    scrollToSubstep(subStepIndex, animated);
                 }
-                final Timeline timeline = new Timeline();
-                final KeyValue kv = new KeyValue(centerScroll.vvalueProperty(), Math.min(locVal, 1.0));
-                final KeyFrame kf = new KeyFrame(Duration.millis(250), kv);
-                timeline.getKeyFrames().add(kf);
-                timeline.play();
-                Label selectedTitleLabel = (Label) ((BorderPane) hash_map.get(subStepIndex)).getTop();
-                final Animation animation = new Transition() {
-
-                    {
-                        setCycleDuration(Duration.millis(500));
-                        setInterpolator(Interpolator.EASE_OUT);
+            } else {
+                if (subStepIndex == Project.NUM_SUB_STEPS[stepIndex]) {
+                    if (centerPane.getCenter() != stepReportPane) {
+                        FadeTransition ft1 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                        ft1.setFromValue(1.0);
+                        ft1.setToValue(0.0);
+                        ft1.play();
+                        ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent ae) {
+                                centerPane.setCenter(stepReportPane);
+                                FadeTransition ft2 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                                ft2.setFromValue(0.0);
+                                ft2.setToValue(1.0);
+                                ft2.play();
+                            }
+                        });
                     }
-
-                    @Override
-                    protected void interpolate(double frac) {
-                        // Grey RGB(89, 89, 89)
-                        // Orange RGB(237, 125, 49)
-                        // Uncomment for interpolate to grey
-//                        double r = 237 - (237 - 89) *  frac;
-//                        double g = 125 - (125 - 89) *frac;
-//                        double b = 49 + (89 - 49) * frac;
-//                        Color vColor = new Color(r/256.0, g/256.0, b/256.0, 1.0);
-//                        selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, CornerRadii.EMPTY, Insets.EMPTY)));
-                        // Uncomment for interpolate to white
-                        double r = 89 + ((255 - 89) *  frac);
-                        double g = 89 + ((255 - 89) * frac);
-                        double b = 89 + ((255 - 89) * frac);
-                        Color vColor = new Color(r/256.0, g/256.0, b/256.0, 1.0);
-                        selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY))); // radii, etc. from css
+                } else {
+                    if (centerPane.getCenter() != centerScroll) {
+                        FadeTransition ft1 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                        ft1.setFromValue(1.0);
+                        ft1.setToValue(0.0);
+                        ft1.play();
+                        ft1.setOnFinished(ae -> {
+                            centerPane.setCenter(centerScroll);
+                            FadeTransition ft2 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                            ft2.setFromValue(0.0);
+                            ft2.setToValue(1.0);
+                            ft2.setOnFinished(actionEvent -> {scrollToSubstep(subStepIndex, animated);});
+                            ft2.play();
+                        });
+                    } else {
+                        scrollToSubstep(subStepIndex, animated);
                     }
-                };
-//                animation.play();
-                // Uncomment for interpolate to grey
-//                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.web("#ed7d31"), CornerRadii.EMPTY, Insets.EMPTY)));
-                // Uncomment for interpolate to white
-                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY)));
-                PauseTransition pt = new PauseTransition(Duration.millis(2000));
-                SequentialTransition st = new SequentialTransition();
-                st.getChildren().addAll(pt, animation);
-                st.play();
+                }
             }
+            for (int si = 0; si <= Project.NUM_SUB_STEPS[stepIndex]; si++) {
+                BorderPane currQuestionCard = (BorderPane) hash_map.get(si);
+                if (currQuestionCard != null) {
+                    Label selectedTitleLabel = (Label) currQuestionCard.getTop();
+                    if (si == subStepIndex) {
+                        selectedTitleLabel.getStyleClass().setAll("substep-list-title-label-selected");
+                    } else {
+                        selectedTitleLabel.getStyleClass().setAll("substep-list-title-label");
+
+                    }
+                }
+                if (si == subStepIndex) {
+                    btnCaptions[si].setStyle("-fx-font-weight: bold; -fx-text-fill: #ED7D31; -fx-underline: true");
+                } else {
+                    btnCaptions[si].setStyle("-fx-font-weight: normal; -fx-underline: false");
+                    if (si < subStepIndex) {
+                        btnCaptions[si].setVisited(true);
+                    } else {
+                        btnCaptions[si].setVisited(false);
+                    }
+                }
+            }
+        }
+    }
+
+    private void scrollToSubstep(int subStepIndex, boolean animated) {
+        if (hash_map.get(subStepIndex) == null) {
+            return;
+        }
+        int i = 0;
+        double locVal = 0.0;
+        double rootHeight = questionPanelBox.getHeight();
+        double scrollHeight = centerScroll.getHeight();
+        double overflow = rootHeight - scrollHeight;
+
+        while (i < subStepIndex) {
+//                    double componentHeight = hash_map.get(i).getBoundsInLocal().getHeight();
+            double componentHeight = hash_map.get(i).getHeight();
+            locVal += componentHeight / overflow;
+            i++;
+        }
+        if (!animated) {
+            centerScroll.setVvalue(Math.min(locVal, 1.0));
+        } else {
+            if (!bypassAutoScroll && centerScroll.getVvalue() != Math.min(locVal, 1.0)) {
+                bypassScrollUpdateCheck = true;
+                try {
+                    final Timeline timeline = new Timeline();
+                    final KeyValue kv = new KeyValue(centerScroll.vvalueProperty(), Math.min(locVal, 1.0));
+                    final KeyFrame kf = new KeyFrame(Duration.millis(250), kv);
+                    timeline.getKeyFrames().add(kf);
+                    timeline.setOnFinished(actionEvent -> {bypassScrollUpdateCheck = false;});
+                    timeline.play();
+                } catch (Exception e) {
+                    System.out.println("Exception at Step " + (stepIndex + 1) + " while playing autoscroll transition");
+                    e.printStackTrace();
+                    bypassScrollUpdateCheck = false;
+                }
+            }
+
+//            Label selectedTitleLabel = (Label) ((BorderPane) hash_map.get(subStepIndex)).getTop();
+//            final Animation animation = new Transition() {
+//
+//                {
+//                    setCycleDuration(Duration.millis(500));
+//                    setInterpolator(Interpolator.EASE_OUT);
+//                }
+//
+//                @Override
+//                protected void interpolate(double frac) {
+//                    double r = 89 + ((255 - 89) * frac);
+//                    double g = 89 + ((255 - 89) * frac);
+//                    double b = 89 + ((255 - 89) * frac);
+//                    Color vColor = new Color(r / 256.0, g / 256.0, b / 256.0, 1.0);
+//                    selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY))); // radii, etc. from css
+//                }
+//            };
+//            selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY)));
+//            PauseTransition pt = new PauseTransition(Duration.millis(2000));
+//            SequentialTransition st = new SequentialTransition();
+//            st.getChildren().addAll(pt, animation);
+//            st.play();
         }
     }
 

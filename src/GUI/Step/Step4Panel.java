@@ -8,13 +8,14 @@ package GUI.Step;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
-import GUI.Tables.Step3TableHelper;
 import GUI.Tables.Step4TableHelper;
 import core.Project;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.animation.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,7 +31,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 /**
@@ -42,16 +42,12 @@ public class Step4Panel extends BorderPane {
     private final MainController control;
     private final int stepIndex = 3;
     private final String stepTitle = "Procurement";
-    private final VBox centerPane = new VBox();
+    private final BorderPane centerPane = new BorderPane();
+    private final VBox questionPanelBox = new VBox();
     private final GridPane stepIntroGrid = new GridPane();
-    private final GridPane topGridNav = new GridPane();
-    private final GridPane btmGridNav = new GridPane();
-    private final GridPane topGridLbl = new GridPane();
     private final Label lblStepNum = new Label("Step 4");
     private final Label lblStepName = new Label("Procurement");
-    private final BorderPane rootPane = new BorderPane();
     private final BorderPane stepReportPane = new BorderPane();
-    private final ArrayList<Node> subStepPanesList = new ArrayList();
     /* adds scroll feature for new step 3-6 redesign */
     private final ScrollPane centerScroll = new ScrollPane();
     private final VBox quesPane = new VBox(10);
@@ -60,7 +56,7 @@ public class Step4Panel extends BorderPane {
     final static String[] captions = new String[]{
             "Direct/Indirect", "Award Mechanism", "RFP Requirements", "Selected Vendor"
     };
-    final Hyperlink[] btnCaptions = new Hyperlink[captions.length];
+    final Hyperlink[] btnCaptions = new Hyperlink[captions.length + 1];
     //hashmap helps map captions strings to specific pane
     HashMap<Integer, Pane> hash_map = new HashMap<>();
 
@@ -87,11 +83,20 @@ public class Step4Panel extends BorderPane {
 
         for (int i = 0; i < captions.length; i++) {
             btnCaptions[i] = new Hyperlink(captions[i]);
+            btnCaptions[i].setStyle("-fx-border-color: transparent; -fx-padding: 4 0 4 0;");
             final int finalI = i;
-            btnCaptions[i].setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {selectSubStep(finalI);}});}
+            btnCaptions[i].setOnAction(actionEvent -> control.setActiveSubStep(stepIndex, finalI));
+        }
+        btnCaptions[btnCaptions.length - 1] = new Hyperlink("Step 4 Report");
+        btnCaptions[btnCaptions.length - 1].setStyle("-fx-border-color: transparent; -fx-padding: 4 0 4 0;");
+        btnCaptions[btnCaptions.length - 1].setOnAction(actionEvent -> {
+            control.setActiveSubStep(stepIndex, Project.NUM_SUB_STEPS[stepIndex]);
+        });
 
+
+        final GridPane topGridNav = new GridPane();
+        final GridPane btmGridNav = new GridPane();
+        final GridPane topGridLbl = new GridPane();
         btmGridNav.setPadding(new Insets(10,10,10,50));
         topGridNav.setMaxWidth(1400);
         topGridNav.setPrefWidth(500);
@@ -123,7 +128,6 @@ public class Step4Panel extends BorderPane {
 
         topGridNav.add(topGridLbl,0,0);
         topGridNav.add(btmGridNav,0,1);
-        rootPane.setTop(topGridNav);
 
         RowConstraints row1 = new RowConstraints();
         row1.setPercentHeight(50);
@@ -158,43 +162,25 @@ public class Step4Panel extends BorderPane {
         BorderPane fillerPane = new BorderPane();
         fillerPane.setMinHeight(500);
         fillerPane.setMaxHeight(500);
-        centerPane.getChildren().addAll(quesPane, fillerPane);
-        centerPane.setAlignment(Pos.CENTER);
-        centerPane.setMaxWidth(1400);
+        questionPanelBox.getChildren().addAll(quesPane, fillerPane);
+        questionPanelBox.setAlignment(Pos.CENTER);
+        questionPanelBox.setMaxWidth(1400);
 //        centerPane.setStyle("-fx-border-radius: 5px");
         BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(centerPane);
-        BorderPane.setAlignment(centerPane, Pos.TOP_CENTER);
+        borderPane.setCenter(questionPanelBox);
+        BorderPane.setAlignment(questionPanelBox, Pos.TOP_CENTER);
         borderPane.setStyle("-fx-border-radius: 5px; -fx-padding: 15;");
+        topGridNav.maxWidthProperty().bind(borderPane.widthProperty());
+        topGridNav.setAlignment(Pos.TOP_LEFT);
         centerScroll.setFitToWidth(true);
         centerScroll.setContent(borderPane);
-        this.setCenter(centerScroll);
+        centerPane.setCenter(centerScroll);
+        this.setCenter(centerPane);
         BorderPane.setAlignment(topGridNav, Pos.CENTER);
-        BorderPane.setAlignment(centerPane, Pos.TOP_CENTER);
+        BorderPane.setAlignment(questionPanelBox, Pos.TOP_CENTER);
 
         setupActionListeners();
         setupPropertyBindings();
-
-//        mainVBox.setFillWidth(true);
-//        Label startLabel = new Label("Step");
-//        startLabel.setWrapText(true);
-//        startLabel.setAlignment(Pos.BOTTOM_CENTER);
-//        startLabel.setTextAlignment(TextAlignment.CENTER);
-//        startLabel.setMaxHeight(MainController.MAX_HEIGHT);
-//        startLabel.setMaxWidth(MainController.MAX_WIDTH);
-//        Label infoLabel = new Label("4");
-//        infoLabel.setMaxHeight(MainController.MAX_HEIGHT);
-//        infoLabel.setMaxWidth(MainController.MAX_WIDTH);
-//        infoLabel.setAlignment(Pos.TOP_CENTER);
-//        Label instructionLabel = new Label(stepTitle);
-//        instructionLabel.setWrapText(true);
-//        instructionLabel.setTextAlignment(TextAlignment.CENTER);
-//        instructionLabel.setMaxHeight(MainController.MAX_HEIGHT);
-//        instructionLabel.setMaxWidth(MainController.MAX_WIDTH);
-//        instructionLabel.setAlignment(Pos.CENTER);
-//        startLabel.getStyleClass().add("launch-title-label-top");
-//        infoLabel.getStyleClass().add("launch-title-label-bottom");
-//        instructionLabel.getStyleClass().add("intro-instructions");
 
         DoubleBinding widthBinding = new DoubleBinding() {
             {
@@ -229,55 +215,6 @@ public class Step4Panel extends BorderPane {
         figStep.setSmooth(true);
         figStep.setCache(true);
 
-//        stepIntroGrid.add(startLabel, 0, 0);
-//        stepIntroGrid.add(infoLabel, 0, 1);
-//        stepIntroGrid.add(instructionLabel, 1, 1);
-//        stepIntroGrid.add(figStep, 1, 0);
-//        stepIntroGrid.setStyle("-fx-background-color: white");
-
-//        GridPane.setHgrow(instructionLabel, Priority.ALWAYS);
-
-        int subStepIndex = 1;
-        // Initial Applications Questions Panel
-//        directIndirectPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
-//        directIndirectPane.setCenter(Step4TableHelper.createDirectIndirectNode(control.getProject()));
-//        directIndirectPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
-//
-//        // Application Wizard Summary Panel
-//        mechanismPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
-//        mechanismPane.setCenter(Step4TableHelper.createMechanismNode(control.getProject()));
-//        mechanismPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
-//
-//        // Benefits Questions Panel
-//        rfpNode.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
-//        rfpNode.setCenter(Step4TableHelper.createRFPNode(control.getProject()));
-//        rfpNode.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
-//
-//        // Costs Questions Panel
-//        vendorSelectionPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[stepIndex][subStepIndex++], "substep-title-label"));
-//        vendorSelectionPane.setCenter(Step4TableHelper.createVendorNode(control.getProject()));
-//        vendorSelectionPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
-
-        // Step Report Pane
-        stepReportPane.setTop(NodeFactory.createFormattedLabel("Report: " + stepTitle, "substep-title-label"));
-//        stepReportPane.setCenter(Step4TableHelper.createStepSummary(control));
-        stepReportPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
-
-//        mainVBox.getChildren().addAll(centerPane);  //allSubStepsPane
-//        int i = 0;
-//        allSubStepsPane.add(stepIntroGrid, i++, 0);
-//        allSubStepsPane.add(directIndirectPane, i++, 0);
-//        allSubStepsPane.add(mechanismPane, i++, 0);
-//        allSubStepsPane.add(rfpNode, i++, 0);
-//        allSubStepsPane.add(vendorSelectionPane, i++, 0);
-//        allSubStepsPane.add(stepReportPane, i++, 0);
-        this.subStepPanesList.add(stepIntroGrid);
-//        this.subStepPanesList.add(directIndirectPane);
-//        this.subStepPanesList.add(mechanismPane);
-//        this.subStepPanesList.add(rfpNode);
-//        this.subStepPanesList.add(vendorSelectionPane);
-        this.subStepPanesList.add(stepReportPane);
-
 //        int numPanes = getNumSubSteps() + 2;
 //        for (int colIdx = 0; colIdx < numPanes; colIdx++) {
 //            ColumnConstraints tcc = new ColumnConstraints();
@@ -286,7 +223,7 @@ public class Step4Panel extends BorderPane {
 //        }
         GridPane.setVgrow(stepIntroGrid, Priority.ALWAYS);
         GridPane.setVgrow(stepReportPane, Priority.ALWAYS);
-        VBox.setVgrow(centerPane, Priority.ALWAYS);  //allSubStepsPane
+        VBox.setVgrow(questionPanelBox, Priority.ALWAYS);  //allSubStepsPane
 
         setupActionListeners();
         setupPropertyBindings();
@@ -297,18 +234,11 @@ public class Step4Panel extends BorderPane {
 
     }
 
+    private HashMap<Integer, Double> pings;
+    private boolean bypassAutoScroll = false;
+    private boolean bypassScrollUpdateCheck = false;
+
     private void setupPropertyBindings() {
-//        this.widthProperty().addListener(new ChangeListener<Number>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Number> ov, Number oldWidth, Number newWidth) {
-//                //System.out.println("Step 4 Width Resized");
-//                if (allSubStepsPane != null && allSubStepsPane.isVisible()) {
-//                    allSubStepsPane.setMinWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//                    allSubStepsPane.setMaxWidth((getNumSubSteps() + 2) * (control.getAppWidth() - 220));
-//                    moveScreen((getActiveSubStep() + 1) * stepIntroGrid.getWidth(), 0, false);
-//                }
-//            }
-//        });
 
         control.activeStepProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -335,6 +265,53 @@ public class Step4Panel extends BorderPane {
                 }
 
                 control.checkProceed();
+            }
+        });
+
+        centerScroll.vvalueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                if (pings == null) {
+                    pings = new HashMap<>();
+                    pings.put(-1, -999.0);
+                    for (int subStepIndex = 0; subStepIndex < Project.NUM_SUB_STEPS[stepIndex]; subStepIndex++) {
+                        int i = 0;
+                        double locVal = 0.0;
+                        double rootHeight = questionPanelBox.getHeight();
+                        double scrollHeight = centerScroll.getHeight();
+                        double overflow = rootHeight - scrollHeight;
+                        while (i < subStepIndex) {
+                            double componentHeight = hash_map.get(i).getHeight();
+                            locVal += componentHeight / overflow;
+                            i++;
+                        }
+                        pings.put(subStepIndex, Math.min(locVal, 1.0));
+                    }
+                }
+                if (bypassScrollUpdateCheck) {
+                    return;
+                }
+                if (getActiveSubStep() < (Project.NUM_SUB_STEPS[stepIndex]-1) && centerScroll.getVvalue() > pings.get(getActiveSubStep() + 1) - 0.05) {
+                    bypassAutoScroll = true;
+                    try {
+                        control.setActiveSubStep(stepIndex, getActiveSubStep() + 1);
+                    } catch(Exception e) {
+                        System.out.println("Exception at Step " + (stepIndex + 1) + " while updating substep via scrolling");
+                        e.printStackTrace();
+                    } finally {
+                        bypassAutoScroll = false;
+                    }
+                } else if (centerScroll.getVvalue() <= pings.get(getActiveSubStep() - 1) && getActiveSubStep() > 0) {
+                    bypassAutoScroll = true;
+                    try {
+                        control.setActiveSubStep(stepIndex, getActiveSubStep() - 1);
+                    } catch(Exception e) {
+                        System.out.println("Exception at Step " + (stepIndex + 1) + " while updating substep via scrolling");
+                        e.printStackTrace();
+                    } finally {
+                        bypassAutoScroll = false;
+                    }
+                }
             }
         });
     }
@@ -370,62 +347,114 @@ public class Step4Panel extends BorderPane {
         }
         if (subStepIndex > -2) {
             if (!animated) {
-            } else {
-                int i = 0;
-                double locVal = 0.0;
-                double rootHeight = centerPane.getHeight();
-                double scrollHeight = centerScroll.getHeight();
-                double overflow = rootHeight - scrollHeight;
-
-                while (i < subStepIndex) {
-//                    double componentHeight = hash_map.get(i).getBoundsInLocal().getHeight();
-                    double componentHeight = hash_map.get(i).getHeight();
-                    locVal += componentHeight / overflow;
-                    i++;
+                if (subStepIndex == Project.NUM_SUB_STEPS[stepIndex]) {
+                    if (centerPane.getCenter() != stepReportPane) {
+                        centerPane.setCenter(stepReportPane);
+                    }
+                } else {
+                    if (centerPane.getCenter() != centerScroll) {
+                        centerPane.setCenter(centerScroll);
+                    }
+                    scrollToSubstep(subStepIndex, animated);
                 }
-                final Timeline timeline = new Timeline();
-                final KeyValue kv = new KeyValue(centerScroll.vvalueProperty(), Math.min(locVal, 1.0));
-                final KeyFrame kf = new KeyFrame(Duration.millis(250), kv);
-                timeline.getKeyFrames().add(kf);
-                timeline.play();
-                Label selectedTitleLabel = (Label) ((BorderPane) hash_map.get(subStepIndex)).getTop();
-                VBox selectedBodyLabel = (VBox) ((BorderPane) hash_map.get(subStepIndex)).getCenter();
-                final Animation animation = new Transition() {
-
-                    {
-                        setCycleDuration(Duration.millis(500));
-                        setInterpolator(Interpolator.EASE_OUT);
+            } else {
+                if (subStepIndex == Project.NUM_SUB_STEPS[stepIndex]) {
+                    if (centerPane.getCenter() != stepReportPane) {
+                        FadeTransition ft1 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                        ft1.setFromValue(1.0);
+                        ft1.setToValue(0.0);
+                        ft1.play();
+                        ft1.setOnFinished(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent ae) {
+                                centerPane.setCenter(stepReportPane);
+                                FadeTransition ft2 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                                ft2.setFromValue(0.0);
+                                ft2.setToValue(1.0);
+                                ft2.play();
+                            }
+                        });
                     }
-
-                    @Override
-                    protected void interpolate(double frac) {
-                        // Grey RGB(89, 89, 89)
-                        // Orange RGB(237, 125, 49)
-                        // Uncomment for interpolate to grey
-//                        double r = 237 - (237 - 89) *  frac;
-//                        double g = 125 - (125 - 89) *frac;
-//                        double b = 49 + (89 - 49) * frac;
-//                        Color vColor = new Color(r/256.0, g/256.0, b/256.0, 1.0);
-//                        selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, CornerRadii.EMPTY, Insets.EMPTY)));
-                        // Uncomment for interpolate to white
-                        double r = 89 + ((255 - 89) *  frac);
-                        double g = 89 + ((255 - 89) * frac);
-                        double b = 89 + ((255 - 89) * frac);
-                        Color vColor = new Color(r/256.0, g/256.0, b/256.0, 1.0);
-                        selectedTitleLabel.setBackground(new Background(new BackgroundFill(vColor, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY))); // radii, etc. from css
+                } else {
+                    if (centerPane.getCenter() != centerScroll) {
+                        FadeTransition ft1 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                        ft1.setFromValue(1.0);
+                        ft1.setToValue(0.0);
+                        ft1.play();
+                        ft1.setOnFinished(ae -> {
+                            centerPane.setCenter(centerScroll);
+                            FadeTransition ft2 = new FadeTransition(Duration.millis(MainController.FADE_TIME), centerPane);
+                            ft2.setFromValue(0.0);
+                            ft2.setToValue(1.0);
+                            ft2.setOnFinished(actionEvent -> {scrollToSubstep(subStepIndex, animated);});
+                            ft2.play();
+                        });
+                    } else {
+                        scrollToSubstep(subStepIndex, animated);
                     }
-                };
-//                animation.play();
-                // Uncomment for interpolate to grey
-//                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.web("#ed7d31"), CornerRadii.EMPTY, Insets.EMPTY)));
-                // Uncomment for interpolate to white
-                selectedTitleLabel.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10, 10, 0, 0, false), Insets.EMPTY)));
-                PauseTransition pt = new PauseTransition(Duration.millis(2000));
-                SequentialTransition st = new SequentialTransition();
-                st.getChildren().addAll(pt, animation);
-                st.play();
+                }
+            }
+            for (int si = 0; si <= Project.NUM_SUB_STEPS[stepIndex]; si++) {
+                BorderPane currQuestionCard = (BorderPane) hash_map.get(si);
+                if (currQuestionCard != null) {
+                    Label selectedTitleLabel = (Label) currQuestionCard.getTop();
+                    if (si == subStepIndex) {
+                        selectedTitleLabel.getStyleClass().setAll("substep-list-title-label-selected");
+                    } else {
+                        selectedTitleLabel.getStyleClass().setAll("substep-list-title-label");
+
+                    }
+                }
+                if (si == subStepIndex) {
+                    btnCaptions[si].setStyle("-fx-font-weight: bold; -fx-text-fill: #ED7D31; -fx-underline: true");
+                } else {
+                    btnCaptions[si].setStyle("-fx-font-weight: normal; -fx-underline: false");
+                    if (si < subStepIndex) {
+                        btnCaptions[si].setVisited(true);
+                    } else {
+                        btnCaptions[si].setVisited(false);
+                    }
+                }
             }
         }
     }
+
+    private void scrollToSubstep(int subStepIndex, boolean animated) {
+        if (hash_map.get(subStepIndex) == null) {
+            return;
+        }
+        int i = 0;
+        double locVal = 0.0;
+        double rootHeight = questionPanelBox.getHeight();
+        double scrollHeight = centerScroll.getHeight();
+        double overflow = rootHeight - scrollHeight;
+
+        while (i < subStepIndex) {
+//                    double componentHeight = hash_map.get(i).getBoundsInLocal().getHeight();
+            double componentHeight = hash_map.get(i).getHeight();
+            locVal += componentHeight / overflow;
+            i++;
+        }
+        if (!animated) {
+            centerScroll.setVvalue(Math.min(locVal, 1.0));
+        } else {
+            if (!bypassAutoScroll && centerScroll.getVvalue() != Math.min(locVal, 1.0)) {
+                bypassScrollUpdateCheck = true;
+                try {
+                    final Timeline timeline = new Timeline();
+                    final KeyValue kv = new KeyValue(centerScroll.vvalueProperty(), Math.min(locVal, 1.0));
+                    final KeyFrame kf = new KeyFrame(Duration.millis(250), kv);
+                    timeline.getKeyFrames().add(kf);
+                    timeline.setOnFinished(actionEvent -> {bypassScrollUpdateCheck = false;});
+                    timeline.play();
+                } catch (Exception e) {
+                    System.out.println("Exception at Step " + (stepIndex + 1) + " while playing autoscroll transition");
+                    e.printStackTrace();
+                    bypassScrollUpdateCheck = false;
+                }
+            }
+        }
+    }
+
     public Node getFactSheet6Node() {return this.stepReportPane.getCenter();}
 }

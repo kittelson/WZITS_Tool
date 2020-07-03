@@ -190,7 +190,7 @@ public class MainController {
         } else if (activeStep.get() == 0 && activeSubStep[activeStep.get()].get() < 0) {
             selectStep(-1, -1);
         } else {
-            if (activeSubStep[activeStep.get()].get() >= 0) {
+            if (activeStep.get() < activeSubStep.length && activeSubStep[activeStep.get()].get() >= 0) {
                 selectStep(activeStep.get(), activeSubStep[activeStep.get()].get() - 1);
             } else {
                 selectStep(activeStep.get() - 1, activeSubStep[activeStep.get() - 1].get());
