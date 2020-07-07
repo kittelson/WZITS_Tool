@@ -217,16 +217,28 @@
 }
 
 .wz-comment-hyperlink {
-  -fx-font-size: 12;
+  -fx-font-size: 9pt;
   -fx-text-fill: #ed7d31;
   -fx-wrap-text: true;
 }
 
 .wz-comment-hyperlink:visited {
-  -fx-font-size: 12;
+  -fx-font-size: 9pt;
   -fx-text-fill: #ed7d31;
   -fx-wrap-text: true;
 }
+.feasibility-comment-hyperlink {
+  -fx-font-size: 12pt;
+  -fx-text-fill: #ed7d31;
+  -fx-wrap-text: true;
+}
+
+.feasibility-comment-hyperlink:visited {
+  -fx-font-size: 12pt;
+  -fx-text-fill: #ed7d31;
+  -fx-wrap-text: true;
+}
+
 
 .wzits-choice-box {
   -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border,
@@ -505,6 +517,16 @@
   -fx-font-size: 18;
 }
 
+.opt-pane-question-idx-v1 {
+  -fx-alignment: center;
+  -fx-background-color: white;
+  -fx-font-family: "calibri";
+  -fx-font-size: 18;
+  -fx-font-weight: bold;
+  -fx-border-radius: 20;
+  -fx-background-radius: 20;
+}
+
 .opt-pane-question-idx {
   -fx-alignment: top-center;
   -fx-background-color: white;
@@ -549,12 +571,12 @@
   -fx-text-fill: #ed7d31;
   -fx-font-weight: lighter;
 }
-.stackholder-modal-title{
+.stakeholder-modal-title{
   -fx-font-size: 13pt;
   -fx-text-fill: #ed7d31;
   -fx-font-weight: lighter;
 }
-.stackholder-modal-labels{
+.stakeholder-modal-labels{
   -fx-font-size: 13pt;
   -fx-text-fill: #4472c4;
   -fx-font-weight: lighter;
@@ -616,6 +638,16 @@
   -fx-background-color: white;
 }
 
+.comment-q-pane-v1 {
+  -fx-background-color: white;
+  -fx-border-color: #bac5cc;
+  -fx-border-width: 1px 1px 1px 1px;
+}
+
+.comment-q-subpane-v1 {
+  -fx-background-color: white;
+}
+
 .markall-pane-checkbox {
   -fx-alignment: center;
   -fx-background-color: white;
@@ -646,11 +678,13 @@
   -fx-alignment: center;
   -fx-font-family: "calibri";
   -fx-font-size: 28;
+  -fx-underline: true;
 }
 
 .feasibility-output-desc {
-  -fx-background-color: white;
-  -fx-alignment: center;
+  -fx-background-color: #ddebf7;
+  -fx-alignment: center; /*basic alignment*/
+  -fx-text-alignment: center; /*multiline alignment*/
   -fx-font-family: "calibri";
   -fx-font-size: 20;
 }
@@ -1320,4 +1354,116 @@
 
 .hyperlink:visited:hover {
     -fx-underline: false;
+}
+
+.modal-comment-text-area {
+  -fx-font-size: 12pt;
+  -fx-prompt-text-fill: grey;
+}
+
+.modal-comment-text-area:focused {
+  -fx-prompt-text-fill: transparent;
+}
+
+.jfx-check-box {
+  -jfx-checked-color: #ED7D31;
+  -fx-font-size: 12pt;
+}
+
+.comment-pane-combo-box {
+  -fx-font-size:  12pt;
+  -fx-background-color: rgba(0, 0, 0, 0.05);
+  -fx-background-radius: 5px 5px 0 0;
+  -jfx-focus-color: #ED7D31;
+}
+
+.comment-pane-combo-box:hover {
+  -fx-background-color: rgba(0, 0, 0, 0.10);
+  -fx-background-radius: 5px 5px 0 0;
+}
+
+.label-additional-justification {
+  -fx-font-style: italic;
+  -fx-underline: true;
+  -fx-background-color: white;
+  -fx-text-fill: black;
+  -fx-font-size: 14pt;
+}
+
+.feasibility-justification {
+  -fx-font-style: italic;
+  -fx-font-size: 12pt;
+  -fx-background-color: white;
+  -fx-text-fill: black;
+  -fx-alignment: center-left;
+  -fx-text-alignment: left;
+}
+
+.feasibility-justification-card {
+  -fx-border-radius: 5px;
+  -fx-border-color: #bac5cc;
+}
+
+.jfx-value-spinner {
+  -fx-background-color: rgba(0, 0, 0, 0.025);
+  -fx-background-radius: 5px 5px 0 0;
+}
+
+.jfx-value-spinner:hover {
+  -fx-background-color: rgba(0, 0, 0, 0.05);
+  -fx-background-radius: 5px 5px 0 0;
+}
+
+.jfx-value-spinner .jfx-text-field {
+  -fx-background-color: transparent;
+  -jfx-focus-color: #ED7D31;
+  -fx-alignment: center;
+  -fx-text-alignment: center;
+}
+
+.jfx-value-spinner .jfx-button {
+  -fx-background-color: transparent;
+}
+
+.jfx-value-spinner .up-button {
+ -fx-background-radius: 0 5px 0 0;
+}
+
+.jfx-value-spinner .down-button {
+ -fx-background-radius: 0 0 0 0;
+}
+
+.custom-jfx-combo-box {
+  -fx-alignment: center;
+  -fx-text-alignment: center;
+  -jfx-focus-color: #ED7D31;
+  -fx-background-color: rgba(0, 0, 0, 0.025);
+  -fx-background-radius: 5px 5px 0 0;
+}
+
+.custom-jfx-combo-box:hover {
+  -fx-background-color: rgba(0, 0, 0, 0.05);
+  -fx-background-radius: 5px 5px 0 0;
+}
+
+.custom-jfx-text-field {
+  -fx-background-color: white;
+  -jfx-focus-color: #ED7D31;
+  -fx-font-size: 12pt;
+  -fx-background-radius: 5px 5px 0 0;
+}
+
+.custom-jfx-text-field:hover {
+  -fx-background-color: rgba(0, 0, 0, 0.025);
+}
+
+.custom-jfx-text-area {
+  -fx-font-size: 12pt;
+  -fx-background-color: white;
+  -jfx-focus-color: #ED7D31;
+  -fx-background-radius: 5px 5px 0 0;
+}
+
+.custom-jfx-text-area:hover {
+  -fx-background-color: rgba(0, 0, 0, 0.025);
 }

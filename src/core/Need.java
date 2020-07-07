@@ -20,6 +20,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.function.Predicate;
+
+import GUI.Helper.NodeFactory;
+import GUI.MainController;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -71,20 +78,38 @@ public class Need implements Serializable {
             @Override
             public void handle(ActionEvent ae) {
                 String[] tokens = getDescription().split(" ");
-                TextInputDialog tid = new TextInputDialog(tokens[6]);
-                tid.setTitle("Goal Specification");
-                tid.setHeaderText("Specify the delay minutes");
-                tid.showAndWait();
-                String newMin = tid.getResult();
-                String newDesc = "";
-                for (int tIdx = 0; tIdx < 6; tIdx++) {
-                    newDesc = newDesc + tokens[tIdx] + " ";
-                }
-                newDesc = newDesc + newMin;
-                for (int tIdx = 7; tIdx < tokens.length; tIdx++) {
-                    newDesc = newDesc + " " + tokens[tIdx];
-                }
-                setDescription(newDesc);
+                JFXDialogLayout content = new JFXDialogLayout();
+                content.setHeading(NodeFactory.createFormattedLabel("Specify the Delay Minutes", "modal-title"));
+                JFXTextField numberEntryTextField = new JFXTextField(tokens[6]);
+                numberEntryTextField.setStyle("-fx-font-size: 14pt;");
+                NodeFactory.setTextFieldIntegerInputOnly(numberEntryTextField);
+                NodeFactory.assignDefaultRequiredFieldValidator(numberEntryTextField, "Please Specify a Value", true);
+                content.setBody(numberEntryTextField);
+                JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+                JFXButton saveButton = new JFXButton("Save");
+                saveButton.setOnAction(actionEvent -> {
+                    String newNumMinutes = numberEntryTextField.getText().trim();
+                    if (!newNumMinutes.equalsIgnoreCase("")) {
+                        String newDesc = "";
+                        for (int tIdx = 0; tIdx < 6; tIdx++) {
+                            newDesc = newDesc + tokens[tIdx] + " ";
+                        }
+                        newDesc = newDesc + newNumMinutes;
+                        for (int tIdx = 7; tIdx < tokens.length; tIdx++) {
+                            newDesc = newDesc + " " + tokens[tIdx];
+                        }
+                        setDescription(newDesc);
+                    }
+                    dlg.close();
+                });
+                JFXButton cancelButton = new JFXButton("Cancel");
+                saveButton.getStyleClass().add("modal-pane-button");
+                saveButton.setDefaultButton(true);
+                cancelButton.getStyleClass().add("comment-pane-buttonClose");
+                cancelButton.setOnAction(actionEvent -> dlg.close());
+                content.getActions().addAll(saveButton, cancelButton);
+                dlg.setOverlayClose(false);
+                dlg.show();
             }
         });
         this.hasHL = true;
@@ -162,20 +187,38 @@ public class Need implements Serializable {
                 @Override
                 public void handle(ActionEvent ae) {
                     String[] tokens = getDescription().split(" ");
-                    TextInputDialog tid = new TextInputDialog(tokens[6]);
-                    tid.setTitle("Goal Specification");
-                    tid.setHeaderText("Specify the delay minutes");
-                    tid.showAndWait();
-                    String newMin = tid.getResult();
-                    String newDesc = "";
-                    for (int tIdx = 0; tIdx < 6; tIdx++) {
-                        newDesc = newDesc + tokens[tIdx] + " ";
-                    }
-                    newDesc = newDesc + newMin;
-                    for (int tIdx = 7; tIdx < tokens.length; tIdx++) {
-                        newDesc = newDesc + " " + tokens[tIdx];
-                    }
-                    setDescription(newDesc);
+                    JFXDialogLayout content = new JFXDialogLayout();
+                    content.setHeading(NodeFactory.createFormattedLabel("Specify the Delay Minutes", "modal-title"));
+                    JFXTextField numberEntryTextField = new JFXTextField(tokens[6]);
+                    numberEntryTextField.setStyle("-fx-font-size: 14pt;");
+                    NodeFactory.setTextFieldIntegerInputOnly(numberEntryTextField);
+                    NodeFactory.assignDefaultRequiredFieldValidator(numberEntryTextField, "Please Specify a Value", true);
+                    content.setBody(numberEntryTextField);
+                    JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+                    JFXButton saveButton = new JFXButton("Save");
+                    saveButton.setOnAction(actionEvent -> {
+                        String newNumMinutes = numberEntryTextField.getText().trim();
+                        if (!newNumMinutes.equalsIgnoreCase("")) {
+                            String newDesc = "";
+                            for (int tIdx = 0; tIdx < 6; tIdx++) {
+                                newDesc = newDesc + tokens[tIdx] + " ";
+                            }
+                            newDesc = newDesc + newNumMinutes;
+                            for (int tIdx = 7; tIdx < tokens.length; tIdx++) {
+                                newDesc = newDesc + " " + tokens[tIdx];
+                            }
+                            setDescription(newDesc);
+                        }
+                        dlg.close();
+                    });
+                    JFXButton cancelButton = new JFXButton("Cancel");
+                    saveButton.getStyleClass().add("modal-pane-button");
+                    saveButton.setDefaultButton(true);
+                    cancelButton.getStyleClass().add("comment-pane-buttonClose");
+                    cancelButton.setOnAction(actionEvent -> dlg.close());
+                    content.getActions().addAll(saveButton, cancelButton);
+                    dlg.setOverlayClose(false);
+                    dlg.show();
                 }
             });
         } catch (EOFException e) {

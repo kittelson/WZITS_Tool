@@ -9,8 +9,7 @@ import GUI.MainController;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -19,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.kordamp.ikonli.Ikon;
@@ -81,18 +81,29 @@ public class NodeFactory {
         commLink.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
-                Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
-                al.initOwner(MainController.getWindow());
-                al.setTitle("Additional Comments");
-                al.setHeaderText(hString);
-                TextArea commTA = new TextArea(sp.get());
-                commTA.setPromptText("Enter additional comments here...");
-                //commTA.textProperty().bindBidirectional(sp);
-                al.getDialogPane().setContent(commTA);
-                Optional<ButtonType> result = al.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    sp.setValue(commTA.getText());
-                }
+                // Update
+                JFXDialogLayout content = new JFXDialogLayout();
+                content.setHeading(NodeFactory.createFormattedLabel(hString, "modal-title"));
+                JFXTextArea txtArea = new JFXTextArea(sp.get());
+                txtArea.setPromptText("Enter additional comments here...");
+                txtArea.getStyleClass().add("modal-comment-text-area");
+                content.setBody(txtArea);
+                JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+                dlg.setStyle("-fx-font-size: 14pt;");
+                JFXButton saveButton = new JFXButton("Save Comments");
+                saveButton.getStyleClass().add("modal-pane-button");
+                saveButton.setOnAction(actionEvent -> {
+                    sp.setValue(txtArea.getText());
+                    dlg.close();
+                });
+                JFXButton closeButton = new JFXButton("Close");
+                closeButton.getStyleClass().add("comment-pane-buttonClose");
+                closeButton.setOnAction(actionEvent -> {
+                    dlg.close();
+                });
+                content.getActions().addAll(saveButton, closeButton);
+                dlg.setOverlayClose(false);
+                dlg.show();
             }
         });
         return commLink;

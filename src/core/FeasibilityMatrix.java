@@ -5,6 +5,7 @@
  */
 package core;
 
+import GUI.Helper.ColorHelper;
 import GUI.Helper.NodeFactory;
 import java.io.Serializable;
 
@@ -14,13 +15,17 @@ import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXTextArea;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 /**
  *
@@ -51,109 +56,116 @@ public class FeasibilityMatrix implements Serializable {
         feasibility.set(feasScore);
     }
 
-    public GridPane createSummaryPanel() {
-        computeFeasibility();
-        Label lblJustification = new Label();
-        Label lblSumPreview = new Label();
-        Label lblSumDesc = new Label();
-        lblSumDesc.setText("Justification:");
-        lblJustification.setText("Feasibility Score Justification");
-        JFXButton btnAddCtm = new JFXButton();
-        JFXButton btnCloseModal = new JFXButton("Cancel");
-        JFXButton btnSaveCmts = new JFXButton("Add Comments");
-        JFXTextArea txtArea = new JFXTextArea();
-        JFXDialogLayout summaryDialog = new JFXDialogLayout();
-        btnAddCtm.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                JFXDialog dialogModal = new JFXDialog(MainController.getRootStackPane(), summaryDialog, JFXDialog.DialogTransition.CENTER);
-                summaryDialog.setHeading(lblJustification);
-                summaryDialog.setBody(txtArea);
-                btnSaveCmts.setOnAction(e -> {
-                    lblSumPreview.setText(txtArea.getText());
-                    dialogModal.close();
-                });
-                btnCloseModal.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        dialogModal.close();
-                    }
-                });
-                dialogModal.show();
-                summaryDialog.setActions(btnCloseModal, btnSaveCmts);
-            }
-        });
-        btnSaveCmts.getStyleClass().add("modal-pane-button");
-        btnCloseModal.getStyleClass().add("comment-pane-buttonClose");
-        lblSumDesc.getStyleClass().add("feasibility-output-title-bold");
-        lblSumDesc.setMaxWidth(Integer.MAX_VALUE);
-        lblSumDesc.setMaxHeight(Integer.MAX_VALUE);
-        lblSumPreview.setMaxWidth(Integer.MAX_VALUE);
-        lblSumPreview.setWrapText(false);
-        GridPane gPane = new GridPane();
-        GridPane scoreGrid = new GridPane();
-        BorderPane summaryPane = new BorderPane();
-        summaryPane.setTop(lblSumDesc);
-        summaryPane.setRight(btnAddCtm);
-        summaryPane.setCenter(lblSumPreview);
-        btnAddCtm.setText("Add/Edit Justification");
-        btnAddCtm.getStyleClass().add("wz-comment-hyperlink");
-        lblSumDesc.getStyleClass().add("label-styles");
-        lblSumPreview.getStyleClass().add("feasibility-output-title");
-        lblJustification.getStyleClass().add("stackholder-modal-title");
-        Label scoreTitleLabel = NodeFactory.createFormattedLabel("Feasibility Score:", "feasibility-output-title-bold");
+    public Node createSummaryPanel(Project project) {
+        this.computeFeasibility();
+        // Create Score and Score Description
+        // -- Label to show numeric score
         Label scoreLabel = NodeFactory.createFormattedLabel(String.valueOf(feasibility.get()), "feasibility-output-title");
         scoreLabel.textProperty().bind(feasibility.asString());
-        scoreGrid.add(scoreTitleLabel, 0, 0);
-        scoreGrid.add(scoreLabel, 0, 1);
-        scoreGrid.add(summaryPane,1,0);
+        scoreLabel.setMinWidth(150);
+        // -- Label to show score description
+        final Label labelDescription = NodeFactory.createFormattedLabel(DESC_30PLUS, "feasibility-output-desc");
+        labelDescription.setAlignment(Pos.CENTER);
+        labelDescription.setWrapText(true);
+        Tooltip labelDescriptionToolTip = new Tooltip();
+        Tooltip.install(labelDescription, labelDescriptionToolTip);
+        if (feasibility.get() >= 30) {
+            labelDescription.setText(DESC_30PLUS);
+            labelDescriptionToolTip.setText(DESC_30PLUS);
+        } else if (feasibility.get() >= 10) {
+            labelDescription.setText(DESC_10_TO_29);
+            labelDescriptionToolTip.setText(DESC_10_TO_29);
+        } else {
+            labelDescription.setText(DESC_LESS_THAN_10);
+            labelDescriptionToolTip.setText(DESC_LESS_THAN_10);
+        }
+        feasibility.addListener((ov, oldVal, newVal) -> {
+            if (newVal.intValue() >= 30) {
+                labelDescription.setText(DESC_30PLUS);
+                labelDescriptionToolTip.setText(DESC_30PLUS);
+            } else if (newVal.intValue() >= 10) {
+                labelDescription.setText(DESC_10_TO_29);
+                labelDescriptionToolTip.setText(DESC_10_TO_29);
+            } else {
+                labelDescription.setText(DESC_LESS_THAN_10);
+                labelDescriptionToolTip.setText(DESC_LESS_THAN_10);
+            }
+        });
+        // Creation additional comments section
+        Label labelCommentDisplay = NodeFactory.createFormattedLabel("", "feasibility-justification");
+        labelCommentDisplay.textProperty().bind(project.feasibilityJustificationProperty());
+        Hyperlink addCommentButton = new Hyperlink("Edit/View");
+        addCommentButton.setGraphic(NodeFactory.createIcon(FontAwesomeSolid.PENCIL_ALT, Color.web(ColorHelper.WZ_ORANGE)));
+        addCommentButton.setAlignment(Pos.CENTER);
+        addCommentButton.setMaxHeight(Integer.MAX_VALUE);
+        addCommentButton.getStyleClass().add("feasibility-comment-hyperlink");
+        addCommentButton.setOnAction(actionEvent -> {
+            JFXTextArea txtArea = new JFXTextArea(labelCommentDisplay.getText());
+            txtArea.getStyleClass().add("modal-comment-text-area");
+            JFXDialogLayout summaryDialog = new JFXDialogLayout();
+            summaryDialog.setHeading(NodeFactory.createFormattedLabel("Feasibility Assessment: Additional Justification", "modal-title"));
+            summaryDialog.setBody(txtArea);
+            JFXDialog dialogModal = new JFXDialog(MainController.getRootStackPane(), summaryDialog, JFXDialog.DialogTransition.CENTER);
+            JFXButton saveComment = new JFXButton("Save Comments");
+            saveComment.getStyleClass().add("modal-pane-button");
+            saveComment.setOnAction(e -> {
+//                labelCommentDisplay.setText(txtArea.getText());
+                project.setFeasibilityJustification(txtArea.getText());
+                dialogModal.close();
+            });
+            JFXButton btnCloseModal = new JFXButton("Cancel");
+            btnCloseModal.getStyleClass().add("comment-pane-buttonClose");
+            btnCloseModal.setOnAction(actionEvent1 -> dialogModal.close());
+            summaryDialog.setMinWidth(600);
+            dialogModal.setOverlayClose(false);
+            dialogModal.show();
+            summaryDialog.setActions(btnCloseModal, saveComment);
+        });
 
+        BorderPane scoreDisplay = new BorderPane();
+        Label scoreTitleLabel = NodeFactory.createFormattedLabel("Feasibility Score:", "feasibility-output-title-bold");
+        scoreTitleLabel.setMaxHeight(Integer.MAX_VALUE);
+        scoreLabel.setMaxHeight(Integer.MAX_VALUE);
+        labelDescription.setMaxHeight(Integer.MAX_VALUE);
+        GridPane.setVgrow(scoreDisplay, Priority.ALWAYS);
+        GridPane.setVgrow(labelDescription, Priority.ALWAYS);
+        scoreDisplay.setCenter(scoreTitleLabel);
+        scoreDisplay.setRight(scoreLabel);
+        GridPane scoreGrid = new GridPane();
         ColumnConstraints cc1 = new ColumnConstraints();
         cc1.setPercentWidth(50);
         ColumnConstraints cc2 = new ColumnConstraints();
         cc2.setPercentWidth(50);
         scoreGrid.getColumnConstraints().addAll(cc1, cc2);
+        scoreGrid.add(scoreDisplay, 0, 0);
+        scoreGrid.add(labelDescription, 1, 0);
 
-        final Label descriptionlabel = NodeFactory.createFormattedLabel(DESC_30PLUS, "feasibility-output-desc");
-        if (feasibility.get() >= 30) {
-            descriptionlabel.setText(DESC_30PLUS);
-        } else if (feasibility.get() >= 10) {
-            descriptionlabel.setText(DESC_10_TO_29);
-        } else {
-            descriptionlabel.setText(DESC_LESS_THAN_10);
-        }
-        feasibility.addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
-                if (newVal.intValue() >= 30) {
-                    descriptionlabel.setText(DESC_30PLUS);
-                } else if (newVal.intValue() >= 10) {
-                    descriptionlabel.setText(DESC_10_TO_29);
-                } else {
-                    descriptionlabel.setText(DESC_LESS_THAN_10);
-                }
-            }
-        });
-//        if (feasibility.get() >= 30) {
-//            descriptionlabel = NodeFactory.createFormattedLabel(DESC_30PLUS, "feasibility-output-desc");
-//        } else if (feasibility.get() >= 10) {
-//            descriptionlabel = NodeFactory.createFormattedLabel(DESC_10_TO_29, "feasibility-output-desc");
-//        } else {
-//            descriptionlabel = NodeFactory.createFormattedLabel(DESC_LESS_THAN_10, "feasibility-output-desc");
-//        }
-        gPane.add(scoreGrid, 0, 0);
-        gPane.add(descriptionlabel, 0, 1);
-        RowConstraints rc1 = new RowConstraints();
-        rc1.setPercentHeight(50);
-        RowConstraints rc2 = new RowConstraints();
-        rc2.setPercentHeight(50);
-        gPane.getRowConstraints().addAll(rc1, rc2);
-        GridPane.setVgrow(scoreTitleLabel, Priority.ALWAYS);
-        GridPane.setVgrow(scoreLabel, Priority.ALWAYS);
-        GridPane.setHgrow(scoreTitleLabel, Priority.ALWAYS);
-        GridPane.setHgrow(scoreLabel, Priority.ALWAYS);
-        GridPane.setHgrow(descriptionlabel, Priority.ALWAYS);
-        GridPane.setHgrow(gPane, Priority.ALWAYS);
-        return gPane;
+        BorderPane additionalCommentsPane = new BorderPane();
+        additionalCommentsPane.setStyle("-fx-background-color: white");
+        Label additionalCommentsTitleLabel = NodeFactory.createFormattedLabel("Additional Justification:", "label-additional-justification");
+        BorderPane.setMargin(additionalCommentsTitleLabel, new Insets(0, 10, 0, 10));
+        BorderPane additionalCommentsTitlePane = new BorderPane();
+        additionalCommentsTitlePane.setCenter(additionalCommentsTitleLabel);
+        additionalCommentsTitlePane.setRight(addCommentButton);
+        additionalCommentsPane.setLeft(additionalCommentsTitlePane);
+        ScrollPane scrollPane = new ScrollPane();
+        labelCommentDisplay.setMaxHeight(Integer.MAX_VALUE);
+        scrollPane.setContent(labelCommentDisplay);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        BorderPane scrollWrapper = new BorderPane();
+        scrollWrapper.getStyleClass().add("feasibility-justification-card");
+        scrollWrapper.setCenter(scrollPane);
+        additionalCommentsPane.setCenter(scrollWrapper);
+
+        scoreGrid.setMinHeight(55);
+        additionalCommentsPane.setMinHeight(55);
+        additionalCommentsPane.setMaxHeight(100);
+        BorderPane summaryPane = new BorderPane();
+        summaryPane.setCenter(scoreGrid);
+        summaryPane.setBottom(additionalCommentsPane);
+
+        return summaryPane;
     }
 
     public SimpleIntegerProperty feasibilityProperty() {

@@ -346,7 +346,7 @@ public class MainWindow2 extends BorderPane {
                     allStepsPane.setMinWidth((numSteps + 2) * (control.getAppWidth() - 220));
                     allStepsPane.setMaxWidth((numSteps + 2) * (control.getAppWidth() - 220));
                     toolBarBox.setMaxWidth(control.getAppWidth() - 20);
-                    ((Step1Panel) step1Pane).setViewWidth(introPane.getWidth());
+//                    ((Step1Panel) step1Pane).setViewWidth(introPane.getWidth());
                     moveScreen((control.getActiveStep() + 1) * introPane.getWidth(), 0, false);
                 }
             }

@@ -13,6 +13,8 @@ public class ColorHelper {
 
     // Hex Color Definitions
     public static final String WZ_NAVY = "#0E298C";
+    public static final String WZ_BLUE = "#4472c4";
+    public static final String WZ_LIGHT_BLUE = "#ddebf7";
     public static final String WZ_ORANGE = "#ED7D31";
     public static final String WZ_ORANGE_BURNT = "#833C0C";
     public static final String WZ_DARK_GREY = "#595959";

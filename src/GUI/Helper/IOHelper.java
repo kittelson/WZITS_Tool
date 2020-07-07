@@ -6,6 +6,10 @@
 package GUI.Helper;
 
 import GUI.MainController;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.events.JFXDialogEvent;
 import core.Project;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,15 +21,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Callback;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 /**
  *
@@ -177,15 +188,46 @@ public class IOHelper {
         return null;
     }
 
-    public static void confirm(int saveResult) {
+//    public static void confirm(int saveResult) {
+//        if (saveResult != SAVE_CANCELLED) {
+//            boolean saveSuccess = saveResult == SAVE_COMPLETED;
+//            String alTitle = "WZITS Tool";
+//            String alHeader = saveSuccess ? "Project file saved successfully." : "Failed to save project file.";
+//            Alert al = new Alert(saveSuccess ? Alert.AlertType.CONFIRMATION : Alert.AlertType.ERROR);
+//            al.setTitle(alTitle);
+//            al.setHeaderText(alHeader);
+//            al.showAndWait();
+//        }
+//    }
+
+    public static void confirm(int saveResult, Runnable onConfirm) {
         if (saveResult != SAVE_CANCELLED) {
+//            boolean saveSuccess = saveResult == SAVE_COMPLETED;
+//            String alTitle = "WZITS Tool";
+//            String alHeader = saveSuccess ? "Project file saved successfully." : "Failed to save project file.";
+//            Alert al = new Alert(saveSuccess ? Alert.AlertType.CONFIRMATION : Alert.AlertType.ERROR);
+//            al.setTitle(alTitle);
+//            al.setHeaderText(alHeader);
+//            al.showAndWait();
+
             boolean saveSuccess = saveResult == SAVE_COMPLETED;
-            String alTitle = "WZITS Tool";
-            String alHeader = saveSuccess ? "Project file saved successfully." : "Failed to save project file.";
-            Alert al = new Alert(saveSuccess ? Alert.AlertType.CONFIRMATION : Alert.AlertType.ERROR);
-            al.setTitle(alTitle);
-            al.setHeaderText(alHeader);
-            al.showAndWait();
+            JFXDialogLayout content = new JFXDialogLayout();
+            Label modalHeader = NodeFactory.createFormattedLabel(saveSuccess ? "Save Successful" : "Save Failed", "modal-title");
+            modalHeader.setGraphic(NodeFactory.createIcon(saveSuccess ? FontAwesomeSolid.CHECK_CIRCLE : FontAwesomeSolid.EXCLAMATION_TRIANGLE, Color.web(ColorHelper.WZ_ORANGE), 24));
+            content.setHeading(modalHeader);
+            content.setBody(NodeFactory.createFormattedLabel(saveSuccess ? "Project file saved successfully." : "Something went wrong saving the project file", ""));
+            JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+            JFXButton okButton = new JFXButton("Ok");
+            okButton.setStyle("-fx-font-size: 12pt;");
+            okButton.setOnAction(actionEvent -> dlg.close());
+
+            content.getActions().add(okButton);
+            dlg.setOnDialogClosed(jfxDialogEvent -> {
+                if (onConfirm != null) {
+                    onConfirm.run();
+                }
+            });
+            dlg.show();
         }
     }
 

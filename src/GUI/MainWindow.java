@@ -90,14 +90,14 @@ public class MainWindow extends BorderPane {
             @Override
             public void handle(ActionEvent ae) {
                 int saveResult = control.saveProject();
-                IOHelper.confirm(saveResult);
+                IOHelper.confirm(saveResult, null);
             }
         });
         saveAsMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent ae) {
                 int saveResult = control.saveAsProject();
-                IOHelper.confirm(saveResult);
+                IOHelper.confirm(saveResult, null);
             }
         });
         exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {

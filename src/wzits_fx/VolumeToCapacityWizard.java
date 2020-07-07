@@ -980,9 +980,9 @@ public class VolumeToCapacityWizard extends BorderPane {
         workZoneTypeAdjustmentTooltip.setOnShown(windowEvent -> {
             String tooltipString = "Adjustment Factor Defaults:\n\n";
             tooltipString += "None:\t\t\t\t1.0\n";
-            tooltipString += "Shoulder Closure:\t1.0\n";
-            tooltipString += "Lane Closure:\t\t1.0\n";
-            tooltipString += "Crossover:\t\t\t1.0\n";
+            tooltipString += "Shoulder Closure:\t0.95\n";
+            tooltipString += "Lane Closure:\t\t0.85\n";
+            tooltipString += "Crossover:\t\t\t0.9\n";
             tooltipString += "Custom:\t\t\t\t--*\n";
             tooltipString += "*For a custom work zone, the user specifies the\nwork zone lane " + (isFreeway ? "capacity" : "saturation flow reate") + " directly.";
             workZoneTypeAdjustmentTooltip.setText(tooltipString);

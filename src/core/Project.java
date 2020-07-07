@@ -806,6 +806,8 @@ public class Project implements Serializable {
         return fapComment;
     }
 
+    private SimpleStringProperty feasibilityJustification = new SimpleStringProperty();
+
     private void writeObject(ObjectOutputStream s) throws IOException {
         //s.defaultWriteObject();
         s.writeInt(getAadt());
@@ -875,6 +877,7 @@ public class Project implements Serializable {
         s.writeObject(wzlwComment.get());
         s.writeObject(shcComment.get());
         s.writeObject(fapComment.get());
+        s.writeObject(feasibilityJustification.get());
 
         if (getProjPhoto() != null) {
             ImageIO.write(SwingFXUtils.fromFXImage(getProjPhoto(), null), "png", s);
@@ -938,6 +941,7 @@ public class Project implements Serializable {
         this.setWzlwComment(proj.getWzlwComment());
         this.setShcComment(proj.getShcComment());
         this.setFapComment(proj.getFapComment());
+        this.setFeasibilityJustification(proj.getFeasibilityJustification());
 
         setAutomatedEnforcementAllowed(proj.isAutomatedEnforcementAllowed());
         setCrashDataAvailable(proj.isCrashDataAvailable());
@@ -1102,6 +1106,12 @@ public class Project implements Serializable {
             fapComment = new SimpleStringProperty("");
         }
 
+        try {
+            feasibilityJustification = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            feasibilityJustification = new SimpleStringProperty("");
+        }
+
         BufferedImage bimg = ImageIO.read(s);
         if (bimg != null) {
             projPhoto = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(bimg, null));
@@ -1114,6 +1124,18 @@ public class Project implements Serializable {
         } else {
             conOpsDiagram = new SimpleObjectProperty<>();
         }
+    }
+
+    public SimpleStringProperty feasibilityJustificationProperty() {
+        return feasibilityJustification;
+    }
+
+    public String getFeasibilityJustification() {
+        return feasibilityJustification.get();
+    }
+
+    public void setFeasibilityJustification(String newJustification) {
+        this.feasibilityJustification.set(newJustification);
     }
 
     public static class Step implements Serializable {

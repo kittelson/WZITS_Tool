@@ -8,6 +8,7 @@ package GUI.Tables;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
+import com.jfoenix.controls.JFXComboBox;
 import core.GoalNeedsMatrix;
 import core.Need;
 import core.Project;
@@ -257,7 +258,7 @@ public class Step1TableHelper {
         return table;
     }
 
-    public static TableView createUserNeeds(Project proj) {
+    public static TableView<QuestionYN> createUserNeeds(Project proj) {
         return TableHelper.createQuestionYNTable(proj.getGoalWizardQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
 
@@ -315,7 +316,9 @@ public class Step1TableHelper {
         pane.getRowConstraints().add(rc);
         int qIdx = 1;
         for (final QuestionOption q : proj.getFeasWizardOptQs()) {
-            final ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(q.getOptions()));
+            final ChoiceBox<String> cb = new ChoiceBox<>(FXCollections.observableArrayList(q.getOptions()));
+//            final JFXComboBox<String> cb = new JFXComboBox<>(FXCollections.observableArrayList(q.getOptions()));
+//            cb.getStyleClass().add("comment-pane-combo-box");
             if (q.getResponseIdx() >= 0) {
                 cb.getSelectionModel().select(q.getResponseIdx());
             }
@@ -683,7 +686,7 @@ public class Step1TableHelper {
         goalsGrid.getColumnConstraints().add(new ColumnConstraints(GoalNeedsMatrix.SCORE_COL_WIDTH, GoalNeedsMatrix.SCORE_COL_WIDTH, GoalNeedsMatrix.SCORE_COL_WIDTH, Priority.NEVER, HPos.CENTER, true));
 
         // Feasibility
-        GridPane feasGrid = p.getFeasibilityMatrix().createSummaryPanel();
+        Node feasGrid = p.getFeasibilityMatrix().createSummaryPanel(mc.getProject());
         feasGrid.getStyleClass().add("fact-sheet-pane-feasibility");
 
         // Team Members and Stake Holders

@@ -6,6 +6,7 @@
 package wzits_fx;
 
 import GUI.Helper.IOHelper;
+import GUI.Helper.NodeFactory;
 import GUI.MainController;
 import GUI.MainWindow;
 import java.awt.GraphicsDevice;
@@ -13,6 +14,10 @@ import java.awt.GraphicsEnvironment;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
+
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -84,20 +89,58 @@ public class WZITS_FX extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent we) {
-                Alert al = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-                al.setTitle("WZITS Tool");
-                al.setHeaderText("Do you want to save the WZITS project before exiting?");
-                al.setContentText("");
-                Optional<ButtonType> result = al.showAndWait();
-                if (result.get() == ButtonType.YES) {
-                    int saveResult = control.saveProject();
-                    IOHelper.confirm(saveResult);
-                    if (saveResult == IOHelper.SAVE_CANCELLED) {
-                        we.consume();
-                    }
-                } else if (result.get() == ButtonType.CANCEL) {
-                    we.consume();
-                }
+//                Alert al = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//                al.setTitle("WZITS Tool");
+//                al.setHeaderText("Do you want to save the WZITS project before exiting?");
+//                al.setContentText("");
+//                Optional<ButtonType> result = al.showAndWait();
+//                if (result.get() == ButtonType.YES) {
+//                    int saveResult = control.saveProject();
+//                    IOHelper.confirm(saveResult, null);
+//                    if (saveResult == IOHelper.SAVE_CANCELLED) {
+//                        we.consume();
+//                    }
+//                } else if (result.get() == ButtonType.CANCEL) {
+//                    we.consume();
+//                }
+                we.consume(); // Stops the program from closing
+                JFXDialogLayout content = new JFXDialogLayout();
+                content.setHeading(NodeFactory.createFormattedLabel("Exiting WZITS Tool", "modal-title"));
+                content.setBody(NodeFactory.createFormattedLabel("Save project before exiting?", ""));
+
+                JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+
+                JFXButton yesButton = new JFXButton("Yes");
+                yesButton.setStyle("-fx-font-size: 12pt;");
+                yesButton.setOnAction(actionEvent -> {
+                    dlg.close();
+                    final int saveResult = control.saveProject();
+                    Runnable closeAfterSaving = new Runnable() {
+                        @Override
+                        public void run() {
+                            if (saveResult != IOHelper.SAVE_CANCELLED) {
+                                primaryStage.close();
+                            }
+                        }
+                    };
+                    IOHelper.confirm(saveResult, closeAfterSaving);
+                });
+                JFXButton noButton = new JFXButton("No");
+                noButton.setStyle("-fx-font-size: 12pt;");
+                noButton.setOnAction(actionEvent -> {
+                    dlg.close();
+                    dlg.setOnDialogClosed(jfxDialogEvent -> {
+                        primaryStage.close();
+                    });
+                });
+                JFXButton cancelButton = new JFXButton("Cancel");
+                cancelButton.setStyle("-fx-font-size: 12pt;");
+                cancelButton.setOnAction(actionEvent -> {
+                    dlg.close();
+                });
+                content.getActions().addAll(yesButton, noButton, cancelButton);
+                dlg.setOverlayClose(false);
+                dlg.show();
             }
         });
         //Image wzitsIcon16 = new Image(WZITS_FX.class.getResourceAsStream("/GUI/Icon/wzits_icon_16.png"));

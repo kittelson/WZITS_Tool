@@ -7,6 +7,11 @@ package GUI;
 
 import GUI.Helper.ColorHelper;
 import GUI.Helper.IOHelper;
+import GUI.Helper.NodeFactory;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import com.sun.javafx.scene.NodeHelper;
 import core.Project;
 
 import java.io.File;
@@ -24,6 +29,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -235,7 +241,11 @@ public class MainController {
         cancelButton.setDisable(true);
         al.show();
         stage.setMaximized(true);
-        Scene newScene = new Scene(new MainWindow(this, false));
+        BorderPane mainPane = new MainWindow(this, false);
+        StackPane rootStackPane = new StackPane();
+        this.setRootStackPane(rootStackPane);
+        rootStackPane.getChildren().add(mainPane);
+        Scene newScene = new Scene(rootStackPane); // new MainWindow(this, false)
         newScene.getStylesheets().add(getClass().getResource("/GUI/CSS/globalStyle.css").toExternalForm());
         stage.setScene(newScene);
         stage.show();
@@ -279,45 +289,119 @@ public class MainController {
     }
 
     public void newProject() {
-        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
-                "Save Current Project?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-        al.setTitle("WZITS Tool");
-        al.setHeaderText("WZITS Tool");
-        Optional<ButtonType> result = al.showAndWait();
-        if (result.isPresent()) {
-            if (result.get() != ButtonType.CANCEL) {
-                if (result.get() == ButtonType.YES) {
-                    int saveResult = saveProject();
-                    IOHelper.confirm(saveResult);
-                }
-                this.proj.setFromProject(new Project());
-                this.newProjectOpened();
-                MainController.updateProgramHeader(this.proj);
+//        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
+//                "Save Current Project?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//        al.setTitle("WZITS Tool");
+//        al.setHeaderText("WZITS Tool");
+//        Optional<ButtonType> result = al.showAndWait();
+//        if (result.isPresent()) {
+//            if (result.get() != ButtonType.CANCEL) {
+//                if (result.get() == ButtonType.YES) {
+//                    int saveResult = saveProject();
+//                    IOHelper.confirm(saveResult);
+//                }
+//                this.proj.setFromProject(new Project());
+//                this.newProjectOpened();
+//                MainController.updateProgramHeader(this.proj);
+//            }
+//        }
+
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setHeading(NodeFactory.createFormattedLabel("WZITS Tool", "modal-title"));
+        content.setBody(NodeFactory.createFormattedLabel("Save current project before creating new project?", ""));
+        JFXDialog dlg = new JFXDialog(getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+        Runnable createNewProject = new Runnable() {
+            @Override
+            public void run() {
+                proj.setFromProject(new Project());
+                newProjectOpened();
+                MainController.updateProgramHeader(proj);
+                dlg.close();
             }
-        }
+        };
+        JFXButton yesButton = new JFXButton("Yes");
+        yesButton.setStyle("-fx-font-size: 12pt");
+        yesButton.setOnAction(actionEvent -> {
+            dlg.close();
+            int saveResult = saveProject();
+            IOHelper.confirm(saveResult, createNewProject);
+        });
+        JFXButton noButton = new JFXButton("No");
+        noButton.setStyle("-fx-font-size: 12pt");
+        noButton.setOnAction(actionEvent -> {
+            dlg.close();
+            createNewProject.run();
+        });
+        JFXButton cancelButton = new JFXButton("Cancel");
+        cancelButton.setStyle("-fx-font-size: 12pt");
+        cancelButton.setOnAction(actionEvent -> {
+            dlg.close();
+        });
+        content.getActions().addAll(yesButton, noButton, cancelButton);
+        dlg.setOverlayClose(false);
+        dlg.show();
     }
 
     public void openProject() {
-        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
-                "Save Current Project?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-        al.setTitle("WZITS Tool");
-        al.setHeaderText("WZITS Tool");
-        Optional<ButtonType> result = al.showAndWait();
-        if (result.isPresent()) {
-            if (result.get() != ButtonType.CANCEL) {
-                if (result.get() == ButtonType.YES) {
-                    int saveResult = saveProject();
-                    IOHelper.confirm(saveResult);
-                }
-                Project openedProj = IOHelper.openProject(this);
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setHeading(NodeFactory.createFormattedLabel("Save Current Project?", "modal-title"));
+        JFXDialog dlg = new JFXDialog(getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+        final MainController mainControllerRef = this;
+        Runnable onConfrim = new Runnable() {
+            @Override
+            public void run() {
+                Project openedProj = IOHelper.openProject(mainControllerRef);
                 if (openedProj != null) {
-                    this.proj.setFromProject(openedProj);
-                    this.newProjectOpened();
-                    MainController.updateProgramHeader(this.proj);
+                    proj.setFromProject(openedProj);
+                    newProjectOpened();
+                    MainController.updateProgramHeader(proj);
                 }
             }
-        }
+        };
+        JFXButton yesButton = new JFXButton("Yes");
+        yesButton.setStyle("-fx-font-size: 12pt;");
+        yesButton.setOnAction(actionEvent -> {
+            dlg.close();
+            int saveResult = saveProject();
+            IOHelper.confirm(saveResult, onConfrim);
+        });
+        JFXButton noButton = new JFXButton("No");
+        noButton.setStyle("-fx-font-size: 12pt;");
+        noButton.setOnAction(actionEvent -> {
+            dlg.close();
+            onConfrim.run();
+        });
+        JFXButton cancelButton = new JFXButton("Cancel");
+        cancelButton.setStyle("-fx-font-size: 12pt;");
+        cancelButton.setOnAction(actionEvent -> {
+            dlg.close();
+        });
+        content.getActions().addAll(yesButton, noButton, cancelButton);
+        dlg.setOverlayClose(false);
+        dlg.show();
     }
+
+//    public void openProject() {
+//        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
+//                "Save Current Project?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//        al.setTitle("WZITS Tool");
+//        al.setHeaderText("WZITS Tool");
+//        Optional<ButtonType> result = al.showAndWait();
+//        if (result.isPresent()) {
+//            if (result.get() != ButtonType.CANCEL) {
+//                if (result.get() == ButtonType.YES) {
+//                    int saveResult = saveProject();
+//                    IOHelper.confirm(saveResult);
+//                }
+//                Project openedProj = IOHelper.openProject(this);
+//                if (openedProj != null) {
+//                    this.proj.setFromProject(openedProj);
+//                    this.newProjectOpened();
+//                    MainController.updateProgramHeader(this.proj);
+//                }
+//            }
+//        }
+//    }
 
     public int saveProject() {
         int res = IOHelper.saveProject(this, proj);
@@ -336,23 +420,57 @@ public class MainController {
     }
 
     public void exitProgram() {
-        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
-                "Save Project Before Exiting?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-        al.setTitle("Exiting WZITS Tool");
-        al.setHeaderText("WZITS Tool");
-        Optional<ButtonType> result = al.showAndWait();
-        if (result.isPresent()) {
-            if (result.get() == ButtonType.NO) {
-                stage.close();
-            } else if (result.get() == ButtonType.YES) {
-                int saveResult = IOHelper.saveProject(this, proj);
-                if (saveResult == IOHelper.SAVE_COMPLETED) {
+//        Alert al = new Alert(Alert.AlertType.CONFIRMATION,
+//                "Save Project Before Exiting?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+//        al.setTitle("Exiting WZITS Tool");
+//        al.setHeaderText("WZITS Tool");
+//        Optional<ButtonType> result = al.showAndWait();
+//        if (result.isPresent()) {
+//            if (result.get() == ButtonType.NO) {
+//                stage.close();
+//            } else if (result.get() == ButtonType.YES) {
+//                int saveResult = IOHelper.saveProject(this, proj);
+//                if (saveResult == IOHelper.SAVE_COMPLETED) {
+//                    stage.close();
+//                }
+//            } else {
+//                // Cancelled by user, do nothing
+//            }
+//        }
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setHeading(NodeFactory.createFormattedLabel("Exiting WZITS Tool", "modal-title"));
+        content.setBody(NodeFactory.createFormattedLabel("Save project before exiting?", ""));
+
+        JFXDialog dlg = new JFXDialog(getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+
+        JFXButton yesButton = new JFXButton("Yes");
+        yesButton.setStyle("-fx-font-size: 12pt;");
+        yesButton.setOnAction(actionEvent -> {
+            dlg.close();
+            final int saveResult = saveProject();
+            Runnable closeAfterSaving = new Runnable() {
+                @Override
+                public void run() {
+                    if (saveResult != IOHelper.SAVE_CANCELLED)
                     stage.close();
                 }
-            } else {
-                // Cancelled by user, do nothing
-            }
-        }
+            };
+            IOHelper.confirm(saveResult, closeAfterSaving);
+        });
+        JFXButton noButton = new JFXButton("No");
+        noButton.setStyle("-fx-font-size: 12pt;");
+        noButton.setOnAction(actionEvent -> {
+            dlg.setOnDialogClosed(jfxDialogEvent -> stage.close());
+            dlg.close();
+        });
+        JFXButton cancelButton = new JFXButton("Cancel");
+        cancelButton.setStyle("-fx-font-size: 12pt;");
+        cancelButton.setOnAction(actionEvent -> {
+            dlg.close();
+        });
+        content.getActions().addAll(yesButton, noButton, cancelButton);
+        dlg.setOverlayClose(false);
+        dlg.show();
     }
 
     public static void updateProgramHeader(Project p) {

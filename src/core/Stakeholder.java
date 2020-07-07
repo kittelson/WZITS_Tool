@@ -250,42 +250,6 @@ public class Stakeholder implements Serializable {
         }
     }
 
-//    public static void editExistingInfo(Stakeholder sh) {
-//        GridPane gp = new GridPane();
-//        Label l1 = new Label("Email: ");
-//        TextField emailTF = new TextField(sh.getEmail());
-//        emailTF.setPadding(new Insets(0, 0, 0, 5));
-//        Label l2 = new Label("Phone #: ");
-//        TextField phoneTF = new TextField(sh.getPhone());
-//        phoneTF.setPadding(new Insets(0, 0, 0, 5));
-//        Label l3 = new Label("Contact Name: ");
-//        TextField contactNameTF = new TextField(sh.getContactName());
-//        contactNameTF.setPadding(new Insets(0, 0, 0, 5));
-//        Label l4 = new Label("Comment: ");
-//        TextField commentTF = new TextField(sh.getComment());
-//        commentTF.setPadding(new Insets(0, 0, 0, 5));
-//        gp.add(new Label(sh.getName()), 0, 0, 2, 1);
-//        gp.add(l1, 0, 1);
-//        gp.add(emailTF, 1, 1);
-//        gp.add(l2, 0, 2);
-//        gp.add(phoneTF, 1, 2);
-//        gp.add(l3, 0, 3);
-//        gp.add(contactNameTF, 1, 3);
-//        gp.add(l4, 0, 4);
-//        gp.add(commentTF, 1, 4);
-//        Alert al = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK, ButtonType.CANCEL);
-//        al.initOwner(MainController.getWindow());
-//        al.setTitle("Enter/Edit Stakeholder Contact Information");
-//        al.setHeaderText("Enter/Edit Stakeholder Contact Information");
-//        al.getDialogPane().setContent(gp);
-//        Optional<ButtonType> result = al.showAndWait();
-//        if (result.isPresent() && result.get() == ButtonType.OK) {
-//            sh.setEmail(emailTF.getText());
-//            sh.setPhone(phoneTF.getText());
-//            sh.setContactName(contactNameTF.getText());
-//            sh.setComment(commentTF.getText());
-//        }
-//    }
     public static void fireEditExistingInfo(Stakeholder sh) {
         GridPane contentGrid = new GridPane();
         Label lblModalHeading = new Label();
@@ -293,7 +257,7 @@ public class Stakeholder implements Serializable {
         JFXTextField phoneTF = new JFXTextField(sh.getPhone());
         JFXTextField contactNameTF = new JFXTextField(sh.getContactName());
         JFXTextField commentTF = new JFXTextField(sh.getComment());
-        JFXButton btnOk = new JFXButton("OK");
+        JFXButton btnSave = new JFXButton("Save");
         JFXButton btnCancel = new JFXButton("Cancel");
         Label l1 = new Label("Email: ");
         Label l2 = new Label("Phone #: ");
@@ -312,36 +276,37 @@ public class Stakeholder implements Serializable {
         contentGrid.setVgap(15);
 
         lblModalHeading.setText("Enter/Edit Stakeholder Contact Information");
-        lblModalHeading.getStyleClass().add("stackholder-modal-title");
-        l1.getStyleClass().add("stackholder-modal-labels");
-        l2.getStyleClass().add("stackholder-modal-labels");
-        l3.getStyleClass().add("stackholder-modal-labels");
-        l4.getStyleClass().add("stackholder-modal-labels");
-        btnOk.getStyleClass().add("modal-pane-button");
+        lblModalHeading.getStyleClass().add("stakeholder-modal-title");
+        l1.getStyleClass().add("stakeholder-modal-labels");
+        l2.getStyleClass().add("stakeholder-modal-labels");
+        l3.getStyleClass().add("stakeholder-modal-labels");
+        l4.getStyleClass().add("stakeholder-modal-labels");
+        btnSave.getStyleClass().add("modal-pane-button");
         btnCancel.getStyleClass().add("comment-pane-buttonClose");
         StackPane rootStackPane = MainController.getRootStackPane();
 
         JFXDialogLayout content = new JFXDialogLayout();
-        JFXDialog dialog = new JFXDialog(rootStackPane,content, JFXDialog.DialogTransition.CENTER);
-        btnOk.setOnAction(new EventHandler<ActionEvent>() {
+        JFXDialog dlg = new JFXDialog(rootStackPane,content, JFXDialog.DialogTransition.CENTER);
+        btnSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 sh.setEmail(txtEmailAddr.getText());
                 sh.setPhone(phoneTF.getText());
                 sh.setContactName(contactNameTF.getText());
                 sh.setComment(commentTF.getText());
+                dlg.close();
             }
         });
         btnCancel.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                dialog.close();
+                dlg.close();
             }
         });
         content.setHeading(lblModalHeading);
         content.setBody(contentGrid);
-        content.setActions(btnCancel, btnOk);
-        dialog.show();
+        content.setActions(btnSave, btnCancel);
+        dlg.show();
     }
 
     public static void editCustomInfo(Stakeholder sh) {

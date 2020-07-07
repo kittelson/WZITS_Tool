@@ -238,7 +238,7 @@ public class Step1PanelDep extends BorderPane {
         feasibilityPane.setTop(NodeFactory.createFormattedLabel("Feasibility Wizard", "substep-title-label"));
         GridPane fwgp1 = new GridPane();
         fwgp1.add(Step1TableHelper.getFeasibilityWizard(control.getProject()), 0, 0);
-        fwgp1.add(control.getProject().getFeasibilityMatrix().createSummaryPanel(), 0, 1);
+        fwgp1.add(control.getProject().getFeasibilityMatrix().createSummaryPanel(control.getProject()), 0, 1);
         RowConstraints rc1 = new RowConstraints();
         rc1.setPercentHeight(80);
         RowConstraints rc2 = new RowConstraints();
