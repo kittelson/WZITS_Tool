@@ -98,6 +98,11 @@ public class XMLGenerator {
         bodyElement.getBody().appendChild(image);
     }
 
+    public void generateImagePixels(String filepath, double width, double height, String header, String footer) {
+        Element image = bodyElement.generateImagePixels(filepath, width, height, header, footer);
+        bodyElement.getBody().appendChild(image);
+    }
+
     public void generateMap(String filepath, double width, double height, String header, String footer) {
         Element image = bodyElement.generateMap(filepath, width, height, header, footer);
         bodyElement.getBody().appendChild(image);

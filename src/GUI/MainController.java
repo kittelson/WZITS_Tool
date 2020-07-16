@@ -8,6 +8,7 @@ package GUI;
 import GUI.Helper.ColorHelper;
 import GUI.Helper.IOHelper;
 import GUI.Helper.NodeFactory;
+import GUI.PDFReports.PDFReportHelper;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
@@ -15,6 +16,9 @@ import com.sun.javafx.scene.NodeHelper;
 import core.Project;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Optional;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -252,7 +256,13 @@ public class MainController {
         cancelButton.setDisable(false);
         cancelButton.fire();
         selectStep(-1);
-        selectStep(0, 0);
+        // Hack to force an update on the flow bar buttons
+        selectStep(0, -1);
+//        if (getActiveSubStep(0) == -1) {
+//            selectStep(0, 0);
+//        } else {
+//            selectStep(0, -1);
+//        }
 
     }
 
@@ -509,9 +519,49 @@ public class MainController {
         location = location.substring(0, location.lastIndexOf("/")) + "/" + "pdfres";
         File pdfresFolder = new File(location);
         if (!pdfresFolder.exists()) {
-            //pdfresFolder.mkdirs();
+            pdfresFolder.mkdirs();
         }
+        checkAndRepairPDFResourceFiles(pdfresFolder);
         return location + "/";
+    }
+
+    private static void checkAndRepairPDFResourceFiles(File pdfresFolder) {
+        String repairFileDir = "/resources/pdfresForRepair/";
+        String[] pdfFiles = new String[]{
+                "us_dot_logo.png",
+                "wzits_icon_64.png",
+                "template.xsl"
+        };
+        for (String repairFileName: pdfFiles) {
+            if (!(new File(pdfresFolder, repairFileName)).exists()) {
+                InputStream stream = null;
+                OutputStream resStreamOut = null;
+                try {
+                    stream = PDFReportHelper.class.getResourceAsStream(repairFileDir + repairFileName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
+                    if (stream == null) {
+                        throw new Exception("Cannot get resource \"" + repairFileName + "\" from Jar file.");
+                    }
+
+                    int readBytes;
+                    byte[] buffer = new byte[4096];
+//                    jarFolder = new File(ExecutingClass.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile().getPath().replace('\\', '/');
+                    resStreamOut = new FileOutputStream(pdfresFolder.getAbsolutePath() + "/" + repairFileName);
+                    while ((readBytes = stream.read(buffer)) > 0) {
+                        resStreamOut.write(buffer, 0, readBytes);
+                    }
+                } catch (Exception ex) {
+//                    throw ex;
+                    ex.printStackTrace(System.out);
+                } finally {
+                    try {
+                        stream.close();
+                        resStreamOut.close();
+                    } catch (Exception ie) {
+
+                    }
+                }
+            }
+        }
     }
 
     public static final int MAX_WIDTH = 999999;

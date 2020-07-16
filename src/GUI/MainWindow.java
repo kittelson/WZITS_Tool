@@ -28,16 +28,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -147,126 +138,64 @@ public class MainWindow extends BorderPane {
         menuStep6Results.getItems().addAll(step6SummaryMenuItem);
         Menu menuExportResults = new Menu("Export to PDF");
         MenuItem fsAllMenuItem = new MenuItem("Full Summary Report");
-        fsAllMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeSummaryReport(control);
-            }
-        });
+        fsAllMenuItem.setOnAction(ae -> PDFIOHelper.writeSummaryReport(control));
+
         MenuItem fs1MenuItem = new MenuItem("Fact Sheet 1");
-        fs1MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 1);
-            }
-        });
+        fs1MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 1));
+
         MenuItem fs2MenuItem = new MenuItem("Fact Sheet 2");
-        fs2MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 2);
-            }
-        });
+        fs2MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 2));
+
         MenuItem fs3MenuItem = new MenuItem("Fact Sheet 3");
-        fs3MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 3);
-            }
-        });
+        fs3MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 3));
+
         MenuItem fs4MenuItem = new MenuItem("Fact Sheet 4");
-        fs4MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 4);
-            }
-        });
+        fs4MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 4));
+
         MenuItem fs5MenuItem = new MenuItem("Fact Sheet 5");
-        fs5MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 5);
-            }
-        });
+        fs5MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 5));
+
         MenuItem fs6MenuItem = new MenuItem("Fact Sheet 6");
-        fs6MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 6);
-            }
-        });
+        fs6MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 6));
+
         MenuItem fs7MenuItem = new MenuItem("Fact Sheet 7");
-        fs7MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 7);
-            }
-        });
+        fs7MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 7));
+
         MenuItem fs8MenuItem = new MenuItem("Fact Sheet 8");
-        fs8MenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeStepSummary(control, 8);
-            }
-        });
-        MenuItem fs1MenuItemV2 = new MenuItem("Fact Sheet 1 (V2)");
-        fs1MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 1);
-            }
-        });
-        MenuItem fs2MenuItemV2 = new MenuItem("Fact Sheet 2 (V2)");
-        fs2MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 2);
-            }
-        });
-        MenuItem fs3MenuItemV2 = new MenuItem("Fact Sheet 3 (V2)");
-        fs3MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 3);
-            }
-        });
-        MenuItem fs4MenuItemV2 = new MenuItem("Fact Sheet 4 (V2)");
-        fs4MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 4);
-            }
-        });
-        MenuItem fs5MenuItemV2 = new MenuItem("Fact Sheet 5 (V2)");
-        fs5MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 5);
-            }
-        });
-        MenuItem fs6MenuItemV2 = new MenuItem("Fact Sheet 6 (V2)");
-        fs6MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 6);
-            }
-        });
-        MenuItem fs7MenuItemV2 = new MenuItem("Fact Sheet 7 (V2)");
-        fs7MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 7);
-            }
-        });
-        MenuItem fs8MenuItemV2 = new MenuItem("Fact Sheet 8 (V2)");
-        fs8MenuItemV2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                PDFIOHelper.writeFactSheetPDF(control, 8);
-            }
-        });
-        menuExportResults.getItems().addAll(fsAllMenuItem, new SeparatorMenuItem(), fs1MenuItem, fs2MenuItem, fs3MenuItem,
-                fs4MenuItem, fs5MenuItem, fs6MenuItem, fs7MenuItem, fs8MenuItem,
+        fs8MenuItem.setOnAction(ae -> PDFIOHelper.writeStepSummary(control, 8));
+
+        MenuItem fs1MenuItemV2 = new MenuItem("Fact Sheet 1");
+        fs1MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 1));
+
+        MenuItem fs2MenuItemV2 = new MenuItem("Fact Sheet 2");
+        fs2MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 2));
+
+        MenuItem fs3MenuItemV2 = new MenuItem("Fact Sheet 3");
+        fs3MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 3));
+
+        MenuItem fs4MenuItemV2 = new MenuItem("Fact Sheet 4");
+        fs4MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 4));
+
+        MenuItem fs5MenuItemV2 = new MenuItem("Fact Sheet 5");
+        fs5MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 5));
+
+        MenuItem fs6MenuItemV2 = new MenuItem("Fact Sheet 6");
+        fs6MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 6));
+
+        MenuItem fs7MenuItemV2 = new MenuItem("Fact Sheet 7");
+        fs7MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 7));
+
+        MenuItem fs8MenuItemV2 = new MenuItem("Fact Sheet 8");
+        fs8MenuItemV2.setOnAction(ae -> PDFIOHelper.writeFactSheetPDF(control, 8));
+
+        MenuItem fsAllMenuItemV2 = new MenuItem("Full Summary Report");
+        fsAllMenuItemV2.setOnAction(actionEvent -> PDFIOHelper.writeFullSummaryReportPDF(control));
+        menuExportResults.getItems().addAll(
+//                fsAllMenuItem,
+//                new SeparatorMenuItem(),
+//                fs1MenuItem, fs2MenuItem, fs3MenuItem, fs4MenuItem, fs5MenuItem, fs6MenuItem, fs7MenuItem, fs8MenuItem,
+//                new SeparatorMenuItem(),
+                fsAllMenuItemV2,
                 new SeparatorMenuItem(),
                 fs1MenuItemV2, fs2MenuItemV2, fs3MenuItemV2, fs4MenuItemV2, fs5MenuItemV2, fs6MenuItemV2, fs7MenuItemV2, fs8MenuItemV2);
         goalWizMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -392,7 +321,7 @@ public class MainWindow extends BorderPane {
         titleLabel2.setMaxWidth(MainController.MAX_WIDTH);
 
         //toolBarBox.setFillWidth(true);
-        projectFlowBar = new FlowBar(control);
+        projectFlowBar = new FlowBarV2(control);
         toolBarBox.setAlignment(Pos.CENTER);
         BorderPane titleLabelPane = new BorderPane();
         titleLabelPane.setLeft(titleLabel1);
@@ -528,11 +457,15 @@ public class MainWindow extends BorderPane {
         this.getChildren().remove(launch);
         this.setTop(toolBarBox);
         BorderPane.setMargin(toolBarBox, new Insets(0, 0, 7, 0));
-        this.setCenter(centerPane);  //allStepsPane
+        ScrollPane centerScroll = new ScrollPane();
+        centerScroll.setFitToHeight(true);
+        centerScroll.setFitToWidth(true);
+        centerScroll.setContent(centerPane);
+        this.setCenter(centerScroll);  //allStepsPane
         this.setLeft(leftBar); // Navigator
         this.setRight(new BorderPane());
         this.setBottom(statusBar);
-        this.projectFlowBar.setProceedButtonFlashing(true);
+//        this.projectFlowBar.setProceedButtonFlashing(true);
     }
 
     public void checkProceed() {
@@ -665,7 +598,7 @@ public class MainWindow extends BorderPane {
     /**
      * Flow control toolbar for the main window of the tool.
      */
-    private final FlowBar projectFlowBar;
+    private final FlowBarV2 projectFlowBar;
     /**
      * Status bar positioned at the bottom of the mainwindow.
      */

@@ -812,7 +812,7 @@ public class QuestionGenerator implements Serializable {
         final int numRequiredQs = 3 + this.qStakeholderYNList.size() - 5; // + this.qStakeholderOptionList.size();
         proj.functionalClassProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                if (newVal.equalsIgnoreCase("Select")) {
+                if (newVal == null || newVal.equalsIgnoreCase("Select")) {
                     if (proj.progressStake.get() > 0) {
                         proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
                     }
@@ -824,7 +824,7 @@ public class QuestionGenerator implements Serializable {
         });
         proj.maintainingAgencyProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                if (newVal.equalsIgnoreCase("Select")) {
+                if (newVal == null || newVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
                 } else if (oldVal == null || oldVal.equalsIgnoreCase("Select")) {
                     proj.progressStake.set(Math.min(1.0, proj.progressStake.get() + 1.0 / numRequiredQs));
@@ -848,7 +848,7 @@ public class QuestionGenerator implements Serializable {
         });
         proj.patrollingAgencyProperty().addListener(new ChangeListener<String>() {
             public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                if (newVal.equalsIgnoreCase("Select")) {
+                if (newVal == null || newVal.equalsIgnoreCase("Select")) {
                     if (proj.progressStake.get() > 0) {
                         proj.progressStake.set(Math.max(0, proj.progressStake.get() - 1.0 / numRequiredQs));
                     }

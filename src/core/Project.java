@@ -6,11 +6,7 @@
 package core;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +32,8 @@ import javax.imageio.ImageIO;
  * @author ltrask
  */
 public class Project implements Serializable {
+
+    private SimpleStringProperty VERSION_ID = new SimpleStringProperty("2.0.0");
 
     private static final long serialVersionUID = 123456789L;
 
@@ -69,6 +67,8 @@ public class Project implements Serializable {
     // Other Properties
     private BooleanProperty crashDataAvailable = new SimpleBooleanProperty();
     private BooleanProperty automatedEnforcementAllowed = new SimpleBooleanProperty();
+
+    private SimpleStringProperty vcWizardJSON = new SimpleStringProperty();
 
     private File saveFile = null;
 
@@ -878,17 +878,40 @@ public class Project implements Serializable {
         s.writeObject(shcComment.get());
         s.writeObject(fapComment.get());
         s.writeObject(feasibilityJustification.get());
+        s.writeObject(vcWizardJSON.get());
 
+        if (!VERSION_ID.get().equalsIgnoreCase("2.0.0")) {
+            VERSION_ID.set("2.0.0");
+        }
+        s.writeObject(VERSION_ID.get());
         if (getProjPhoto() != null) {
-            ImageIO.write(SwingFXUtils.fromFXImage(getProjPhoto(), null), "png", s);
+//            ImageIO.write(SwingFXUtils.fromFXImage(getProjPhoto(), null), "png", s);
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            ImageIO.write(SwingFXUtils.fromFXImage(getProjPhoto(), null), "png", b);
+
+            s.writeInt(b.size());
+            b.writeTo(s);
+
+            System.out.println("First image saved.");
         } else {
-            s.writeObject(getProjPhoto());
+//            s.writeObject(getProjPhoto());
+            s.writeInt(0);
         }
         if (getConOpsDiagram() != null) {
-            ImageIO.write(SwingFXUtils.fromFXImage(getConOpsDiagram(), null), "png", s);
+//            ImageIO.write(SwingFXUtils.fromFXImage(getConOpsDiagram(), null), "png", s);
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            ImageIO.write(SwingFXUtils.fromFXImage(getConOpsDiagram(), null), "png", b);
+
+            s.writeInt(b.size());
+            b.writeTo(s);
+
+            System.out.println("First image saved.");
         } else {
-            s.writeObject(getConOpsDiagram());
+//            s.writeObject(getConOpsDiagram());
+            s.writeInt(0);
         }
+
+
         s.flush();
     }
 
@@ -942,6 +965,7 @@ public class Project implements Serializable {
         this.setShcComment(proj.getShcComment());
         this.setFapComment(proj.getFapComment());
         this.setFeasibilityJustification(proj.getFeasibilityJustification());
+        this.setVcWizardJSON(proj.getVcWizardJSON());
 
         setAutomatedEnforcementAllowed(proj.isAutomatedEnforcementAllowed());
         setCrashDataAvailable(proj.isCrashDataAvailable());
@@ -1112,17 +1136,65 @@ public class Project implements Serializable {
             feasibilityJustification = new SimpleStringProperty("");
         }
 
-        BufferedImage bimg = ImageIO.read(s);
-        if (bimg != null) {
-            projPhoto = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(bimg, null));
-        } else {
-            projPhoto = new SimpleObjectProperty<>();
+        try {
+            vcWizardJSON = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            vcWizardJSON = new SimpleStringProperty("");
         }
-        BufferedImage conOpsImg = ImageIO.read(s);
-        if (conOpsImg != null) {
-            conOpsDiagram = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(conOpsImg, null));
+
+        try {
+            VERSION_ID = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            VERSION_ID = new SimpleStringProperty("1.0.0");
+        }
+        System.out.println("Project Version: " + VERSION_ID.get());
+
+        if (VERSION_ID.get() == null) {
+            BufferedImage bimg = ImageIO.read(s);
+            if (bimg != null) {
+                projPhoto = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(bimg, null));
+            } else {
+                projPhoto = new SimpleObjectProperty<>();
+            }
+            BufferedImage conOpsImg = ImageIO.read(s);
+            if (conOpsImg != null) {
+                conOpsDiagram = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(conOpsImg, null));
+            } else {
+                conOpsDiagram = new SimpleObjectProperty<>();
+            }
+        } else if (VERSION_ID.get().equalsIgnoreCase("2.0.0")) {
+            int length = s.readInt();
+            if (length > 0) {
+                byte[] bytes = new byte[length];
+                s.readFully(bytes);
+//            firstImage = ImageIO.read(new ByteArrayInputStream(bytes));
+                projPhoto = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(bytes)), null));
+            } else {
+                projPhoto = new SimpleObjectProperty<>();
+            }
+
+            length = s.readInt();
+            if (length > 0) {
+                byte[] bytes = new byte[length];
+                s.readFully(bytes);
+//            secondImage = ImageIO.read(new ByteArrayInputStream(bytes));
+                conOpsDiagram = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(bytes)), null));
+            } else {
+                conOpsDiagram = new SimpleObjectProperty<>();
+            }
         } else {
-            conOpsDiagram = new SimpleObjectProperty<>();
+            BufferedImage bimg = ImageIO.read(s);
+            if (bimg != null) {
+                projPhoto = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(bimg, null));
+            } else {
+                projPhoto = new SimpleObjectProperty<>();
+            }
+            BufferedImage conOpsImg = ImageIO.read(s);
+            if (conOpsImg != null) {
+                conOpsDiagram = new SimpleObjectProperty<>(SwingFXUtils.toFXImage(conOpsImg, null));
+            } else {
+                conOpsDiagram = new SimpleObjectProperty<>();
+            }
         }
     }
 
@@ -1136,6 +1208,18 @@ public class Project implements Serializable {
 
     public void setFeasibilityJustification(String newJustification) {
         this.feasibilityJustification.set(newJustification);
+    }
+
+    public String getVcWizardJSON() {
+        return vcWizardJSON.get();
+    }
+
+    public SimpleStringProperty vcWizardJSONProperty() {
+        return vcWizardJSON;
+    }
+
+    public void setVcWizardJSON(String vcWizardJSON) {
+        this.vcWizardJSON.set(vcWizardJSON);
     }
 
     public static class Step implements Serializable {

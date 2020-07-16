@@ -46,7 +46,7 @@ public class NodeFactory {
         if (tooltipIcon) {
             FontIcon tooltipIconNode = NodeFactory.createIcon(FontAwesomeRegular.QUESTION_CIRCLE, iconColor, iconSize);
             labelTooltip.setShowDelay(Duration.ZERO);
-            labelTooltip.setStyle("-fx-font-size: 10pt");
+            labelTooltip.setStyle("-fx-font-size: 12pt");
             labelTooltip.setMaxWidth(500);
             labelTooltip.setWrapText(true);
             Tooltip.install(tooltipIconNode, labelTooltip);

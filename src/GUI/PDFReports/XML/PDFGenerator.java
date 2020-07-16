@@ -61,7 +61,7 @@ public class PDFGenerator {
                     }
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,
-                            "The report was created successuflly, but the PDF reader could not be launched from FREEVAL-NC.",
+                            "The report was created successfully, but the PDF reader could not be launched from the WZITS Tool.",
                             "Report Launch Error",
                             JOptionPane.ERROR_MESSAGE);
                 }

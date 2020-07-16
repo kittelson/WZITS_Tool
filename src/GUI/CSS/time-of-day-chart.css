@@ -1,0 +1,213 @@
+* {
+    -fx-chart-bg-color: #f4f4f4;
+    -fx-legend-bg-color: transparent;
+    -fx-chart-title-bg-color: transparent;
+    -fx-chart-border: lightgray;
+    -fx-font-family: 'Helvetica', Arial, sans-serif;
+    -fx-dark-chart-bg-color: #2f2f31;
+    -fx-dark-legend-bg-color: darkgrey;
+    -fx-dark-chart-title-bg-color: lightgray;
+    -fx-dark-chart-border: lightgray;
+}
+
+.time-of-day-donut-light {
+    -fx-padding: 5px 15px 5px 15px; /* JavaFx Default is 5px */
+    -fx-background-color: -fx-chart-bg-color;
+    -fx-legend-side: bottom;
+}
+
+.time-of-day-donut-dark {
+    -fx-padding: 5px 15px 5px 15px;
+    -fx-background-color: -fx-dark-chart-bg-color;
+    -fx-legend-side: bottom;
+    /* -fx-background-radius: 10px; */
+    /* -fx-border-radius: 10px; */
+    -fx-border-color: -fx-dark-chart-bg-color;
+    -fx-border-width: 0 1 0 1;
+}
+
+.time-of-day-donut-light .chart-content {
+    -fx-padding: 10px; /* JavaFx Default is 10px */
+}
+
+.time-of-day-donut-dark .chart-content {
+    -fx-padding: 10px; /* JavaFx Default is 10px */
+}
+
+.time-of-day-donut-light .chart-legend {
+    -fx-background-color: -fx-legend-bg-color;
+}
+
+.time-of-day-donut-dark .chart-legend {
+    -fx-background-color: -fx-legend-bg-color;
+}
+
+.time-of-day-donut-dark .chart-title {
+    -fx-font-size: 16pt;
+    -fx-font-family: -fx-font-family;
+    -fx-background-color: -fx-dark-chart-bg-color;
+    -fx-text-fill: lightgrey;
+    -fx-background-radius: 5px;
+}
+
+.time-of-day-donut-light .chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.time-of-day-donut-dark .chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.time-of-day-donut-light .inner-circle {
+    -fx-fill: -fx-chart-bg-color;
+    -fx-stroke: -fx-chart-bg-color;
+    -fx-stroke-width: 1;
+}
+
+.time-of-day-donut-dark .inner-circle {
+    -fx-fill: -fx-dark-chart-bg-color;
+    -fx-stroke: -fx-dark-chart-bg-color;
+    -fx-stroke-width: 1;
+}
+
+.time-of-day-donut-light .clock-tick-mark {
+    -fx-stroke: darkgrey;
+    -fx-stroke-width: 1;
+}
+
+.time-of-day-donut-dark .clock-tick-mark {
+    -fx-stroke: lightgrey;
+    -fx-stroke-width: 1;
+}
+
+.time-of-day-donut-light .clock-tick-label {
+    -fx-fill: black;
+    -fx-font-size: 10pt;
+}
+
+.time-of-day-donut-dark .clock-tick-label {
+    -fx-fill: lightgrey;
+    -fx-font-size: 10pt;
+}
+
+.time-of-day-donut-light .chart-pie {
+    -fx-pie-color: CHART_COLOR_1;
+    -fx-background-color: -fx-pie-color;
+    -fx-background-insets: 0;
+    -fx-border-color: -fx-pie-color;
+}
+
+.time-of-day-donut-dark .chart-pie {
+    -fx-pie-color: CHART_COLOR_1;
+    -fx-background-color: -fx-pie-color;
+    -fx-background-insets: 0;
+    -fx-border-color: -fx-pie-color;
+}
+
+.time-of-day-donut-light .data-reg-under.chart-pie { 
+    -fx-pie-color: mediumseagreen; 
+    -fx-border-width: 0px;
+}
+.time-of-day-donut-light .data-reg-near.chart-pie { 
+    -fx-pie-color: orange;
+    -fx-border-width: 0px;
+}
+.time-of-day-donut-light .data-reg-at.chart-pie { 
+    -fx-pie-color: indianred;
+    -fx-border-width: 0px;
+}
+.time-of-day-donut-light .data-reg-over.chart-pie { 
+    -fx-pie-color: crimson;
+    -fx-border-width: 0px;
+}
+
+.time-of-day-donut-light .data-reg-na.chart-pie {
+    -fx-pie-color: lightgray;
+    -fx-border-width: 0px;
+    /*-fx-border-color: -fx-dark-chart-bg-color;*/
+}
+
+.time-of-day-donut-dark .data-reg-under.chart-pie { 
+    -fx-pie-color: mediumseagreen; 
+    -fx-border-width: 0px;
+}
+.time-of-day-donut-dark .data-reg-near.chart-pie { 
+    -fx-pie-color: orange;
+    -fx-border-width: 0px;
+}
+.time-of-day-donut-dark .data-reg-at.chart-pie { 
+    -fx-pie-color: indianred;
+    -fx-border-width: 0px;
+}
+.time-of-day-donut-dark .data-reg-over.chart-pie { 
+    -fx-pie-color: crimson;
+    -fx-border-width: 0px;
+}
+
+.time-of-day-donut-dark .data-reg-na.chart-pie {
+    -fx-pie-color: darkgrey;
+    -fx-border-width: 0px;
+    /*-fx-border-color: -fx-dark-chart-bg-color;*/
+}
+
+.time-of-day-donut-light .tooltip {
+    -fx-background: rgba(30,30,30);
+    -fx-text-fill: white;
+    -fx-background-color: rgba(30,30,30,0.8);
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0;
+    -fx-padding: 0.667em 0.75em 0.667em 0.75em; /* 10px */
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );
+    -fx-font-size: 0.85em;
+}
+
+.time-of-day-donut-light .tooltip-reg-under {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(60, 179, 113, 0.8);
+}
+
+.time-of-day-donut-light .tooltip-reg-near {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(255, 165, 0, 0.8);
+}
+
+.time-of-day-donut-light .tooltip-reg-at {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(205, 92, 92, 0.8);
+}
+
+.time-of-day-donut-light .tooltip-reg-over {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(220, 20, 60, 0.8);
+}
+
+.time-of-day-donut-dark .tooltip {
+    -fx-background: rgba(30,30,30);
+    -fx-text-fill: white;
+    -fx-background-color: rgba(30,30,30,0.8);
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0;
+    -fx-padding: 0.667em 0.75em 0.667em 0.75em; /* 10px */
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );
+    -fx-font-size: 0.85em;
+}
+
+.time-of-day-donut-dark .tooltip-reg-under {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(60, 179, 113, 0.8);
+}
+
+.time-of-day-donut-dark .tooltip-reg-near {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(255, 165, 0, 0.8);
+}
+
+.time-of-day-donut-dark .tooltip-reg-at {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(205, 92, 92, 0.8);
+}
+
+.time-of-day-donut-dark .tooltip-reg-over {
+    -fx-text-fill: black;
+    -fx-background-color: rgba(220, 20, 60, 0.8);
+}

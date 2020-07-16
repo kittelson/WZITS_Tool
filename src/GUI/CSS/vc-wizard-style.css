@@ -68,16 +68,17 @@
   -jfx-label-float: true;
   -fx-font-size: 12pt;
   -fx-alignment: center;
-  -fx-background-color: #ededed;
+  -fx-background-color: rgba(0, 0, 0, 0.025);
   -fx-background-radius: 5 5 0 0;
 }
 
 .jfx-combo-box:hover {
-  -fx-background-color: #d4d4d4;
+  -fx-background-color: rgba(0, 0, 0, 0.05);
   -fx-background-radius: 5 5 0 0;
+  -jfx-unfocus-color: -custom-jfx-hover-unfocus-color;
 }
 
-.jfx-combo-box  .list-cell {
+.jfx-combo-box .list-cell {
   -fx-alignment: center;
   -fx-font-size: 12pt;
 }
@@ -114,6 +115,7 @@
   -fx-font-size: 12pt;
   -fx-background-color: #d4d4d4;
   -fx-background-radius: 5 5 0 0;
+  -jfx-unfocus-color: -custom-jfx-hover-unfocus-color;
 }
 
 .jfx-radio-button {
@@ -240,18 +242,9 @@
     -fx-effect: null;
 }
 
-.demand-vs-capacity-chart .chart-series-line:hover {
-    -fx-stroke-width: 8px;
-    -fx-stroke: pink;
-}
-
 .demand-vs-capacity-chart .default-color0.chart-series-line {
     -fx-stroke: -fx-background-dark;
     -fx-stroke-dash-array: 10 10 10 10;
-}
-
-.demand-vs-capacity-chart .default-color0.chart-series-line:hover {
-    -fx-stroke-dash-array: 20 20 20 20;
 }
 
 .demand-vs-capacity-chart .default-color0.chart-line-symbol {
@@ -261,10 +254,6 @@
 .demand-vs-capacity-chart .default-color1.chart-series-line {
     -fx-stroke: -fx-wzits-orange;
     -fx-stroke-dash-array: 10 10 10 10;
-}
-
-.demand-vs-capacity-chart .default-color1.chart-series-line:hover {
-    -fx-stroke-dash-array: 20 20 20 20;
 }
 
 .demand-vs-capacity-chart .default-color1.chart-line-symbol {

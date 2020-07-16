@@ -209,6 +209,7 @@ public class Step1Panel extends BorderPane {
         col2.setPercentWidth(50);
         projInfoGrid.getColumnConstraints().addAll(col1, col2);
 
+
         // Creating User Needs Questions Pane
         final ProgressIndicatorBar progressBarUserNeeds;
         progressBarUserNeeds = new ProgressIndicatorBar(goalWizProgress, 1.0, "%.0f%%", true);
@@ -257,7 +258,7 @@ public class Step1Panel extends BorderPane {
         // Stakeholders Questions Panel
         final BorderPane stakeholderPane = new BorderPane();
         stakeholderPane.setTop(NodeFactory.createFormattedLabel(Project.STEP_NAMES[0][6], "substep-title-label")); // "Stakeholders"
-        stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject()));
+        stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject(), control));
         stakeholderPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Stakeholder Wizard panel
@@ -524,6 +525,7 @@ public class Step1Panel extends BorderPane {
 
     private GridPane createGeneralInfoGrid() {
 
+        genInfoDateToday.getStyleClass().add("wz-input-label-style");
         genInfoDateToday.setText(control.getProject().getDateString());
 
         genInfoInputProjectDescription.setWrapText(true);
@@ -540,6 +542,7 @@ public class Step1Panel extends BorderPane {
             }
         });
 
+        genInfoPicLabel.getStyleClass().add("wz-input-label-style");
         genInfoPicGrid.add(genInfoPicLabel, 0, 0);
         genInfoPicGrid.add(uploadProjectPhotoButton, 1, 0);
         genInfoPicLabel.setMaxWidth(MainController.MAX_WIDTH);
@@ -667,7 +670,10 @@ public class Step1Panel extends BorderPane {
         }
 
 //        VolumeToCapacityWizard vcWiz = new VolumeToCapacityWizard(this.control);
-        btnLaunchVCwiz.setOnAction(e -> centerPane.setCenter(new VolumeToCapacityWizard(this.control, centerPane.getCenter())));
+        btnLaunchVCwiz.setOnAction(e -> {
+            centerPane.setCenter(new VolumeToCapacityWizard(this.control, centerPane.getCenter()));
+//            control.disableFlowBar();
+        });
         BorderPane btnLaunchVCWizWrapper = new BorderPane();
         btnLaunchVCWizWrapper.setCenter(btnLaunchVCwiz);
         int rowIdx = 0;

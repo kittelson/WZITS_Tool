@@ -5,9 +5,11 @@
  */
 package GUI.Tables;
 
+import GUI.Helper.ColorHelper;
 import GUI.Helper.IconHelper;
 import GUI.Helper.NodeFactory;
 import GUI.MainController;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import core.GoalNeedsMatrix;
 import core.Need;
@@ -29,32 +31,16 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 
 /**
  *
@@ -275,19 +261,19 @@ public class Step1TableHelper {
         return TableHelper.createQuestionYNTable(proj.getMajorGoalsQs(), new TableHelper.Options(STEP1_TABLE_CSS));
     }
 
-    public static GridPane getFeasibilityWizard(Project proj) {
-        final GridPane pane = new GridPane();
+    public static Pane getFeasibilityWizard(Project proj) {
+        final BorderPane pane = new BorderPane();
 
         Node t1 = createFeasibilityOptTable(proj);//createFeasibilityOptTable(proj);
-        TableView t2 = createFeasibilityYNTable(proj);
-        pane.add(t1, 0, 0);
-        pane.add(t2, 0, 1);
-
-        int rowHeight = 170;
-        pane.getRowConstraints().add(new RowConstraints(rowHeight, rowHeight, rowHeight, Priority.NEVER, VPos.CENTER, true));
-        pane.getRowConstraints().add(new RowConstraints(1, 125, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true));
-        GridPane.setHgrow(t1, Priority.ALWAYS);
-        GridPane.setHgrow(t2, Priority.ALWAYS);
+        TableView<QuestionYN> t2 = createFeasibilityYNTable(proj);
+        pane.setTop(t1);
+        pane.setCenter(t2);
+//
+//        int rowHeight = 170;
+//        pane.getRowConstraints().add(new RowConstraints(rowHeight, rowHeight, rowHeight, Priority.NEVER, VPos.CENTER, true));
+//        pane.getRowConstraints().add(new RowConstraints(1, 125, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true));
+//        GridPane.setHgrow(t1, Priority.ALWAYS);
+//        GridPane.setHgrow(t2, Priority.ALWAYS);
 
         return pane;
     }
@@ -297,7 +283,7 @@ public class Step1TableHelper {
         return createFeasOptGrid(proj);
     }
 
-    private static TableView createFeasibilityYNTable(Project proj) {
+    private static TableView<QuestionYN> createFeasibilityYNTable(Project proj) {
         TableHelper.Options tOpts = new TableHelper.Options(STEP1_TABLE_CSS);
         tOpts.qColumnHeader = "Mark All That Apply";
         tOpts.showFeasibilityScore = true;
@@ -314,9 +300,12 @@ public class Step1TableHelper {
         RowConstraints rc = new RowConstraints();
         rc.setPercentHeight(rowSplit * 2);
         pane.getRowConstraints().add(rc);
+        pane.setVgap(10);
+        pane.setStyle("-fx-background-color: white; -fx-padding: 0 0 10px 0;");
         int qIdx = 1;
         for (final QuestionOption q : proj.getFeasWizardOptQs()) {
-            final ChoiceBox<String> cb = new ChoiceBox<>(FXCollections.observableArrayList(q.getOptions()));
+            final JFXComboBox<String> cb = new JFXComboBox<>(FXCollections.observableArrayList(q.getOptions()));
+            cb.getStyleClass().add("custom-jfx-combo-box");
 //            final JFXComboBox<String> cb = new JFXComboBox<>(FXCollections.observableArrayList(q.getOptions()));
 //            cb.getStyleClass().add("comment-pane-combo-box");
             if (q.getResponseIdx() >= 0) {
@@ -340,7 +329,7 @@ public class Step1TableHelper {
                     }
                 }
             });
-            Label qIdxLabel = NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx");
+            Label qIdxLabel = NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx-v1");
             qIdxLabel.disableProperty().bind(q.lockedProperty());
             final Label qLabel = NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question");
             qLabel.disableProperty().bind(q.lockedProperty());
@@ -355,7 +344,7 @@ public class Step1TableHelper {
                     }
                 }
             });
-            final Label qScoreLabel = NodeFactory.createFormattedLabel("0", "opt-pane-question-idx");
+            final Label qScoreLabel = NodeFactory.createFormattedLabel("0", "opt-pane-question-idx-v1");
             qScoreLabel.textProperty().bind(q.scoreProperty().asString());
             pane.add(qIdxLabel, 0, qIdx);
             pane.add(qLabel, 1, qIdx);
@@ -378,28 +367,28 @@ public class Step1TableHelper {
         return pane;
     }
 
-    public static GridPane createStakeholderWizard(Project proj) {
-        final GridPane pane = new GridPane();
+    public static Pane createStakeholderWizard(Project proj, MainController control) {
+        final BorderPane pane = new BorderPane();
 
-        Node t1 = createStakeholderOptTable(proj);
-        TableView t2 = createStakeholderYNTable(proj);
-        pane.add(t1, 0, 0);
-        pane.add(t2, 0, 1);
+        Node t1 = createStakeholderOptTable(proj, control);
+        TableView<QuestionYN> t2 = createStakeholderYNTable(proj);
+        pane.setTop(t1);
+        pane.setCenter(t2);
 
-        int rowHeight = 170;
-        pane.getRowConstraints().add(new RowConstraints(rowHeight, rowHeight, rowHeight, Priority.NEVER, VPos.CENTER, true));
-        pane.getRowConstraints().add(new RowConstraints(1, 125, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true));
-        GridPane.setHgrow(t1, Priority.ALWAYS);
-        GridPane.setHgrow(t2, Priority.ALWAYS);
+//        int rowHeight = 170;
+//        pane.getRowConstraints().add(new RowConstraints(rowHeight, rowHeight, rowHeight, Priority.NEVER, VPos.CENTER, true));
+//        pane.getRowConstraints().add(new RowConstraints(1, 125, MainController.MAX_HEIGHT, Priority.ALWAYS, VPos.CENTER, true));
+//        GridPane.setHgrow(t1, Priority.ALWAYS);
+//        GridPane.setHgrow(t2, Priority.ALWAYS);
         return pane;
     }
 
-    private static Node createStakeholderOptTable(Project proj) {
+    private static Node createStakeholderOptTable(Project proj, MainController control) {
         //return TableHelper.createQuestionOptionTable(proj.getStakeWizardOptQs(), STEP1_TABLE_CSS);
-        return createStakeholderOptGrid(proj);
+        return createStakeholderOptGrid(proj, control);
     }
 
-    private static GridPane createStakeholderOptGrid(Project proj) {
+    private static GridPane createStakeholderOptGrid(Project proj, MainController control) {
         GridPane pane = new GridPane();
         pane.add(NodeFactory.createFormattedLabel("#", "opt-pane-title"), 0, 0);
         pane.add(NodeFactory.createFormattedLabel("Input Question", "opt-pane-title"), 1, 0);
@@ -408,11 +397,14 @@ public class Step1TableHelper {
         RowConstraints rc = new RowConstraints();
         rc.setPercentHeight(rowSplit * 2);
         pane.getRowConstraints().add(rc);
+        pane.setVgap(10);
         int qIdx = 1;
         for (final QuestionOption q : proj.getStakeWizardOptQs()) {
             Node displayNode;
             if (!q.isLocked()) {
-                final ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(q.getOptions()));
+                final JFXComboBox<String> cb = new JFXComboBox<>(FXCollections.observableArrayList(q.getOptions()));
+                cb.getStyleClass().add("custom-jfx-combo-box");
+
                 if (q.getResponseIdx() >= 0) {
                     cb.getSelectionModel().select(q.getResponseIdx());
                 }
@@ -426,12 +418,22 @@ public class Step1TableHelper {
                 });
                 displayNode = cb;
             } else {
-                displayNode = NodeFactory.createFormattedLabel("", "opt-pane-question-response");
-                ((Label) displayNode).textProperty().bind(q.answerStringProperty());
+                Label answerLabel = NodeFactory.createFormattedLabel("", "opt-pane-question-response");
+                JFXButton returnButton = new JFXButton();
+                returnButton.setGraphic(NodeFactory.createIcon(FontAwesomeRegular.SHARE_SQUARE, Color.web(ColorHelper.WZ_ORANGE)));
+                returnButton.getStyleClass().add("return-button");
+                returnButton.setTooltip(new Tooltip("Return to Work Zone Metadata Inputs"));
+                returnButton.setOnAction(actionEvent -> control.setActiveSubStep(0, 0));
+                answerLabel.textProperty().bind(q.answerStringProperty());
+                BorderPane wrapper = new BorderPane();
+                wrapper.setCenter(answerLabel);
+                wrapper.setRight(returnButton);
+                displayNode = wrapper;
             }
-            pane.add(NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx"), 0, qIdx);
+            pane.add(NodeFactory.createFormattedLabel(String.valueOf(qIdx), "opt-pane-question-idx-v1"), 0, qIdx);
             pane.add(NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question"), 1, qIdx);
             pane.add(displayNode, 2, qIdx);
+            pane.setStyle("-fx-background-color: white; -fx-padding: 0 0 10px 0;");
             rc = new RowConstraints();
             rc.setPercentHeight(rowSplit);
             pane.getRowConstraints().add(rc);
@@ -950,7 +952,7 @@ public class Step1TableHelper {
         return sp;
     }
 
-    private static TableView createStakeholderYNTable(Project proj) {
+    private static TableView<QuestionYN> createStakeholderYNTable(Project proj) {
         TableHelper.Options tOpts = new TableHelper.Options(STEP1_TABLE_CSS);
         tOpts.qColumnHeader = "Mark All That Apply";
         return TableHelper.createQuestionYNTable(proj.getStakeWizardYNQs(), tOpts);

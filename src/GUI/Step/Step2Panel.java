@@ -197,12 +197,9 @@ public class Step2Panel extends BorderPane {
         BorderPane uploadPane = new BorderPane();
 //        Button uploadButton = new Button("Upload Concept of Operations Figure");
         JFXButton uploadButton = new JFXButton("Upload Concept of Operations Figure");
-        uploadButton.setStyle("-fx-font-size: 24; -fx-text-wrap: true; -fx-padding: 0.7em 0.57em;\n" +
-                "    -fx-font-size: 14px;\n" +
-                "    -jfx-button-type: RAISED;\n" +
-                "    -fx-background-color: rgb(77,102,204);\n" +
-                "    -fx-pref-width: 250;\n" +
-                "    -fx-text-fill: WHITE;");
+        uploadButton.getStyleClass().add("upload-button-style");
+        uploadButton.setButtonType(JFXButton.ButtonType.RAISED);
+        BorderPane.setMargin(uploadButton, new Insets(15, 0, 0, 0));
 //        uploadButton.setStyle("-fx-font-size: 24; -fx-text-wrap: true;");
         BorderPane.setAlignment(uploadButton, Pos.CENTER);
         final ImageView conOpsIV = new ImageView();

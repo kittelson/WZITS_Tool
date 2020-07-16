@@ -51,7 +51,7 @@ public class ElementGenerator {
             cellElement = generateElement("cell");
         }
 
-        Element dataElement = generateAndPopulateStringElement("data", data);
+        Element dataElement = generateAndPopulateStringElement("data", data != null ? data : "??");
         cellElement.appendChild(dataElement);
         if (generateCellIds) {
             cellElement.setAttribute("id", getId(data));

@@ -41,6 +41,23 @@ public class BodyElement extends ElementGenerator {
         return imageElement;
     }
 
+    public Element generateImagePixels(String filepath, double width, double height, String header, String footer) {
+        String wrap = urlWrapper(filepath);
+        Element imageElement = generateElement("image");
+        imageElement.appendChild(generateAndPopulateStringElement("header", header));
+        imageElement.appendChild(generateAndPopulateStringElement("data", wrap));
+
+        Element attributes = generateElement("attributes");
+//        attributes.appendChild(generateAndPopulateStringElement("content-height", "scale-to-fit"));
+        attributes.appendChild(generateAndPopulateStringElement("height", String.valueOf(height) + "px"));
+//        attributes.appendChild(generateAndPopulateStringElement("scaling", "non-uniform"));
+        attributes.appendChild(generateAndPopulateStringElement("content-width", String.valueOf(width) + "px"));
+
+        imageElement.appendChild(attributes);
+        imageElement.appendChild(generateAndPopulateStringElement("footer", footer));
+        return imageElement;
+    }
+
     public Element generateMap(String filepath, double width, double height, String header, String footer) {
         String wrap = urlWrapper(filepath);
         Element imageElement = generateElement("map");

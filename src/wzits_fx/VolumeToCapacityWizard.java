@@ -6,6 +6,8 @@ import com.jfoenix.controls.*;
 import core.VCWizard.AADTDistributionHelper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -18,12 +20,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class VolumeToCapacityWizard extends BorderPane {
@@ -171,6 +176,12 @@ public class VolumeToCapacityWizard extends BorderPane {
      * XYChart Number series to display the D/C ratio for the work zone condtitions
      */
     private final XYChart.Series<Number, Number> dcRatioWorkZoneSeries = new XYChart.Series<>();
+
+//    private final ObservableList<LOSChartHelper.CustomPieData> lrDataBase = FXCollections.observableArrayList();
+//    private final ObservableList<LOSChartHelper.CustomPieData> lrDataWZ = FXCollections.observableArrayList();
+
+    private final BorderPane dcRingChartWrapper = new BorderPane();
+
 
     private final Label lblMaxVCRatioBaseComputed;
     private final Label lblMaxVCRatioWorkZoneComputed;
@@ -383,7 +394,7 @@ public class VolumeToCapacityWizard extends BorderPane {
             capacityInputGrid.add(NodeFactory.createFormattedLabel("Computed Total Base Capacity:", "label-italic", ttComputedBaseCapacity, true), 2, ri);
             capacityInputGrid.add(computedSegmentCapacityLabel, 3, ri);
         } else {
-            capacityInputGrid.add(NodeFactory.createFormattedLabel("Adjusted Saturation Flow Rate (pc/ln/hr):", "label-italic", ttAdjustedSatFlowRate, true), 2, ri);
+            capacityInputGrid.add(NodeFactory.createFormattedLabel("Adjusted Saturation Flow Rate (veh/ln/hr):", "label-italic", ttAdjustedSatFlowRate, true), 2, ri);
             capacityInputGrid.add(computedAdjustedSatFlowRateLabel, 3, ri);
         }
 
@@ -505,14 +516,47 @@ public class VolumeToCapacityWizard extends BorderPane {
         backButton.getStyleClass().add("contained-button-default");
         backButton.setGraphic(NodeFactory.createIcon(FontAwesomeRegular.CARET_SQUARE_LEFT, Color.WHITE)); //Color.web(ColorHelper.WZ_ORANGE)
         backButton.setOnAction(actionEvent -> {
-            mc.setActiveSubStep(0, 0);
-            ((BorderPane) getParent()).setCenter(replacedStepNode);
+            JFXDialogLayout content = new JFXDialogLayout();
+            content.setHeading(NodeFactory.createFormattedLabel("Assign V/C Wizard Inputs to Project?", "modal-title"));
+            content.setBody(NodeFactory.createFormattedLabel("Would you like to assign the current V/C wizard inputs to the project? If so, the inputs to the wizard will be preserved in the project file the next time it is saved.", ""));
+            JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+            JFXButton assignButton = new JFXButton("Assign");
+            assignButton.setStyle("-fx-font-size: 12pt");
+            assignButton.setOnAction(actionEvent1 -> {
+                control.getProject().setVcWizardJSON(generateVCWizardJSON());
+                dlg.setOnDialogClosed( jfxDialogEvent -> {
+                    mc.setActiveSubStep(0, 0);
+                    ((BorderPane) getParent()).setCenter(replacedStepNode);
+                });
+                dlg.close();
+            });
+            JFXButton discardButton = new JFXButton("Discard");
+            discardButton.setStyle("-fx-font-size: 12pt");
+            discardButton.setOnAction(actionEvent1 -> {
+                dlg.setOnDialogClosed( jfxDialogEvent -> {
+                    mc.setActiveSubStep(0, 0);
+                    ((BorderPane) getParent()).setCenter(replacedStepNode);
+                });
+                dlg.close();
+            });
+            JFXButton cancelButton = new JFXButton("Cancel");
+            cancelButton.setStyle("-fx-font-size: 12pt");
+            cancelButton.setOnAction(actionEvent1 -> {
+                dlg.close();
+            });
+
+            content.getActions().addAll(assignButton, discardButton, cancelButton);
+            content.setMinWidth(600);
+            dlg.setOverlayClose(false);
+            dlg.show();
         });
 
         //creates a line chart
         final Node demandToCapacityChart = createDemandToCapacityChart();
         final Node queueLengthChart = createQueueLengthChart();
         final Node dcRatioChart = createDCRatioBarChart();
+        final Node dcRatioRingChart = createLOSRingCharts();
+        dcRingChartWrapper.setCenter(dcRatioRingChart);
         final BorderPane chartPane = new BorderPane();
         chartPane.setCenter(demandToCapacityChart);
 
@@ -527,7 +571,7 @@ public class VolumeToCapacityWizard extends BorderPane {
         });
         final JFXRadioButton dcRatioChartRatioButton = new JFXRadioButton("D/C Ratio");
         dcRatioChartRatioButton.selectedProperty().addListener((observableValue, oldVal, newVal) -> {
-            chartPane.setCenter(dcRatioChart);
+            chartPane.setCenter(dcRingChartWrapper);
         });
         ToggleGroup chartTypeGroup = new ToggleGroup();
         chartTypeGroup.getToggles().addAll(vcChartRadioButton, qLenChartRatioButton, dcRatioChartRatioButton);
@@ -578,7 +622,11 @@ public class VolumeToCapacityWizard extends BorderPane {
         setupInputChangeListeners();
 //        formnatTextfields(inputBaseLaneCapacity);
 //        minMaxTextField(txtWorkzoneCap);
-        inputParametersUpdated();
+        if (control.getProject().getVcWizardJSON() != null && !control.getProject().getVcWizardJSON().trim().equalsIgnoreCase("")) {
+            parseJSONString(control.getProject().getVcWizardJSON(), true);
+        } else {
+            inputParametersUpdated();
+        }
     }
 
     private String convertApToTime(int period) {
@@ -845,26 +893,26 @@ public class VolumeToCapacityWizard extends BorderPane {
         );
 
         inputTerrainType.getItems().addAll(
-                new TerrainTypeItem("Level", TERRAIN_TYPE_LEVEL),
-                new TerrainTypeItem("Rolling", TERRAIN_TYPE_ROLLING),
-                new TerrainTypeItem("Mountainous", TERRAIN_TYPE_MOUNTAIN)
+                new TerrainTypeItem(TYPE_LEVEL,"Level", TERRAIN_TYPE_LEVEL),
+                new TerrainTypeItem(TYPE_ROLLING,"Rolling", TERRAIN_TYPE_ROLLING),
+                new TerrainTypeItem(TYPE_MOUNTAINOUS, "Mountainous", TERRAIN_TYPE_MOUNTAIN)
         );
         inputSegmentType.getItems().addAll(
-                new SegmentTypeItem("Basic Freeway", 2400, false),
-                new SegmentTypeItem("Merge/On-Ramp", 2100, false),
-                new SegmentTypeItem("Diverge/Off-Ramp", 2100, false),
-                new SegmentTypeItem("Weaving Segment", 2000, false),
-                new SegmentTypeItem("Custom", 2400, true)
+                new SegmentTypeItem(TYPE_BASIC, "Basic Freeway", 2400, false),
+                new SegmentTypeItem(TYPE_MERGE,"Merge/On-Ramp", 2100, false),
+                new SegmentTypeItem(TYPE_DIVERGE,"Diverge/Off-Ramp", 2100, false),
+                new SegmentTypeItem(TYPE_WEAVE,"Weaving Segment", 2000, false),
+                new SegmentTypeItem(TYPE_CUSTOM,"Custom", 2400, true)
         );
         inputIntxType.getItems().addAll(
-                new IntxTypeInput("None", 1.0f),
-                new IntxTypeInput("Roundabout", .50f),
-                new IntxTypeInput("Two-Way Stop (Mainline)", 1.0f),
-                new IntxTypeInput("All Way Stop", 0.30f),
-                new IntxTypeInput("Two-Phase Signal", 0.60f),
-                new IntxTypeInput("Three Phase Signal", 0.45f),
-                new IntxTypeInput("Four Phase Signal", 0.35f),
-                new IntxTypeInput("Custom", 1.0f)
+                new IntxTypeInput(TYPE_NONE,  "None", 1.0f),
+                new IntxTypeInput(TYPE_ROUNDABOUT,"Roundabout", .50f),
+                new IntxTypeInput(TYPE_TWSC,"Two-Way Stop (Mainline)", 1.0f),
+                new IntxTypeInput(TYPE_AWSC,"All Way Stop", 0.30f),
+                new IntxTypeInput(TYPE_SIGNAL_TWO_PHASE,"Two-Phase Signal", 0.60f),
+                new IntxTypeInput(TYPE_SIGNAL_THREE_PHASE,"Three Phase Signal", 0.45f),
+                new IntxTypeInput(TYPE_SIGNAL_FOUR_PHASE,"Four Phase Signal", 0.35f),
+                new IntxTypeInput(TYPE_CUSTOM,"Custom", 1.0f)
         );
         inputWorkZoneType.getItems().addAll(
                 new WorkZoneTypeItem("None", 1.0f, WorkZoneType.NONE),
@@ -1068,6 +1116,9 @@ public class VolumeToCapacityWizard extends BorderPane {
     }
 
     private void inputParametersUpdated() {
+        if (parseLock) {
+            return;
+        }
 
         //------------Step 1 - General Facility Demand------------
         // -- 1A) Initialize all variables (so as to not break computations)
@@ -1265,6 +1316,8 @@ public class VolumeToCapacityWizard extends BorderPane {
 
 //            System.out.println("Period: " + String.valueOf(per + 1) + ", Capacity: " + String.valueOf(totalSegmentCapacityVeh) + ", Demand: " + String.format("%,2d", demandArray[per]));
         }
+        final Node dcRatioRingChart = createLOSRingCharts();
+        dcRingChartWrapper.setCenter(dcRatioRingChart);
         lblMaxDCRatioBaseComputed.setText(String.format("%.2f", maxBaseDC));
         lblMaxDCRatioWorkZoneComputed.setText(String.format("%.2f", maxWorkZoneDC));
         lblMaxVCRatioBaseComputed.setText(String.format("%.2f", Math.min(maxBaseDC, 1.0f)));
@@ -1450,12 +1503,18 @@ public class VolumeToCapacityWizard extends BorderPane {
         }
     }
     private class IntxTypeInput {
+        public final int intxType;
         public final String displayStr;
         public final float value;
 
-        public IntxTypeInput(String displayStr, float value) {
+        public IntxTypeInput(int intxType, String displayStr, float value) {
+            this.intxType = intxType;
             this.displayStr = displayStr;
             this.value = value;
+        }
+
+        public boolean isCustom() {
+            return this.intxType == TYPE_CUSTOM;
         }
 
         @Override
@@ -1463,11 +1522,13 @@ public class VolumeToCapacityWizard extends BorderPane {
     }
 
     private class SegmentTypeItem {
+        public final int segTypeIdx;
         public final String displayStr;
         public final int baseCapacity;
         private final SimpleBooleanProperty custom;
 
-        public SegmentTypeItem(String displayStr, int baseCapacity, boolean isCustom) {
+        public SegmentTypeItem(int segTypeIdx, String displayStr, int baseCapacity, boolean isCustom) {
+            this.segTypeIdx = segTypeIdx;
             this.displayStr = displayStr;
             this.baseCapacity = baseCapacity;
             this.custom = new SimpleBooleanProperty(isCustom);
@@ -1571,10 +1632,12 @@ public class VolumeToCapacityWizard extends BorderPane {
 
 
     private class TerrainTypeItem {
+        public final int type;
         public final String displayStr;
         public final float value;
 
-        public TerrainTypeItem(String displayStr, float value) {
+        public TerrainTypeItem(int type, String displayStr, float value) {
+            this.type = type;
             this.displayStr = displayStr;
             this.value = value;
         }
@@ -1647,6 +1710,60 @@ public class VolumeToCapacityWizard extends BorderPane {
         return demandToCapacityChartWrapper;
     }
 
+    private Node createLOSRingCharts() {
+//        lrDataBase.clear();
+//        lrDataWZ.clear();
+
+        final ObservableList<LOSChartHelper.CustomPieData> lrDataBase = FXCollections.observableArrayList();
+        final ObservableList<LOSChartHelper.CustomPieData> lrDataWZ = FXCollections.observableArrayList();
+        int apStart = 0;
+
+        String prevRegime = LOSChartHelper.UNDER;
+        int currCount = 0;
+        int beginPeriodTracker = apStart;
+        for (int count = 0; count < 96; count++) {
+            String currRegime = LOSChartHelper.toRegimeStr(dcRatioBaseSeries.getData().get(count).getYValue().floatValue(), false);
+
+            if (currRegime.equalsIgnoreCase(prevRegime)) {
+                currCount++;
+            } else {
+                LOSChartHelper.CustomPieData slice = new LOSChartHelper.CustomPieData(prevRegime, currCount, beginPeriodTracker);
+                lrDataBase.add(slice);
+                beginPeriodTracker = (beginPeriodTracker + currCount) % 96;
+                currCount = 1;
+            }
+            prevRegime = currRegime;
+        }
+        LOSChartHelper.CustomPieData lastSliceBase = new LOSChartHelper.CustomPieData(prevRegime, currCount, (apStart + 96 - currCount) % 96);
+        lrDataBase.add(lastSliceBase);
+
+        currCount = 0;
+        beginPeriodTracker = apStart;
+        for (int count = 0; count < 96; count++) {
+            String currRegime = LOSChartHelper.toRegimeStr(dcRatioWorkZoneSeries.getData().get(count).getYValue().floatValue(), false);
+
+            if (currRegime.equalsIgnoreCase(prevRegime)) {
+                currCount++;
+            } else {
+                LOSChartHelper.CustomPieData slice = new LOSChartHelper.CustomPieData(prevRegime, currCount, beginPeriodTracker);
+                lrDataWZ.add(slice);
+                beginPeriodTracker = (beginPeriodTracker + currCount) % 96;
+                currCount = 1;
+            }
+            prevRegime = currRegime;
+        }
+        LOSChartHelper.CustomPieData lastSliceWZ = new LOSChartHelper.CustomPieData(prevRegime, currCount, (apStart + 96 - currCount) % 96);
+        lrDataWZ.add(lastSliceWZ);
+
+        Node chart1 = LOSChartHelper.createDonutChart(lrDataBase, true, "Base - D/C Regime by Time of Day", false);
+        Node chart2 = LOSChartHelper.createDonutChart(lrDataWZ, true, "Work Zone - D/C Regime by Time of Day", false);
+        GridPane gridPane = new GridPane();
+        gridPane.add(chart1, 0, 0);
+        gridPane.add(chart2, 1, 0);
+        return gridPane;
+    }
+
+
     private Node createQueueLengthChart() {
         final NumberAxis xAxis = new NumberAxis("Time of Day", 0, 96, 1);
         xAxis.setLabel("Time of Day");
@@ -1717,6 +1834,210 @@ public class VolumeToCapacityWizard extends BorderPane {
         return chartWrapper;
     }
 
+    private String generateVCWizardJSON() {
+        JSONObject vcJSON = new JSONObject();
+
+        vcJSON.put(KEY_AADT_SPLIT, String.valueOf(inputDirectionalSplitSlider.getValue()));
+        vcJSON.put(KEY_VOLUME_PROFILE, String.valueOf(inputAADTProfile.getValue().value));
+        if (inputAADTProfile.getValue().value == AADTDistributionHelper.TYPE_DEFAULT_NATIONAL_WEEKDAY || inputAADTProfile.getValue().value == AADTDistributionHelper.TYPE_DEFAULT_NATIONAL_WEEKEND) {
+            vcJSON.put(KEY_VOLUME_SCALING, String.valueOf(inputAADTNationalProfileSubtype.getValue().value));
+        } else {
+            vcJSON.put(KEY_VOLUME_SCALING, String.valueOf(inputAADTProfileSubType.getValue().value));
+        }
+        vcJSON.put(KEY_TERRAIN_TYPE, String.valueOf(inputTerrainType.getValue().type));
+        vcJSON.put(KEY_TRUCK_PCT, inputTruckPct.getText());
+        vcJSON.put(KEY_SEGMENT_TYPE, String.valueOf(inputSegmentType.getValue().segTypeIdx));
+        vcJSON.put(KEY_BASE_LANE_CAPCITY_PC, inputBaseLaneCapacity.getText().replace(",", ""));
+        vcJSON.put(KEY_BASE_SAT_FLOW_RATE_PC, inputBaseLaneSatFlowRate.getText().replace(",", ""));
+        vcJSON.put(KEY_INTX_TYPE, String.valueOf(inputIntxType.getValue().intxType));
+        vcJSON.put(KEY_INTX_ADJUSTMENT_FACTOR, inputIntxTypeAdjustment.getText());
+        vcJSON.put(KEY_WZ_TYPE, inputWorkZoneType.getValue().type.toString());
+        vcJSON.put(KEY_WZ_LANE_CAPCITY_PC, inputWorkZoneLaneCapacity.getText().replace(",", ""));
+        vcJSON.put(KEY_WZ_LANE_SAT_FLOW_PC, inputWorkZoneLaneSatFlow.getText().replace(",", ""));
+        vcJSON.put(KEY_WZ_LANES_CLOSED, String.valueOf(inputWorkZoneNumLanesClosed.getValue().value));
+
+        return vcJSON.toJSONString();
+    }
+
+    private void parseJSONString(String jsonString, boolean updateInputsOnParse) {
+        parseLock = true;
+        ArrayList<String> parseFail = new ArrayList<>();
+        JSONParser parser = new JSONParser();
+        try {
+            //System.out.println(jsonString);
+            JSONObject vcJSON = (JSONObject) parser.parse(jsonString);
+            try {
+                double dirSplit = Double.parseDouble(vcJSON.get(KEY_AADT_SPLIT).toString());
+                inputDirectionalSplitSlider.setValue(dirSplit);
+                inputDirectionalSplitValue.setText(String.format("%.2f", dirSplit));
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_AADT_SPLIT);
+            }
+            try {
+                int volueProfile = Integer.parseInt(vcJSON.get(KEY_VOLUME_PROFILE).toString());
+                for (VolumeProfileItem volumeProfileItem : inputAADTProfile.getItems()) {
+                    if (volumeProfileItem.value == volueProfile) {
+                        inputAADTProfile.setValue(volumeProfileItem);
+                        break;
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_VOLUME_PROFILE);
+            }
+            try {
+                int volumeScaling = Integer.parseInt(vcJSON.get(KEY_VOLUME_SCALING).toString());
+                if (inputAADTProfile.getValue().value == AADTDistributionHelper.TYPE_DEFAULT_NATIONAL_WEEKDAY || inputAADTProfile.getValue().value == AADTDistributionHelper.TYPE_DEFAULT_NATIONAL_WEEKEND) {
+                    for (ProfileSubTypeItem profileSubTypeItem : inputAADTNationalProfileSubtype.getItems()) {
+                        if (profileSubTypeItem.value == volumeScaling) {
+                            inputAADTNationalProfileSubtype.setValue(profileSubTypeItem);
+                            break;
+                        }
+                    }
+                } else {
+                    for (ProfileSubTypeItem profileSubTypeItem : inputAADTProfileSubType.getItems()) {
+                        if (profileSubTypeItem.value == volumeScaling) {
+                            inputAADTProfileSubType.setValue(profileSubTypeItem);
+                            break;
+                        }
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_VOLUME_SCALING);
+            }
+            try {
+                int terrainType = Integer.parseInt(vcJSON.get(KEY_TERRAIN_TYPE).toString());
+                for (TerrainTypeItem terrainTypeItem : inputTerrainType.getItems()) {
+                    if (terrainTypeItem.type == terrainType) {
+                        inputTerrainType.setValue(terrainTypeItem);
+                        break;
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_TERRAIN_TYPE);
+            }
+            try {
+                float truckPCT = Float.parseFloat(vcJSON.get(KEY_TRUCK_PCT).toString());
+                inputTruckPct.setText(String.valueOf(truckPCT));
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_TRUCK_PCT);
+            }
+            try {
+                int segmentType = Integer.parseInt(vcJSON.get(KEY_SEGMENT_TYPE).toString());
+                for (SegmentTypeItem segmentTypeItem : inputSegmentType.getItems()) {
+                    if (segmentTypeItem.segTypeIdx == segmentType) {
+                        inputSegmentType.setValue(segmentTypeItem);
+                        break;
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_SEGMENT_TYPE);
+            }
+            try {
+                if (inputSegmentType.getValue().isCustom()) {
+                    int baseLaneCapacity = Integer.parseInt(vcJSON.get(KEY_BASE_LANE_CAPCITY_PC).toString().replace(",", ""));
+                    inputBaseLaneCapacity.setText(String.format("%,d", baseLaneCapacity));
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_BASE_LANE_CAPCITY_PC);
+            }
+            try {
+                int baseLaneSatFlowRate = Integer.parseInt(vcJSON.get(KEY_BASE_SAT_FLOW_RATE_PC).toString().replace(",", ""));
+                inputBaseLaneSatFlowRate.setText(String.format("%,d", baseLaneSatFlowRate));
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_BASE_SAT_FLOW_RATE_PC);
+            }
+            try {
+                int intxType = Integer.parseInt(vcJSON.get(KEY_INTX_TYPE).toString());
+                for (IntxTypeInput intxTypeInput : inputIntxType.getItems()) {
+                    if (intxTypeInput.intxType == intxType) {
+                        inputIntxType.setValue(intxTypeInput);
+                        break;
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_INTX_TYPE);
+            }
+            try {
+                if (inputIntxType.getValue().isCustom()) {
+                    float intxAdjustmentFactory = Float.parseFloat(vcJSON.get(KEY_INTX_ADJUSTMENT_FACTOR).toString());
+                    inputIntxTypeAdjustment.setText(String.valueOf(intxAdjustmentFactory));
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_INTX_ADJUSTMENT_FACTOR);
+            }
+            try {
+                String wzType = vcJSON.get(KEY_WZ_TYPE).toString();
+                for (WorkZoneTypeItem workZoneTypeItem : inputWorkZoneType.getItems()) {
+                    if (workZoneTypeItem.type.toString().equalsIgnoreCase(wzType)) {
+                        inputWorkZoneType.setValue(workZoneTypeItem);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                parseFail.add(KEY_WZ_TYPE);
+            }
+            try {
+                if (inputWorkZoneType.getValue().type == WorkZoneType.CUSTOM) {
+                    int wzLaneCapacity = Integer.parseInt(vcJSON.get(KEY_WZ_LANE_CAPCITY_PC).toString().replace(",", ""));
+                    inputWorkZoneLaneCapacity.setText(String.format("%,d", wzLaneCapacity));
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_WZ_LANE_CAPCITY_PC);
+            }
+            try {
+                if (inputWorkZoneType.getValue().type == WorkZoneType.CUSTOM) {
+                    int wzLaneSatFlow = Integer.parseInt(vcJSON.get(KEY_WZ_LANE_SAT_FLOW_PC).toString().replace(",", ""));
+                    inputWorkZoneLaneSatFlow.setText(String.format("%,d", wzLaneSatFlow));
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_WZ_LANE_SAT_FLOW_PC);
+            }
+            try {
+                int wzLanesClosed = Integer.parseInt(vcJSON.get(KEY_WZ_LANES_CLOSED).toString());
+                for ( WZnumLanesClosedInput wZnumLanesClosedInput : inputWorkZoneNumLanesClosed.getItems()) {
+                    if (wZnumLanesClosedInput.value == wzLanesClosed) {
+                        inputWorkZoneNumLanesClosed.setValue(wZnumLanesClosedInput);
+                        break;
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                parseFail.add(KEY_WZ_LANES_CLOSED);
+            }
+        } catch (org.json.simple.parser.ParseException e) {
+            e.printStackTrace();
+        }
+
+        parseLock = false;
+        if (updateInputsOnParse) {
+            inputParametersUpdated();
+        }
+        if (parseFail.size() > 0) {
+            JFXDialogLayout content = new JFXDialogLayout();
+            content.setHeading(NodeFactory.createFormattedLabel("Warning: Saved V/C Wizard Data Issue", "modal-title"));
+            Label desc = NodeFactory.createFormattedLabel("One or more issues was encountered while extracting the saved V/C Wizard inputs from the project file.\n\nIssues were encountered for the following inputs:", "");
+            VBox issueVBox = new VBox(5);
+            for (String issue : parseFail) {
+                issueVBox.getChildren().add(NodeFactory.createFormattedLabel(issue, ""));
+            }
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            scrollPane.setContent(issueVBox);
+            BorderPane contentPane = new BorderPane();
+            contentPane.setTop(desc);
+            contentPane.setCenter(scrollPane);
+            content.setBody(contentPane);
+            JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+            JFXButton okAction = new JFXButton("Ok");
+            okAction.setOnAction(actionEvent -> {dlg.close();});
+            content.getActions().addAll(okAction);
+            content.setMinWidth(600);
+            content.setMinHeight(600);
+            dlg.setOverlayClose(false);
+            dlg.show();
+        }
+    }
+
     private static final Object MOUSE_TRIGGER_LOCATION = "tooltip-last-location";
 
     private static final float TERRAIN_TYPE_LEVEL = 2.0f;
@@ -1732,4 +2053,39 @@ public class VolumeToCapacityWizard extends BorderPane {
         CROSSOVER,
         CUSTOM
     }
+
+    private boolean parseLock = false;
+
+    private static final String KEY_AADT_SPLIT = "KEY_AADT_SPLIT";
+    private static final String KEY_VOLUME_PROFILE = "KEY_VOLUME_PROFILE";
+    private static final String KEY_VOLUME_SCALING = "KEY_VOLUME_SCALING";
+    private static final String KEY_TERRAIN_TYPE = "KEY_TERRAIN_TYPE";
+    private static final String KEY_TRUCK_PCT = "KEY_TRUCK_PCT";
+    private static final String KEY_SEGMENT_TYPE = "KEY_SEGMENT_TYPE";
+    private static final String KEY_BASE_LANE_CAPCITY_PC = "KEY_BASE_LANE_CAPCITY_PC";
+    private static final String KEY_WZ_TYPE = "KEY_WZ_TYPE";
+    private static final String KEY_WZ_LANE_CAPCITY_PC = "KEY_WZ_LANE_CAPCITY_PC";
+    private static final String KEY_WZ_LANE_SAT_FLOW_PC = "KEY_WZ_LANE_SAT_FLOW_PC";
+    private static final String KEY_WZ_LANES_CLOSED = "KEY_WZ_LANES_CLOSED";
+    private static final String KEY_BASE_SAT_FLOW_RATE_PC = "KEY_BASE_SAT_FLOW_RATE_PC";
+    private static final String KEY_INTX_TYPE = "KEY_INTX_TYPE";
+    private static final String KEY_INTX_ADJUSTMENT_FACTOR = "KEY_INTX_ADJUSTMENT_FACTOR";
+
+    private static final int TYPE_BASIC = 0;
+    private static final int TYPE_MERGE = 1;
+    private static final int TYPE_DIVERGE = 2;
+    private static final int TYPE_WEAVE = 3;
+    private static final int TYPE_CUSTOM = -1;
+
+    private static final int TYPE_NONE = 0;
+    private static final int TYPE_ROUNDABOUT = 1;
+    private static final int TYPE_TWSC = 2;
+    private static final int TYPE_AWSC = 3;
+    private static final int TYPE_SIGNAL_TWO_PHASE = 4;
+    private static final int TYPE_SIGNAL_THREE_PHASE = 5;
+    private static final int TYPE_SIGNAL_FOUR_PHASE = 6;
+
+    private static final int TYPE_LEVEL = 0;
+    private static final int TYPE_ROLLING = 1;
+    private static final int TYPE_MOUNTAINOUS = 2;
 }

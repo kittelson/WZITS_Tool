@@ -124,6 +124,12 @@ public class PDFIOHelper {
         pdfReportHelper.createFactSheet(controller, factSheetIdx);
     }
 
+    public static void writeFullSummaryReportPDF(MainController controller) {
+        PDFReportHelper pdfReportHelper = new PDFReportHelper(null, -1);
+        pdfReportHelper.createFactSheet(controller, -1);
+
+    }
+
     public static void writeStepSummary(MainController mc, int factSheetIdx) {
         Node n = mc.goToFactSheet(factSheetIdx, false);
         FileChooser fc = new FileChooser();

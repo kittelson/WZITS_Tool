@@ -254,7 +254,7 @@ public class Step1PanelDep extends BorderPane {
         //fwSummaryPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
         // Stakeholders Questions Panel
         stakeholderPane.setTop(NodeFactory.createFormattedLabel("Stakeholders", "substep-title-label"));
-        stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject()));
+        stakeholderPane.setCenter(Step1TableHelper.createStakeholderWizard(control.getProject(), control));
         stakeholderPane.setBottom(NodeFactory.createFormattedLabel("", "substep-title-label"));
 
         // Stakeholder Wizard panel

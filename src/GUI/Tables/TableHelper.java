@@ -35,7 +35,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
+import javafx.util.Duration;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  * @author ltrask
@@ -484,9 +489,9 @@ public class TableHelper {
     }
 
     public static Pane createCommentQV2(int idx, Question q) {
-        GridPane gPane = new GridPane();
-        GridPane.setVgrow(gPane, Priority.ALWAYS);
-        gPane.getStyleClass().add("comment-q-pane");
+        BorderPane commentPane = new BorderPane();
+        GridPane.setVgrow(commentPane, Priority.ALWAYS);
+        commentPane.getStyleClass().add("comment-q-pane");
         Label idxLabel = NodeFactory.createFormattedLabel(String.valueOf(idx) + ":", "opt-pane-question-idx");
 
         Label qText = NodeFactory.createFormattedLabel(q.getQuestionText(), "opt-pane-question");
@@ -499,57 +504,13 @@ public class TableHelper {
         GridPane.setHgrow(qText, Priority.ALWAYS);
         // Adding components to sub gridpane
         GridPane subGrid = new GridPane();
-        subGrid.add(idxLabel, 0, 1);
-        subGrid.add(qText, 1, 1);
-        // Adding column constraints, idx is fixed, question text fills remaining space
-        ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
-        ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
-
-        subGrid.getColumnConstraints().addAll(cc1, cc2);
+        subGrid.add(idxLabel, 0, 0);
+        subGrid.add(qText, 1, 0);
 
         switch (q.getCommentQType()) {
             case Question.COMMENT_QTYPE_YN:
                 QuestionYN qyn = (QuestionYN) q;
                 JFXCheckBox yesCheck = new JFXCheckBox("Yes");
-                JFXButton btnComments = new JFXButton("Add Comments");
-                btnComments.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        JFXDialogLayout content = new JFXDialogLayout();
-                        JFXDialog modalComments = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
-                        content.setHeading(NodeFactory.createFormattedLabel("Additional Comments", "modal-title"));
-                        JFXTextArea txtArea = new JFXTextArea(q.getComment());
-                        txtArea.setStyle("-fx-font-size: 12pt;");
-                        Label questionText = new Label(idx + ") " + q.getQuestionText());
-                        questionText.setWrapText(true);
-                        BorderPane modalBody = new BorderPane();
-                        modalBody.setTop(questionText);
-                        BorderPane.setMargin(questionText, new Insets(0, 0, 15, 0));
-                        modalBody.setCenter(txtArea);
-                        content.setBody(modalBody);
-                        JFXButton btnCloseDialog = new JFXButton("Cancel");
-                        btnCloseDialog.getStyleClass().add("comment-pane-buttonClose");
-                        btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                modalComments.close();
-                            }
-                        });
-                        JFXButton btnSaveComment = new JFXButton("Save Comments");
-                        btnSaveComment.getStyleClass().add("modal-pane-button");
-                        btnSaveComment.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                qyn.setComment(txtArea.getText());
-                                modalComments.close();
-                            }
-                        });
-                        content.setActions(btnCloseDialog, btnSaveComment);
-                        content.setMinWidth(800);
-                        modalComments.show();
-                    }
-                });
-                btnComments.getStyleClass().add("comment-pane-button");
                 yesCheck.selectedProperty().bindBidirectional(qyn.answerIsYesProperty());
                 JFXCheckBox noCheck = new JFXCheckBox("No");
                 noCheck.selectedProperty().bindBidirectional(qyn.answerIsNoProperty());
@@ -557,17 +518,12 @@ public class TableHelper {
                 GridPane.setVgrow(noCheck, Priority.ALWAYS);
                 GridPane.setHgrow(yesCheck, Priority.ALWAYS);
                 GridPane.setHgrow(noCheck, Priority.ALWAYS);
-                subGrid.add(yesCheck, 2, 1);
-                subGrid.add(noCheck, 3, 1);
-                subGrid.add(btnComments, 4, 1);
-                ColumnConstraints ccY = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
-                ColumnConstraints ccN = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
-                ColumnConstraints ccBtn = new ColumnConstraints(150, 150, 150, Priority.NEVER, HPos.CENTER, true);
-                subGrid.getColumnConstraints().addAll(ccY, ccN, ccBtn);
+                subGrid.add(yesCheck, 2, 0);
+                subGrid.add(noCheck, 3, 0);
                 break;
             case Question.COMMENT_QTYPE_OPT:
                 QuestionOption qo = (QuestionOption) q;
-                ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(qo.getOptions()));
+                JFXComboBox<String> cb = new JFXComboBox<>(FXCollections.observableArrayList(qo.getOptions()));
                 cb.setMaxWidth(MainController.MAX_WIDTH);
                 GridPane.setHgrow(cb, Priority.ALWAYS);
                 GridPane.setVgrow(cb, Priority.ALWAYS);
@@ -580,56 +536,108 @@ public class TableHelper {
                 subGrid.getColumnConstraints().addAll(ccChoice);
                 break;
             case Question.COMMENT_QTYPE_NA:
-                JFXButton btnNoYS = new JFXButton("Add Comments");
-                btnNoYS.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        JFXDialogLayout content = new JFXDialogLayout();
-                        JFXDialog modalComments = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
-                        content.setHeading(NodeFactory.createFormattedLabel("Additional Comments", "modal-title"));
-                        JFXTextArea txtArea = new JFXTextArea(q.getComment());
-                        txtArea.setStyle("-fx-font-size: 18; -fx-text-fill: #4472c4;");
-                        Label questionText = new Label(idx + ") " + q.getQuestionText());
-                        questionText.setWrapText(true);
-                        BorderPane modalBody = new BorderPane();
-                        modalBody.setTop(questionText);
-                        modalBody.setCenter(txtArea);
-                        content.setBody(modalBody);
-                        JFXButton btnCloseDialog = new JFXButton("Cancel");
-                        btnCloseDialog.getStyleClass().add("comment-pane-buttonClose");
-                        btnCloseDialog.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                modalComments.close();
-                            }
-                        });
-                        JFXButton btnSaveComment = new JFXButton("Save Comments");
-                        btnSaveComment.getStyleClass().add("modal-pane-button");
-                        btnSaveComment.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                q.setComment(txtArea.getText());
-                                modalComments.close();
-                            }
-                        });
-                        content.setActions(btnCloseDialog, btnSaveComment);
-                        content.setMinWidth(800);
-                        modalComments.show();
-                    }
-                });
-                subGrid.add(btnNoYS, 4, 1);
-                ColumnConstraints ccYe = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
-                ColumnConstraints ccNo = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
-                ColumnConstraints ccBtnT = new ColumnConstraints(150, 150, 150, Priority.NEVER, HPos.CENTER, true);
-                subGrid.getColumnConstraints().addAll(ccYe, ccNo, ccBtnT);
-                btnNoYS.getStyleClass().add("comment-pane-button");
                 break;
         }
+        JFXButton addCommentsButton = new JFXButton("Add Comments");
+        addCommentsButton.setOnAction(actionEvent -> {
+            JFXDialogLayout content = new JFXDialogLayout();
+            JFXDialog modalComments = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+            content.setHeading(NodeFactory.createFormattedLabel("Additional Comments", "modal-title"));
+            JFXTextArea txtArea = new JFXTextArea(q.getComment());
+            txtArea.setStyle("-fx-font-size: 12pt;");
+            Label questionText = new Label(idx + ") " + q.getQuestionText());
+            questionText.setWrapText(true);
+            BorderPane modalBody = new BorderPane();
+            modalBody.setTop(questionText);
+            BorderPane.setMargin(questionText, new Insets(0, 0, 15, 0));
+            modalBody.setCenter(txtArea);
+            content.setBody(modalBody);
+            JFXButton btnCloseDialog = new JFXButton("Cancel");
+            btnCloseDialog.getStyleClass().add("comment-pane-buttonClose");
+            btnCloseDialog.setOnAction(closeActionEvent -> modalComments.close());
+            JFXButton btnSaveComment = new JFXButton("Save Comments");
+            btnSaveComment.getStyleClass().add("modal-pane-button");
+            btnSaveComment.setOnAction(saveActionEvent -> {
+                q.setComment(txtArea.getText());
+                modalComments.close();
+            });
+            content.setActions(btnCloseDialog, btnSaveComment);
+            content.setMinWidth(800);
+            modalComments.show();
+        });
+        addCommentsButton.getStyleClass().add("comment-pane-button");
 
-        gPane.add(subGrid, 0, 0);
-        GridPane.setVgrow(subGrid, Priority.ALWAYS);
-        GridPane.setHgrow(subGrid, Priority.ALWAYS);
-        return gPane;
+        final FontIcon commentStatusCompleteIcon = NodeFactory.createIcon(FontAwesomeSolid.COMMENT, Color.web(ColorHelper.WZ_BLUE));
+        final Tooltip statusCompleteTooltip = new Tooltip();
+        statusCompleteTooltip.setShowDelay(Duration.millis(250));
+        statusCompleteTooltip.setShowDuration(Duration.INDEFINITE);
+        statusCompleteTooltip.setStyle("-fx-font-size: 11pt;");
+        statusCompleteTooltip.setOnShown(windowEvent -> {
+            statusCompleteTooltip.setText(q.getComment());
+        });
+        Tooltip.install(commentStatusCompleteIcon, statusCompleteTooltip);
+        final FontIcon commentStatusIncompleteIcon = NodeFactory.createIcon(FontAwesomeSolid.COMMENT_SLASH, Color.DARKGRAY);
+        final Tooltip statusIncompleteTooltip = new Tooltip("No comment entered for documentation question.");
+        statusIncompleteTooltip.setShowDelay(Duration.millis(250));
+        statusIncompleteTooltip.setShowDuration(Duration.INDEFINITE);
+        statusIncompleteTooltip.setStyle("-fx-font-size: 11pt;");
+        Tooltip.install(commentStatusIncompleteIcon, statusIncompleteTooltip);
+
+        final BorderPane commentStatus = new BorderPane();
+        GridPane.setHgrow(commentStatus, Priority.ALWAYS);
+        GridPane.setHalignment(commentStatus, HPos.CENTER);
+        if (q.getCommentQType() == Question.COMMENT_QTYPE_NA) {
+            commentStatus.setCenter(commentStatusIncompleteIcon);
+        }
+
+        if (q.isTypeYesNo()) {
+            q.responseIdxProperty().addListener(((observableValue, oldResponse, newResponse) -> {
+                if (q.getComment() != null && !q.getComment().trim().equalsIgnoreCase("")) {
+                    commentStatus.setCenter(commentStatusCompleteIcon);
+                } else {
+                    if (newResponse.intValue() < 0) {
+                        commentStatus.setCenter(null);
+                    } else {
+                        commentStatus.setCenter(commentStatusIncompleteIcon);
+                    }
+                }
+            }));
+        }
+        q.commentProperty().addListener(((observableValue, oldComment, newComment) -> {
+            if (newComment != null && !newComment.trim().equalsIgnoreCase("")) {
+                commentStatus.setCenter(commentStatusCompleteIcon);
+            } else {
+                if (q.isTypeYesNo()) {
+                    if (q.getResponseIdx() >= 0) {
+                        commentStatus.setCenter(commentStatusIncompleteIcon);
+                    } else {
+                        commentStatus.setCenter(null);
+                    }
+                } else {
+                    commentStatus.setCenter(commentStatusIncompleteIcon);
+                }
+            }
+        }));
+
+
+        subGrid.add(commentStatus, 4, 0);
+        subGrid.add(addCommentsButton, 5, 0);
+
+        // Adding column constraints, idx is fixed, question text fills remaining space
+        ColumnConstraints cc1 = new ColumnConstraints(35, 35, 35, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints cc2 = new ColumnConstraints(1, 350, MainController.MAX_HEIGHT, Priority.ALWAYS, HPos.LEFT, true);
+        ColumnConstraints ccCheckBoxYes = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints ccCheckboxNo = new ColumnConstraints(50, 50, 50, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints ccCommentIcon = new ColumnConstraints(25, 25, 25, Priority.NEVER, HPos.CENTER, true);
+        ColumnConstraints ccCommentButton = new ColumnConstraints(150, 150, 150, Priority.NEVER, HPos.CENTER, true);
+        subGrid.getColumnConstraints().addAll(cc1, cc2, ccCheckBoxYes, ccCheckboxNo, ccCommentIcon, ccCommentButton);
+        subGrid.setHgap(10);
+
+//        gPane.add(subGrid, 0, 0);
+        commentPane.setCenter(subGrid);
+//        GridPane.setVgrow(subGrid, Priority.ALWAYS);
+//        GridPane.setHgrow(subGrid, Priority.ALWAYS);
+        return commentPane;
     }
 
     public static Node createCommentPage(ObservableList<Question> qList) {
@@ -653,7 +661,7 @@ public class TableHelper {
         return scrollPane;
     }
 
-    public static Pane createCommentPageYN(ObservableList<QuestionYN> qList) {
+    public static Node createCommentPageYN(ObservableList<QuestionYN> qList) {
         GridPane gPane = new GridPane();
 
         for (int qIdx = 0; qIdx < qList.size(); qIdx++) {
@@ -668,7 +676,10 @@ public class TableHelper {
         BorderPane bPane = new BorderPane();
         bPane.setTop(NodeFactory.createFormattedLabel("Answer the following yes/no questions and enter any comments as necessary.", "opt-pane-title"));
         bPane.setCenter(gPane);
-        return bPane;
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setContent(bPane);
+        return scrollPane;
     }
 
     public static Pane createCommentPageYNv2(ObservableList<QuestionYN> qList) {
