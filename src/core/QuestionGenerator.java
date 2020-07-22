@@ -14,6 +14,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -277,14 +279,164 @@ public class QuestionGenerator implements Serializable {
     }
 
     private void initializeQuestions() {
-        createGoalWizardQuestions();
+//        createGoalWizardQuestions();
+        createGoalWizardQuestionsV2();
         createUserNeedsSupportQuestions();
         createMajorGoalsQuestions();
-        createFeasWizardQuestions();
-        createStakeholderWizardQuestions();
+//        createFeasWizardQuestions();
+        createFeasWizardQuestionsV2();
+//        createStakeholderWizardQuestions();
+        createStakeholderWizardQuestionsV2();
         createITSResourcesQuestions();
-        createApplicationWizardQuestions();
+//        createApplicationWizardQuestions();
+        createApplicationWizardQuestionsV2();
         createProjectDocumentationQuesitons();
+    }
+
+    private void createFeasWizardQuestionsV2() {
+        JSONObject json = FeasibilityMatrix.loadJSON();
+        JSONArray jArr = (JSONArray) json.get("Feasibility Matrix");
+        int qIdx = 0;
+        JSONObject q = (JSONObject) jArr.get(qIdx++);
+        JSONArray workDurationAnswers = (JSONArray) q.get("Answers");
+        String[] workDurationAnswerLabels = new String[4];
+        workDurationAnswerLabels[0] = ((JSONObject) workDurationAnswers.get(0)).get("Label").toString();
+        workDurationAnswerLabels[1] = ((JSONObject) workDurationAnswers.get(1)).get("Label").toString();
+        workDurationAnswerLabels[2] = ((JSONObject) workDurationAnswers.get(2)).get("Label").toString();
+        workDurationAnswerLabels[3] = "N/A";
+        int[] workDurationAnswerScores = new int[4];
+        workDurationAnswerScores[0] = Integer.parseInt(((JSONObject) workDurationAnswers.get(0)).getOrDefault("Score", "0").toString());
+        workDurationAnswerScores[1] = Integer.parseInt(((JSONObject) workDurationAnswers.get(1)).getOrDefault("Score", "0").toString());
+        workDurationAnswerScores[2] = Integer.parseInt(((JSONObject) workDurationAnswers.get(2)).getOrDefault("Score", "0").toString());
+        workDurationAnswerScores[3] = 0;
+        final QuestionOption workDurationQ = new QuestionOption(qIdx, Question.GOAL_FEASIBILITY,
+                q.get("Question").toString(), // "What is the duration of long-term stationary work?"
+                workDurationAnswerLabels, //new String[]{"> 1 Construction Season", "4-10 Months", "< 4 Months", "N/A"},
+                workDurationAnswerScores //new int[]{8, 5, 1, 0});
+        );
+        workDurationQ.setRefText("MUTCD Designation");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        JSONArray impactExtentAnswers = (JSONArray) q.get("Answers");
+        String[] impactExtentAnswerLabels = new String[3];
+        impactExtentAnswerLabels[0] = ((JSONObject) impactExtentAnswers.get(0)).get("Label").toString();
+        impactExtentAnswerLabels[1] = ((JSONObject) impactExtentAnswers.get(1)).get("Label").toString();
+        impactExtentAnswerLabels[2] = ((JSONObject) impactExtentAnswers.get(2)).get("Label").toString();
+        int[] impactExtentAnswerScores = new int[3];
+        impactExtentAnswerScores[0] = Integer.parseInt(((JSONObject) impactExtentAnswers.get(0)).getOrDefault("Score", "0").toString());
+        impactExtentAnswerScores[1] = Integer.parseInt(((JSONObject) impactExtentAnswers.get(1)).getOrDefault("Score", "0").toString());
+        impactExtentAnswerScores[2] = Integer.parseInt(((JSONObject) impactExtentAnswers.get(2)).getOrDefault("Score", "0").toString());
+        final QuestionOption impactExtentQ = new QuestionOption(qIdx, Question.GOAL_FEASIBILITY,
+                q.get("Question").toString(), // "To what extent will users be impacted for the duration of the work zone?"
+                impactExtentAnswerLabels, //new String[]{"Significant", "Moderate", "Minimal"},
+                impactExtentAnswerScores //new int[]{8, 5, 1}
+        );
+
+        q = (JSONObject) jArr.get(qIdx++);
+        JSONArray queueExpectationAnswers = (JSONArray) q.get("Answers");
+        String[] queueExpectationAnswerLabels = new String[3];
+        queueExpectationAnswerLabels[0] = ((JSONObject) queueExpectationAnswers.get(0)).get("Label").toString();
+        queueExpectationAnswerLabels[1] = ((JSONObject) queueExpectationAnswers.get(1)).get("Label").toString();
+        queueExpectationAnswerLabels[2] = ((JSONObject) queueExpectationAnswers.get(2)).get("Label").toString();
+        int[] queueExpectationAnswerScores = new int[3];
+        queueExpectationAnswerScores[0] = Integer.parseInt(((JSONObject) queueExpectationAnswers.get(0)).getOrDefault("Score", "0").toString());
+        queueExpectationAnswerScores[1] = Integer.parseInt(((JSONObject) queueExpectationAnswers.get(1)).getOrDefault("Score", "0").toString());
+        queueExpectationAnswerScores[2] = Integer.parseInt(((JSONObject) queueExpectationAnswers.get(2)).getOrDefault("Score", "0").toString());
+        final QuestionOption queueExpectationQ = new QuestionOption(qIdx, Question.GOAL_FEASIBILITY,
+                q.get("Question").toString(),  // "How long are queues expected to extend?"
+                queueExpectationAnswerLabels, //new String[]{"At least 2 miles for at least 2 hours per day", "1-2 miles for 1-2 hours per day", "<1 mile for <1 hour per day"},
+                queueExpectationAnswerScores //new int[]{8, 5, 1}
+        );
+        bindDependantQs(queueExpectationQ, this.significantQueueingQ, "User Needs #3");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        JSONArray noticeableTimePeriodAnswers = (JSONArray) q.get("Answers");
+        String[] noticeableTimePeriodAnswerLabels = new String[4];
+        noticeableTimePeriodAnswerLabels[0] = ((JSONObject) noticeableTimePeriodAnswers.get(0)).get("Label").toString();
+        noticeableTimePeriodAnswerLabels[1] = ((JSONObject) noticeableTimePeriodAnswers.get(1)).get("Label").toString();
+        noticeableTimePeriodAnswerLabels[2] = ((JSONObject) noticeableTimePeriodAnswers.get(2)).get("Label").toString();
+        noticeableTimePeriodAnswerLabels[3] = ((JSONObject) noticeableTimePeriodAnswers.get(3)).get("Label").toString();
+        int[] noticeableTimePeriodAnswerScores = new int[4];
+        noticeableTimePeriodAnswerScores[0] = Integer.parseInt(((JSONObject) noticeableTimePeriodAnswers.get(0)).getOrDefault("Score", "0").toString());
+        noticeableTimePeriodAnswerScores[1] = Integer.parseInt(((JSONObject) noticeableTimePeriodAnswers.get(1)).getOrDefault("Score", "0").toString());
+        noticeableTimePeriodAnswerScores[2] = Integer.parseInt(((JSONObject) noticeableTimePeriodAnswers.get(2)).getOrDefault("Score", "0").toString());
+        noticeableTimePeriodAnswerScores[3] = Integer.parseInt(((JSONObject) noticeableTimePeriodAnswers.get(3)).getOrDefault("Score", "0").toString());
+        final QuestionOption noticeableTimePeriodQ = new QuestionOption(qIdx, Question.GOAL_FEASIBILITY,
+                q.get("Question").toString(),  // "During which time periods are noticeable traffic impacts expected to occur?"
+                noticeableTimePeriodAnswerLabels, //new String[]{"More than morning and afternoon peak hours in both directions", "During most of the morning or afternoon peaks hours in either direction", "Single peak hour or less in a single direction"},
+                noticeableTimePeriodAnswerScores //new int[]{8, 5, 1, 0}
+        );
+        bindDependantQs(noticeableTimePeriodQ, this.congestionNoticableQ, "User Needs #1");
+
+        qFeasOptionList.addAll(workDurationQ, impactExtentQ, noticeableTimePeriodQ, queueExpectationQ);
+
+        // List of yes no questions
+        q = (JSONObject) jArr.get(qIdx);
+        JSONArray ynFeasQuestionsArr = (JSONArray) q.get("Answers");
+        qIdx = 0;
+        JSONObject answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(), // "Is traffic speed variability expected to occur?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Do you expect back of queue and other sight distance issues?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString()))); // Dependant
+        bindDependantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.significantQueueingQ, "User Needs #3");
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Are high speeds/chronic speeding expected to occur?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString() + " (See User Needs #2)",  // "Is driver diversion expected onto alternate routes? (See User Needs #2)"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        bindRedundantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.driverDiversionQ, "User Needs #2");
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Are merging conflicts and hazards at work zone tapers expected to occur?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Do you expect the work zone layout to cause driver confusion or trouble wayfinding?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Will frequently changing operating conditions for traffic be used?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Will variable work activities occur?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Are oversize vehicles expected?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Do you expect a construction vehicle entry/exit speed differential relative to traffic?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        bindDependantQs(qFeasYNList.get(qFeasYNList.size() - 1), this.highVolumeConstructionVehsQ, "User Needs #7");
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Will data be collected for work zone performance measures?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
+        answerOpt = (JSONObject) ynFeasQuestionsArr.get(qIdx++);
+        qFeasYNList.add(new QuestionYN(qIdx, Question.GOAL_FEASIBILITY,
+                answerOpt.get("Label").toString(),  // "Do you expect any unusual or unpredictable weather patterns to occur?"
+                false,
+                Integer.parseInt(answerOpt.getOrDefault("Score", "0").toString())));
     }
 
     private void createFeasWizardQuestions() {
@@ -334,8 +486,83 @@ public class QuestionGenerator implements Serializable {
         //verticalHorizontalSightDistanceQ = qFeasYNList.get(qFeasYNList.size() - 1);
     }
 
+    private void createGoalWizardQuestionsV2() {
+        JSONObject json = GoalNeedsMatrix.loadJSON();
+        JSONArray jArr = (JSONArray) json.get("Goals Matrix");
+        int qIdx = 0;
+        JSONObject q = (JSONObject) jArr.get(qIdx++);
+        this.congestionNoticableQ = new QuestionYN(1, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.driverDiversionQ = new QuestionYN(2, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.significantQueueingQ = new QuestionYN(3, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.reducedLaneWidthQ = new QuestionYN(4, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.reducedSightDistanceQ = new QuestionYN(5, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        QuestionYN transitVehicleQ = new QuestionYN(6, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.highVolumeConstructionVehsQ = new QuestionYN(7, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.specificAgencyPoliciesQ = new QuestionYN(8, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.existingPerformanceMeasuresQ = new QuestionYN(9, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.outreachTravelerInfoQ = new QuestionYN(10, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        QuestionYN dataCollectionNeedsQ = new QuestionYN(11, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.emergencyShoulderQ = new QuestionYN(12, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.loweredSpeedLimitsQ = new QuestionYN(13, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.allowAutomatedSpeedEnforcementQ = new QuestionYN(14, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        proj.automatedEnforcementAllowedProperty().bindBidirectional(allowAutomatedSpeedEnforcementQ.answerIsYesProperty());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.rampGeometryQ = new QuestionYN(15, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.disableRampMetersQ = new QuestionYN(16, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+        q = (JSONObject) jArr.get(qIdx++);
+        this.biannualProcessReviewQ = new QuestionYN(17, Question.GOAL_USER_NEEDS, q.get("Question").toString());
+
+        qGoalWizardList.add(this.congestionNoticableQ);
+        this.congestionNoticableQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.driverDiversionQ);
+        this.driverDiversionQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.significantQueueingQ);
+        this.significantQueueingQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.reducedLaneWidthQ);
+        this.reducedLaneWidthQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.reducedSightDistanceQ);
+        this.reducedSightDistanceQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(transitVehicleQ);
+        qGoalWizardList.add(this.highVolumeConstructionVehsQ);
+        this.highVolumeConstructionVehsQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.specificAgencyPoliciesQ);
+        this.specificAgencyPoliciesQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.existingPerformanceMeasuresQ);
+        this.existingPerformanceMeasuresQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.outreachTravelerInfoQ);
+        this.outreachTravelerInfoQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(dataCollectionNeedsQ);
+        qGoalWizardList.add(this.emergencyShoulderQ);
+        this.emergencyShoulderQidx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.loweredSpeedLimitsQ);
+        this.loweredSpeedLimitsQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.allowAutomatedSpeedEnforcementQ);
+        this.allowAutomatedSpeedEnforcementQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.rampGeometryQ);
+        this.rampGeometryQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.disableRampMetersQ);
+        this.disableRampMetersQIdx = qGoalWizardList.size() - 1;
+        qGoalWizardList.add(this.biannualProcessReviewQ);
+        this.biannualProcessReviewQIdx = qGoalWizardList.size() - 1;
+    }
+
+
     private void createGoalWizardQuestions() {
-        qGoalWizardList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Do you expect congestion impacts to be noticable to drivers?"));
+        qGoalWizardList.add(new QuestionYN(1, Question.GOAL_USER_NEEDS, "Do you expect congestion impacts to be noticeable to drivers?"));
         this.congestionNoticableQ = qGoalWizardList.get(qGoalWizardList.size() - 1);
         this.congestionNoticableQIdx = qGoalWizardList.size() - 1;
         qGoalWizardList.add(new QuestionYN(2, Question.GOAL_USER_NEEDS, "Is driver diversion expected onto alternate routes?"));
@@ -518,6 +745,141 @@ public class QuestionGenerator implements Serializable {
         bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #10");
     }
 
+    private void createApplicationWizardQuestionsV2() {
+        JSONObject json = ApplicationMatrix.loadJSON();
+        JSONArray jArr = (JSONArray) json.get("Application Matrix");
+        QuestionYN refQ;
+        int qIdx = 0;
+        JSONObject q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        qApplicationList.get(qIdx - 1).visibleProperty().bind(proj.numLanesClosedProperty().greaterThan(0));
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        qApplicationList.get(qIdx - 1).visibleProperty().bind(proj.numLanesClosedProperty().greaterThan(0));
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_SAFETY, q.get("Question").toString()));
+        refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticable to drivers?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticeable
+        bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        refQ = this.congestionNoticableQ; // GW#1 Do you expect congestion impacts to be noticeable
+        bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #1");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        refQ = this.significantQueueingQ; // GW#3 Do you expect significant queueing
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #3");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        refQ = this.loweredSpeedLimitsQ; // GW#14 Will speed limits in the work zone be lowered compared to base conditions?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #13");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_MOBILITY, q.get("Question").toString()));
+        refQ = this.disableRampMetersQ; //  GW#19 Will work zone activities disable ramp meters?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #16");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_SAFETY, q.get("Question").toString()));
+        refQ = this.emergencyShoulderQ; // GW#13 Will the work zone result in closure of emergency shoulders?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #12");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_SAFETY, q.get("Question").toString()));
+        refQ = emergencyResponseCorridorQIdx; // F14 Is the work zone located on an emergency response corridor?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Stakeholder #6");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_SAFETY, q.get("Question").toString()));
+        //qApplicationList.get(qIdx - 2).visibleProperty().bind(proj.crashDataAvailableProperty());
+        // Redundent on GW#4 = Yes or GW#5 = Yes
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_SAFETY, q.get("Question").toString()));
+        BooleanBinding bb = new BooleanBinding() {
+
+            {
+                super.bind(reducedLaneWidthQ.answerIsYesProperty());
+                super.bind(reducedSightDistanceQ.answerIsYesProperty());
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return reducedLaneWidthQ.getAnswerIsYes() || reducedSightDistanceQ.getAnswerIsYes();
+            }
+        };
+        qApplicationList.get(qApplicationList.size() - 1).setLocked(true);
+        qApplicationList.get(qApplicationList.size() - 1).setVisible(false);
+        qApplicationList.get(qApplicationList.size() - 1).setRedundant(true);
+        qApplicationList.get(qApplicationList.size() - 1).setRefText("User Needs #5");
+        qApplicationList.get(qApplicationList.size() - 1).answerIsYesProperty().bind(bb);
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_SAFETY, q.get("Question").toString()));
+        refQ = this.rampGeometryQ; // GW#18 Will temporary ramp geometry constrain acceleration lanes?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #15");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_PROD, q.get("Question").toString())); // "Will construction vehicles access site from travel lanes?"
+        //refQ = this.constructionVehAccessQ; //
+        bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), highVolumeConstructionVehsQ, "User Needs #7");
+        //bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #9");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_PROD, q.get("Question").toString())); //"Are there ramps or construction access points with vertical or horizontal sight distance restrictions?"
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_PROD, q.get("Question").toString())); // "Will there be a high volume of construction vehicles requiring access to the work zone?"
+        refQ = this.highVolumeConstructionVehsQ; // GW#17 Will there be a high volume of construction vehicles?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #7");
+        //qApplicationList.add(new QuestionYN(qIdx++, Question.GOAL_PROD, "Will existing equipment be used for the work zone?"));
+        //this.existingEquipmentQ = qApplicationList.get(qApplicationList.size() - 1);
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_PROD, q.get("Question").toString())); // "Will any exisiting ITS devices be incorporated into the smart work zone?"
+        //refQ = this.existingEquipmentQ; // AW (previous q) Will existing equipment be used for the WZ?
+        //bindDependantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "previous question");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_REG, q.get("Question").toString())); // "Is automated enforcement legal in your state?"
+        refQ = this.allowAutomatedSpeedEnforcementQ; // Same as GW#15 Does state law allow use of automated speed enforcement in WZs?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #14");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_REG, q.get("Question").toString())); // "Are there specific agency policies for work zones?"
+        refQ = this.specificAgencyPoliciesQ; // GW#9 Are there specific agency policies for work zones as required by the WZ safety and mobility rule?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #8");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_REG, q.get("Question").toString())); // "Does the agency have existing performance targets for work zones?"
+        refQ = this.existingPerformanceMeasuresQ; // GW#10 Does the agency have existing performance targets for work zone?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #9");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_REG, q.get("Question").toString())); // "Is there a mobility goal?"
+        refQ = this.mobilityGoalQ; // Is there a mobility goal?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "Selected Goals #1");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_REG, q.get("Question").toString())); // "Will the work zone be included in the federally-mandated biannual process review?"
+        refQ = this.biannualProcessReviewQ; // GW#20 Will the work zone be included in the federally-mandated biannual process review?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #17");
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qApplicationList.add(new QuestionYN(qIdx, Question.GOAL_TRAVELER_INFO, q.get("Question").toString())); // "Will outreach and traveler information be used for this work zone?"
+        refQ = this.outreachTravelerInfoQ; // GW#11 Will outreach and traveler information be used for this work zone?
+        bindRedundantQs(qApplicationList.get(qApplicationList.size() - 1), refQ, "User Needs #10");
+    }
+
     /**
      * Creates the list of Stakeholder wizard questions. Two observable
      * ArrayLists are filled. The first (qStakeholderYNList) consists of the
@@ -588,6 +950,95 @@ public class QuestionGenerator implements Serializable {
             }
         });
         qStakeholderOptionList.get(qStakeholderOptionList.size() - 1).setLocked(true);
+
+    }
+
+    /**
+     * Creates the list of Stakeholder wizard questions. Two observable
+     * ArrayLists are filled. The first (qStakeholderYNList) consists of the
+     * yes/no questions, and the second (qStakeholderOptionList) holds the
+     * questions with additional options.
+     */
+    private void createStakeholderWizardQuestionsV2() {
+        JSONObject json = StakeholderMatrix.loadJSON();
+        JSONArray jArr = (JSONArray) json.get("Stakeholders Matrix");
+        int qIdx = 0;
+        JSONObject q = (JSONObject) jArr.get(qIdx++); // Skip the first question in the matrix
+        q = (JSONObject) jArr.get(qIdx++);
+        final QuestionOption funcQ = new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER,
+                q.get("Question").toString() + " (Specified in WZ Metadata)", // "What is the functional class of the roadway? (Specified in WZ Metadata)"
+                Project.FUNCTIONAL_CLASS_LIST);
+        proj.functionalClassProperty().addListener((ov, oldVal, newVal) -> funcQ.setAnswer(newVal));
+        funcQ.setLocked(true);
+
+
+        q = (JSONObject) jArr.get(qIdx++);
+        final QuestionOption numLanesQ = new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER,
+                q.get("Question").toString() + " (Specified in WZ Metadata)", // "Will the work zone require lane closures? (Specified in WZ Metadata)"
+                new String[]{"Yes", "No"});
+        numLanesQ.setResponseIdx(proj.getNumLanesClosed() > 0 ? 0 : 1);
+        proj.numLanesClosedProperty().addListener((ov, oldVal, newVal) -> numLanesQ.setAnswer(newVal.intValue() > 0 ? "Yes" : "No"));
+        numLanesQ.setLocked(true);
+
+        q = (JSONObject) jArr.get(qIdx++);
+        final QuestionOption maintainingAgencyQ = new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER,
+                q.get("Question").toString() + " (Specified in WZ Metadata)", // "Which agency is responsible for maintaining the roadway? (Specified in WZ Metadata)"
+                Project.AGENCY_LIST);
+        proj.maintainingAgencyProperty().addListener((ov, oldVal, newVal) -> maintainingAgencyQ.setAnswer(newVal));
+        maintainingAgencyQ.setLocked(true);
+
+        q = (JSONObject) jArr.get(qIdx++);
+        final QuestionOption patrolQ = new QuestionOption(qIdx, Question.GOAL_STAKEHOLDER,
+                q.get("Question").toString(), // "What agencies are responsible for responding to incidents/patrolling the roadway?)"
+                new String[]{"Local Police/Sheriff", "State Police", "Service Patrol or Contractor", "N/A"});
+        proj.patrollingAgencyProperty().bindBidirectional(patrolQ.answerStringProperty());
+
+        qStakeholderOptionList.addAll(patrolQ, numLanesQ, funcQ, maintainingAgencyQ);
+
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString())); // "Are there schools or universities in the area?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString()));  // "Do you expect a high percentage of tourists or unfamiliar drivers using the routes?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString())); // "Is there a special event venue nearby?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString()));  // "Does a transit line run parallel to the work zone?"
+        bindDependantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.qGoalWizardList.get(this.transitVehQIdx), "User Needs #6");
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString()));  // "Are there other work zones in the area?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString()));  // "Is the work zone located on a priority route for an emergency response system?"
+        qStakeholderYNList.get(qStakeholderYNList.size() - 1).hasMoreInfo = true;
+        qStakeholderYNList.get(qStakeholderYNList.size() - 1).setComment("An emergency response corridor includes priority first responder routes, evacuation routes and all other \"weather emergency\" routes.");
+        emergencyResponseCorridorQIdx = qStakeholderYNList.get(qStakeholderYNList.size() - 1);
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString()));  // "Are there local businesses/shopping centers located near the work zone?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER,q.get("Question").toString()));  // "Will there be restrictions to side streets?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString()));  // "Is this a freight or shipping corridor?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString()));  // "Are there ped/bike routes impacted by the work zone?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString())); // "Is the work zone on a roadway that is part of a signalized / coordinated system?"
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString())); // "Is there a concern the work zone will cause unwanted diversion on to local roads?"
+        bindDependantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.driverDiversionQ, "User Needs #2");
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString() + " (Refer to \"Goals\" Step)")); // "Is there a mobility goal? (Refer to \"Goals\" Step)"
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.mobilityGoalQ, "Selected Goals #1");
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString() + " (Refer to \"Goals\" Step)"));  //"Is there a productivity goal? (Refer to \"Goals\" Step)"
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.productivityGoalQ, "Selected Goals #3");
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString() + " (Refer to \"Goals\" Step)"));  //"Is there a regulatory goal? (Refer to \"Goals\" Step)"
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.regulatoryGoalQ, "Selected Goals #4");
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString() + " (Refer to \"Goals\" Step)"));  // "Is there a safety goal? (Refer to \"Goals\" Step)"
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.safetyGoalQ, "Selected Goals #2");
+        q = (JSONObject) jArr.get(qIdx++);
+        qStakeholderYNList.add(new QuestionYN(qIdx, Question.GOAL_STAKEHOLDER, q.get("Question").toString() + " (Refer to \"Goals\" Step)"));  // "Is there a traveler information goal? (Refer to \"Goals\" Step)"
+        bindRedundantQs(qStakeholderYNList.get(qStakeholderYNList.size() - 1), this.travelerInfoGoalQ, "Selected Goals #5");
 
     }
 

@@ -52,6 +52,8 @@ public class MainController {
 
     private Project proj;
 
+    private static boolean inLaunchWindow = true;
+
     /**
      * Indicates if the project has been started, bound to the activeStep
      * property
@@ -447,40 +449,42 @@ public class MainController {
 //                // Cancelled by user, do nothing
 //            }
 //        }
-        JFXDialogLayout content = new JFXDialogLayout();
-        content.setHeading(NodeFactory.createFormattedLabel("Exiting WZITS Tool", "modal-title"));
-        content.setBody(NodeFactory.createFormattedLabel("Save project before exiting?", ""));
+        if (!MainController.isInLaunchWindow()) {
+            JFXDialogLayout content = new JFXDialogLayout();
+            content.setHeading(NodeFactory.createFormattedLabel("Exiting WZITS Tool", "modal-title"));
+            content.setBody(NodeFactory.createFormattedLabel("Save project before exiting?", ""));
 
-        JFXDialog dlg = new JFXDialog(getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+            JFXDialog dlg = new JFXDialog(getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
 
-        JFXButton yesButton = new JFXButton("Yes");
-        yesButton.setStyle("-fx-font-size: 12pt;");
-        yesButton.setOnAction(actionEvent -> {
-            dlg.close();
-            final int saveResult = saveProject();
-            Runnable closeAfterSaving = new Runnable() {
-                @Override
-                public void run() {
-                    if (saveResult != IOHelper.SAVE_CANCELLED)
-                    stage.close();
-                }
-            };
-            IOHelper.confirm(saveResult, closeAfterSaving);
-        });
-        JFXButton noButton = new JFXButton("No");
-        noButton.setStyle("-fx-font-size: 12pt;");
-        noButton.setOnAction(actionEvent -> {
-            dlg.setOnDialogClosed(jfxDialogEvent -> stage.close());
-            dlg.close();
-        });
-        JFXButton cancelButton = new JFXButton("Cancel");
-        cancelButton.setStyle("-fx-font-size: 12pt;");
-        cancelButton.setOnAction(actionEvent -> {
-            dlg.close();
-        });
-        content.getActions().addAll(yesButton, noButton, cancelButton);
-        dlg.setOverlayClose(false);
-        dlg.show();
+            JFXButton yesButton = new JFXButton("Yes");
+            yesButton.setStyle("-fx-font-size: 12pt;");
+            yesButton.setOnAction(actionEvent -> {
+                dlg.close();
+                final int saveResult = saveProject();
+                Runnable closeAfterSaving = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (saveResult != IOHelper.SAVE_CANCELLED)
+                            stage.close();
+                    }
+                };
+                IOHelper.confirm(saveResult, closeAfterSaving);
+            });
+            JFXButton noButton = new JFXButton("No");
+            noButton.setStyle("-fx-font-size: 12pt;");
+            noButton.setOnAction(actionEvent -> {
+                dlg.setOnDialogClosed(jfxDialogEvent -> stage.close());
+                dlg.close();
+            });
+            JFXButton cancelButton = new JFXButton("Cancel");
+            cancelButton.setStyle("-fx-font-size: 12pt;");
+            cancelButton.setOnAction(actionEvent -> {
+                dlg.close();
+            });
+            content.getActions().addAll(yesButton, noButton, cancelButton);
+            dlg.setOverlayClose(false);
+            dlg.show();
+        }
     }
 
     public static void updateProgramHeader(Project p) {
@@ -562,6 +566,69 @@ public class MainController {
                 }
             }
         }
+    }
+
+    public static String getScoringMatrixFolder() {
+        String location = MainController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        location = location.replaceAll("%20", " ");
+        if (location.contains("/build/classes")) {
+            location = location.substring(0, location.lastIndexOf("/build")) + "/"; // + "resources" + "/";
+        }
+        location = location.substring(0, location.lastIndexOf("/")) + "/" + "scoringMatrix";
+        File pdfresFolder = new File(location);
+        if (!pdfresFolder.exists()) {
+            pdfresFolder.mkdirs();
+        }
+        checkAndRepairScoringMatrices(pdfresFolder);
+        return location + "/";
+    }
+
+    private static void checkAndRepairScoringMatrices(File pdfresFolder) {
+        String repairFileDir = "/core/defaults/";
+        String[] matrixFiles = new String[]{
+                "appWizardDefaultMatrix.json",
+                "feasibilityDefaultMatrix.json",
+                "goalNeedsDefaultMatrix.json",
+                "stakeholderDefaultMatrix.json"
+        };
+        for (String repairFileName: matrixFiles) {
+            if (!(new File(pdfresFolder, repairFileName)).exists()) {
+                InputStream stream = null;
+                OutputStream resStreamOut = null;
+                try {
+                    stream = PDFReportHelper.class.getResourceAsStream(repairFileDir + repairFileName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
+                    if (stream == null) {
+                        throw new Exception("Cannot get resource \"" + repairFileName + "\" from Jar file.");
+                    }
+
+                    int readBytes;
+                    byte[] buffer = new byte[4096];
+//                    jarFolder = new File(ExecutingClass.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile().getPath().replace('\\', '/');
+                    resStreamOut = new FileOutputStream(pdfresFolder.getAbsolutePath() + "/" + repairFileName);
+                    while ((readBytes = stream.read(buffer)) > 0) {
+                        resStreamOut.write(buffer, 0, readBytes);
+                    }
+                } catch (Exception ex) {
+//                    throw ex;
+                    ex.printStackTrace(System.out);
+                } finally {
+                    try {
+                        stream.close();
+                        resStreamOut.close();
+                    } catch (Exception ie) {
+
+                    }
+                }
+            }
+        }
+    }
+
+    public static boolean isInLaunchWindow() {
+        return inLaunchWindow;
+    }
+
+    public static void setInLaunchWindow(boolean inLaunchWindow) {
+        MainController.inLaunchWindow = inLaunchWindow;
     }
 
     public static final int MAX_WIDTH = 999999;

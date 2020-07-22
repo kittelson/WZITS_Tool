@@ -7,6 +7,10 @@ package core;
 
 import GUI.Helper.ColorHelper;
 import GUI.Helper.NodeFactory;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
 
 import GUI.MainController;
@@ -25,6 +29,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 /**
@@ -43,6 +50,25 @@ public class FeasibilityMatrix implements Serializable {
     public FeasibilityMatrix(ObservableList<QuestionOption> qFeasOptList, ObservableList<QuestionYN> qFeasYNList) {
         this.qFeasOptList = qFeasOptList;
         this.qFeasYNList = qFeasYNList;
+        FeasibilityMatrix.loadJSON();
+    }
+
+    public static JSONObject loadJSON() {
+        JSONParser parser = new JSONParser();
+        JSONObject returnJSON = null;
+        try {
+            File customMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityCustomMatrix.json");
+            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityDefaultMatrix.json");
+            if (customMatrix.exists()) {
+                returnJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
+            } else {
+                returnJSON = (JSONObject) parser.parse(new FileReader(defaultMatrix));
+            }
+//            System.out.println(returnJSON);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return returnJSON;
     }
 
     public void computeFeasibility() {

@@ -1,0 +1,57 @@
+{"Feasibility Matrix": [
+{
+"QID":"1", 
+"Criteria":"Duration of work zone",
+"Question":"What is the duration of long-term stationary work?",
+"Answers":[
+{"Label":">1 construction season ","Score":"8"},
+{"Label":"4-10 months","Score":"5"},
+{"Label":"<4 months","Score":"1"},
+]},
+{
+"QID":"2", 
+"Criteria":"Impact to traffic, businesses, other destinations, or other users (e.g. extremely long delays, high risk of speed variability, access issues)",
+"Question":"To what extent will users be impacted for the duration of the work zone?",
+"Answers":[
+{"Label":"Significant","Score":"8"},
+{"Label":"Moderate","Score":"5"},
+{"Label":"Minimal","Score":"1"},
+]},
+{
+"QID":"3", 
+"Criteria":"Queuing and delay",
+"Question":"How long are queues expected to extend?",
+"Answers":[
+{"Label":"At least 2 miles for at least 2 hours per day","Score":"8"},
+{"Label":"1-2 miles for 1-2 hours per day","Score":"5"},
+{"Label":"Less than one mile for less than one hour per day","Score":"1"},
+]},
+{
+"QID":"4", 
+"Criteria":"Temporal Aspects of Traffic Impacts",
+"Question":"During which time periods are noticeable traffic impacts expected to occur?",
+"Answers":[
+{"Label":"More than morning and afternoon peak hours in both directions ","Score":"6"},
+{"Label":"During most of the morning and afternoon peak hours in either direction","Score":"3"},
+{"Label":"During most of a single peak hour in a single direction","Score":"1"},
+{"Label":"Unpredictable","Score":"0"},
+]},
+{
+"QID":"5", 
+"Criteria":"Specific Issues",
+"Question":"How many of the following issues are expected to occur? (Select all that apply)",
+"Answers":[
+{"Label":"Is traffic speed variability expected to occur?","Score":"1"},
+{"Label":"Do you expect back of queue and other sight distance issues?","Score":"3"},
+{"Label":"Are high speeds/chronic speeding expected to occur?","Score":"2"},
+{"Label":"Is driver diversion expected onto alternate routes?","Score":"1"},
+{"Label":"Are merging conflicts and hazards at work zone tapers expected to occur?","Score":"3"},
+{"Label":"Do you expect the work zone layout to cause driver vonfusion or trouble wayfinding?","Score":"3"},
+{"Label":"Will frequently changing operating conditions for traffic be used?","Score":"3"},
+{"Label":"Will variable work activities occur?","Score":"3"},
+{"Label":"Are oversize vehicles expected?","Score":"3"},
+{"Label":"Do you expect a contruction vehicle entry/exit speed differential relative to traffic?","Score":"2"},
+{"Label":"Will data be collected for work zone performance measures?","Score":"3"},
+{"Label":"Do you expect any unusual or unpredictable weather patterns to occur?","Score":"3"},
+]},
+]}

@@ -417,6 +417,7 @@ public class MainWindow extends BorderPane {
         launch = new LaunchPane(control);
         if (launchSplash) {
             this.setCenter(launch);
+            MainController.setInLaunchWindow(true);
         } else {
             this.begin();
         }
@@ -454,6 +455,7 @@ public class MainWindow extends BorderPane {
     }
 
     public void begin() {
+        MainController.setInLaunchWindow(false);
         this.getChildren().remove(launch);
         this.setTop(toolBarBox);
         BorderPane.setMargin(toolBarBox, new Insets(0, 0, 7, 0));

@@ -6,12 +6,8 @@
 package core;
 
 import GUI.MainController;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+
+import java.io.*;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -47,6 +43,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -71,56 +71,151 @@ public class StakeholderMatrix implements Serializable {
         this.qOptList = qOptList;
         this.qYNList = qYNList;
         stakeholders = FXCollections.observableArrayList();
-        int numStakeholders = 0;
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/stake1.csv")));
-            String[] headerTokens = br.readLine().split(",");
-            numStakeholders = headerTokens.length - 1;
-            for (int sIdx = 1; sIdx < headerTokens.length; sIdx++) {
-                stakeholders.add(new Stakeholder(sIdx, headerTokens[sIdx], 0));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+//        int numStakeholders = 0;
+//        BufferedReader br = null;
+//        try {
+//            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "stake1.csv"));
+//            String[] headerTokens = br.readLine().split(",");
+//            numStakeholders = headerTokens.length - 1;
+//            for (int sIdx = 1; sIdx < headerTokens.length; sIdx++) {
+//                stakeholders.add(new Stakeholder(sIdx, headerTokens[sIdx], 0));
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        optScoreMat = new int[10][numStakeholders];
+//        ynScoreMat = new int[18][numStakeholders];
+//
+//        try {
+//            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "stake1.csv"));
+//            br.readLine(); // Skipping header
+//            String line = br.readLine();
+//            int countIdx = 0;
+//            while (line != null) {
+//                String[] tokens = line.split(",");
+//                for (int entryIdx = 0; entryIdx < tokens.length - 1; entryIdx++) {
+//                    optScoreMat[countIdx][entryIdx] = !tokens[entryIdx + 1].trim().equalsIgnoreCase("") ? Integer.parseInt(tokens[entryIdx + 1]) : 0;
+//                }
+//                countIdx++;
+//                line = br.readLine();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+//        try {
+//            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "stake2.csv"));
+//            br.readLine(); // Skipping header
+//            String line = br.readLine();
+//            int countIdx = 0;
+//            while (line != null) {
+//                String[] tokens = line.split(",");
+//                for (int entryIdx = 0; entryIdx < tokens.length - 1; entryIdx++) {
+//                    ynScoreMat[countIdx][entryIdx] = !tokens[entryIdx + 1].trim().equalsIgnoreCase("") ? Integer.parseInt(tokens[entryIdx + 1]) : 0;
+//                }
+//                countIdx++;
+//                line = br.readLine();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        JSONObject json = loadJSON();
+        JSONArray jArr = (JSONArray) json.get("Stakeholders Matrix");
+        JSONObject initQ = (JSONObject) jArr.get(0);
+        JSONArray scores = (JSONArray) initQ.get("Scores");
+        int numStakeholders = scores.size();
+        for (int sIdx = 0; sIdx < numStakeholders; sIdx++) {
+            JSONObject currScore = (JSONObject) scores.get(sIdx);
+            stakeholders.add(new Stakeholder(sIdx, currScore.get("Stakeholder").toString(), 0));
         }
+
         optScoreMat = new int[10][numStakeholders];
         ynScoreMat = new int[18][numStakeholders];
 
-        try {
-            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/stake1.csv")));
-            br.readLine(); // Skipping header
-            String line = br.readLine();
-            int countIdx = 0;
-            while (line != null) {
-                String[] tokens = line.split(",");
-                for (int entryIdx = 0; entryIdx < tokens.length - 1; entryIdx++) {
-                    optScoreMat[countIdx][entryIdx] = !tokens[entryIdx + 1].trim().equalsIgnoreCase("") ? Integer.parseInt(tokens[entryIdx + 1]) : 0;
-                }
-                countIdx++;
-                line = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        JSONObject functionalClassQ = (JSONObject) jArr.get(1);
+        JSONObject funcClassObj = (JSONObject) functionalClassQ.get("Functional Class");
+        JSONArray freewayScores = (JSONArray) ((JSONObject) funcClassObj.get("Freeway")).get("Scores");
+        JSONArray arterialScores = (JSONArray) ((JSONObject) funcClassObj.get("Arterial")).get("Scores");
+        JSONArray localScores = (JSONArray) ((JSONObject) funcClassObj.get("Local")).get("Scores");
+
+        JSONObject laneClosureQ = (JSONObject) jArr.get(2);
+
+        JSONObject maintainingAgencyQ = (JSONObject) jArr.get(3);
+        JSONObject maintainingAgencyObj = (JSONObject) maintainingAgencyQ.get("Agency");
+        JSONArray stateScores = (JSONArray) ((JSONObject) maintainingAgencyObj.get("State")).get("Scores");
+        JSONArray countyScores = (JSONArray) ((JSONObject) maintainingAgencyObj.get("County")).get("Scores");
+        JSONArray cityScores = (JSONArray) ((JSONObject) maintainingAgencyObj.get("City/Town")).get("Scores");
+        JSONArray otherScores = (JSONArray) ((JSONObject) maintainingAgencyObj.get("Other")).get("Scores");
+
+        JSONObject patrollingAgencyQ = (JSONObject) jArr.get(4);
+        JSONObject patrollingAgencyArr = (JSONObject) patrollingAgencyQ.get("Agency");
+        JSONArray localPoliceScores = (JSONArray) ((JSONObject) patrollingAgencyArr.get("Local Police/Sheriff")).get("Scores");
+        JSONArray statePoliceScores = (JSONArray) ((JSONObject) patrollingAgencyArr.get("State Police")).get("Scores");
+        JSONArray servicePatrolScores = (JSONArray) ((JSONObject) patrollingAgencyArr.get("Service Patrol or Contractor")).get("Scores");
+
+        for (int sIdx = 0; sIdx < numStakeholders; sIdx++) {
+            // Functional class of roadway
+            optScoreMat[0][sIdx] = Integer.parseInt(((JSONObject) freewayScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            optScoreMat[1][sIdx] = Integer.parseInt(((JSONObject) arterialScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            optScoreMat[2][sIdx] = Integer.parseInt(((JSONObject) localScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            // Maintaining Agency
+            optScoreMat[3][sIdx] = Integer.parseInt(((JSONObject) stateScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            optScoreMat[4][sIdx] = Integer.parseInt(((JSONObject) countyScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            optScoreMat[5][sIdx] = Integer.parseInt(((JSONObject) cityScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            optScoreMat[6][sIdx] = Integer.parseInt(((JSONObject) otherScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            // Patroilling Agency
+            optScoreMat[7][sIdx] = Integer.parseInt(((JSONObject) localPoliceScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            optScoreMat[8][sIdx] = Integer.parseInt(((JSONObject) statePoliceScores.get(sIdx)).getOrDefault("Score", "0").toString());
+            optScoreMat[9][sIdx] = Integer.parseInt(((JSONObject) servicePatrolScores.get(sIdx)).getOrDefault("Score", "0").toString());
+
         }
 
-        try {
-            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/stake2.csv")));
-            br.readLine(); // Skipping header
-            String line = br.readLine();
-            int countIdx = 0;
-            while (line != null) {
-                String[] tokens = line.split(",");
-                for (int entryIdx = 0; entryIdx < tokens.length - 1; entryIdx++) {
-                    ynScoreMat[countIdx][entryIdx] = !tokens[entryIdx + 1].trim().equalsIgnoreCase("") ? Integer.parseInt(tokens[entryIdx + 1]) : 0;
-                }
-                countIdx++;
-                line = br.readLine();
+        for (int qIdx = 5; qIdx < jArr.size(); qIdx++) {
+            JSONObject currQ = (JSONObject) jArr.get(qIdx);
+            JSONArray currScores = (JSONArray) currQ.get("Scores");
+            for (int sIdx = 0; sIdx < currScores.size(); sIdx++) {
+                ynScoreMat[qIdx-5][sIdx] = Integer.parseInt(((JSONObject) currScores.get(sIdx)).getOrDefault("Scores", "0").toString());
             }
+        }
+
+
+
+
+        BufferedWriter bw = null;
+        try {
+            bw = new BufferedWriter(new FileWriter("C:\\Users\\ltrask\\Documents\\StakeYNEcho.csv"));
+            for (int row = 0; row < ynScoreMat.length; row++) {
+                bw.write(String.valueOf(ynScoreMat[row][0]));
+                for (int col = 1; col < ynScoreMat[row].length; col++) {
+                    bw.write("," + ynScoreMat[row][col]);
+                }
+                bw.write("\n");
+            }
+            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         setupBindings();
+    }
+
+    public static JSONObject loadJSON() {
+        JSONParser parser = new JSONParser();
+        JSONObject retJSON = null;
+        try {
+            File customMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderCustomMatrix.json");
+            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderDefaultMatrix.json");
+            if (customMatrix.exists()) {
+                retJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
+            } else {
+                retJSON = (JSONObject) parser.parse(new FileReader(defaultMatrix));
+            }
+//            System.out.println(retJSON.toJSONString());
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return retJSON;
     }
 
     public StakeholderMatrix(StakeholderMatrix sm, Project proj) {
@@ -260,18 +355,17 @@ public class StakeholderMatrix implements Serializable {
                 ynIdx++;
                 scores[stakeIdx] += this.signalizedSystem.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
                 ynIdx++;
-                scores[stakeIdx] += this.mobilityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                scores[stakeIdx] += this.unwantedLocalDiversion.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
                 ynIdx++;
-                scores[stakeIdx] += this.safetyGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                scores[stakeIdx] += this.mobilityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
                 ynIdx++;
                 scores[stakeIdx] += this.productivityGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
                 ynIdx++;
                 scores[stakeIdx] += this.regulatoryGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
                 ynIdx++;
+                scores[stakeIdx] += this.safetyGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
+                ynIdx++;
                 scores[stakeIdx] += this.travelerInfoGoal.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-                ynIdx++;
-                scores[stakeIdx] += this.unwantedLocalDiversion.get() ? ynScoreMat[ynIdx][stakeIdx] : 0;
-                ynIdx++;
                 stakeholders.get(stakeIdx).setScore(scores[stakeIdx]);
             }
             if (false) {

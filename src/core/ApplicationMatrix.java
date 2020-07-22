@@ -6,16 +6,14 @@
 package core;
 
 import static core.GoalNeedsMatrix.ZERO_SCORE_TXT;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.function.Predicate;
+
+import GUI.MainController;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -34,6 +32,10 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -58,7 +60,8 @@ public class ApplicationMatrix implements Serializable {
         appTypes = new ArrayList();
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/appWizardDefaultMatrix.csv")));
+//            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/appWizardDefaultMatrix.csv")));
+            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.csv"));
             String[] header = br.readLine().split(",");
             for (String appType : header) {
                 appTypes.add(new Application(appType.trim()));
@@ -78,8 +81,10 @@ public class ApplicationMatrix implements Serializable {
         }
         matrix = new int[inputQuestions.size()][appTypes.size()];
         connectAppProperties();
-        loadDefaultMatrix();
+//        loadDefaultMatrix();
+        loadDefaultMatrixV2();
     }
+
 
     public ApplicationMatrix(Project proj, ObservableList<QuestionYN> inputQuestions, ArrayList<Application> appTypes) {
         this.proj = proj;
@@ -92,7 +97,8 @@ public class ApplicationMatrix implements Serializable {
         }
         matrix = new int[inputQuestions.size()][appTypes.size()];
         connectAppProperties();
-        loadDefaultMatrix();
+//        loadDefaultMatrix();
+        loadDefaultMatrixV2();
     }
 
     public ApplicationMatrix(ApplicationMatrix am, Project proj) {
@@ -125,7 +131,8 @@ public class ApplicationMatrix implements Serializable {
     private void loadDefaultMatrix() {
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/appWizardDefaultMatrix.csv")));
+//            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/appWizardDefaultMatrix.csv")));
+            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.csv"));
             String[] hearder = br.readLine().split(",");
             String line = br.readLine().trim();
             int counter = 0;
@@ -140,6 +147,42 @@ public class ApplicationMatrix implements Serializable {
         } catch (IOException e) {
 
         }
+    }
+
+    private void loadDefaultMatrixV2() {
+        JSONObject json = ApplicationMatrix.loadJSON();
+        JSONArray jArr = (JSONArray) json.get("Application Matrix");
+        for (int qIdx = 0; qIdx < jArr.size(); qIdx++) {
+            JSONObject q = (JSONObject) jArr.get(qIdx);
+            JSONArray scoresArr = (JSONArray) q.get("Scores");
+            for (int scoreIdx = 0; scoreIdx < scoresArr.size(); scoreIdx++) {
+                JSONObject score = (JSONObject) scoresArr.get(scoreIdx);
+                try {
+                    matrix[qIdx][scoreIdx] = Integer.parseInt(score.getOrDefault("Score", "0").toString());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    matrix[qIdx][scoreIdx] = 0;
+                }
+            }
+        }
+    }
+
+    public static JSONObject loadJSON() {
+        JSONParser parser = new JSONParser();
+        JSONObject returnJSON = null;
+        try {
+            File customMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardCustomMatrix.json");
+            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.json");
+            if (customMatrix.exists()) {
+                returnJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
+            } else {
+                returnJSON = (JSONObject) parser.parse(new FileReader(defaultMatrix));
+            }
+//            System.out.println(returnJSON.toJSONString());
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return returnJSON;
     }
 
     public void computeScores() {

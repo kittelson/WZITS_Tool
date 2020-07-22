@@ -6,15 +6,13 @@
 package core;
 
 import GUI.Helper.NodeFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.function.Predicate;
+
+import GUI.MainController;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -26,16 +24,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -85,7 +84,7 @@ public class GoalNeedsMatrix implements Serializable {
 
         matrix = new int[qList.size()][needsList.size()];
 
-        loadDefault();
+        loadDefaultV2();
 
     }
 
@@ -222,7 +221,8 @@ public class GoalNeedsMatrix implements Serializable {
     private void loadDefault() {
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/goalNeedsDefaultMatrix.csv")));
+//            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/goalNeedsDefaultMatrix.csv")));
+            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "goalNeedsDefaultMatrix.csv"));
             String line = br.readLine();
             String[] tokens;
             int rowIdx = 0;
@@ -237,6 +237,48 @@ public class GoalNeedsMatrix implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadDefaultV2() {
+        JSONObject json = GoalNeedsMatrix.loadJSON();
+        JSONArray jArr = (JSONArray) json.get("Goals Matrix");
+        for (int qIdx = 0; qIdx < jArr.size(); qIdx++) {
+            JSONObject currQ = (JSONObject) jArr.get(qIdx);
+            JSONArray scores = (JSONArray) currQ.get("Scores");
+            int colIdx = 0;
+            for (int scoreIdx = 0; scoreIdx < scores.size(); scoreIdx++) {
+                JSONObject currScore = (JSONObject) scores.get(scoreIdx);
+                if (currScore.getOrDefault("Category", "").toString().trim().equalsIgnoreCase("")) {
+                    continue;
+                }
+                int currScoreVal = 0;
+                try {
+                    currScoreVal = Integer.parseInt(currScore.getOrDefault("Score", "0").toString());
+                } catch (NumberFormatException e) {
+                    // do nothing, default value of 0 is used
+                }
+                matrix[qIdx][colIdx] = currScoreVal;
+                colIdx++;
+            }
+        }
+    }
+
+    public static JSONObject loadJSON() {
+        JSONParser parser = new JSONParser();
+        JSONObject returnJSON = null;
+        try {
+            File customMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsCustomMatrix.json");
+            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsDefaultMatrix.json");
+            if (customMatrix.exists()) {
+                returnJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
+            } else {
+                returnJSON = (JSONObject) parser.parse(new FileReader(defaultMatrix));
+            }
+//            System.out.println(returnJSON.toJSONString());
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return returnJSON;
     }
 
     public void computeScores() {
@@ -317,25 +359,25 @@ public class GoalNeedsMatrix implements Serializable {
     public Node createSummaryTable() {
         computeScores();
 
-        TableView<Need> summary = new TableView();
+        TableView<Need> summary = new TableView<>();
         summary.getStyleClass().add("step-selection-table");
         summary.setEditable(true);
         summary.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn catCol = new TableColumn("Category");
+        TableColumn<Need, String> catCol = new TableColumn<>("Category");
         catCol.setCellValueFactory(new PropertyValueFactory<>("goal"));
         catCol.setPrefWidth(175);
         catCol.setMaxWidth(175);
         catCol.setMinWidth(175);
         catCol.getStyleClass().add("col-style-center");
 
-        TableColumn recCol = new TableColumn("Subcategory"); // heading changed in accordance to recommendations from tool updates spreadsheet 
+        TableColumn<Need, String> recCol = new TableColumn<>("Subcategory"); // heading changed in accordance to recommendations from tool updates spreadsheet
         recCol.setEditable(false);
         recCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         recCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
             @Override
             public TableCell<Need, String> call(TableColumn<Need, String> tc) {
-                final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell<Need, String>() {
+                return new TextFieldTableCell<Need, String>() {
                     @Override
                     public void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
@@ -353,41 +395,44 @@ public class GoalNeedsMatrix implements Serializable {
                         }
                     }
                 };
-                return tfe;
             }
         });
 
-        TableColumn scoreCol = new TableColumn(SCORE_COL_NAME);
+        TableColumn<Need, Integer> scoreCol = new TableColumn<>(SCORE_COL_NAME);
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
         scoreCol.setPrefWidth(SCORE_COL_WIDTH);
         scoreCol.setMaxWidth(SCORE_COL_WIDTH);
         scoreCol.setMinWidth(SCORE_COL_WIDTH);
+        scoreCol.setEditable(false);
         scoreCol.getStyleClass().add("col-style-center");
-        scoreCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
+        scoreCol.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Integer>() {
             @Override
-            public TableCell<Need, String> call(TableColumn<Need, String> tc) {
-                final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell();
-                tfe.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                        if (newVal != null) {
-                            try {
-                                int score = Integer.parseInt(newVal);
-                                tfe.setText(Need.getScoreString(score));
-                            } catch (NumberFormatException e) {
-
-                            }
-                        }
-//                        if (newVal != null && newVal.equalsIgnoreCase("0")) {
-//                            tfe.setText(ZERO_SCORE_TXT);
-//                        }
-                    }
-                });
-                return tfe;
+            public String toString(Integer integer) {
+                return Need.getScoreString(integer);
             }
-        });
 
-        TableColumn selectedCol = new TableColumn("Selected");
+            @Override
+            public Integer fromString(String s) {
+                return null;
+            }
+        }));
+//        scoreCol.setCellFactory(tc -> {
+//            final TextFieldTableCell<Need, String> tfe = new TextFieldTableCell<>();
+//            tfe.textProperty().addListener((ov, oldVal, newVal) -> {
+//                if (newVal != null) {
+//                    try {
+//                        int score = Integer.parseInt(newVal);
+//                        tfe.setText(Need.getScoreString(score));
+//                        System.out.println(Need.getScoreString(score));
+//                    } catch (NumberFormatException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//            return tfe;
+//        });
+
+        TableColumn<Need, Boolean> selectedCol = new TableColumn<>("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
         selectedCol.setCellFactory(CheckBoxTableCell.forTableColumn(selectedCol));
         selectedCol.setPrefWidth(85);
@@ -446,6 +491,7 @@ public class GoalNeedsMatrix implements Serializable {
         scoreCol.setMaxWidth(SCORE_COL_WIDTH);
         scoreCol.setMinWidth(SCORE_COL_WIDTH);
         scoreCol.getStyleClass().add("col-style-center");
+        scoreCol.setEditable(false);
         scoreCol.setCellFactory(new Callback<TableColumn<Need, String>, TableCell<Need, String>>() {
             @Override
             public TableCell<Need, String> call(TableColumn<Need, String> tc) {
