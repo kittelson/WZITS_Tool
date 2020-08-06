@@ -61,7 +61,7 @@ public class PDFIOHelper {
                 fc.setInitialDirectory(initDir);
             }
         }
-        File saveFile = fc.showSaveDialog(MainController.getWindow());  //mc.getMainWindow()
+        File saveFile = fc.showSaveDialog(MainController.getStage());  //mc.getMainWindow()
         if (saveFile != null) {
             Platform.runLater(new Runnable() {
                 @Override
@@ -141,7 +141,7 @@ public class PDFIOHelper {
                 fc.setInitialDirectory(initDir);
             }
         }
-        File saveFile = fc.showSaveDialog(MainController.getWindow());  //mc.getMainWindow()
+        File saveFile = fc.showSaveDialog(MainController.getStage());  //mc.getMainWindow()
         if (saveFile != null) {
 
             BorderPane bp = (BorderPane) ((ScrollPane) n).getContent();

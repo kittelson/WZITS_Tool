@@ -106,7 +106,7 @@ public class Step1Panel extends BorderPane {
         wzInputWorkZoneLength = new JFXDoubleSpinner(0.1, 50.0, control.getProject().getWzLength(), 0.1);
         baseInputNumRoadwayLanes = new JFXIntegerSpinner(1, 8, control.getProject().getNumRoadwayLanes(), 1);
         baseInputLeftShoulderWidth = new JFXDoubleSpinner(0.0, 25.0, control.getProject().getShoulderWidth(), 0.5);
-        baseInputRightShoulderWidth = new JFXDoubleSpinner(0.0, 25.0, control.getProject().getShoulderWidth(), 0.5);
+        baseInputRightShoulderWidth = new JFXDoubleSpinner(0.0, 25.0, control.getProject().getRightShoulderWidth(), 0.5);
         baseInputPostedSpeedLimit = new JFXIntegerSpinner(5, 100, control.getProject().getSpeedLimit(), 5);
         baseInputLaneWidth = new JFXDoubleSpinner(5.0, 25.0, control.getProject().getLaneWidthBase(), 0.5);
         wzInputWorkZoneSpeedLimit = new JFXIntegerSpinner(5, 100, control.getProject().getWzSpeedLimit(), 5);
@@ -425,7 +425,7 @@ public class Step1Panel extends BorderPane {
         control.getProject().aadtProperty().bindBidirectional(this.baseInputAADT.valueProperty());
         control.getProject().numRoadwayLanesProperty().bindBidirectional(this.baseInputNumRoadwayLanes.valueProperty());
         control.getProject().shoulderWidthProperty().bindBidirectional(this.baseInputLeftShoulderWidth.valueProperty());
-        control.getProject().shoulderWidthProperty().bindBidirectional(this.baseInputRightShoulderWidth.valueProperty());
+        control.getProject().rightShoulderWidthProperty().bindBidirectional(this.baseInputRightShoulderWidth.valueProperty());
         control.getProject().speedLimitProperty().bindBidirectional(this.baseInputPostedSpeedLimit.valueProperty());
         control.getProject().laneWidthBaseProperty().bindBidirectional(this.baseInputLaneWidth.valueProperty());
         control.getProject().wzSpeedLimitProperty().bindBidirectional(this.wzInputWorkZoneSpeedLimit.valueProperty());
@@ -629,7 +629,7 @@ public class Step1Panel extends BorderPane {
         FontIcon vcWizardLaunchIcon = new FontIcon(FontAwesomeSolid.CHART_LINE);
         vcWizardLaunchIcon.setIconColor(Color.WHITE);
 
-        JFXButton btnLaunchVCwiz = new JFXButton("V/C Wizard");
+        JFXButton btnLaunchVCwiz = new JFXButton("Launch V/C Wizard");
         btnLaunchVCwiz.getStyleClass().add("jfx-button-style");
         btnLaunchVCwiz.setGraphic(vcWizardLaunchIcon);
         btnLaunchVCwiz.disableProperty().bind(
@@ -679,60 +679,74 @@ public class Step1Panel extends BorderPane {
         int rowIdx = 0;
         GridPane inputGrid = new GridPane();
         inputGrid.setVgap(10);
-        inputGrid.add(NodeFactory.createFormattedLabel("Facility and Base Conditions", "wz-input-title-style"), 0, rowIdx, 3, 1);
+        inputGrid.add(NodeFactory.createFormattedLabel("Facility and Base Conditions", "wz-input-title-style"), 0, rowIdx, 4, 1);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Functional Class of Roadway:", "wz-input-label-style"), 0, rowIdx);    // Functional Class
         inputGrid.add(baseInputFunctionalClass, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Functional Class of Roadway", control.getProject().fcrCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().fcrCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Functional Class of Roadway", control.getProject().fcrCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Maintaining Agency:", "wz-input-label-style", "Who owns the roadway?", true), 0, rowIdx);    // Maintaining Agency
         inputGrid.add(baseInputMaintainingAgency, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Maintaining Agency", control.getProject().maCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().maCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Maintaining Agency", control.getProject().maCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Area Type:", "wz-input-label-style"), 0, rowIdx);    // Area Type
         inputGrid.add(baseInputAreaType, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Area Type", control.getProject().atCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().atCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Area Type", control.getProject().atCommentProperty()), 3, rowIdx);
         rowIdx++;
-        inputGrid.add(NodeFactory.createFormattedLabel("Annual Average Daily Traffic (Bidirectional AADT):", "wz-input-label-style"), 0, rowIdx);    // AADT
+        inputGrid.add(NodeFactory.createFormattedLabel("Annual Average Daily Traffic:", "wz-input-label-style", "Bidirectional AADT", true), 0, rowIdx);    // AADT
         inputGrid.add(baseInputAADT, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Average Annual Daily Traffic", control.getProject().aadtCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().aadtCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Average Annual Daily Traffic", control.getProject().aadtCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Number of Roadway Lanes (1 Direction):", "wz-input-label-style"), 0, rowIdx);    // Number of Roadway Lanes
         inputGrid.add(baseInputNumRoadwayLanes, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Number of Roadway Lanes", control.getProject().nrlCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().nrlCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Number of Roadway Lanes", control.getProject().nrlCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Left Shoulder Width (ft):", "wz-input-label-style"), 0, rowIdx);    // left Shoulder Width
         inputGrid.add(baseInputLeftShoulderWidth, 1, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Right Shoulder Width (ft):", "wz-input-label-style"), 0, rowIdx);   // right shoulder width
         inputGrid.add(baseInputRightShoulderWidth, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Shoulder Width", control.getProject().swCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().swCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Shoulder Width", control.getProject().swCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Posted Speed Limit (mph):", "wz-input-label-style"), 0, rowIdx);    // Posted Speed Limit
         inputGrid.add(baseInputPostedSpeedLimit, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Posted Speed Limit", control.getProject().pslCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().pslCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Posted Speed Limit", control.getProject().pslCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Lane Width:", "wz-input-label-style"), 0, rowIdx);    // Lane Width
         inputGrid.add(baseInputLaneWidth, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Lane Width", control.getProject().lwCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().lwCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Lane Width", control.getProject().lwCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Part of a Signalized Corridor?", "wz-input-label-style"), 0, rowIdx);    // Part of a signalized corridor
         inputGrid.add(baseInputSignalizedCorridor, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Part of a Signalized Corridor", control.getProject().scCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().scCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Part of a Signalized Corridor", control.getProject().scCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("On the National Highway System?", "wz-input-label-style"), 0, rowIdx);   // National highway system
         inputGrid.add(baseInputNationalHighwaySystem, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("National Highway System", control.getProject().nhsCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().nhsCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("National Highway System", control.getProject().nhsCommentProperty()), 3, rowIdx);
         rowIdx++;
 
-        inputGrid.add(NodeFactory.createFormattedLabel("Work Zone Configuration", "wz-input-title-style"), 0, rowIdx, 3, 1);
+        inputGrid.add(NodeFactory.createFormattedLabel("Work Zone Configuration", "wz-input-title-style"), 0, rowIdx, 4, 1);
         rowIdx++;
-        inputGrid.add(NodeFactory.createFormattedLabel("Work Zone Length (mi):", "wz-input-label-style"), 0, rowIdx);    // Work Zone Length
+        inputGrid.add(
+                NodeFactory.createFormattedLabel("Work Zone Length (mi):", "wz-input-label-style",
+                "The length in miles of the physical limits of the work zone work activities.",
+                true), 0, rowIdx);    // Work Zone Length
         inputGrid.add(wzInputWorkZoneLength, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Work Zone Length", control.getProject().wzlCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().wzlCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Length", control.getProject().wzlCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Work Zone Type (MUTCD Designation):", "wz-input-label-style",
-                "MUTCD Designations (MUTCD 6G.02)\n\n" +
+                "MUTCD Designations (2009, MUTCD 6G.02)\n\n" +
                         "1) Long-term stationary - Work that occupies a location more than 3 days.\n" +
                         "2) Intermediate-term stationary - Work that occupies a location more than one daylight period up to 3 days, or night work lasting more than 1 hour.\n" +
                         "3) Short-term stationary - Daytime work lasting more than 1 hour within a single daylight period.\n" +
@@ -740,42 +754,58 @@ public class Step1Panel extends BorderPane {
                         "5) Mobile - Work that moves intermittently or continuously.\n",
                 true), 0, rowIdx);    // Work Zone Type
         inputGrid.add(wzInputWorkZoneType, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Work Zone Type", control.getProject().wztCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().wztCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Type", control.getProject().wztCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Work Zone Speed Limit:", "wz-input-label-style"), 0, rowIdx);    // Work Zone Speed Limit
         inputGrid.add(wzInputWorkZoneSpeedLimit, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Work Zone Speed Limit", control.getProject().wzslCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().wzslCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Speed Limit", control.getProject().wzslCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Number of Lanes to be Closed:", "wz-input-label-style", "Maximum number of lanes to close during the duration of the project.", true), 0, rowIdx);    // Number of Lanes to be closed
         inputGrid.add(wzInputWorkZoneNumLanesClosed, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Number of Lanes to be Closed", control.getProject().nlcCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().nlcCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Number of Lanes to be Closed", control.getProject().nlcCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Work Zone Lane Width:", "wz-input-label-style"), 0, rowIdx);    // Reduced Lane Width
         inputGrid.add(wzInputWorkLaneWidth, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Work Zone Lane Width", control.getProject().wzlwCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().wzlwCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Work Zone Lane Width", control.getProject().wzlwCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Shoulder Closure:", "wz-input-label-style"), 0, rowIdx);    // Shoulder Closure
         inputGrid.add(wzInputHasShoulderClosure, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Shoulder Closure", control.getProject().shcCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().shcCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Shoulder Closure", control.getProject().shcCommentProperty()), 3, rowIdx);
         rowIdx++;
         inputGrid.add(NodeFactory.createFormattedLabel("Federal-Aid Project:", "wz-input-label-style"), 0, rowIdx);    // Federal-Aid Project
         inputGrid.add(wzInputFederalAidProject, 1, rowIdx);
-        inputGrid.add(NodeFactory.createCommentLink("Federal-Aid Project", control.getProject().fapCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().fapCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Federal-Aid Project", control.getProject().fapCommentProperty()), 3, rowIdx);
         rowIdx++;
-        inputGrid.add(btnLaunchVCWizWrapper,1,rowIdx);
-        inputGrid.add(vcWizardIconWrapper, 2, rowIdx);
-
+        inputGrid.add(btnLaunchVCWizWrapper,0,rowIdx);
+        inputGrid.add(vcWizardIconWrapper, 1, rowIdx);
+        inputGrid.add(NodeFactory.createCommentStatusIcon(control.getProject().vcWizardCommentProperty()), 2, rowIdx);
+        inputGrid.add(NodeFactory.createCommentLink("Volume-to-Capacity Wizard", control.getProject().vcWizardCommentProperty()), 3, rowIdx);
+        GridPane.setMargin(btnLaunchVCWizWrapper, new Insets(0, 0, 10, 0));
         //inputGrid.add(proceedButton, 1, 9);
-        double leftColsplit = 65;
-        double rightColSplit = 10;
+//        double leftColsplit = 65;
+//        double rightColSplit = 10;
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(leftColsplit);
+//        col1.setPercentWidth(leftColsplit);
+        col1.setHgrow(Priority.ALWAYS);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(100 - leftColsplit - rightColSplit);
+//        col2.setPercentWidth(100 - leftColsplit - rightColSplit);
+        col2.setMinWidth(200);
+        col2.setMaxWidth(200);
         ColumnConstraints col3 = new ColumnConstraints();
-        col3.setPercentWidth(rightColSplit);
+//        col3.setPercentWidth(rightColSplit);
+        col3.setMinWidth(20);
+        col3.setMaxWidth(20);
+        ColumnConstraints col4 = new ColumnConstraints();
+        col4.setMinWidth(80);
+        col4.setMaxWidth(80);
 
-        inputGrid.getColumnConstraints().addAll(col1, col2, col3);
+        inputGrid.getColumnConstraints().addAll(col1, col2, col3, col4);
 
 //        GridPane.setHgrow(wzTitleLabel1, Priority.ALWAYS);
 //        GridPane.setHgrow(wzTitleLabel2, Priority.ALWAYS);

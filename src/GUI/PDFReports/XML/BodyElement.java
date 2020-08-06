@@ -75,19 +75,6 @@ public class BodyElement extends ElementGenerator {
         return imageElement;
     }
 
-    private Element generateFacilityGraphic() {
-//        TODO: As per our discussion, the facility graphics has to be an external graphics file either in jpg, png or
-//        TODO: svg and the url to that file is currently hardcoded, has to be changed later on.
-        String header = "Facility Image";
-        String url = "/Users/alay/Documents/NCSU/ITRE/trial-app/src/main/java/resources/facility.png";
-        String wrap = urlWrapper(url);
-        Element imageElement = generateElement("image");
-        imageElement.appendChild(generateAndPopulateStringElement("header", header));
-        imageElement.appendChild(generateAndPopulateStringElement("data", wrap));
-        imageElement.appendChild(generateAndPopulateStringElement("footer", ""));
-        return imageElement;
-    }
-
     public Element addPageBreak() {
         return generateElement("page-break");
     }

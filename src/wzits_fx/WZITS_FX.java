@@ -67,7 +67,7 @@ public class WZITS_FX extends Application {
     }
 
     public void launchWZITSTool(Stage primaryStage) {
-        primaryStage.setTitle("Work Zone Intelligent Transportations Systems Tool");
+        primaryStage.setTitle("Work Zone Intelligent Transportations Systems Tool" + " (Version " + MainController.VERSION + ")");
 
         // Creating Panes
         MainController control = new MainController(primaryStage);

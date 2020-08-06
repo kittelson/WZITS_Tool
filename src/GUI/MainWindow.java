@@ -54,11 +54,11 @@ public class MainWindow extends BorderPane {
         // Creating MenuBar
         menuBar = new MenuBar();
         Menu menuFile = new Menu("File");
-        Menu menuEdit = new Menu("Edit");
+        Menu menuAnalysis = new Menu("Analysis");
         Menu menuNavigation = new Menu("Results");
         Menu menuTemplate = new Menu("Templates");
         Menu menuHelp = new Menu("Help");
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuNavigation, menuHelp); // menuTemplate
+        menuBar.getMenus().addAll(menuFile, menuAnalysis, menuNavigation, menuHelp); // menuTemplate
         // Creating File Menu
         MenuItem newMenuItem = new MenuItem("New");
         MenuItem openMenuItem = new MenuItem("Open");
@@ -104,12 +104,13 @@ public class MainWindow extends BorderPane {
         menuFile.getItems().addAll(newMenuItem, openMenuItem, saveMenuItem, saveAsMenuItem, exitMenuItem);
         // Creating Edit Menu
         MenuItem projInfoMenuItem = new MenuItem("Project Info/WZ Metadata");
-        menuEdit.getItems().add(projInfoMenuItem);
-        projInfoMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                control.selectStep(0, 0);
-            }
+        Menu scoringMatrixMenu = new Menu("Scoring Matrices");
+        MenuItem scoringMatrixInfoMenuItem = new MenuItem("Scoring Matrix Information");
+        scoringMatrixMenu.getItems().add(scoringMatrixInfoMenuItem);
+        menuAnalysis.getItems().addAll(projInfoMenuItem, scoringMatrixMenu);
+        projInfoMenuItem.setOnAction(ae -> control.selectStep(0, 0));
+        scoringMatrixInfoMenuItem.setOnAction(actionEvent -> {
+            MainController.launchScoringMatrixInfo();
         });
         // Creating Results Menu
         Menu menuStep1Results = new Menu("Step 1");

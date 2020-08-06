@@ -41,7 +41,7 @@ public class IconHelper {
 
     public static final Image TREE_NODE_STEP_COMPLETE = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/check16.png"));
 
-    public static final Image SPLASH_SCREEN = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/splash.PNG"));
+    public static final Image SPLASH_SCREEN = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/splash v2.PNG"));
 
     public static final Image NAV_HELPER = new Image(IconHelper.class.getResourceAsStream("/GUI/Icon/navigatorHelp.PNG"));
 

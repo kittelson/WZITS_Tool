@@ -249,4 +249,36 @@ public class NodeFactory {
 
     public static int NAVIGATOR_MAX_WIDTH = 200;
 
+    public static Node createCommentStatusIcon(StringProperty commentProperty) {
+        final FontIcon commentStatusCompleteIcon = NodeFactory.createIcon(FontAwesomeSolid.COMMENT, Color.web(ColorHelper.WZ_BLUE));
+        final Tooltip statusCompleteTooltip = new Tooltip();
+        statusCompleteTooltip.setShowDelay(Duration.millis(250));
+        statusCompleteTooltip.setShowDuration(Duration.INDEFINITE);
+        statusCompleteTooltip.setStyle("-fx-font-size: 11pt;");
+        statusCompleteTooltip.setOnShown(windowEvent -> {
+            statusCompleteTooltip.setText(commentProperty.get());
+        });
+        statusCompleteTooltip.setShowDelay(Duration.ZERO);
+        statusCompleteTooltip.setShowDuration(Duration.INDEFINITE);
+        Tooltip.install(commentStatusCompleteIcon, statusCompleteTooltip);
+
+
+        final BorderPane iconWrapper = new BorderPane();
+        if (commentProperty.get() != null && !commentProperty.get().trim().equalsIgnoreCase("")) {
+            iconWrapper.setCenter(commentStatusCompleteIcon);
+        }
+        commentProperty.addListener((observableValue, oldVal, newVal) -> {
+            if (newVal == null || newVal.trim().equalsIgnoreCase("")) {
+                if (iconWrapper.getCenter() == commentStatusCompleteIcon) {
+                    iconWrapper.setCenter(null);
+                }
+            } else {
+                if (iconWrapper.getCenter() != commentStatusCompleteIcon) {
+                    iconWrapper.setCenter(commentStatusCompleteIcon);
+                }
+            }
+        });
+        return iconWrapper;
+    }
+
 }

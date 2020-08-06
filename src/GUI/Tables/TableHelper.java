@@ -192,7 +192,7 @@ public class TableHelper {
             }
         });
 
-        TableColumn noCol = new TableColumn("No");
+        TableColumn noCol = new TableColumn("No or N/A");
         noCol.setCellValueFactory(new PropertyValueFactory<>("answerIsNo"));
         //noCol.setCellFactory(CheckBoxTableCell.forTableColumn(noCol));
         noCol.setCellFactory(new Callback<TableColumn<QuestionYN, Boolean>, TableCell<QuestionYN, Boolean>>() {
@@ -213,12 +213,12 @@ public class TableHelper {
             }
         });
 
-        yesCol.setPrefWidth(75);
-        yesCol.setMaxWidth(75);
-        yesCol.setMinWidth(75);
-        noCol.setPrefWidth(75);
-        noCol.setMaxWidth(75);
-        noCol.setMinWidth(75);
+        yesCol.setPrefWidth(100);
+        yesCol.setMaxWidth(100);
+        yesCol.setMinWidth(100);
+        noCol.setPrefWidth(100);
+        noCol.setMaxWidth(100);
+        noCol.setMinWidth(100);
         responseCol.getColumns().addAll(yesCol, noCol);
         table.getColumns().add(indexCol);
 

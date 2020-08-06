@@ -236,14 +236,11 @@ public class Step2Panel extends BorderPane {
         conOpsIV.setPreserveRatio(true);
         conOpsIV.setSmooth(true);
         conOpsIV.setCache(true);
-        uploadButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent ae) {
-                Image conOpsImage = IOHelper.openImage(control);
-                if (conOpsImage != null) {
-                    conOpsIV.setImage(conOpsImage);
-                    control.getProject().setConOpsDiagram(conOpsImage);
-                }
+        uploadButton.setOnAction(ae -> {
+            Image conOpsImage = IOHelper.openImage(control);
+            if (conOpsImage != null) {
+                conOpsIV.setImage(conOpsImage);
+                control.getProject().setConOpsDiagram(conOpsImage);
             }
         });
         uploadPane.setTop(uploadButton);

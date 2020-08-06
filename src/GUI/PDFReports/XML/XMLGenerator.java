@@ -85,8 +85,8 @@ public class XMLGenerator {
         createRootElement("pdf-data");
         HeaderElement header = new HeaderElement(getDocument(), title1);
         header.setSubtitle(title2);
-        header.setProgramLogo(MainController.getResFolderLocation() + "/wzits_icon_64.png");
-        header.setAgencyLogo(MainController.getResFolderLocation() + "/us_dot_logo.png");
+        header.setProgramLogo(MainController.getResFolderLocation() + "wzits_icon_64.png");
+        header.setAgencyLogo(MainController.getResFolderLocation() + "us_dot_logo.png");
         header.setFileName(projectFileName);
         header.generateHeader(getRootElement());
         bodyElement = new BodyElement(getDocument(), getRootElement());

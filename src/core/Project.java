@@ -60,6 +60,7 @@ public class Project implements Serializable {
     private DoubleProperty wzLength = new SimpleDoubleProperty(2.0);
     private IntegerProperty numRoadwayLanes = new SimpleIntegerProperty(3);
     private DoubleProperty shoulderWidth = new SimpleDoubleProperty(10);
+    private DoubleProperty rightShoulderWidth = new SimpleDoubleProperty(10);
     private IntegerProperty speedLimit = new SimpleIntegerProperty(55);
     private IntegerProperty numLanesClosed = new SimpleIntegerProperty(1);
     private IntegerProperty activityDuration = new SimpleIntegerProperty(6);
@@ -296,6 +297,18 @@ public class Project implements Serializable {
 
     public DoubleProperty shoulderWidthProperty() {
         return shoulderWidth;
+    }
+
+    public double getRightShoulderWidth() {
+        return rightShoulderWidth.get();
+    }
+
+    public DoubleProperty rightShoulderWidthProperty() {
+        return rightShoulderWidth;
+    }
+
+    public void setRightShoulderWidth(double rightShoulderWidth) {
+        this.rightShoulderWidth.set(rightShoulderWidth);
     }
 
     public int getSpeedLimit() {
@@ -545,7 +558,7 @@ public class Project implements Serializable {
     private IntegerProperty futureIntProp5 = new SimpleIntegerProperty();
     private DoubleProperty laneWidthBase = new SimpleDoubleProperty(12.0);
     private DoubleProperty laneWidthWZ = new SimpleDoubleProperty(12.0);
-    private DoubleProperty futureDoubleProp3 = new SimpleDoubleProperty();
+//    private DoubleProperty futureDoubleProp3 = new SimpleDoubleProperty();
     private DoubleProperty futureDoubleProp4 = new SimpleDoubleProperty();
     private DoubleProperty futureDoubleProp5 = new SimpleDoubleProperty();
 
@@ -808,6 +821,20 @@ public class Project implements Serializable {
 
     private SimpleStringProperty feasibilityJustification = new SimpleStringProperty();
 
+    private StringProperty vcWizardComment = new SimpleStringProperty();
+
+    public String getVcWizardComment() {
+        return vcWizardComment.get();
+    }
+
+    public StringProperty vcWizardCommentProperty() {
+        return vcWizardComment;
+    }
+
+    public void setVcWizardComment(String vcWizardComment) {
+        this.vcWizardComment.set(vcWizardComment);
+    }
+
     private void writeObject(ObjectOutputStream s) throws IOException {
         //s.defaultWriteObject();
         s.writeInt(getAadt());
@@ -851,7 +878,7 @@ public class Project implements Serializable {
         s.writeInt(futureIntProp5.get());
         s.writeDouble(laneWidthBase.get());
         s.writeDouble(laneWidthWZ.get());
-        s.writeDouble(futureDoubleProp3.get());
+        s.writeDouble(getShoulderWidth());
         s.writeDouble(futureDoubleProp4.get());
         s.writeDouble(futureDoubleProp5.get());
         s.writeObject(areaType.get());
@@ -884,6 +911,7 @@ public class Project implements Serializable {
             VERSION_ID.set("2.0.0");
         }
         s.writeObject(VERSION_ID.get());
+        s.writeObject(vcWizardComment.get());
         if (getProjPhoto() != null) {
 //            ImageIO.write(SwingFXUtils.fromFXImage(getProjPhoto(), null), "png", s);
             ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -905,7 +933,7 @@ public class Project implements Serializable {
             s.writeInt(b.size());
             b.writeTo(s);
 
-            System.out.println("First image saved.");
+            System.out.println("Second image saved.");
         } else {
 //            s.writeObject(getConOpsDiagram());
             s.writeInt(0);
@@ -966,6 +994,7 @@ public class Project implements Serializable {
         this.setFapComment(proj.getFapComment());
         this.setFeasibilityJustification(proj.getFeasibilityJustification());
         this.setVcWizardJSON(proj.getVcWizardJSON());
+        this.setVcWizardComment(proj.getVcWizardComment());
 
         setAutomatedEnforcementAllowed(proj.isAutomatedEnforcementAllowed());
         setCrashDataAvailable(proj.isCrashDataAvailable());
@@ -1034,7 +1063,7 @@ public class Project implements Serializable {
         futureIntProp5 = new SimpleIntegerProperty(s.readInt());
         laneWidthBase = new SimpleDoubleProperty(s.readDouble());
         laneWidthWZ = new SimpleDoubleProperty(s.readDouble());
-        futureDoubleProp3 = new SimpleDoubleProperty(s.readDouble());
+        rightShoulderWidth = new SimpleDoubleProperty(s.readDouble());
         futureDoubleProp4 = new SimpleDoubleProperty(s.readDouble());
         futureDoubleProp5 = new SimpleDoubleProperty(s.readDouble());
         areaType = new SimpleStringProperty((String) s.readObject());
@@ -1148,6 +1177,11 @@ public class Project implements Serializable {
             VERSION_ID = new SimpleStringProperty("1.0.0");
         }
         System.out.println("Project Version: " + VERSION_ID.get());
+        try {
+            vcWizardComment = new SimpleStringProperty((String) s.readObject());
+        } catch (IOException e) {
+            vcWizardComment = new SimpleStringProperty("");
+        }
 
         if (VERSION_ID.get() == null) {
             BufferedImage bimg = ImageIO.read(s);

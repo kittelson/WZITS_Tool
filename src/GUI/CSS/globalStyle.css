@@ -1557,30 +1557,30 @@
   -fx-opacity: 0.4;
 }*/
 
-.flow-v2 .color-light-grey {
+.flow-v2 .color-light-grey-v1 {
   -fx-background-color: -color-wzits-lightgrey;
   -fx-text-fill: black;
 }
 
-.flow-v2 .color-orange {
+.flow-v2 .color-orange-v1 {
   -fx-background-color: -color-wzits-orange;
   -fx-text-fill: white;
 
 }
 
-.flow-v2 .color-burnt-orange {
+.flow-v2 .color-burnt-orange-v1 {
   -fx-background-color: -color-wzits-burnt-orange;
   -fx-text-fill: white;
 
 }
 
-.flow-v2 .color-blue {
+.flow-v2 .color-blue-v1 {
   -fx-background-color: -color-wzits-blue;
   -fx-text-fill: white;
 
 }
 
-.flow-v2 .color-light-blue {
+.flow-v2 .color-light-blue-v1 {
   -fx-background-color: -color-wzits-lightblue;
   -fx-text-fill: black;
 }
@@ -1589,30 +1589,30 @@
   -fx-background-color: rgba(237, 125, 49, 0.1);
 }
 
-.flow-v2 .color-light-grey-v2 {
+.flow-v2 .color-light-grey {
   -fx-background-color: -color-wzits-lightgrey;
   -fx-text-fill: black;
 }
 
-.flow-v2 .color-orange-v2 {
+.flow-v2 .color-orange {
   -fx-background-color: -color-wzits-orange;
   -fx-border-color: -color-wzits-orange;
   -fx-text-fill: white;
 }
 
-.flow-v2 .color-burnt-orange-v2 {
+.flow-v2 .color-burnt-orange {
   -fx-background-color: white;
   -fx-border-color: -color-wzits-orange;
   -fx-text-fill: -color-wzits-orange;
 }
 
-.flow-v2 .color-blue-v2 {
+.flow-v2 .color-blue {
   -fx-background-color: white;
   -fx-border-color: -color-wzits-blue;
   -fx-text-fill: -color-wzits-blue;
 }
 
-.flow-v2 .color-light-blue-v2 {
+.flow-v2 .color-light-blue {
   -fx-background-color: -color-wzits-blue;
   -fx-border-color: -color-wzits-blue;
   -fx-text-fill: white;

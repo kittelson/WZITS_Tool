@@ -73,7 +73,7 @@ public class IOHelper {
                 fc.setInitialDirectory(initDir);
             }
         }
-        File saveFile = fc.showSaveDialog(mc.getWindow());  //mc.getMainWindow()
+        File saveFile = fc.showSaveDialog(MainController.getStage());  //mc.getMainWindow()
         if (saveFile != null) {
             try {
                 if (!saveFile.getName().endsWith(".wzp")) {
@@ -98,7 +98,7 @@ public class IOHelper {
         FileChooser fc = new FileChooser();
         fc.setTitle("Open WZITS Tool Project");
         fc.getExtensionFilters().add(new ExtensionFilter("WZITS Project File (.wzp)", "*.wzp"));
-        File openFile = fc.showOpenDialog(null);
+        File openFile = fc.showOpenDialog(MainController.getStage());
         Project proj = null;
         if (openFile != null) {
             try {
@@ -123,7 +123,7 @@ public class IOHelper {
                 new FileChooser.ExtensionFilter("PNG", "*.png"),
                 new FileChooser.ExtensionFilter("PDF", "*.pdf")
         );
-        File openFile = fc.showOpenDialog(MainController.getWindow());  //mc.getMainWindow()
+        File openFile = fc.showOpenDialog(MainController.getStage());  //mc.getMainWindow()
         if (openFile != null) {
             if (fc.getSelectedExtensionFilter().getExtensions().get(0).equalsIgnoreCase("*.pdf")) {
                 try {
@@ -161,7 +161,7 @@ public class IOHelper {
                 new FileChooser.ExtensionFilter("PNG", "*.png"),
                 new FileChooser.ExtensionFilter("PDF", "*.pdf")
         );
-        File openFile = fc.showOpenDialog(mc.getWindow());  //mc.getMainWindow()
+        File openFile = fc.showOpenDialog(MainController.getStage());  //mc.getMainWindow()
         if (openFile != null) {
             if (fc.getSelectedExtensionFilter().getExtensions().get(0).equalsIgnoreCase("*.pdf")) {
                 try {

@@ -171,31 +171,49 @@ public class StakeholderMatrix implements Serializable {
 
         }
 
+        JSONArray laneClosureScores = (JSONArray) laneClosureQ.get("Scores");
+        for (int sIdx = 0; sIdx < laneClosureScores.size(); sIdx++) {
+            ynScoreMat[0][sIdx] = Integer.parseInt(((JSONObject) laneClosureScores.get(sIdx)).getOrDefault("Score", "0").toString());
+        }
+
         for (int qIdx = 5; qIdx < jArr.size(); qIdx++) {
             JSONObject currQ = (JSONObject) jArr.get(qIdx);
             JSONArray currScores = (JSONArray) currQ.get("Scores");
             for (int sIdx = 0; sIdx < currScores.size(); sIdx++) {
-                ynScoreMat[qIdx-5][sIdx] = Integer.parseInt(((JSONObject) currScores.get(sIdx)).getOrDefault("Scores", "0").toString());
+                ynScoreMat[qIdx-4][sIdx] = Integer.parseInt(((JSONObject) currScores.get(sIdx)).getOrDefault("Score", "0").toString());
             }
         }
 
 
 
 
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter("C:\\Users\\ltrask\\Documents\\StakeYNEcho.csv"));
-            for (int row = 0; row < ynScoreMat.length; row++) {
-                bw.write(String.valueOf(ynScoreMat[row][0]));
-                for (int col = 1; col < ynScoreMat[row].length; col++) {
-                    bw.write("," + ynScoreMat[row][col]);
-                }
-                bw.write("\n");
-            }
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        BufferedWriter bw = null;
+//        try {
+//            bw = new BufferedWriter(new FileWriter("C:\\Users\\ltrask\\Documents\\StakeOptEcho.csv"));
+//            for (int row = 0; row < optScoreMat.length; row++) {
+//                bw.write(String.valueOf(optScoreMat[row][0]));
+//                for (int col = 1; col < optScoreMat[row].length; col++) {
+//                    bw.write("," + optScoreMat[row][col]);
+//                }
+//                bw.write("\n");
+//            }
+//            bw.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            bw = new BufferedWriter(new FileWriter("C:\\Users\\ltrask\\Documents\\StakeYNEcho.csv"));
+//            for (int row = 0; row < ynScoreMat.length; row++) {
+//                bw.write(String.valueOf(ynScoreMat[row][0]));
+//                for (int col = 1; col < ynScoreMat[row].length; col++) {
+//                    bw.write("," + ynScoreMat[row][col]);
+//                }
+//                bw.write("\n");
+//            }
+//            bw.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         setupBindings();
     }

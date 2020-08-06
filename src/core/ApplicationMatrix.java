@@ -58,16 +58,22 @@ public class ApplicationMatrix implements Serializable {
     public ApplicationMatrix(Project proj, ObservableList<QuestionYN> inputQuestions) {
         this.proj = proj;
         appTypes = new ArrayList();
-        BufferedReader br = null;
-        try {
-//            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/appWizardDefaultMatrix.csv")));
-            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.csv"));
-            String[] header = br.readLine().split(",");
-            for (String appType : header) {
-                appTypes.add(new Application(appType.trim()));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+//        BufferedReader br = null;
+//        try {
+//            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.csv"));
+//            String[] header = br.readLine().split(",");
+//            for (String appType : header) {
+//                appTypes.add(new Application(appType.trim()));
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        JSONObject json = ApplicationMatrix.loadJSON();
+        JSONArray appMatrix = (JSONArray) json.get("Application Matrix");
+        JSONArray firstEntry = (JSONArray) ((JSONObject) appMatrix.get(0)).get("Scores");
+        for (int i = 0; i < firstEntry.size(); i++) {
+            String appType = ((JSONObject) firstEntry.get(i)).get("Category").toString();
+            appTypes.add(new Application(appType.trim()));
         }
         questionToRowMap = new LinkedHashMap();
         appToColMap = new LinkedHashMap();

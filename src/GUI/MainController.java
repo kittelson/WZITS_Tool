@@ -26,14 +26,13 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -621,6 +620,177 @@ public class MainController {
                 }
             }
         }
+    }
+
+    public static void launchScoringMatrixInfo() {
+        BorderPane contentPanel = new BorderPane();
+        contentPanel.setTop(
+                NodeFactory.createFormattedLabel("The scoring matrices for the four wizards can be adjusted to match an " +
+                        "agency's specific needs and policies using the associated Master Matrix Generator excel file (.xlsm).",
+                        "")
+        );
+
+        File customGoalsMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsCustomMatrix.json");
+        File customFeasibilityMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityCustomMatrix.json");
+        File customStakeholderMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderCustomMatrix.json");
+        File customApplicationMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardCustomMatrix.json");
+
+        Label labelGoalsMatrix = NodeFactory.createFormattedLabel(customFeasibilityMatrix.exists() ? "Custom" : "Default", "");
+        Label labelFeasibilityMatrix = NodeFactory.createFormattedLabel(customFeasibilityMatrix.exists() ? "Custom" : "Default", "");
+        Label labelStakeholderMatrix = NodeFactory.createFormattedLabel(customFeasibilityMatrix.exists() ? "Custom" : "Default", "");
+        Label labelApplicationMatrix = NodeFactory.createFormattedLabel(customFeasibilityMatrix.exists() ? "Custom" : "Default", "");
+
+        JFXButton resetGoalsMatrixButton = new JFXButton("Reset to Default");
+        resetGoalsMatrixButton.getStyleClass().add("default-text-button");
+        resetGoalsMatrixButton.setDisable(!customGoalsMatrix.exists());
+        resetGoalsMatrixButton.setOnAction(actionEvent -> {
+            boolean wasDeleted = customGoalsMatrix.delete();
+            JFXDialogLayout subContent = new JFXDialogLayout();
+            if (wasDeleted) {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Goal-Needs Scoring Matrix Reverted to Default", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("The WZITS tool must be restarted before the changes will take effect.", ""));
+                resetGoalsMatrixButton.setDisable(true);
+                labelGoalsMatrix.setText("Default");
+            } else {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Failed to Revert to Default Matrix", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("An error was encountered deleting the custom scoring matrix. Please make sure the file is not in use by another program before attempting to revert to the default matrix.", ""));
+            }
+            JFXDialog subDlg = new JFXDialog(MainController.getRootStackPane(), subContent, JFXDialog.DialogTransition.CENTER);
+            subDlg.setOverlayClose(false);
+            subDlg.setContent(subContent);
+            JFXButton okAction = new JFXButton("Ok");
+            okAction.getStyleClass().add("comment-pane-buttonClose");
+            okAction.setOnAction(actionEvent1 -> {subDlg.close();});
+            subContent.getActions().addAll(okAction);
+
+            subDlg.show();
+        });
+        JFXButton resetFeasibilityMatrixButton = new JFXButton("Reset to Default");
+        resetFeasibilityMatrixButton.getStyleClass().add("default-text-button");
+        resetFeasibilityMatrixButton.setDisable(!customFeasibilityMatrix.exists());
+        resetFeasibilityMatrixButton.setOnAction(actionEvent -> {
+            boolean wasDeleted = customFeasibilityMatrix.delete();
+            JFXDialogLayout subContent = new JFXDialogLayout();
+            if (wasDeleted) {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Feasibility Scoring Matrix Reverted to Default", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("The WZITS tool must be restarted before the changes will take effect.", ""));
+                resetFeasibilityMatrixButton.setDisable(true);
+                labelFeasibilityMatrix.setText("Default");
+            } else {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Failed to Revert to Default Matrix", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("An error was encountered deleting the custom scoring matrix. Please make sure the file is not in use by another program before attempting to revert to the default matrix.", ""));
+            }
+            JFXDialog subDlg = new JFXDialog(MainController.getRootStackPane(), subContent, JFXDialog.DialogTransition.CENTER);
+            subDlg.setOverlayClose(false);
+            subDlg.setContent(subContent);
+            JFXButton okAction = new JFXButton("Ok");
+            okAction.getStyleClass().add("comment-pane-buttonClose");
+            okAction.setOnAction(actionEvent1 -> {subDlg.close();});
+            subContent.getActions().addAll(okAction);
+
+            subDlg.show();
+        });
+        JFXButton resetStakeholderMatrixButton = new JFXButton("Reset to Default");
+        resetStakeholderMatrixButton.getStyleClass().add("default-text-button");
+        resetStakeholderMatrixButton.setDisable(!customStakeholderMatrix.exists());
+        resetStakeholderMatrixButton.setOnAction(actionEvent -> {
+            boolean wasDeleted = customStakeholderMatrix.delete();
+            JFXDialogLayout subContent = new JFXDialogLayout();
+            if (wasDeleted) {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Stakeholder Scoring Matrix Reverted to Default", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("The WZITS tool must be restarted before the changes will take effect.", ""));
+                resetStakeholderMatrixButton.setDisable(true);
+                labelStakeholderMatrix.setText("Default");
+            } else {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Failed to Revert to Default Matrix", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("An error was encountered deleting the custom scoring matrix. Please make sure the file is not in use by another program before attempting to revert to the default matrix.", ""));
+            }
+            JFXDialog subDlg = new JFXDialog(MainController.getRootStackPane(), subContent, JFXDialog.DialogTransition.CENTER);
+            subDlg.setOverlayClose(false);
+            subDlg.setContent(subContent);
+            JFXButton okAction = new JFXButton("Ok");
+            okAction.getStyleClass().add("comment-pane-buttonClose");
+            okAction.setOnAction(actionEvent1 -> {subDlg.close();});
+            subContent.getActions().addAll(okAction);
+
+            subDlg.show();
+        });
+        JFXButton resetApplicationMatrixButton = new JFXButton("Reset to Default");
+        resetApplicationMatrixButton.getStyleClass().add("default-text-button");
+        resetApplicationMatrixButton.setDisable(!customApplicationMatrix.exists());
+        resetApplicationMatrixButton.setOnAction(actionEvent -> {
+            boolean wasDeleted = customApplicationMatrix.delete();
+            JFXDialogLayout subContent = new JFXDialogLayout();
+            if (wasDeleted) {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Application Scoring Matrix Reverted to Default", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("The WZITS tool must be restarted before the changes will take effect.", ""));
+                resetApplicationMatrixButton.setDisable(true);
+                labelApplicationMatrix.setText("Default");
+            } else {
+                subContent.setHeading(NodeFactory.createFormattedLabel("Failed to Revert to Default Matrix", "modal-title"));
+                subContent.setBody(NodeFactory.createFormattedLabel("An error was encountered deleting the custom scoring matrix. Please make sure the file is not in use by another program before attempting to revert to the default matrix.", ""));
+            }
+            JFXDialog subDlg = new JFXDialog(MainController.getRootStackPane(), subContent, JFXDialog.DialogTransition.CENTER);
+            subDlg.setOverlayClose(false);
+            subDlg.setContent(subContent);
+            JFXButton okAction = new JFXButton("Ok");
+            okAction.getStyleClass().add("comment-pane-buttonClose");
+            okAction.setOnAction(actionEvent1 -> {subDlg.close();});
+            subContent.getActions().addAll(okAction);
+
+            subDlg.show();
+        });
+
+        GridPane matrixSummaryPane = new GridPane();
+        matrixSummaryPane.setHgap(80);
+        int rowIdx = 0;
+        Label headerLabel1 = NodeFactory.createFormattedLabel("Wizard", "");
+        headerLabel1.setAlignment(Pos.CENTER);
+        headerLabel1.setStyle("-fx-font-weight: bold");
+        Label headerLabel2 = NodeFactory.createFormattedLabel("Matrix", "", "A value of \"custom\" indicates that a user-custom scoring matrix is currently being used by the tool, while a value of \"default\" indicates the default matrix is being used.", true);
+        headerLabel2.setAlignment(Pos.CENTER);
+        headerLabel2.setStyle("-fx-font-weight: bold");
+        Label headerLabel3 = NodeFactory.createFormattedLabel("Action", "");
+        headerLabel3.setAlignment(Pos.CENTER);
+        headerLabel3.setStyle("-fx-font-weight: bold");
+        matrixSummaryPane.add(headerLabel1, 0, rowIdx);
+        matrixSummaryPane.add(headerLabel2, 1, rowIdx);
+        matrixSummaryPane.add(headerLabel3, 2, rowIdx);
+        rowIdx++;
+        matrixSummaryPane.add(NodeFactory.createFormattedLabel("Goal-Needs", ""), 0, rowIdx);
+        matrixSummaryPane.add(labelGoalsMatrix, 1, rowIdx);
+        matrixSummaryPane.add(resetGoalsMatrixButton, 2, rowIdx);
+        rowIdx++;
+        matrixSummaryPane.add(NodeFactory.createFormattedLabel("Feasibility", ""), 0, rowIdx);
+        matrixSummaryPane.add(labelFeasibilityMatrix, 1, rowIdx);
+        matrixSummaryPane.add(resetFeasibilityMatrixButton, 2, rowIdx);
+        rowIdx++;
+        matrixSummaryPane.add(NodeFactory.createFormattedLabel("Stakeholders", ""), 0, rowIdx);
+        matrixSummaryPane.add(labelStakeholderMatrix, 1, rowIdx);
+        matrixSummaryPane.add(resetStakeholderMatrixButton, 2, rowIdx);
+        rowIdx++;
+        matrixSummaryPane.add(NodeFactory.createFormattedLabel("Applications", ""), 0, rowIdx);
+        matrixSummaryPane.add(labelApplicationMatrix, 1, rowIdx);
+        matrixSummaryPane.add(resetApplicationMatrixButton, 2, rowIdx);
+
+        contentPanel.setCenter(matrixSummaryPane);
+        matrixSummaryPane.setAlignment(Pos.CENTER);
+        BorderPane.setMargin(matrixSummaryPane, new Insets(20, 0, 0, 0));
+
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setMinWidth(800);
+        content.setHeading(NodeFactory.createFormattedLabel("WZITS Tool Scoring Matrix Info", "modal-title"));
+        content.setBody(contentPanel);
+
+        JFXDialog dlg = new JFXDialog(MainController.getRootStackPane(), content, JFXDialog.DialogTransition.CENTER);
+        dlg.setOverlayClose(false);
+        dlg.setContent(content);
+        JFXButton closeAction = new JFXButton("Close");
+        closeAction.getStyleClass().add("comment-pane-buttonClose");
+        closeAction.setOnAction(actionEvent -> dlg.close());
+        content.getActions().addAll(closeAction);
+
+        dlg.show();
     }
 
     public static boolean isInLaunchWindow() {
