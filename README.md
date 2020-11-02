@@ -63,7 +63,7 @@ place to document the decisions made over the course of the project.
 ## Installation
 
 To install the Work Zone ITS Implementation tool, download the Windows installer file (.msi) 
-[below](https://github.com/kittelson/WZITS_Tool/releases). Once the file has downloaded, double-click the file to launch
+[here](https://github.com/kittelson/WZITS_Tool/releases). Once the file has downloaded, double-click the file to launch
 a guided installation wizard. Follow the instructions of the installation wizard to install WZITS.  
 
 ![Installation Wizard](img/install_1.png)
