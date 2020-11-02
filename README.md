@@ -5,7 +5,7 @@
 Quick Links:
 * [Version 2.0 Changes](#version-two-changes)
 * [Installation](#installation)
-* [Download Latest Jar Release](https://github.com/kittelson/WZITS_Tool/releases)
+* [Download Latest Release](https://github.com/kittelson/WZITS_Tool/releases)
 
 ## Introduction
 
