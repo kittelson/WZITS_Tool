@@ -1,10 +1,10 @@
-# Work Zone ITS Tool
+# Work Zone ITS Tool (Version 2.0)
 
 *Companion tool for the [FHWA Work Zone Intelligent Transportation Systems Implementation Guide](https://ops.fhwa.dot.gov/publications/fhwahop14008/fhwahop14008.pdf)*
 
 Quick Links:
-* [Java Requirements](#java-requirements)
-* [Installation and Running the Tool](#installation-and-running)
+* [Version 2.0 Changes](#version-two-changes)
+* [Installation](#installation)
 * [Download Latest Jar Release](https://github.com/kittelson/WZITS_Tool/releases)
 
 ## Introduction
@@ -14,7 +14,7 @@ The **WZITS Implementation Tool** implements the logic and methodology described
 Users should refer to the guide for information about the underlying methods incorporated into the tool. The tool creates
 and manages a project file that provides users with (a) guidance during the WZITS decision making
 process, and (b) a place to document the decisions made, along with relevant supporting 
-information. The [user guide](WZITS%20User%20Guide%20V1_0.pdf) includes four case studies that illustrate the use of the tool.
+information. The [user guide](WZITS%20User%20Guide%20V2_0.pdf) includes four case studies that illustrate the use of the tool.
 
 ### Overview
 
@@ -50,58 +50,36 @@ Implementation Guide*. These questions are intended to ensure that the user has 
 particular steps or aspects of the implementation process. This section of the tool also provides a
 place to document the decisions made over the course of the project.
 
+### Version 2.0 Changes
+* Enhanced user-friendliness and interface facelift – simplified tool navigation with a more modern look and feel.
+* Streamlined installation process, now independent of Java – Users no longer need to have Java installed on their computer to use WZITS, simply download the Windows Installer file (.msi) and install.
+* Ability to change wizard scoring by agency using the [Master Matrix Generator](Master_Matrix_Generator_V3.xlsm).
+* Streamlined presentation of documentation steps 3 through 6
+* Fact sheet improvements
+* Comment Fields for most data entries – Comments useful for justification or reasoning for a certain selection. 
+* Bug fixes and minor updates – Notably the concept of operations image now correctly saves with the file. 
+
+
 ## Installation
 
-### Java Requirements
-The WZITS Implementation Tool has been developed using the Java programming language
-and version 8 or newer of the Java SE Runtime Environment (JRE) is required to run the tool. Any
-version of Java 8 will be sufficient, but it is generally preferable to have the most up-to-date
-version whenever possible. There are a number of ways to check if the installed version of Java is
-sufficient or up-to-date, as described in the following section. For Release Version 1.0, the recommended
-version of java is 8u191 (sometimes displayed as 1.8u191), which can be downloaded from [here](https://www.oracle.com/technetwork/java/javase/downloads/java-archive-javase8-2177648.html).
+To install the Work Zone ITS Implementation tool, download the Windows installer file (.msi) 
+[below](https://github.com/kittelson/WZITS_Tool/releases). Once the file has downloaded, double-click the file to launch
+a guided installation wizard. Follow the instructions of the installation wizard to install WZITS.  
 
-#### Checking the Java Version - Windows
+![Installation Wizard](img/install_1.png)
 
-The Java Control Panel provides information about the version of the JRE installed on the
-computer. To find the Java Control Panel in Windows 7 and earlier, open the Windows Control
-Panel and enter “java” in the search bar. In Windows 10, type “java” in the search bar located
-with the taskbar at the bottom of the window and select the “Configure Java” desktop app.
-Once the Java Control Panel is open, click the “About…” button in the “General” tab to display
-a window displaying the version number, as shown in the following image.
+If desired, a specific install location can be specified for the program, but in general the standard location 
+in C:\Program Files\WZITS TOOL should suffice for most users.  Note that installing the program will 
+require administrator privileges for the computer.
 
-![About Java Dialog - Windows](img/AboutJavaWindows.png)
+Once the installation wizard has finished, both a desktop shortcut and a start menu item will have been created and can
+be used to launch the program.
 
-If the search does not return any results, it is likely that the JRE is not installed on the computer. An
-alternative way to check is to open a Command Prompt window and type the command
-“java-version”. If this command returns an error or the output does not say “java version 1.8.0_xx”
-(xx can be any number), then the JRE will need to be installed or updated.
 
-#### Mac OS and Linux Users
+### Uninstalling the tool
 
-On Mac OS computers, the Java Control Panel provides information about the version of the JRE
-installed on the computer. To find it, open System Preferences from the Apple menu, and click
-the Java icon at the bottom of the window. A message will appear stating that the Java Control
-Panel will open in a new window; click to continue. Once the Java Control Panel is open, click
-the “About…” button in the “General” tab to display a window displaying the version number,
-similar to that shown in Figure 1. If the Java icon cannot be found in System Preferences, Java is
-likely not installed on the computer (Java must be reinstalled each time the Mac OS is updated).
+There are two options to uninstall WZITS.  First, if the original installer is available, launching the install wizard
+provides an option to uninstall the WZITS tool.  Alternatively, the WZITS tool can be uninstalled using the 
+“Add or Remove Programs” Windows built-in utility.
 
-An alternative way to check the installed version of Java on either a Mac OS or Linux computer
-is to use the “Terminal” application. On a Macintosh, Terminal can be found using the
-Launchpad or by performing a Spotlight search. Once in the terminal, type the “java –version”
-command. If this command returns an error or the output does not say “java version 1.8.0_xx” (xx
-can be any number), then the JRE will need to be installed or updated.
-
-### Installation and Running
-To install the WZITS Implementation Tool, [download the latest release](https://github.com/kittelson/WZITS_Tool/releases) and copy the **WZITS_Tool_Vx.x.zip** file to the desired
-location on the computer. Next, extract the contents of the zip archive. **This is a key step
-because the tool cannot be run while in an archived state.** Some computers will extract the files
-from the archive automatically if the .zip file is double-clicked, but on many Windows computers
-the extraction must be done explicitly.
-
-To extract the contents of the archive, right-click on the .zip file and select the “Extract” option.
-Alternatively, if the .zip file has been opened, choose the Extract tab and select the “Extract All”
-option. In either case, the user will be asked to specify a location for the extracted files.
-
-Once the files have been extracted, the WZITS Implementation Tool can be run immediately by
-double-clicking on the WZITS_Tool.jar icon—no further installation is required.
+![Uninstalling the Tool](img/install_2.png)

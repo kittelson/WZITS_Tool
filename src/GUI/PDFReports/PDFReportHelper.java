@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 
 /**
@@ -57,8 +58,9 @@ public class PDFReportHelper {
         System.out.println("Actually Creating Report");
         PDFGenerator pdfGenerator = new PDFGenerator();
         try {
-            pdfGenerator.convertToPDF(PDFReportHelper.getResFolderLocation() + reportResourcesXML,
-                    PDFReportHelper.getResFolderLocation() + "template.xsl",
+            Path pdfResourcePath = MainController.getResFolderLocation();
+            pdfGenerator.convertToPDF(pdfResourcePath.resolve(reportResourcesXML).toString(),
+                    pdfResourcePath.resolve("template.xsl").toString(),
                     fName);
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,20 +88,6 @@ public class PDFReportHelper {
 
     private void setSelectedFileName(String selfname) {
         this.fName = selfname;
-    }
-
-    public static String getResFolderLocation() {
-        String location = PDFReportHelper.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        location = location.replaceAll("%20", " ");
-        if (location.contains("/build/classes")) {
-            location = location.substring(0, location.lastIndexOf("/build")) + "/"; // + "resources" + "/";
-        }
-        location = location.substring(0, location.lastIndexOf("/")) + "/" + "pdfres";
-        File pdfresFolder = new File(location);
-        if (!pdfresFolder.exists()) {
-            //pdfresFolder.mkdirs();
-        }
-        return location + "/";
     }
 
 //    public static final String FILE_CHART_HSDTT = "hourly-system-delay.png";

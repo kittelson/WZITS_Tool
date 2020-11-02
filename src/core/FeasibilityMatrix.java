@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 
 import GUI.MainController;
 import com.jfoenix.controls.JFXButton;
@@ -57,8 +58,11 @@ public class FeasibilityMatrix implements Serializable {
         JSONParser parser = new JSONParser();
         JSONObject returnJSON = null;
         try {
-            File customMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityCustomMatrix.json");
-            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityDefaultMatrix.json");
+//            File customMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityCustomMatrix.json");
+//            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityDefaultMatrix.json");
+            Path scoringMatrixFolder = MainController.getScoringMatrixFolder();
+            File customMatrix = scoringMatrixFolder.resolve("feasibilityCustomMatrix.json").toFile();
+            File defaultMatrix = scoringMatrixFolder.resolve("feasibilityDefaultMatrix.json").toFile();
             if (customMatrix.exists()) {
                 returnJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
             } else {

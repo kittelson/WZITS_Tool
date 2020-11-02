@@ -12,15 +12,17 @@ import GUI.PDFReports.PDFReportHelper;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
-import com.sun.javafx.scene.NodeHelper;
 import core.Project;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Optional;
+
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -34,8 +36,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Duration;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  *
@@ -513,7 +519,46 @@ public class MainController {
         return null;
     }
 
-    public static String getResFolderLocation() {
+    public static Path getProgramAppDataLocation() {
+        Path localData;
+        final String localAppData = System.getenv("LOCALAPPDATA");
+        if (localAppData != null) {
+            localData = Paths.get(localAppData);
+            if (!Files.isDirectory(localData))
+                throw new RuntimeException("%LOCALAPPDATA% set to nonexistent directory " + localData);
+        } else {
+            Path userHome = Paths.get(System.getProperty("user.home"));
+            localData = userHome.resolve(Paths.get("AppData", "Local"));
+            if (!Files.isDirectory(localData))
+                localData = userHome.resolve(Paths.get("Local Settings", "Application Data"));
+            if (!Files.isDirectory(localData))
+                throw new RuntimeException("%LOCALAPPDATA% is undefined, and neither "
+                        + userHome.resolve(Paths.get("AppData", "Local")) + " nor "
+                        + userHome.resolve(Paths.get("Local Settings", "Application Data")) + " have been found");
+        }
+        Path localProgramData = localData.resolve("WZITS_Tool");
+        if (!Files.isDirectory(localProgramData)) {
+            boolean success = localProgramData.toFile().mkdirs();
+            if (!success) {
+                throw new RuntimeException("Could not create AppData resources: " + localProgramData.toString());
+            }
+        }
+        return localProgramData;
+    }
+
+    public static Path getResFolderLocation() {
+        Path location = getProgramAppDataLocation();
+        location = location.resolve("pdfres");
+        File pdfResourcesFolder = location.toFile();
+        if (!pdfResourcesFolder.exists()) {
+            pdfResourcesFolder.mkdirs();
+        }
+        checkAndRepairPDFResourceFiles(pdfResourcesFolder);
+        return location;
+    }
+
+    @Deprecated
+    public static String getResFolderLocation_deprecated() {
         String location = MainController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         location = location.replaceAll("%20", " ");
         if (location.contains("/build/classes")) {
@@ -567,7 +612,19 @@ public class MainController {
         }
     }
 
-    public static String getScoringMatrixFolder() {
+    public static Path getScoringMatrixFolder() {
+        Path location = getProgramAppDataLocation();
+        location = location.resolve("scoringMatrix");
+        File scoringMatrixFolder = location.toFile();
+        if (!scoringMatrixFolder.exists()) {
+            scoringMatrixFolder.mkdirs();
+        }
+        checkAndRepairScoringMatrices(scoringMatrixFolder);
+        return location;
+    }
+
+    @Deprecated
+    public static String getScoringMatrixFolder_deprecated() {
         String location = MainController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         location = location.replaceAll("%20", " ");
         if (location.contains("/build/classes")) {
@@ -582,7 +639,7 @@ public class MainController {
         return location + "/";
     }
 
-    private static void checkAndRepairScoringMatrices(File pdfresFolder) {
+    private static void checkAndRepairScoringMatrices(File scoringMatrixFolder) {
         String repairFileDir = "/core/defaults/";
         String[] matrixFiles = new String[]{
                 "appWizardDefaultMatrix.json",
@@ -591,7 +648,8 @@ public class MainController {
                 "stakeholderDefaultMatrix.json"
         };
         for (String repairFileName: matrixFiles) {
-            if (!(new File(pdfresFolder, repairFileName)).exists()) {
+            File currMatrixFile = new File(scoringMatrixFolder, repairFileName);
+            if (!(currMatrixFile).exists()) {
                 InputStream stream = null;
                 OutputStream resStreamOut = null;
                 try {
@@ -602,8 +660,8 @@ public class MainController {
 
                     int readBytes;
                     byte[] buffer = new byte[4096];
-//                    jarFolder = new File(ExecutingClass.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile().getPath().replace('\\', '/');
-                    resStreamOut = new FileOutputStream(pdfresFolder.getAbsolutePath() + "/" + repairFileName);
+//                    resStreamOut = new FileOutputStream(pdfresFolder.getAbsolutePath() + "/" + repairFileName);
+                    resStreamOut = new FileOutputStream(currMatrixFile);
                     while ((readBytes = stream.read(buffer)) > 0) {
                         resStreamOut.write(buffer, 0, readBytes);
                     }
@@ -630,10 +688,15 @@ public class MainController {
                         "")
         );
 
-        File customGoalsMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsCustomMatrix.json");
-        File customFeasibilityMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityCustomMatrix.json");
-        File customStakeholderMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderCustomMatrix.json");
-        File customApplicationMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardCustomMatrix.json");
+//        File customGoalsMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsCustomMatrix.json");
+//        File customFeasibilityMatrix = new File(MainController.getScoringMatrixFolder() + "feasibilityCustomMatrix.json");
+//        File customStakeholderMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderCustomMatrix.json");
+//        File customApplicationMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardCustomMatrix.json");
+        Path scoringMatrixFolder = MainController.getScoringMatrixFolder();
+        File customGoalsMatrix = scoringMatrixFolder.resolve("goalNeedsCustomMatrix.json").toFile();
+        File customFeasibilityMatrix = scoringMatrixFolder.resolve("feasibilityCustomMatrix.json").toFile();
+        File customStakeholderMatrix = scoringMatrixFolder.resolve("stakeholderCustomMatrix.json").toFile();
+        File customApplicationMatrix = scoringMatrixFolder.resolve("appWizardCustomMatrix.json").toFile();
 
         Label labelGoalsMatrix = NodeFactory.createFormattedLabel(customFeasibilityMatrix.exists() ? "Custom" : "Default", "");
         Label labelFeasibilityMatrix = NodeFactory.createFormattedLabel(customFeasibilityMatrix.exists() ? "Custom" : "Default", "");
@@ -759,19 +822,19 @@ public class MainController {
         rowIdx++;
         matrixSummaryPane.add(NodeFactory.createFormattedLabel("Goal-Needs", ""), 0, rowIdx);
         matrixSummaryPane.add(labelGoalsMatrix, 1, rowIdx);
-        matrixSummaryPane.add(resetGoalsMatrixButton, 2, rowIdx);
+        matrixSummaryPane.add(configureResetMatrixButton(resetGoalsMatrixButton), 2, rowIdx);
         rowIdx++;
         matrixSummaryPane.add(NodeFactory.createFormattedLabel("Feasibility", ""), 0, rowIdx);
         matrixSummaryPane.add(labelFeasibilityMatrix, 1, rowIdx);
-        matrixSummaryPane.add(resetFeasibilityMatrixButton, 2, rowIdx);
+        matrixSummaryPane.add(configureResetMatrixButton(resetFeasibilityMatrixButton), 2, rowIdx);
         rowIdx++;
         matrixSummaryPane.add(NodeFactory.createFormattedLabel("Stakeholders", ""), 0, rowIdx);
         matrixSummaryPane.add(labelStakeholderMatrix, 1, rowIdx);
-        matrixSummaryPane.add(resetStakeholderMatrixButton, 2, rowIdx);
+        matrixSummaryPane.add(configureResetMatrixButton(resetStakeholderMatrixButton), 2, rowIdx);
         rowIdx++;
         matrixSummaryPane.add(NodeFactory.createFormattedLabel("Applications", ""), 0, rowIdx);
         matrixSummaryPane.add(labelApplicationMatrix, 1, rowIdx);
-        matrixSummaryPane.add(resetApplicationMatrixButton, 2, rowIdx);
+        matrixSummaryPane.add(configureResetMatrixButton(resetApplicationMatrixButton), 2, rowIdx);
 
         contentPanel.setCenter(matrixSummaryPane);
         matrixSummaryPane.setAlignment(Pos.CENTER);
@@ -791,6 +854,26 @@ public class MainController {
         content.getActions().addAll(closeAction);
 
         dlg.show();
+    }
+
+    private static Node configureResetMatrixButton(Button resetButton) {
+        FontIcon helpIcon = NodeFactory.createIcon(FontAwesomeRegular.QUESTION_CIRCLE, Color.GREY);
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setShowDelay(Duration.ZERO);
+        tooltip.setShowDuration(Duration.INDEFINITE);
+        tooltip.setStyle("-fx-font-size: 11pt;");
+        tooltip.setOnShowing(windowEvent -> {
+            if (resetButton.isDisable()) {
+                tooltip.setText("Action only available when a custom scoring matrix exists.");
+            } else {
+                tooltip.setText("Reset the scoring matrix to the default scores.");
+            }
+        });
+        Tooltip.install(helpIcon, tooltip);
+        BorderPane wrapper = new BorderPane();
+        wrapper.setCenter(resetButton);
+        wrapper.setRight(helpIcon);
+        return wrapper;
     }
 
     public static boolean isInLaunchWindow() {

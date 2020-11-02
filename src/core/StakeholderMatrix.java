@@ -8,6 +8,7 @@ package core;
 import GUI.MainController;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -222,8 +223,11 @@ public class StakeholderMatrix implements Serializable {
         JSONParser parser = new JSONParser();
         JSONObject retJSON = null;
         try {
-            File customMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderCustomMatrix.json");
-            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderDefaultMatrix.json");
+//            File customMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderCustomMatrix.json");
+//            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "stakeholderDefaultMatrix.json");
+            Path scoringMatrixFolder = MainController.getScoringMatrixFolder();
+            File customMatrix = scoringMatrixFolder.resolve("stakeholderCustomMatrix.json").toFile();
+            File defaultMatrix = scoringMatrixFolder.resolve("stakeholderDefaultMatrix.json").toFile();
             if (customMatrix.exists()) {
                 retJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
             } else {

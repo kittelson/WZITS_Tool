@@ -8,6 +8,7 @@ package core;
 import static core.GoalNeedsMatrix.ZERO_SCORE_TXT;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -134,11 +135,13 @@ public class ApplicationMatrix implements Serializable {
         }
     }
 
+    @Deprecated
     private void loadDefaultMatrix() {
         BufferedReader br = null;
         try {
 //            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/appWizardDefaultMatrix.csv")));
-            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.csv"));
+//            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.csv"));
+            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder().resolve("appWizardDefaultMatrix.csv").toFile()));
             String[] hearder = br.readLine().split(",");
             String line = br.readLine().trim();
             int counter = 0;
@@ -177,8 +180,11 @@ public class ApplicationMatrix implements Serializable {
         JSONParser parser = new JSONParser();
         JSONObject returnJSON = null;
         try {
-            File customMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardCustomMatrix.json");
-            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.json");
+//            File customMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardCustomMatrix.json");
+//            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "appWizardDefaultMatrix.json");
+            Path scoringMatrixFolder = MainController.getScoringMatrixFolder();
+            File customMatrix = scoringMatrixFolder.resolve("appWizardCustomMatrix.json").toFile();
+            File defaultMatrix = scoringMatrixFolder.resolve("appWizardDefaultMatrix.json").toFile();
             if (customMatrix.exists()) {
                 returnJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
             } else {

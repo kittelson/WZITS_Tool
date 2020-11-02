@@ -24,9 +24,9 @@
     </orderEntry>
     <orderEntry type="library" name="org.kordamp.ikonli:ikonli-fontawesome5-pack:11.0.2" level="project" />
     <orderEntry type="library" name="org.kordamp.ikonli:ikonli-javafx:11.0.2" level="project" />
-    <orderEntry type="library" name="javafx-sdk-11.0" level="project" />
-    <orderEntry type="library" name="com.jfoenix:jfoenix:9.0.9" level="project" />
+    <orderEntry type="library" name="com.jfoenix:jfoenix:9.0.10" level="project" />
     <orderEntry type="library" name="pdf" level="project" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
+    <orderEntry type="library" name="javafx-sdk-14.0.2" level="project" />
   </component>
 </module>

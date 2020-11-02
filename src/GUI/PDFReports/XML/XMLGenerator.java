@@ -11,6 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.nio.file.Path;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -85,8 +86,9 @@ public class XMLGenerator {
         createRootElement("pdf-data");
         HeaderElement header = new HeaderElement(getDocument(), title1);
         header.setSubtitle(title2);
-        header.setProgramLogo(MainController.getResFolderLocation() + "wzits_icon_64.png");
-        header.setAgencyLogo(MainController.getResFolderLocation() + "us_dot_logo.png");
+        Path imageResourcePath = MainController.getResFolderLocation();
+        header.setProgramLogo(imageResourcePath.resolve("wzits_icon_64.png").toUri().toString()); //
+        header.setAgencyLogo(imageResourcePath.resolve("us_dot_logo.png").toUri().toString());
         header.setFileName(projectFileName);
         header.generateHeader(getRootElement());
         bodyElement = new BodyElement(getDocument(), getRootElement());

@@ -8,6 +8,7 @@ package core;
 import GUI.Helper.NodeFactory;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.function.Predicate;
@@ -218,27 +219,6 @@ public class GoalNeedsMatrix implements Serializable {
 
     }
 
-    private void loadDefault() {
-        BufferedReader br = null;
-        try {
-//            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/core/defaults/goalNeedsDefaultMatrix.csv")));
-            br = new BufferedReader(new FileReader(MainController.getScoringMatrixFolder() + "goalNeedsDefaultMatrix.csv"));
-            String line = br.readLine();
-            String[] tokens;
-            int rowIdx = 0;
-            while (line != null) {
-                tokens = line.split(",");
-                for (int colIdx = 0; colIdx < tokens.length; colIdx++) {
-                    matrix[rowIdx][colIdx] = Integer.parseInt(tokens[colIdx]);
-                }
-                line = br.readLine();
-                rowIdx++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void loadDefaultV2() {
         JSONObject json = GoalNeedsMatrix.loadJSON();
         JSONArray jArr = (JSONArray) json.get("Goals Matrix");
@@ -267,8 +247,11 @@ public class GoalNeedsMatrix implements Serializable {
         JSONParser parser = new JSONParser();
         JSONObject returnJSON = null;
         try {
-            File customMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsCustomMatrix.json");
-            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsDefaultMatrix.json");
+//            File customMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsCustomMatrix.json");
+//            File defaultMatrix = new File(MainController.getScoringMatrixFolder() + "goalNeedsDefaultMatrix.json");
+            Path scoringMatrixFolder = MainController.getScoringMatrixFolder();
+            File customMatrix = scoringMatrixFolder.resolve("goalNeedsCustomMatrix.json").toFile();
+            File defaultMatrix = scoringMatrixFolder.resolve("goalNeedsDefaultMatrix.json").toFile();
             if (customMatrix.exists()) {
                 returnJSON = (JSONObject) parser.parse(new FileReader(customMatrix));
             } else {
