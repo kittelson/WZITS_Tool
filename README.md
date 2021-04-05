@@ -6,6 +6,7 @@ Quick Links:
 * [Version 2.0 Changes](#version-two-changes)
 * [Installation](#installation)
 * [Download Latest Release](https://github.com/kittelson/WZITS_Tool/releases)
+* [WZITS Tool User Guide](WZITS%20User%20Guide%20V2_1.pdf)
 
 ## Introduction
 
@@ -14,7 +15,7 @@ The **WZITS Implementation Tool** implements the logic and methodology described
 Users should refer to the guide for information about the underlying methods incorporated into the tool. The tool creates
 and manages a project file that provides users with (a) guidance during the WZITS decision making
 process, and (b) a place to document the decisions made, along with relevant supporting 
-information. The user guide (link to revised version coming soon!) includes four case studies that illustrate the use of the tool.
+information. The user guide [user guide](WZITS%20User%20Guide%20V2_1.pdf) includes four case studies that illustrate the use of the tool.
 
 ### Overview
 
